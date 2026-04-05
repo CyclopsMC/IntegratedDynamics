@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer.client;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -47,7 +47,7 @@ public class RenderPattern<E extends IGuiInputElement, G extends Screen, C exten
         return container;
     }
 
-    protected void drawSlot(GuiGraphics guiGraphics, int x, int y) {
+    protected void drawSlot(GuiGraphicsExtractor guiGraphics, int x, int y) {
         guiGraphics.blit(RenderPipelines.GUI_TEXTURED, SubGuiBox.TEXTURE, x, y, 19, 0, 18, 18, 256, 256);
     }
 
@@ -66,7 +66,7 @@ public class RenderPattern<E extends IGuiInputElement, G extends Screen, C exten
     }
 
     @Override
-    public void renderBg(GuiGraphics guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
+    public void renderBg(GuiGraphicsExtractor guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
         super.renderBg(guiGraphics, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
         if (drawRenderPattern()) {
             IConfigRenderPattern configRenderPattern = element.getRenderPattern();

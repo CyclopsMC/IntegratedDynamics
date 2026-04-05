@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.core.client.gui.subgui;
 import com.google.common.collect.Lists;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
@@ -39,9 +39,9 @@ public abstract class SubGuiBox implements ISubGuiBox {
         subGuiHolder.init(guiLeft, guiTop);
     }
 
-    public void drawScreen(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    public void drawScreen(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
         for (int i = 0; i < this.buttonList.size(); ++i) {
-            this.buttonList.get(i).render(guiGraphics, mouseX, mouseY, partialTicks);
+            this.buttonList.get(i).extractRenderState(guiGraphics, mouseX, mouseY, partialTicks);
         }
     }
 
@@ -50,7 +50,7 @@ public abstract class SubGuiBox implements ISubGuiBox {
     }
 
     @Override
-    public void renderBg(GuiGraphics guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
+    public void renderBg(GuiGraphicsExtractor guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
         if (this.isDrawBackground()) {
             int textureWidth = 19;
             int textureHeight = textureWidth;
@@ -108,7 +108,7 @@ public abstract class SubGuiBox implements ISubGuiBox {
     }
 
     @Override
-    public void drawGuiContainerForegroundLayer(GuiGraphics guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, int mouseX, int mouseY) {
+    public void drawGuiContainerForegroundLayer(GuiGraphicsExtractor guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, int mouseX, int mouseY) {
         subGuiHolder.drawGuiContainerForegroundLayer(guiGraphics, guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
     }
 

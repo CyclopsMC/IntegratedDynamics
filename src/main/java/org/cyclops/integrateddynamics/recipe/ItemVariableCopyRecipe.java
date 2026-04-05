@@ -1,9 +1,7 @@
 package org.cyclops.integrateddynamics.recipe;
 
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -25,18 +23,18 @@ public class ItemVariableCopyRecipe extends CustomRecipe {
 
     private ValueDeseralizationContext lastValueDeseralizationContext;
 
-    public ItemVariableCopyRecipe(CraftingBookCategory craftingBookCategory) {
-        super(craftingBookCategory);
+    public ItemVariableCopyRecipe() {
+        super();
     }
 
     @Override
     public boolean matches(CraftingInput inv, Level worldIn) {
         lastValueDeseralizationContext = ValueDeseralizationContext.of(worldIn);
-        return !assemble(inv, worldIn.registryAccess()).isEmpty();
+        return !assemble(inv).isEmpty();
     }
 
     @Override
-    public ItemStack assemble(CraftingInput inv, HolderLookup.Provider registryAccess) {
+    public ItemStack assemble(CraftingInput inv) {
         ItemStack withData = ItemStack.EMPTY;
         ItemStack withoutData = ItemStack.EMPTY;
         IVariableFacade facade;

@@ -6,20 +6,28 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.mojang.math.Quadrant;
 import net.minecraft.client.model.geom.builders.UVPair;
-import net.minecraft.client.renderer.block.model.*;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.dispatch.BlockModelRotation;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.BlockModelRotation;
 import net.minecraft.client.resources.model.ModelBaker;
-import net.minecraft.client.resources.model.ModelState;
+import net.minecraft.client.renderer.block.dispatch.ModelState;
+import net.minecraft.client.resources.model.cuboid.CuboidFace;
+import net.minecraft.client.resources.model.cuboid.FaceBakery;
+import net.minecraft.client.resources.model.cuboid.ItemTransform;
+import net.minecraft.client.resources.model.cuboid.ItemTransforms;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.ItemOwner;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.BlockAndTintGetter;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.model.quad.BakedColors;
 import net.neoforged.neoforge.client.model.quad.BakedNormals;
@@ -34,6 +42,7 @@ import org.cyclops.integrateddynamics.block.BlockCableClientConfig;
 import org.cyclops.integrateddynamics.core.blockentity.BlockEntityMultipartTicking;
 import org.joml.Vector3f;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -46,7 +55,6 @@ import java.util.stream.Collectors;
 public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel {
 
     public static ModelBaker MODEL_BAKER;
-    private static final FaceBakery FACE_BAKERY = new FaceBakery();
     private static final Cache<Triple<IRenderState, Direction, ChunkSectionLayer>, List<BakedQuad>> CACHE_QUADS = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.MINUTES).build();
 
     private static final int RADIUS = 4;
@@ -78,7 +86,7 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
         super(level, blockState, facing, rand, modelData, renderType);
     }
 
-    public CableModelBase(ItemStack itemStack, Level world, ItemOwner entity) {
+    public CableModelBase(ItemStack itemStack, ClientLevel world, ItemOwner entity) {
         super(itemStack, world, entity);
     }
 
@@ -129,11 +137,11 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
 
     public List<BakedQuad> getFacadeQuads(BlockStateModel facadeModel, BlockState blockState, Direction side, PartRenderPosition partRenderPosition, ChunkSectionLayer renderType) {
         List<BakedQuad> originalQuads = Lists.newArrayList();
-        for (BlockModelPart collectPart : facadeModel.collectParts(level, BlockPos.ZERO, blockState, rand)) {
-            if (collectPart.getRenderType(blockState) == renderType) {
-                originalQuads.addAll(collectPart.getQuads(null));
-                originalQuads.addAll(collectPart.getQuads(side));
-            }
+        List<BlockStateModelPart> parts = new ArrayList<>();
+        facadeModel.collectParts(rand, parts);
+        for (BlockStateModelPart collectPart : parts) {
+            originalQuads.addAll(collectPart.getQuads(null));
+            originalQuads.addAll(collectPart.getQuads(side));
         }
 
         return originalQuads.stream()
@@ -179,15 +187,14 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
     private void addFacadeQuad(List<BakedQuad> quads, BakedQuad originalQuad, float u0, float v0, float u1, float v1, Direction side) {
         Vector3f from = new Vector3f(u0 * 16f, v0 * 16f, 0f);
         Vector3f to = new Vector3f(u1 * 16f, v1 * 16f, 0f);
-        TextureAtlasSprite texture = originalQuad.sprite();
-        BlockElementFace.UVs blockFaceUV = new BlockElementFace.UVs(16f - u1 * 16f, 16f - v1 * 16f, 16f - u0 * 16f, 16f - v0 * 16f);
+        TextureAtlasSprite texture = originalQuad.materialInfo().sprite();
+        CuboidFace.UVs blockFaceUV = new CuboidFace.UVs(16f - u1 * 16f, 16f - v1 * 16f, 16f - u0 * 16f, 16f - v0 * 16f);
         Direction NO_FACE_CULLING = null;
         String DUMMY_TEXTURE_NAME = "";
-        BlockElementFace blockPartFace = new BlockElementFace(NO_FACE_CULLING, originalQuad.tintIndex(), DUMMY_TEXTURE_NAME, blockFaceUV, Quadrant.R0);
+        CuboidFace blockPartFace = new CuboidFace(NO_FACE_CULLING, originalQuad.materialInfo().tintIndex(), DUMMY_TEXTURE_NAME, blockFaceUV, Quadrant.R0);
         ModelState transformation = getRotation(side);
-        BlockElementRotation DEFAULT_ROTATION = null;
         boolean APPLY_SHADING = true;
-        quads.add(FACE_BAKERY.bakeQuad(MODEL_BAKER.parts(), from, to, blockPartFace, texture, Direction.NORTH, transformation, DEFAULT_ROTATION, APPLY_SHADING, 0));
+        quads.add(FaceBakery.bakeQuad(MODEL_BAKER, from, to, blockPartFace, new Material.Baked(texture, false), Direction.NORTH, transformation, null, APPLY_SHADING, 0));
     }
 
     public static BlockModelRotation getRotation(Direction facing) {
@@ -212,6 +219,11 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
     protected abstract IRenderState getRenderState(ModelData modelData);
 
     @Override
+    public int materialFlags() {
+        return 0;
+    }
+
+    @Override
     public List<BakedQuad> getGeneralQuads() {
         Triple<IRenderState, Direction, ChunkSectionLayer> cacheKey = null;
         List<BakedQuad> cachedQuads = null;
@@ -234,7 +246,9 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
                 boolean hasPart = !isItemStack() && hasPart(modelData, side);
                 if (hasPart && shouldRenderParts(modelData)) {
                     try {
-                        for (BlockModelPart collectPart : getPartModel(modelData, side).collectParts(level, BlockPos.ZERO, blockState, rand)) {
+                        List<BlockStateModelPart> parts = new ArrayList<>();
+                        getPartModel(modelData, side).collectParts(rand, parts);
+                        for (BlockStateModelPart collectPart : parts) {
                             ret.addAll(collectPart.getQuads(null));
                         }
                     } catch (Exception e) {
@@ -270,14 +284,10 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
                                     UVPair.pack(texture.getU(INV_LENGTH_CONNECTION / 16f), texture.getV(invert ? length / 16f : 0)),
                                     UVPair.pack(texture.getU(INV_LENGTH_CONNECTION / 16f), texture.getV(invert ? 0 : length / 16f)),
                                     UVPair.pack(texture.getU(LENGTH_CONNECTION / 16f), texture.getV(invert ? 0 : length / 16f)),
-                                    -1,
                                     realSide,
-                                    texture,
-                                    true,
-                                    0,
+                                    new BakedQuad.MaterialInfo(texture, ChunkSectionLayer.SOLID, RenderTypes.entityCutout(texture.atlasLocation()), -1, true, 0),
                                     BakedNormals.UNSPECIFIED,
-                                    BakedColors.DEFAULT,
-                                    true
+                                    BakedColors.DEFAULT
                             ));
                         }
                     } else {
@@ -309,9 +319,13 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
         return cachedQuads;
     }
 
-    @Override
     public TextureAtlasSprite particleIcon() {
         return BlockCableClientConfig.BLOCK_TEXTURE;
+    }
+
+    @Override
+    public Material.Baked particleMaterial() {
+        return new Material.Baked(particleIcon(), false);
     }
 
     @Override

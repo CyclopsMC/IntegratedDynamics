@@ -103,7 +103,7 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
         String typeName = IModHelpers.get().getL10NHelpers().localize(getTranslationKey());
         tooltipAdder.accept(Component.translatable(L10NValues.VALUETYPE_TOOLTIP_TYPENAME, getDisplayColorFormat() + typeName));
         if(appendOptionalInfo) {
-            IModHelpers.get().getL10NHelpers().addOptionalInfo(tooltipAdder, getUnlocalizedPrefix());
+            IModHelpers.get().getL10NHelpers().addOptionalInfo(tooltipAdder, getUnlocalizedPrefix(), net.minecraft.world.item.TooltipFlag.NORMAL);
         }
     }
 

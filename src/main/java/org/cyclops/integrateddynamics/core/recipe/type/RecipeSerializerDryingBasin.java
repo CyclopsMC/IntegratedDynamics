@@ -9,7 +9,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStackTemplate;
 import org.cyclops.cyclopscore.helper.RecipeSerializerHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
 
@@ -17,14 +17,14 @@ import org.cyclops.integrateddynamics.GeneralConfig;
  * Recipe serializer for drying basin recipes
  * @author rubensworks
  */
-public class RecipeSerializerDryingBasin implements RecipeSerializer<RecipeDryingBasin> {
+public class RecipeSerializerDryingBasin {
 
     public static final MapCodec<RecipeDryingBasin> CODEC = RecordCodecBuilder.mapCodec(
             builder -> builder.group(
                             Ingredient.CODEC.optionalFieldOf("input_item").forGetter(RecipeDryingBasin::getInputIngredient),
-                            FluidStack.CODEC.optionalFieldOf("input_fluid").forGetter(RecipeDryingBasin::getInputFluid),
-                            RecipeSerializerHelpers.getCodecItemStackOrTag(() -> GeneralConfig.recipeTagOutputModPriorities).optionalFieldOf("output_item").forGetter(RecipeDryingBasin::getOutputItem),
-                            FluidStack.CODEC.optionalFieldOf("output_fluid").forGetter(RecipeDryingBasin::getOutputFluid),
+                            FluidStackTemplate.CODEC.optionalFieldOf("input_fluid").forGetter(RecipeDryingBasin::getInputFluidTemplate),
+                            RecipeSerializerHelpers.getCodecItemStackTemplateOrTag(() -> GeneralConfig.recipeTagOutputModPriorities).optionalFieldOf("output_item").forGetter(RecipeDryingBasin::getOutputItemTemplate),
+                            FluidStackTemplate.CODEC.optionalFieldOf("output_fluid").forGetter(RecipeDryingBasin::getOutputFluidTemplate),
                             Codec.INT.fieldOf("duration").forGetter(RecipeDryingBasin::getDuration)
                     )
                     .apply(builder, (inputItem, inputFluid, outputItem, outputFluid, duration) -> {
@@ -47,20 +47,12 @@ public class RecipeSerializerDryingBasin implements RecipeSerializer<RecipeDryin
     );
     public static final StreamCodec<RegistryFriendlyByteBuf, RecipeDryingBasin> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.optional(Ingredient.CONTENTS_STREAM_CODEC), RecipeDryingBasin::getInputIngredient,
-            ByteBufCodecs.optional(FluidStack.STREAM_CODEC), RecipeDryingBasin::getInputFluid,
-            ByteBufCodecs.optional(RecipeSerializerHelpers.STREAM_CODEC_ITEMSTACK_OR_TAG), RecipeDryingBasin::getOutputItem,
-            ByteBufCodecs.optional(FluidStack.STREAM_CODEC), RecipeDryingBasin::getOutputFluid,
+            ByteBufCodecs.optional(FluidStackTemplate.STREAM_CODEC), RecipeDryingBasin::getInputFluidTemplate,
+            ByteBufCodecs.optional(RecipeSerializerHelpers.STREAM_CODEC_ITEMSTACKTEMPLATE_OR_TAG), RecipeDryingBasin::getOutputItemTemplate,
+            ByteBufCodecs.optional(FluidStackTemplate.STREAM_CODEC), RecipeDryingBasin::getOutputFluidTemplate,
             ByteBufCodecs.INT, RecipeDryingBasin::getDuration,
             RecipeDryingBasin::new
     );
+    public static final RecipeSerializer<RecipeDryingBasin> SERIALIZER = new RecipeSerializer<>(CODEC, STREAM_CODEC);
 
-    @Override
-    public MapCodec<RecipeDryingBasin> codec() {
-        return CODEC;
-    }
-
-    @Override
-    public StreamCodec<RegistryFriendlyByteBuf, RecipeDryingBasin> streamCodec() {
-        return STREAM_CODEC;
-    }
 }

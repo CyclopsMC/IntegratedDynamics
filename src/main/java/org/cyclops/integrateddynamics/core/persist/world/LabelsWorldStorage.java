@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.persist.world;
 import com.google.common.collect.Maps;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.saveddata.SavedDataType;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -32,6 +33,10 @@ public class LabelsWorldStorage extends WorldStorage<LabelsWorldStorage> {
     public LabelsWorldStorage(Map<Integer, String> labels) {
         this.labels = Maps.newHashMap(labels);
         NeoForge.EVENT_BUS.register(this);
+    }
+
+    public Map<Integer, String> getLabels() {
+        return labels;
     }
 
     /**
@@ -135,12 +140,12 @@ public class LabelsWorldStorage extends WorldStorage<LabelsWorldStorage> {
         }
 
         public Access(ModBaseNeoForge<?> mod) {
-            super(new SavedDataType<>(
-                    mod.getModId() + "_labels",
+            super(new SavedDataType<LabelsWorldStorage>(
+                    Identifier.fromNamespaceAndPath(mod.getModId(), "labels"),
                     (ctx) -> new LabelsWorldStorage(Maps.newHashMap()),
                     ctx -> RecordCodecBuilder.create(instance -> instance.group(
                             RecordCodecBuilder.point(ctx.getLevel()),
-                            NeoForgeExtraCodecs.unboundedMapAsList("k", Codec.INT, "v", Codec.STRING).fieldOf("counters").forGetter(data -> data.labels)
+                            NeoForgeExtraCodecs.unboundedMapAsList("k", Codec.INT, "v", Codec.STRING).fieldOf("counters").forGetter(data -> data.getLabels())
                     ).apply(instance, (level, labels) -> new LabelsWorldStorage(labels)))
             ), mod);
         }

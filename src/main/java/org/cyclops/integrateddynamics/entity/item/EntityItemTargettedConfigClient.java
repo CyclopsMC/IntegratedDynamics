@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.entity.item;
 
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 import org.cyclops.cyclopscore.config.extendedconfig.EntityClientConfig;
 import org.cyclops.cyclopscore.config.extendedconfig.EntityConfigCommon;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -16,7 +15,7 @@ public class EntityItemTargettedConfigClient extends EntityClientConfig<Integrat
     }
 
     @Override
-    public EntityRenderer<? super EntityItemTargetted, ?> getRender(EntityRendererProvider.Context renderContext, ItemRenderer renderItem) {
+    public EntityRenderer<? super EntityItemTargetted, ?> getRender(EntityRendererProvider.Context renderContext) {
         return new net.minecraft.client.renderer.entity.ItemEntityRenderer(renderContext);
     }
 }

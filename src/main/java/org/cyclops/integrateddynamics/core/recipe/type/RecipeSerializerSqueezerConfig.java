@@ -14,7 +14,7 @@ public class RecipeSerializerSqueezerConfig extends RecipeConfigCommon<RecipeSqu
         super(
                 IntegratedDynamics._instance,
                 "squeezer",
-                eConfig -> new RecipeSerializerSqueezer()
+                eConfig -> RecipeSerializerSqueezer.SERIALIZER
         );
     }
 

@@ -27,7 +27,7 @@ public class BlockFluidLiquidChorusConfig extends BlockConfigCommon<IntegratedDy
     }
 
     @Override
-    public Collection<ItemStack> getDefaultCreativeTabEntries() {
+    public Collection<java.util.function.Supplier<ItemStack>> getDefaultCreativeTabEntries() {
         return Collections.emptyList();
     }
 

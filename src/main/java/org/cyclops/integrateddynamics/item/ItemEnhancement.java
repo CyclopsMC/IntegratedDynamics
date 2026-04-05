@@ -40,11 +40,11 @@ public class ItemEnhancement extends Item {
                         if (!player.level().isClientSide()) {
                             partState.setMaxOffset(newValue);
                             itemStack.shrink(1);
-                            player.displayClientMessage(Component.translatable("item.integrateddynamics.enhancement_offset.increased", newValue), true);
+                            player.sendOverlayMessage(Component.translatable("item.integrateddynamics.enhancement_offset.increased", newValue));
                         }
                         return InteractionResult.SUCCESS;
                     }
-                    player.displayClientMessage(Component.translatable("item.integrateddynamics.enhancement_offset.limit", GeneralConfig.maxPartOffset), true);
+                    player.sendOverlayMessage(Component.translatable("item.integrateddynamics.enhancement_offset.limit", GeneralConfig.maxPartOffset));
                     return InteractionResult.SUCCESS;
                 }
             }

@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer.client;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
@@ -47,13 +47,13 @@ public class ValueTypeOperatorLPElementClient extends ValueTypeLPElementBaseClie
         }
 
         @Override
-        public void renderBg(GuiGraphics guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
+        public void renderBg(GuiGraphicsExtractor guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
             super.renderBg(guiGraphics, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
             IOperator operator = element.getSelectedOperator();
             if (operator != null) {
                 int offsetY = 0;
                 for (Component line : ValueTypeOperator.getSignatureLines(operator, true)) {
-                    guiGraphics.drawString(fontRenderer, line, getX() + guiLeft + 10, getY() + guiTop + 25 + offsetY, IModHelpers.get().getBaseHelpers().RGBAToInt(10, 10, 10, 255), false);
+                    guiGraphics.text(fontRenderer, line, getX() + guiLeft + 10, getY() + guiTop + 25 + offsetY, IModHelpers.get().getBaseHelpers().RGBAToInt(10, 10, 10, 255), false);
                     offsetY += fontRenderer.lineHeight;
                 }
             }

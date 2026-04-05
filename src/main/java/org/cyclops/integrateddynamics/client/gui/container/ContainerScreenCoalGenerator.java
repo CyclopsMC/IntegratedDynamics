@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.client.gui.container;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -27,8 +27,8 @@ public class ContainerScreenCoalGenerator extends ContainerScreenExtended<Contai
     }
 
     @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(guiGraphics, partialTicks, mouseX, mouseY);
+    public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractBackground(guiGraphics, mouseX, mouseY, partialTicks);
         int lastProgress = getMenu().getProgress();
         if (lastProgress >= 0) {
             guiGraphics.blit(RenderPipelines.GUI_TEXTURED, getGuiTexture(), getGuiLeftTotal() + 81, getGuiTopTotal() + 30 + lastProgress, 176,
@@ -37,8 +37,8 @@ public class ContainerScreenCoalGenerator extends ContainerScreenExtended<Contai
     }
 
     @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int x, int y) {
+    protected void extractLabels(GuiGraphicsExtractor guiGraphics, int x, int y) {
         // super.drawGuiContainerForegroundLayer(matrixStack, x, y);
-        guiGraphics.drawString(font, this.title, this.titleLabelX, this.titleLabelY, ARGB.opaque(4210752), false);
+        guiGraphics.text(font, this.title, this.titleLabelX, this.titleLabelY, ARGB.opaque(4210752), false);
     }
 }

@@ -26,13 +26,13 @@ public class GameTester {
 
     public static GameTestHelper GAME_TEST_HELPER;
 
-    public static void registerCommonTests(String modId, BiConsumer<Identifier, GameTestInstance> registrar, Registry<TestEnvironmentDefinition> testEnvironmentRegistry) {
+    public static void registerCommonTests(String modId, BiConsumer<Identifier, GameTestInstance> registrar, Registry<TestEnvironmentDefinition<?>> testEnvironmentRegistry) {
         for (IntegrationMethodGameTestInstance testInstance : GameTester.integrationTests(modId, testEnvironmentRegistry)) {
             registrar.accept(testInstance.getId(), testInstance);
         }
     }
 
-    public static Collection<IntegrationMethodGameTestInstance> integrationTests(String modId, Registry<TestEnvironmentDefinition> testEnvironmentRegistry) {
+    public static Collection<IntegrationMethodGameTestInstance> integrationTests(String modId, Registry<TestEnvironmentDefinition<?>> testEnvironmentRegistry) {
         List<IntegrationMethodGameTestInstance> testsList = Lists.newArrayList();
 
         for(String className : CommandTest.CLASSES) {
@@ -49,22 +49,18 @@ public class GameTester {
 
                 // Run tests
                 for(Method method : tests) {
-                    Holder.Reference<TestEnvironmentDefinition> environment = testEnvironmentRegistry.getOrThrow(ResourceKey.create(
+                    Holder.Reference<TestEnvironmentDefinition<?>> environment = testEnvironmentRegistry.getOrThrow(ResourceKey.create(
                             Registries.TEST_ENVIRONMENT,
                             Identifier.parse("default")
                     ));
                     testsList.add(new IntegrationMethodGameTestInstance(
-                            new TestData<>(
+                            new TestData<Holder<TestEnvironmentDefinition<?>>>(
                                     environment,
                                     Identifier.parse("integrateddynamics:test"),
                                     1,
                                     1,
                                     true,
-                                    Rotation.NONE,
-                                    false,
-                                    1,
-                                    1,
-                                    false
+                                    Rotation.NONE
                             ),
                             modId,
                             clazz.getName(),

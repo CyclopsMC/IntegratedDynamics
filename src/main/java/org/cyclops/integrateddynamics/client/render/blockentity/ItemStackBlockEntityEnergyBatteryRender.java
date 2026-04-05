@@ -8,9 +8,8 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -38,7 +37,7 @@ public class ItemStackBlockEntityEnergyBatteryRender implements SpecialModelRend
     }
 
     @Override
-    public void submit(@Nullable ItemStack itemStack, ItemDisplayContext itemDisplayContext, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int packedLight, int packedOverlay, boolean outline, int outlineColor) {
+    public void submit(@Nullable ItemStack itemStack, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
         BlockEntityEnergyBattery tile = new BlockEntityEnergyBattery(BlockPos.ZERO, RegistryEntries.BLOCK_ENERGY_BATTERY.get().defaultBlockState());
         tile.setLevel(Minecraft.getInstance().level);
         BlockEnergyBatteryBase.itemStackToTile(itemStack, tile);
@@ -53,7 +52,7 @@ public class ItemStackBlockEntityEnergyBatteryRender implements SpecialModelRend
 
     }
 
-    public static record Unbaked() implements SpecialModelRenderer.Unbaked {
+    public static record Unbaked() implements SpecialModelRenderer.Unbaked<ItemStack> {
         public static final MapCodec<ItemStackBlockEntityEnergyBatteryRender.Unbaked> MAP_CODEC = MapCodec.unit(ItemStackBlockEntityEnergyBatteryRender.Unbaked::new);
 
         @Override
@@ -62,7 +61,7 @@ public class ItemStackBlockEntityEnergyBatteryRender implements SpecialModelRend
         }
 
         @Override
-        public SpecialModelRenderer<?> bake(BakingContext bakingContext) {
+        public SpecialModelRenderer<ItemStack> bake(BakingContext bakingContext) {
             return new ItemStackBlockEntityEnergyBatteryRender();
         }
     }

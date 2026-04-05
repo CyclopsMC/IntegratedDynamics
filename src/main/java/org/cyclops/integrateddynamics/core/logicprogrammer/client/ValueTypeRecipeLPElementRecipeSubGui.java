@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -96,7 +96,7 @@ public class ValueTypeRecipeLPElementRecipeSubGui extends RenderPattern<ValueTyp
     }
 
     @Override
-    public void drawGuiContainerForegroundLayer(GuiGraphics guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, int mouseX, int mouseY) {
+    public void drawGuiContainerForegroundLayer(GuiGraphicsExtractor guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(guiGraphics, guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
 
         // Output type tooltip
@@ -127,18 +127,18 @@ public class ValueTypeRecipeLPElementRecipeSubGui extends RenderPattern<ValueTyp
     }
 
     @Override
-    public void renderBg(GuiGraphics guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
+    public void renderBg(GuiGraphicsExtractor guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
         super.renderBg(guiGraphics, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
 
         // Draw crafting arrow
         guiGraphics.blit(RenderPipelines.GUI_TEXTURED, SubGuiBox.TEXTURE, guiLeft + getX() + 66, guiTop + getY() + 21, 0, 38, 22, 15, 256, 256);
 
-        inputFluidAmountBox.render(guiGraphics, mouseX, mouseY, partialTicks);
-        guiGraphics.drawString(fontRenderer, IModHelpers.get().getL10NHelpers().localize(L10NValues.GENERAL_ENERGY_UNIT) + ":", guiLeft + getX() + 2, guiTop + getY() + 78, ARGB.opaque(0), false);
-        inputEnergyBox.render(guiGraphics, mouseX, mouseY, partialTicks);
-        outputFluidAmountBox.render(guiGraphics, mouseX, mouseY, partialTicks);
-        guiGraphics.drawString(fontRenderer, IModHelpers.get().getL10NHelpers().localize(L10NValues.GENERAL_ENERGY_UNIT) + ":", guiLeft + getX() + 84, guiTop + getY() + 78, ARGB.opaque(0), false);
-        outputEnergyBox.render(guiGraphics, mouseX, mouseY, partialTicks);
+        inputFluidAmountBox.extractRenderState(guiGraphics, mouseX, mouseY, partialTicks);
+        guiGraphics.text(fontRenderer, IModHelpers.get().getL10NHelpers().localize(L10NValues.GENERAL_ENERGY_UNIT) + ":", guiLeft + getX() + 2, guiTop + getY() + 78, ARGB.opaque(0), false);
+        inputEnergyBox.extractRenderState(guiGraphics, mouseX, mouseY, partialTicks);
+        outputFluidAmountBox.extractRenderState(guiGraphics, mouseX, mouseY, partialTicks);
+        guiGraphics.text(fontRenderer, IModHelpers.get().getL10NHelpers().localize(L10NValues.GENERAL_ENERGY_UNIT) + ":", guiLeft + getX() + 84, guiTop + getY() + 78, ARGB.opaque(0), false);
+        outputEnergyBox.extractRenderState(guiGraphics, mouseX, mouseY, partialTicks);
     }
 
     @Override

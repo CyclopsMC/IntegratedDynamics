@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.client.gui.container;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.player.Inventory;
@@ -39,7 +39,7 @@ public class ContainerScreenPartWriter<P extends IPartTypeWriter<P, S>, S extend
     }
 
     @Override
-    protected void drawAdditionalElementInfoForeground(GuiGraphics guiGraphics, ContainerPartWriter<P, S> container, int index, IAspectWrite<?, ?> aspect, int mouseX, int mouseY) {
+    protected void drawAdditionalElementInfoForeground(GuiGraphicsExtractor guiGraphics, ContainerPartWriter<P, S> container, int index, IAspectWrite<?, ?> aspect, int mouseX, int mouseY) {
         // Render error tooltip
         if(getMenu().isPartStateEnabled()) {
             displayErrors.drawForeground(guiGraphics, getMenu().getAspectErrors(aspect), ERROR_X, ERROR_Y + container.getAspectBoxHeight() * index, mouseX, mouseY, this, this.leftPos, this.topPos);
@@ -47,14 +47,14 @@ public class ContainerScreenPartWriter<P extends IPartTypeWriter<P, S>, S extend
     }
 
     @Override
-    protected void drawAdditionalElementInfo(GuiGraphics guiGraphics, ContainerPartWriter<P, S> container, int index, IAspectWrite<?, ?> aspect) {
+    protected void drawAdditionalElementInfo(GuiGraphicsExtractor guiGraphics, ContainerPartWriter<P, S> container, int index, IAspectWrite<?, ?> aspect) {
         int aspectBoxHeight = container.getAspectBoxHeight();
 
         // Render dummy target item
         // This could be cached if this would prove to be a bottleneck
         ItemStack itemStack = container.writeAspectInfo(false, new ItemStack(RegistryEntries.ITEM_VARIABLE), container.getPlayerIInventory().player.level(), aspect);
         Rectangle pos = getElementPosition(container, index, true);
-        guiGraphics.renderItem(itemStack, pos.x, pos.y);
+        guiGraphics.item(itemStack, pos.x, pos.y);
 
         // Render error symbol
         if(getMenu().isPartStateEnabled()) {
@@ -64,8 +64,8 @@ public class ContainerScreenPartWriter<P extends IPartTypeWriter<P, S>, S extend
     }
 
     @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(guiGraphics, partialTicks, mouseX, mouseY);
+    public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractBackground(guiGraphics, mouseX, mouseY, partialTicks);
         ContainerPartWriter<?, ?> container = getMenu();
         IModHelpers.get().getRenderHelpers().drawScaledCenteredString(guiGraphics, font, container.getWriteValue().getString(), this.leftPos + offsetX + 53,
                 this.topPos + offsetY + 132, 70, ARGB.opaque(container.getWriteValueColor()), false, Font.DisplayMode.NORMAL);

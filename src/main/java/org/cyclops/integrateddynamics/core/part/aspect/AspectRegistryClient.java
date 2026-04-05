@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.part.aspect;
 
 import net.minecraft.client.color.item.Constant;
-import net.minecraft.client.renderer.item.BlockModelWrapper;
+import net.minecraft.client.renderer.item.CuboidItemModelWrapper;
 import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.resources.Identifier;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
@@ -18,7 +18,7 @@ public class AspectRegistryClient implements IAspectRegistryClient {
 
     @Override
     public void registerAspectModel(IAspect aspect, Identifier modelLocation) {
-        aspectModels.put(aspect, new BlockModelWrapper.Unbaked(modelLocation, List.of(new Constant(-1))));
+        aspectModels.put(aspect, new CuboidItemModelWrapper.Unbaked(modelLocation, java.util.Optional.empty(), List.of(new Constant(-1))));
     }
 
     @Override

@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable.gui;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -49,14 +49,14 @@ public abstract class SubGuiValueTypeInfoBase<S extends ISubGuiBox, G extends Co
     }
 
     @Override
-    public void renderBg(GuiGraphics guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
+    public void renderBg(GuiGraphicsExtractor guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
         super.renderBg(guiGraphics, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
 
         int x = guiLeft + getX();
         int y = guiTop + getY();
 
         if (this.shouldRenderElementName()) {
-            guiGraphics.drawString(fontRenderer, element.getName(), x + 2, y + 6, IModHelpers.get().getBaseHelpers().RGBAToInt(240, 240, 240, 255), true);
+            guiGraphics.text(fontRenderer, element.getName(), x + 2, y + 6, IModHelpers.get().getBaseHelpers().RGBAToInt(240, 240, 240, 255), true);
         }
 
         if (showError()) {
@@ -74,7 +74,7 @@ public abstract class SubGuiValueTypeInfoBase<S extends ISubGuiBox, G extends Co
     }
 
     @Override
-    public void drawGuiContainerForegroundLayer(GuiGraphics guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, int mouseX, int mouseY) {
+    public void drawGuiContainerForegroundLayer(GuiGraphicsExtractor guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(guiGraphics, guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
 
         int x = getX();

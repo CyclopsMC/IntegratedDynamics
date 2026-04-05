@@ -26,7 +26,7 @@ public class FuzzingGameTestInstance extends GameTestInstance {
 
     private final int iteration;
 
-    public FuzzingGameTestInstance(TestData<Holder<TestEnvironmentDefinition>> info, int iteration) {
+    public FuzzingGameTestInstance(TestData<Holder<TestEnvironmentDefinition<?>>> info, int iteration) {
         super(info);
         this.iteration = iteration;
     }

@@ -19,7 +19,7 @@ public class AspectVariableModelProvider implements IVariableModelProvider<Baked
         Map<IAspect, ItemModel> bakedModels = Maps.newHashMap();
         for(IAspect aspect : Aspects.REGISTRY.getAspects()) {
             ItemModel.Unbaked unbakedModel = Aspects.REGISTRY.getClient().getAspectModel(aspect);
-            ItemModel bakedModel = unbakedModel.bake(bakingContext);
+            ItemModel bakedModel = unbakedModel.bake(bakingContext, new org.joml.Matrix4f());
             bakedModels.put(aspect, bakedModel);
         }
         return new BakedMapVariableModelProvider<>(bakedModels);

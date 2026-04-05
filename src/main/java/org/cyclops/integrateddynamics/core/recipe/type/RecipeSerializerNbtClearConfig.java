@@ -12,7 +12,7 @@ public class RecipeSerializerNbtClearConfig extends RecipeConfigCommon<RecipeNbt
     public RecipeSerializerNbtClearConfig() {
         super(IntegratedDynamics._instance,
                 "crafting_special_nbt_clear",
-                eConfig -> new RecipeSerializerNbtClear());
+                eConfig -> RecipeSerializerNbtClear.SERIALIZER);
     }
 
 }

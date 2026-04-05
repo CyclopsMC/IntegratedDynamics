@@ -18,9 +18,7 @@ public class FluidMenrilResinConfig extends FluidConfigNeoForge {
         super(
                 IntegratedDynamics._instance,
                 "menril_resin",
-                fluidConfig -> getDefaultFluidProperties(IntegratedDynamics._instance,
-                        "block/menril_resin",
-                        builder -> builder
+                fluidConfig -> getDefaultFluidProperties(builder -> builder
                                 .density(1500)
                                 .viscosity(3000)
                                 .rarity(Rarity.RARE)

@@ -9,6 +9,6 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
  */
 public class LootFunctionCopyMechanicalDryingBasinTanksConfig extends LootFunctionConfigCommon<IModBase> {
     public LootFunctionCopyMechanicalDryingBasinTanksConfig() {
-        super(IntegratedDynamics._instance, "copy_mechanical_drying_basin_tanks", LootFunctionCopyMechanicalDryingBasinTanks.TYPE);
+        super(IntegratedDynamics._instance, "copy_mechanical_drying_basin_tanks", LootFunctionCopyMechanicalDryingBasinTanks.CODEC);
     }
 }

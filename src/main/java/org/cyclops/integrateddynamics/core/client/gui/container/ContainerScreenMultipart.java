@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.client.gui.container;
 
 import com.google.common.collect.Lists;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
@@ -73,15 +73,15 @@ public abstract class ContainerScreenMultipart<P extends IPartType<P, S>, S exte
     }
 
     @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(guiGraphics, partialTicks, mouseX, mouseY);
+    public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractBackground(guiGraphics, mouseX, mouseY, partialTicks);
 
         // Draw part name
-        guiGraphics.drawString(font, getTitle(), leftPos + 8, topPos + 6, ARGB.opaque(4210752), false);
+        guiGraphics.text(font, getTitle(), leftPos + 8, topPos + 6, ARGB.opaque(4210752), false);
     }
 
     @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+    protected void extractLabels(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
         // super.drawGuiContainerForegroundLayer(matrixStack, x, y);
 
         if (isHovering(-20, 0, 18, 18, mouseX, mouseY)) {

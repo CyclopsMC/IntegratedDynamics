@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.client.gui.container;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -118,14 +118,14 @@ public class ContainerScreenLabeller extends ContainerScreenExtended<ContainerLa
     }
 
     @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+    protected void extractLabels(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
         // super
     }
 
     @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(guiGraphics, partialTicks, mouseX, mouseY);
-        this.searchField.render(guiGraphics, mouseX, mouseY, partialTicks);
+    public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractBackground(guiGraphics, mouseX, mouseY, partialTicks);
+        this.searchField.extractRenderState(guiGraphics, mouseX, mouseY, partialTicks);
     }
 
     public void setText(String text) {

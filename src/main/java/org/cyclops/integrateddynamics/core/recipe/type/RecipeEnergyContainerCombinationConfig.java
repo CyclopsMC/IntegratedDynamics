@@ -12,7 +12,7 @@ public class RecipeEnergyContainerCombinationConfig extends RecipeConfigCommon<R
     public RecipeEnergyContainerCombinationConfig() {
         super(IntegratedDynamics._instance,
                 String.format("crafting_special_energycontainer_combination"),
-                eConfig -> new RecipeSerializerEnergyContainerCombination());
+                eConfig -> RecipeSerializerEnergyContainerCombination.SERIALIZER);
     }
 
 }

@@ -1,16 +1,17 @@
 package org.cyclops.integrateddynamics.block;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.color.block.BlockTintSource;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleEngine;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -32,7 +33,7 @@ import org.cyclops.integrateddynamics.client.model.CableModel;
 import org.cyclops.integrateddynamics.core.client.model.ItemModelCable;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 
-import javax.annotation.Nullable;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -48,8 +49,8 @@ public class BlockCableClientConfig extends BlockClientConfig<IntegratedDynamics
         blockConfig.getMod().getModEventBus().addListener((RegisterItemModelsEvent event) -> event.register(Identifier.fromNamespaceAndPath(Reference.MOD_ID, "cable"), ItemModelCable.Unbaked.MAP_CODEC));
     }
 
-    public void onRegisterColors(RegisterColorHandlersEvent.Block event) {
-        event.register(new BlockCableClientConfig.BlockColor(), getBlockConfig().getInstance());
+    public void onRegisterColors(RegisterColorHandlersEvent.BlockTintSources event) {
+        event.register(List.of(new BlockCableClientConfig.BlockColor()), getBlockConfig().getInstance());
     }
 
     public void postTextureStitch(TextureAtlasStitchedEvent event) {
@@ -75,18 +76,26 @@ public class BlockCableClientConfig extends BlockClientConfig<IntegratedDynamics
     }
 
     @Override
-    @Nullable
     public IDynamicModelElementCommon getDynamicModelElement() {
         return new DynamicModel();
     }
 
-    public static class BlockColor implements net.minecraft.client.color.block.BlockColor {
+    public static class BlockColor implements BlockTintSource {
         @Override
-        public int getColor(BlockState blockState, @Nullable BlockAndTintGetter world, @Nullable BlockPos blockPos, int color) {
-            // Only modify color if we have a facade
-            return blockPos == null ?
-                    -1 : CableHelpers.getFacadeMultipartTicking(world, blockPos)
-                    .map(facadeState -> Minecraft.getInstance().getBlockColors().getColor(facadeState, world, blockPos, color))
+        public int color(BlockState blockState) {
+            return -1;
+        }
+
+        @Override
+        public int colorInWorld(BlockState blockState, BlockAndTintGetter world, BlockPos blockPos) {
+            return CableHelpers.getFacadeMultipartTicking(world, blockPos)
+                    .map(facadeState -> {
+                        BlockTintSource tintSource = Minecraft.getInstance().getBlockColors().getTintSource(facadeState, 0);
+                        if (tintSource != null) {
+                            return tintSource.colorInWorld(facadeState, world, blockPos);
+                        }
+                        return -1;
+                    })
                     .orElse(-1);
         }
     }

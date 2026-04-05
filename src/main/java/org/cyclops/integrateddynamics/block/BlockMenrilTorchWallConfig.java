@@ -42,7 +42,7 @@ public class BlockMenrilTorchWallConfig extends BlockConfigCommon<IntegratedDyna
     }
 
     @Override
-    public Collection<ItemStack> getDefaultCreativeTabEntries() {
+    public Collection<java.util.function.Supplier<ItemStack>> getDefaultCreativeTabEntries() {
         return Collections.emptyList();
     }
 }

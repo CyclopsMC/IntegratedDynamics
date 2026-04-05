@@ -632,7 +632,8 @@ public class TestFluidStackOperators {
     public void testFluidStackTag() throws EvaluationException {
         IValue res1 = Operators.OBJECT_FLUIDSTACK_TAG.evaluate(new IVariable[]{eBucketWater});
         Asserts.check(res1 instanceof ValueTypeList.ValueList, "result is a list");
-        TestHelpers.assertEqual(((ValueTypeList.ValueList) res1).getRawValue().getLength(), 2, "size(tag(water)) = 2");
+        int waterTagCount = (int) Fluids.WATER.builtInRegistryHolder().tags().count();
+        TestHelpers.assertEqual(((ValueTypeList.ValueList) res1).getRawValue().getLength(), waterTagCount, "size(tag(water)) = " + waterTagCount);
 
         IValue res2 = Operators.OBJECT_FLUIDSTACK_TAG.evaluate(new IVariable[]{eBucketEmpty});
         TestHelpers.assertEqual(((ValueTypeList.ValueList) res2).getRawValue().getLength(), 0, "size(tag(empty)) = 0");

@@ -76,7 +76,7 @@ public class BlockEntityDryingBasin extends CyclopsBlockEntity {
             @Override
             public void setItem(int slotId, ItemStack itemstack) {
                 super.setItem(slotId, itemstack);
-                BlockEntityDryingBasin.this.randomRotation = level.random.nextFloat() * 360;
+                BlockEntityDryingBasin.this.randomRotation = level.getRandom().nextFloat() * 360;
                 sendUpdate();
             }
         };
@@ -201,7 +201,7 @@ public class BlockEntityDryingBasin extends CyclopsBlockEntity {
                 blockEntity.setFire(blockEntity.getFire() + 1);
                 if (blockEntity.getFire() >= 100) {
                     level.setBlockAndUpdate(pos, Blocks.FIRE.defaultBlockState());
-                } else if (level.isEmptyBlock(pos.relative(Direction.UP)) && level.random.nextInt(10) == 0) {
+                } else if (level.isEmptyBlock(pos.relative(Direction.UP)) && level.getRandom().nextInt(10) == 0) {
                     level.setBlockAndUpdate(pos.relative(Direction.UP), Blocks.FIRE.defaultBlockState());
                 }
 
@@ -258,7 +258,7 @@ public class BlockEntityDryingBasin extends CyclopsBlockEntity {
     public static class TickerClient implements BlockEntityTicker<BlockEntityDryingBasin> {
         @Override
         public void tick(Level level, BlockPos pos, BlockState blockState, BlockEntityDryingBasin blockEntity) {
-            if(blockEntity.getProgress() > 0 && level.random.nextInt(5) == 0) {
+            if(blockEntity.getProgress() > 0 && level.getRandom().nextInt(5) == 0) {
                 if(!blockEntity.getTank().isEmpty()) {
                     BlockState blockStateFluid = blockEntity.getTank().getFluid().getFluid().getFluidType().getBlockForFluidState(level, pos,
                             blockEntity.getTank().getFluid().getFluid().defaultFluidState());
@@ -270,7 +270,7 @@ public class BlockEntityDryingBasin extends CyclopsBlockEntity {
                 }
                 if(!blockEntity.getInventory().getItem(0).isEmpty()) {
                     ItemStack itemStack = blockEntity.getInventory().getItem(0);
-                    level.addParticle(new ItemParticleOption(ParticleTypes.ITEM, itemStack),
+                    level.addParticle(new ItemParticleOption(ParticleTypes.ITEM, net.minecraft.world.item.ItemStackTemplate.fromNonEmptyStack(itemStack)),
                             pos.getX() + Math.random() * 0.8D + 0.1D, pos.getY() + Math.random() * 0.1D + 0.9D,
                             pos.getZ() + Math.random() * 0.8D + 0.1D, 0, 0.1D, 0);
                 }

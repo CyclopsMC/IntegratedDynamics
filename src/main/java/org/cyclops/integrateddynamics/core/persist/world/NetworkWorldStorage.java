@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.saveddata.SavedDataType;
 import org.cyclops.cyclopscore.init.ModBaseNeoForge;
 import org.cyclops.cyclopscore.persist.world.WorldStorage;
@@ -27,6 +28,10 @@ public class NetworkWorldStorage extends WorldStorage<NetworkWorldStorage> {
 
     public NetworkWorldStorage(List<NetworkParams> networkParams) {
         this.networkParams = Lists.newArrayList(networkParams);
+    }
+
+    public List<NetworkParams> getNetworkParams() {
+        return networkParams;
     }
 
     /**
@@ -105,12 +110,12 @@ public class NetworkWorldStorage extends WorldStorage<NetworkWorldStorage> {
         }
 
         public Access(ModBaseNeoForge<?> mod) {
-            super(new SavedDataType<>(
-                    mod.getModId() + "_networks",
+            super(new SavedDataType<NetworkWorldStorage>(
+                    Identifier.fromNamespaceAndPath(mod.getModId(), "networks"),
                     (ctx) -> new NetworkWorldStorage(Lists.newArrayList()),
                     ctx -> RecordCodecBuilder.create(instance -> instance.group(
                             RecordCodecBuilder.point(ctx.getLevel()),
-                            Codec.list(NetworkParams.CODEC).fieldOf("networks").forGetter(data -> data.networkParams)
+                            Codec.list(NetworkParams.CODEC).fieldOf("networks").forGetter(data -> data.getNetworkParams())
                     ).apply(instance, (level, networkParams) -> new NetworkWorldStorage(networkParams)))
             ), mod);
         }

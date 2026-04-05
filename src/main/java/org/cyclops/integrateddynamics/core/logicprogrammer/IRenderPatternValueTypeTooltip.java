@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import com.google.common.collect.Lists;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
@@ -28,7 +28,7 @@ public interface IRenderPatternValueTypeTooltip {
 
     public abstract void setRenderTooltip(boolean renderTooltip);
 
-    public default void drawTooltipForeground(ContainerScreenLogicProgrammerBase gui, GuiGraphics guiGraphics, ContainerLogicProgrammerBase container, int guiLeft, int guiTop, int mouseX, int mouseY, IValueType valueType) {
+    public default void drawTooltipForeground(ContainerScreenLogicProgrammerBase gui, GuiGraphicsExtractor guiGraphics, ContainerLogicProgrammerBase container, int guiLeft, int guiTop, int mouseX, int mouseY, IValueType valueType) {
         if (isRenderTooltip()) {
             // Output type tooltip
             if (!container.hasWriteItemInSlot()) {

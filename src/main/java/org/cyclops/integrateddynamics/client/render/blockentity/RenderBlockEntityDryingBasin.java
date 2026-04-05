@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
@@ -18,7 +18,6 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.helper.IModHelpers;
@@ -69,8 +68,7 @@ public class RenderBlockEntityDryingBasin implements BlockEntityRenderer<BlockEn
             int i3 = brightness & 0xFFFF;
 
             TextureAtlasSprite icon = IModHelpersNeoForge.get().getRenderHelpers().getFluidIcon(fluid, Direction.UP);
-            IClientFluidTypeExtensions renderProperties = IClientFluidTypeExtensions.of(fluid.getFluid());
-            Triple<Float, Float, Float> color = IModHelpers.get().getBaseHelpers().intToRGB(renderProperties.getTintColor(fluid));
+            Triple<Float, Float, Float> color = IModHelpers.get().getBaseHelpers().intToRGB(Minecraft.getInstance().getModelManager().getFluidStateModelSet().get(fluid.getFluid().defaultFluidState()).fluidTintSource().colorAsStack(fluid));
 
             submitNodeCollector.submitCustomGeometry(poseStack, RenderTypes.text(icon.atlasLocation()), (pose, vb) -> {
                 vb.addVertex(pose, 0.0625F, height, 0.0625F).setColor(color.getLeft(), color.getMiddle(), color.getRight(), 1).setUv(icon.getU0(), icon.getV1()).setUv2(l2, i3);

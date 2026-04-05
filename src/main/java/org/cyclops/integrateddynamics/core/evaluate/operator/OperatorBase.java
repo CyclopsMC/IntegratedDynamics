@@ -178,7 +178,7 @@ public abstract class OperatorBase implements IOperator {
                         .literal(")")
                         .withStyle(ChatFormatting.WHITE)));
             }
-            IModHelpers.get().getL10NHelpers().addOptionalInfo(tooltipAdder, getUnlocalizedPrefix());
+            IModHelpers.get().getL10NHelpers().addOptionalInfo(tooltipAdder, getUnlocalizedPrefix(), net.minecraft.world.item.TooltipFlag.NORMAL);
         }
     }
 

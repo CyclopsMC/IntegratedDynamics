@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.client.gui;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.player.Inventory;
@@ -34,8 +34,8 @@ public abstract class ContainerScreenActiveVariableBase<C extends ContainerActiv
     }
 
     @Override
-    protected void renderBg(GuiGraphics guiGraphics, float f, int x, int y) {
-        super.renderBg(guiGraphics, f, x, y);
+    public void extractBackground(GuiGraphicsExtractor guiGraphics, int x, int y, float f) {
+        super.extractBackground(guiGraphics, x, y, f);
 
         Component readValue = getMenu().getReadValue();
         int readValueColor = getMenu().getReadValueColor();
@@ -51,9 +51,9 @@ public abstract class ContainerScreenActiveVariableBase<C extends ContainerActiv
     }
 
     @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+    protected void extractLabels(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
         // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
-        guiGraphics.drawString(font, this.title, this.titleLabelX, this.titleLabelY, ARGB.opaque(4210752), false);
+        guiGraphics.text(font, this.title, this.titleLabelX, this.titleLabelY, ARGB.opaque(4210752), false);
         displayErrors.drawForeground(guiGraphics, getMenu().getReadErrors(), getErrorX(), getErrorY(), mouseX, mouseY, this, this.leftPos, this.topPos);
     }
 }

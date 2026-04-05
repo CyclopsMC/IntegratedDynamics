@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.core.client.gui.container;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -239,28 +239,28 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
     }
 
     @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(guiGraphics, partialTicks, mouseX, mouseY);
+    public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractBackground(guiGraphics, mouseX, mouseY, partialTicks);
         if (isFieldUpdateIntervalEnabled()) {
-            guiGraphics.drawString(font, IModHelpers.get().getL10NHelpers().localize("gui.integrateddynamics.partsettings.update_interval"), leftPos + 8, topPos + getFieldUpdateIntervalY() + 3, ARGB.opaque(0), false);
-            numberFieldUpdateInterval.render(guiGraphics, mouseX, mouseY, partialTicks);
+            guiGraphics.text(font, IModHelpers.get().getL10NHelpers().localize("gui.integrateddynamics.partsettings.update_interval"), leftPos + 8, topPos + getFieldUpdateIntervalY() + 3, ARGB.opaque(0), false);
+            numberFieldUpdateInterval.extractRenderState(guiGraphics, mouseX, mouseY, partialTicks);
         }
         if (isFieldPriorityEnabled()) {
-            guiGraphics.drawString(font, IModHelpers.get().getL10NHelpers().localize("gui.integrateddynamics.partsettings.priority"), leftPos + 8, topPos + getFieldPriorityY() + 3, ARGB.opaque(0), false);
-            numberFieldPriority.render(guiGraphics, mouseX, mouseY, partialTicks);
+            guiGraphics.text(font, IModHelpers.get().getL10NHelpers().localize("gui.integrateddynamics.partsettings.priority"), leftPos + 8, topPos + getFieldPriorityY() + 3, ARGB.opaque(0), false);
+            numberFieldPriority.extractRenderState(guiGraphics, mouseX, mouseY, partialTicks);
         }
         if (isFieldChannelEnabled()) {
-            guiGraphics.drawString(font, IModHelpers.get().getL10NHelpers().localize("gui.integrateddynamics.partsettings.channel"), leftPos + 8, topPos + getFieldChannelY() + 3, isChannelEnabled() ? ARGB.opaque(0) : IModHelpers.get().getBaseHelpers().RGBAToInt(100, 100, 100, 255), false);
-            numberFieldChannel.render(guiGraphics, mouseX, mouseY, partialTicks);
+            guiGraphics.text(font, IModHelpers.get().getL10NHelpers().localize("gui.integrateddynamics.partsettings.channel"), leftPos + 8, topPos + getFieldChannelY() + 3, isChannelEnabled() ? ARGB.opaque(0) : IModHelpers.get().getBaseHelpers().RGBAToInt(100, 100, 100, 255), false);
+            numberFieldChannel.extractRenderState(guiGraphics, mouseX, mouseY, partialTicks);
         }
         if (isFieldSideEnabled()) {
-            guiGraphics.drawString(font, IModHelpers.get().getL10NHelpers().localize("gui.integrateddynamics.partsettings.side"), leftPos + 8, topPos + getFieldSideY() + 3, ARGB.opaque(0), false);
-            dropdownFieldSide.render(guiGraphics, mouseX, mouseY, partialTicks);
+            guiGraphics.text(font, IModHelpers.get().getL10NHelpers().localize("gui.integrateddynamics.partsettings.side"), leftPos + 8, topPos + getFieldSideY() + 3, ARGB.opaque(0), false);
+            dropdownFieldSide.extractRenderState(guiGraphics, mouseX, mouseY, partialTicks);
         }
     }
 
     @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+    protected void extractLabels(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
         // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
         if (!isChannelEnabled()) {
             IModHelpers.get().getGuiHelpers().renderTooltip(this, guiGraphics, 8, 87, 100, 20, mouseX, mouseY,

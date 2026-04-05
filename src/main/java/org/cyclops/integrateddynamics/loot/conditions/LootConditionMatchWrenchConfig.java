@@ -8,6 +8,6 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
  */
 public class LootConditionMatchWrenchConfig extends LootConditionConfigCommon<IntegratedDynamics> {
     public LootConditionMatchWrenchConfig() {
-        super(IntegratedDynamics._instance, "match_wrench", LootConditionMatchWrench.TYPE);
+        super(IntegratedDynamics._instance, "match_wrench", LootConditionMatchWrench.CODEC);
     }
 }

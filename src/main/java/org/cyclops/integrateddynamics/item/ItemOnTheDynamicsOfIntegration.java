@@ -61,9 +61,9 @@ public class ItemOnTheDynamicsOfIntegration extends ItemGui {
                 Player player = event.getEntity();
                 ItemStack itemStack = new ItemStack(RegistryEntries.ITEM_ON_THE_DYNAMICS_OF_INTEGRATION);
                 EntityItemTargetted entity = new EntityItemTargetted(world,
-                        player.blockPosition().getX() + SPAWN_RANGE - 2 * SPAWN_RANGE * world.random.nextFloat(),
-                        player.blockPosition().getY() + SPAWN_RANGE * world.random.nextFloat(),
-                        player.blockPosition().getZ() + SPAWN_RANGE - 2 * SPAWN_RANGE * world.random.nextFloat()
+                        player.blockPosition().getX() + SPAWN_RANGE - 2 * SPAWN_RANGE * world.getRandom().nextFloat(),
+                        player.blockPosition().getY() + SPAWN_RANGE * world.getRandom().nextFloat(),
+                        player.blockPosition().getZ() + SPAWN_RANGE - 2 * SPAWN_RANGE * world.getRandom().nextFloat()
                 );
 
                 entity.setItem(itemStack);

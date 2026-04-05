@@ -182,8 +182,8 @@ public class PartTypeConnectorOmniDirectional extends PartTypeConnector<PartType
             return InteractionResult.PASS;
         }
         if (world.isClientSide()) {
-            player.displayClientMessage(Component.translatable(L10NValues.PART_TOOLTIP_MONODIRECTIONALCONNECTOR_GROUP,
-                    partState.getGroupId()), true);
+            player.sendSystemMessage(Component.translatable(L10NValues.PART_TOOLTIP_MONODIRECTIONALCONNECTOR_GROUP,
+                    partState.getGroupId()));
         }
 
         return InteractionResult.SUCCESS;

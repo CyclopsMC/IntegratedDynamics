@@ -6,7 +6,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunction;
-import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import org.cyclops.cyclopscore.RegistryEntries;
@@ -23,7 +22,6 @@ public class LootFunctionCopyMechanicalMachineEnergy extends LootItemConditional
     public static final MapCodec<LootFunctionCopyMechanicalMachineEnergy> CODEC = RecordCodecBuilder.mapCodec(
             builder -> commonFields(builder).apply(builder, LootFunctionCopyMechanicalMachineEnergy::new)
     );
-    public static final LootItemFunctionType<LootFunctionCopyMechanicalMachineEnergy> TYPE = new LootItemFunctionType<>(LootFunctionCopyMechanicalMachineEnergy.CODEC);
 
     protected LootFunctionCopyMechanicalMachineEnergy(List<LootItemCondition> conditionsIn) {
         super(conditionsIn);
@@ -39,8 +37,8 @@ public class LootFunctionCopyMechanicalMachineEnergy extends LootItemConditional
     }
 
     @Override
-    public LootItemFunctionType<LootFunctionCopyMechanicalMachineEnergy> getType() {
-        return TYPE;
+    public MapCodec<? extends LootItemConditionalFunction> codec() {
+        return CODEC;
     }
 
 }

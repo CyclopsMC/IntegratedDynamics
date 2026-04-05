@@ -10,7 +10,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStackTemplate;
 import org.cyclops.cyclopscore.codec.ListCodecStrict;
 
 import java.util.Optional;
@@ -19,13 +19,13 @@ import java.util.Optional;
  * Recipe serializer for mechanical squeezer recipes
  * @author rubensworks
  */
-public class RecipeSerializerMechanicalSqueezer implements RecipeSerializer<RecipeMechanicalSqueezer> {
+public class RecipeSerializerMechanicalSqueezer {
 
     public static final MapCodec<RecipeMechanicalSqueezer> CODEC = RecordCodecBuilder.mapCodec(
             builder -> builder.group(
                             Ingredient.CODEC.fieldOf("input_item").forGetter(RecipeMechanicalSqueezer::getInputIngredient),
                             new ListCodecStrict<>(RecipeSerializerSqueezer.CODEC_INGREDIENT_CHANCE).optionalFieldOf("output_items").forGetter(r -> r.getOutputItems().isEmpty() ? Optional.empty() : Optional.of(r.getOutputItems().stream().toList())),
-                            FluidStack.CODEC.optionalFieldOf("output_fluid").forGetter(RecipeMechanicalSqueezer::getOutputFluid),
+                            FluidStackTemplate.CODEC.optionalFieldOf("output_fluid").forGetter(RecipeMechanicalSqueezer::getOutputFluidTemplate),
                             Codec.INT.fieldOf("duration").forGetter(RecipeMechanicalSqueezer::getDuration)
                     )
                     .apply(builder, (inputIngredient, outputItemStacks, outputFluid, duration) -> {
@@ -43,18 +43,10 @@ public class RecipeSerializerMechanicalSqueezer implements RecipeSerializer<Reci
     public static final StreamCodec<RegistryFriendlyByteBuf, RecipeMechanicalSqueezer> STREAM_CODEC = StreamCodec.composite(
             Ingredient.CONTENTS_STREAM_CODEC, RecipeMechanicalSqueezer::getInputIngredient,
             RecipeSerializerSqueezer.STREAM_CODEC_INGREDIENT_CHANCE.apply(ByteBufCodecs.collection(NonNullList::createWithCapacity)), RecipeMechanicalSqueezer::getOutputItems,
-            ByteBufCodecs.optional(FluidStack.STREAM_CODEC), RecipeMechanicalSqueezer::getOutputFluid,
+            ByteBufCodecs.optional(FluidStackTemplate.STREAM_CODEC), RecipeMechanicalSqueezer::getOutputFluidTemplate,
             ByteBufCodecs.INT, RecipeMechanicalSqueezer::getDuration,
             RecipeMechanicalSqueezer::new
     );
+    public static final RecipeSerializer<RecipeMechanicalSqueezer> SERIALIZER = new RecipeSerializer<>(CODEC, STREAM_CODEC);
 
-    @Override
-    public MapCodec<RecipeMechanicalSqueezer> codec() {
-        return CODEC;
-    }
-
-    @Override
-    public StreamCodec<RegistryFriendlyByteBuf, RecipeMechanicalSqueezer> streamCodec() {
-        return STREAM_CODEC;
-    }
 }

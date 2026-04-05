@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -91,7 +91,7 @@ public class RenderBlockEntityEnergyBattery implements BlockEntityRenderer<Block
         renderState.maxEnergyStored = blockEntity.getMaxEnergyStored();
         renderState.combinedLights = new EnumFacingMap<>();
         for(Direction side : Direction.Plane.HORIZONTAL) {
-            renderState.combinedLights.put(side, LevelRenderer.getLightColor(blockEntity.getLevel(), blockEntity.getBlockPos().offset(side.getUnitVec3i())));
+            renderState.combinedLights.put(side, LevelRenderer.getLightCoords(blockEntity.getLevel(), blockEntity.getBlockPos().offset(side.getUnitVec3i())));
         }
         renderState.creative = blockEntity.isCreative();
         renderState.gameTime = blockEntity.getLevel().getGameTime();

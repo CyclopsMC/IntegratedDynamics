@@ -161,7 +161,7 @@ public class BlockEntityMechanicalSqueezer extends BlockEntityMechanicalMachine<
         for (RecipeSqueezer.IngredientChance itemStackChance : recipe.assemble(getInventory().getItem(SLOT_INPUT))) {
             ItemStack outputStack = itemStackChance.getIngredientFirst().copy();
             if (!outputStack.isEmpty() && (simulate || itemStackChance.getChance() == 1.0F
-                    || itemStackChance.getChance() >= getLevel().random.nextFloat())) {
+                    || itemStackChance.getChance() >= getLevel().getRandom().nextFloat())) {
                 IModHelpers.get().getInventoryHelpers().addStackToList(outputStacks, outputStack);
             }
         }

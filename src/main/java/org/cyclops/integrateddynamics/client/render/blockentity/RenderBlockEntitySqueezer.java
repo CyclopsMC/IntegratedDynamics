@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
@@ -18,7 +18,6 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.helper.DirectionHelpers;
@@ -108,7 +107,7 @@ public class RenderBlockEntitySqueezer implements BlockEntityRenderer<BlockEntit
 
         if(!renderState.fluidStack.isEmpty()) {
             FluidStack fluid = renderState.fluidStack;
-            int combinedLightCorrected = LevelRenderer.getLightColor(renderState.level, renderState.blockPos.offset(Direction.UP.getUnitVec3i()));
+            int combinedLightCorrected = LevelRenderer.getLightCoords(renderState.level, renderState.blockPos.offset(Direction.UP.getUnitVec3i()));
             IModHelpersNeoForge.get().getRenderHelpers().renderFluidContext(fluid, poseStack, () -> {
                 float height = Math.max(0.0625F - OFFSET, fluid.getAmount() * 0.0625F / IModHelpersNeoForge.get().getFluidHelpers().getBucketVolume() + 0.0625F - OFFSET);
                 int brightness = Math.max(combinedLightCorrected, fluid.getFluid().getFluidType().getLightLevel(fluid));
@@ -117,8 +116,7 @@ public class RenderBlockEntitySqueezer implements BlockEntityRenderer<BlockEntit
 
                 for(Direction side : DirectionHelpers.DIRECTIONS) {
                     TextureAtlasSprite icon = IModHelpersNeoForge.get().getRenderHelpers().getFluidIcon(fluid, Direction.UP);
-                    IClientFluidTypeExtensions renderProperties = IClientFluidTypeExtensions.of(fluid.getFluid());
-                    Triple<Float, Float, Float> color = IModHelpers.get().getBaseHelpers().intToRGB(renderProperties.getTintColor(fluid));
+                    Triple<Float, Float, Float> color = IModHelpers.get().getBaseHelpers().intToRGB(Minecraft.getInstance().getModelManager().getFluidStateModelSet().get(fluid.getFluid().defaultFluidState()).fluidTintSource().colorAsStack(fluid));
 
                     submitNodeCollector.submitCustomGeometry(poseStack, RenderTypes.text(icon.atlasLocation()), (pose, vb) -> {
                         float[][] c = coordinates[side.ordinal()];

@@ -1,12 +1,10 @@
 package org.cyclops.integrateddynamics.core.recipe.type;
 
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.transfer.access.ItemAccess;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -23,7 +21,7 @@ public class RecipeEnergyContainerCombination extends CustomRecipe {
     private final int maxCapacity;
 
     public RecipeEnergyContainerCombination(Ingredient batteryItem, int maxCapacity) {
-        super(CraftingBookCategory.MISC);
+        super();
         this.batteryItem = batteryItem;
         this.maxCapacity = maxCapacity;
     }
@@ -38,10 +36,10 @@ public class RecipeEnergyContainerCombination extends CustomRecipe {
 
     @Override
     public boolean matches(CraftingInput grid, Level world) {
-        return !assemble(grid, world.registryAccess()).isEmpty();
+        return !assemble(grid).isEmpty();
     }
 
-    protected ItemStack getResultItem(HolderLookup.Provider registryAccess) {
+    protected ItemStack getResultItem() {
         return new ItemStack(this.batteryItem.items().findFirst().get());
     }
 
@@ -51,7 +49,8 @@ public class RecipeEnergyContainerCombination extends CustomRecipe {
 
         for (int i = 0; i < aitemstack.size(); ++i) {
             ItemStack itemstack = inventory.getItem(i);
-            aitemstack.set(i, CommonHooks.getCraftingRemainder(itemstack));
+            net.minecraft.world.item.ItemStackTemplate remainder = itemstack.getItem().getCraftingRemainder(itemstack);
+            aitemstack.set(i, remainder != null ? remainder.create() : ItemStack.EMPTY);
         }
 
         return aitemstack;
@@ -63,8 +62,8 @@ public class RecipeEnergyContainerCombination extends CustomRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingInput grid, HolderLookup.Provider registryAccess) {
-        ItemStack output = getResultItem(registryAccess).copy();
+    public ItemStack assemble(CraftingInput grid) {
+        ItemStack output = getResultItem().copy();
         IEnergyStorageCapacity energyStorage = (IEnergyStorageCapacity) output.getCapability(Capabilities.Energy.ITEM, ItemAccess.forStack(output));
 
         int totalCapacity = 0;

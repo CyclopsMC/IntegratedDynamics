@@ -1,13 +1,12 @@
 package org.cyclops.integrateddynamics.client.render.model;
 
-import com.google.common.collect.Lists;
 import net.minecraft.client.color.item.Constant;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.item.*;
-import net.minecraft.core.BlockPos;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.resources.model.geometry.QuadCollection;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.ItemOwner;
@@ -17,6 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -40,13 +40,17 @@ public class FacadeModel implements ItemModel {
             emptyModel.update(renderState, itemStack, itemModelResolver, displayContext, level, entity, seed);
         } else {
             BlockStateModel bakedModel = IModHelpers.get().getRenderHelpers().getBakedModel(blockState);
-            List<BakedQuad> quads = Lists.newArrayList();
-            for (BlockModelPart collectPart : bakedModel.collectParts(level, BlockPos.ZERO, blockState, RandomSource.create(seed))) {
+            List<BlockStateModelPart> parts = new ArrayList<>();
+            bakedModel.collectParts(RandomSource.create(seed), parts);
+            QuadCollection.Builder quadBuilder = new QuadCollection.Builder();
+            for (BlockStateModelPart collectPart : parts) {
                 for (Direction direction : Direction.values()) {
-                    quads.addAll(collectPart.getQuads(direction));
+                    for (BakedQuad quad : collectPart.getQuads(direction)) {
+                        quadBuilder.addCulledFace(direction, quad);
+                    }
                 }
             }
-            new BlockModelWrapper(List.of(new Constant(-1)), quads, this.modelrenderproperties, BlockModelWrapper.detectRenderType(quads)).update(renderState, itemStack, itemModelResolver, displayContext, level, entity, seed);
+            new CuboidItemModelWrapper(List.of(new Constant(-1)), quadBuilder.build(), this.modelrenderproperties, null).update(renderState, itemStack, itemModelResolver, displayContext, level, entity, seed);
         }
     }
 }

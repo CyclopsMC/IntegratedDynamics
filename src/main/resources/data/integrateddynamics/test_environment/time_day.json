@@ -2,7 +2,8 @@
   "type": "minecraft:all_of",
   "definitions": [
     {
-      "type": "minecraft:time_of_day",
+      "type": "minecraft:clock_time",
+      "clock": "minecraft:overworld",
       "time": 1000
     }
   ]

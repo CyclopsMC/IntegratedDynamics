@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.core.logicprogrammer.client;
 import com.google.common.collect.Maps;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -132,7 +132,7 @@ public class ValueTypeIngredientsLPElementClient extends ValueTypeLPElementBaseC
         }
 
         @Override
-        public void drawGuiContainerForegroundLayer(GuiGraphics guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, int mouseX, int mouseY) {
+        public void drawGuiContainerForegroundLayer(GuiGraphicsExtractor guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, int mouseX, int mouseY) {
             super.drawGuiContainerForegroundLayer(guiGraphics, guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
 
             // Output type tooltip
@@ -212,9 +212,9 @@ public class ValueTypeIngredientsLPElementClient extends ValueTypeLPElementBaseC
         }
 
         @Override
-        public void renderBg(GuiGraphics guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
+        public void renderBg(GuiGraphicsExtractor guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
             super.renderBg(guiGraphics, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
-            valueTypeSelector.renderWidget(guiGraphics, mouseX, mouseY, partialTicks);
+            valueTypeSelector.extractWidgetRenderState(guiGraphics, mouseX, mouseY, partialTicks);
         }
 
         @Override
@@ -282,7 +282,7 @@ public class ValueTypeIngredientsLPElementClient extends ValueTypeLPElementBaseC
         }
 
         @Override
-        public void renderBg(GuiGraphics guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
+        public void renderBg(GuiGraphicsExtractor guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
             super.renderBg(guiGraphics, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
             int x = guiLeft + getX() + (getWidth() / 2);
             int y = guiTop + getY() + 4;

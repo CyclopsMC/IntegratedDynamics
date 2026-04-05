@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer.client;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.texture.TextureManager;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.ISubGuiBox;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
@@ -35,7 +35,7 @@ public class ValueTypeItemStackLPElementClient<V extends IValue> extends ValueTy
         }
 
         @Override
-        public void drawGuiContainerForegroundLayer(GuiGraphics guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, int mouseX, int mouseY) {
+        public void drawGuiContainerForegroundLayer(GuiGraphicsExtractor guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, int mouseX, int mouseY) {
             super.drawGuiContainerForegroundLayer(guiGraphics, guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
             this.drawTooltipForeground(gui, guiGraphics, container, guiLeft, guiTop, mouseX, mouseY, element.getValueType());
         }

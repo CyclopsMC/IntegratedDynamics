@@ -9,6 +9,6 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
  */
 public class LootFunctionCopyMechanicalSqueezerTankConfig extends LootFunctionConfigCommon<IModBase> {
     public LootFunctionCopyMechanicalSqueezerTankConfig() {
-        super(IntegratedDynamics._instance, "copy_mechanical_squeezer_tank", LootFunctionCopyMechanicalSqueezerTank.TYPE);
+        super(IntegratedDynamics._instance, "copy_mechanical_squeezer_tank", LootFunctionCopyMechanicalSqueezerTank.CODEC);
     }
 }

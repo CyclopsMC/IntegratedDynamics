@@ -6,7 +6,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunction;
-import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.fluids.SimpleFluidContent;
@@ -23,7 +22,6 @@ public class LootFunctionCopyMechanicalSqueezerTank extends LootItemConditionalF
     public static final MapCodec<LootFunctionCopyMechanicalSqueezerTank> CODEC = RecordCodecBuilder.mapCodec(
             builder -> commonFields(builder).apply(builder, LootFunctionCopyMechanicalSqueezerTank::new)
     );
-    public static final LootItemFunctionType<LootFunctionCopyMechanicalSqueezerTank> TYPE = new LootItemFunctionType<>(LootFunctionCopyMechanicalSqueezerTank.CODEC);
 
     protected LootFunctionCopyMechanicalSqueezerTank(List<LootItemCondition> conditionsIn) {
         super(conditionsIn);
@@ -39,8 +37,8 @@ public class LootFunctionCopyMechanicalSqueezerTank extends LootItemConditionalF
     }
 
     @Override
-    public LootItemFunctionType getType() {
-        return TYPE;
+    public MapCodec<? extends LootItemConditionalFunction> codec() {
+        return CODEC;
     }
 
 }

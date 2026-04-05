@@ -57,7 +57,7 @@ public class ItemWrench extends Item {
         ItemStack itemStack = player.getItemInHand(hand);
         if (player.isSecondaryUseActive() && !world.isClientSide()) {
             incrementMode(itemStack);
-            player.displayClientMessage(Component.translatable("item.integrateddynamics.wrench.mode", Component.translatable(getMode(itemStack).getLabel())), true);
+            player.sendOverlayMessage(Component.translatable("item.integrateddynamics.wrench.mode", Component.translatable(getMode(itemStack).getLabel())));
             return InteractionResult.SUCCESS.heldItemTransformedTo(itemStack);
         }
         return super.use(world, player, hand);
@@ -71,14 +71,14 @@ public class ItemWrench extends Item {
                 case OFFSET -> {
                     // Save offset
                     itemStack.set(RegistryEntries.DATACOMPONENT_WRENCH_TARGET_BLOCKPOS, context.getClickedPos());
-                    context.getPlayer().displayClientMessage(Component.translatable("item.integrateddynamics.wrench.mode.offset.saved", context.getClickedPos().toShortString()), true);
+                    context.getPlayer().sendOverlayMessage(Component.translatable("item.integrateddynamics.wrench.mode.offset.saved", context.getClickedPos().toShortString()));
                     return InteractionResult.SUCCESS;
                 }
                 case OFFSET_SIDE -> {
                     // Save offset and side
                     itemStack.set(RegistryEntries.DATACOMPONENT_WRENCH_TARGET_BLOCKPOS, context.getClickedPos());
                     itemStack.set(RegistryEntries.DATACOMPONENT_WRENCH_TARGET_DIRECTION, context.getClickedFace());
-                    context.getPlayer().displayClientMessage(Component.translatable("item.integrateddynamics.wrench.mode.offset_side.saved", context.getClickedPos().toShortString(), context.getClickedFace().getSerializedName()), true);
+                    context.getPlayer().sendOverlayMessage(Component.translatable("item.integrateddynamics.wrench.mode.offset_side.saved", context.getClickedPos().toShortString(), context.getClickedFace().getSerializedName()));
                     return InteractionResult.SUCCESS;
                 }
                 case DEFAULT -> {
@@ -162,12 +162,12 @@ public class ItemWrench extends Item {
                 if (itemStack.has(RegistryEntries.DATACOMPONENT_WRENCH_TARGET_BLOCKPOS)) {
                     Vec3i offset = determineOffset(hit, itemStack);
                     if (((IPartType) partType).setTargetOffset(partState, center, offset)) {
-                        player.displayClientMessage(Component.translatable("item.integrateddynamics.wrench.mode.offset.success"), true);
+                        player.sendOverlayMessage(Component.translatable("item.integrateddynamics.wrench.mode.offset.success"));
                     } else {
-                        player.displayClientMessage(Component.translatable("item.integrateddynamics.wrench.mode.offset.fail"), true);
+                        player.sendOverlayMessage(Component.translatable("item.integrateddynamics.wrench.mode.offset.fail"));
                     }
                 } else {
-                    player.displayClientMessage(Component.translatable("item.integrateddynamics.wrench.mode.offset.incomplete"), true);
+                    player.sendOverlayMessage(Component.translatable("item.integrateddynamics.wrench.mode.offset.incomplete"));
                 }
                 return InteractionResult.SUCCESS;
             }
@@ -177,12 +177,12 @@ public class ItemWrench extends Item {
                     Direction side = itemStack.get(RegistryEntries.DATACOMPONENT_WRENCH_TARGET_DIRECTION);
                     if (((IPartType) partType).setTargetOffset(partState, center, offset)) {
                         ((IPartType) partType).setTargetSideOverride(partState, side);
-                        player.displayClientMessage(Component.translatable("item.integrateddynamics.wrench.mode.offset_side.success"), true);
+                        player.sendOverlayMessage(Component.translatable("item.integrateddynamics.wrench.mode.offset_side.success"));
                     } else {
-                        player.displayClientMessage(Component.translatable("item.integrateddynamics.wrench.mode.offset.fail"), true);
+                        player.sendOverlayMessage(Component.translatable("item.integrateddynamics.wrench.mode.offset.fail"));
                     }
                 } else {
-                    player.displayClientMessage(Component.translatable("item.integrateddynamics.wrench.mode.offset.incomplete"), true);
+                    player.sendOverlayMessage(Component.translatable("item.integrateddynamics.wrench.mode.offset.incomplete"));
                 }
                 return InteractionResult.SUCCESS;
             }

@@ -9,7 +9,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -330,7 +330,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     }
 
     @Override
-    public void clicked(int slotId, int mouseButton, ClickType clickType, Player player) {
+    public void clicked(int slotId, int mouseButton, ContainerInput clickType, Player player) {
         // Handle cases where the client may have more (phantom) slots than the server.
         if (slotId >= this.slots.size() || (this.activeElement != null
                 && this.slots.size() > slotId && slotId >= 0

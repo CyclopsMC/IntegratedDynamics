@@ -101,8 +101,8 @@ public abstract class PartTypeBase<P extends IPartType<P, S>, S extends IPartSta
             }
 
             @Override
-            public Collection<ItemStack> getDefaultCreativeTabEntries() {
-                return Collections.singleton(new ItemStack(getItemInstance()));
+            public Collection<java.util.function.Supplier<ItemStack>> getDefaultCreativeTabEntries() {
+                return Collections.singleton(() -> new ItemStack(getItemInstance()));
             }
         };
         getMod().getConfigHandler().addConfigurable(blockConfig);

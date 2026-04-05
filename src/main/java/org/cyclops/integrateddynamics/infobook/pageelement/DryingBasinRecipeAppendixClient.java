@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.infobook.pageelement;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.util.context.ContextMap;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.display.RecipeDisplayEntry;
@@ -34,7 +34,7 @@ public class DryingBasinRecipeAppendixClient extends RecipeAppendixClient<Drying
     }
 
     @Override
-    public void drawElementInner(ScreenInfoBook gui, GuiGraphics guiGraphics, int x, int y, int width, int height, int page, int mx, int my) {
+    public void drawElementInner(ScreenInfoBook gui, GuiGraphicsExtractor guiGraphics, int x, int y, int width, int height, int page, int mx, int my) {
         int middle = (width - SLOT_SIZE) / 2;
         gui.drawArrowRight(guiGraphics, x + middle - 3, y + 2);
 

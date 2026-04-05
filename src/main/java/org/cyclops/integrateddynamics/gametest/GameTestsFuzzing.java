@@ -103,13 +103,13 @@ public class GameTestsFuzzing {
         helper.runAfterDelay(RUN_TICKS, helper::succeed);
     }
 
-    public static void registerCommonTests(String modId, BiConsumer<Identifier, GameTestInstance> registrar, Registry<TestEnvironmentDefinition> testEnvironmentRegistry) {
+    public static void registerCommonTests(String modId, BiConsumer<Identifier, GameTestInstance> registrar, Registry<TestEnvironmentDefinition<?>> testEnvironmentRegistry) {
         for (FuzzingGameTestInstance testInstance : fuzzingTests(modId, testEnvironmentRegistry)) {
             registrar.accept(testInstance.getId(), testInstance);
         }
     }
 
-    public static Collection<FuzzingGameTestInstance> fuzzingTests(String modId, Registry<TestEnvironmentDefinition> testEnvironmentRegistry) {
+    public static Collection<FuzzingGameTestInstance> fuzzingTests(String modId, Registry<TestEnvironmentDefinition<?>> testEnvironmentRegistry) {
         List<FuzzingGameTestInstance> testsList = Lists.newArrayList();
 
         int fuzzingIterations = getFuzzingIterations();
@@ -117,23 +117,19 @@ public class GameTestsFuzzing {
             IntegratedDynamics.clog(Level.INFO, "[Fuzzing] Disabled (FUZZING_ITERATIONS not set to a number)");
         }
 
-        Holder.Reference<TestEnvironmentDefinition> environment = testEnvironmentRegistry.getOrThrow(ResourceKey.create(
+        Holder.Reference<TestEnvironmentDefinition<?>> environment = testEnvironmentRegistry.getOrThrow(ResourceKey.create(
                 Registries.TEST_ENVIRONMENT,
                 Identifier.parse("default")
         ));
         for (int i = 0; i < fuzzingIterations; i++) {
             testsList.add(new FuzzingGameTestInstance(
-                    new TestData<>(
+                    new TestData<Holder<TestEnvironmentDefinition<?>>>(
                             environment,
                             Identifier.parse("integrateddynamics:test"),
                             RUN_TICKS + 10,
                             1,
                             true,
-                            Rotation.NONE,
-                            false,
-                            1,
-                            1,
-                            false
+                            Rotation.NONE
                     ),
                     i));
         }

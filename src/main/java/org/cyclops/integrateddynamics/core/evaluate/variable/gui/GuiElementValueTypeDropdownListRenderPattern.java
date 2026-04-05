@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.core.evaluate.variable.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
@@ -76,10 +76,10 @@ public class GuiElementValueTypeDropdownListRenderPattern<T, S extends ISubGuiBo
     }
 
     @Override
-    public void renderBg(GuiGraphics guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
+    public void renderBg(GuiGraphicsExtractor guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
         super.renderBg(guiGraphics, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
         // Textbox
-        searchField.render(guiGraphics, mouseX, mouseY, partialTicks);
+        searchField.extractRenderState(guiGraphics, mouseX, mouseY, partialTicks);
     }
 
     @Override

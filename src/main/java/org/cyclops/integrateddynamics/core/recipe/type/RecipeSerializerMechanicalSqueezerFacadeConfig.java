@@ -15,7 +15,7 @@ public class RecipeSerializerMechanicalSqueezerFacadeConfig extends RecipeConfig
         super(
                 IntegratedDynamics._instance,
                 "mechanical_squeezer_facade",
-                eConfig -> new RecipeSerializerMechanicalSqueezerFacade()
+                eConfig -> RecipeSerializerMechanicalSqueezerFacade.SERIALIZER
         );
     }
 

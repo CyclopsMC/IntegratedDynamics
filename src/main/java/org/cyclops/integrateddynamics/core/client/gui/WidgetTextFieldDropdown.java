@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.core.client.gui;
 import com.google.common.collect.Lists;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -179,11 +179,11 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
     }
 
     @Override
-    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    public void extractWidgetRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
         // Display text red that is in an "invalid" state (no valid dropdrown entry selected)
         this.setTextColor(this.selectedDropdownPossibility == null ? IModHelpers.get().getBaseHelpers().RGBAToInt(220, 10, 10, 255) : ARGB.opaque(14737632));
 
-        super.renderWidget(guiGraphics, mouseX, mouseY, partialTicks);
+        super.extractWidgetRenderState(guiGraphics, mouseX, mouseY, partialTicks);
         if (this.isVisible() && isFocused()) {
             Font fontRenderer = Minecraft.getInstance().font;
             int yOffset = fontRenderer.lineHeight + 3;
@@ -201,7 +201,7 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
                 guiGraphics.fill(x, cy - 1, x + width, cy + 11, -6250336);
                 guiGraphics.fill(x - 1, cy, x + width - 1, cy + 10, -16777216);
 
-                guiGraphics.drawString(fontRenderer, "...", x + 1, cy + 2, disabledColor, true);
+                guiGraphics.text(fontRenderer, "...", x + 1, cy + 2, disabledColor, true);
 
                 cy += 10;
             }
@@ -228,12 +228,12 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
                 guiGraphics.fill(x - 1, cy, x + width - 1, cy + entryHeight, -16777216);
 
                 // Draw text
-                guiGraphics.drawString(fontRenderer, displayPossibility.get(0), x + 1, cy + 2, active ? enabledColor : disabledColor, true);
+                guiGraphics.text(fontRenderer, displayPossibility.get(0), x + 1, cy + 2, active ? enabledColor : disabledColor, true);
                 if(addTooltip) {
                     int tooltipLineOffsetY = 2;
                     for (Component tooltipLine : tooltipLines) {
                         tooltipLineOffsetY += yOffset;
-                        guiGraphics.drawString(fontRenderer, tooltipLine.getString(), x + 1, cy + tooltipLineOffsetY, enabledColor, true);
+                        guiGraphics.text(fontRenderer, tooltipLine.getString(), x + 1, cy + tooltipLineOffsetY, enabledColor, true);
                     }
                 }
 
@@ -246,7 +246,7 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
                 guiGraphics.fill(x, cy - 1, x + width, cy + 11, -6250336);
                 guiGraphics.fill(x - 1, cy, x + width - 1, cy + 10, -16777216);
 
-                guiGraphics.drawString(fontRenderer, "...", x + 1, cy + 2, disabledColor, true);
+                guiGraphics.text(fontRenderer, "...", x + 1, cy + 2, disabledColor, true);
             }
         }
     }

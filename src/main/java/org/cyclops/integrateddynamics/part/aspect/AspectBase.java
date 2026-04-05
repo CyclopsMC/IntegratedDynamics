@@ -66,7 +66,7 @@ public abstract class AspectBase<V extends IValue, T extends IValueType<V>> impl
         tooltipAdder.accept(Component.translatable(L10NValues.ASPECT_TOOLTIP_VALUETYPENAME, valueTypeName)
                 .withStyle(getValueType().getDisplayColorFormat()));
         if(appendOptionalInfo) {
-            IModHelpers.get().getL10NHelpers().addOptionalInfo(tooltipAdder, getUnlocalizedPrefix());
+            IModHelpers.get().getL10NHelpers().addOptionalInfo(tooltipAdder, getUnlocalizedPrefix(), net.minecraft.world.item.TooltipFlag.NORMAL);
         }
     }
 

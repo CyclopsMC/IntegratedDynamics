@@ -21,7 +21,7 @@ public class ValueTypeVariableModelProvider implements IVariableModelProvider<Ba
             try {
                 ItemModel.Unbaked unbakedModel = ValueTypes.REGISTRY.getClient().getValueTypeModel(valueType);
                 if(unbakedModel != null) {
-                    ItemModel bakedModel = unbakedModel.bake(bakingContext);
+                    ItemModel bakedModel = unbakedModel.bake(bakingContext, new org.joml.Matrix4f());
                     bakedModels.put(valueType, bakedModel);
                 }
             } catch (Exception e) {

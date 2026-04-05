@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -133,7 +133,7 @@ public class ValueTypeListLPElementClient extends ValueTypeLPElementBaseClient<V
         }
 
         @Override
-        public void drawGuiContainerForegroundLayer(GuiGraphics guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, int mouseX, int mouseY) {
+        public void drawGuiContainerForegroundLayer(GuiGraphicsExtractor guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, int mouseX, int mouseY) {
             super.drawGuiContainerForegroundLayer(guiGraphics, guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
 
             // Output type tooltip
@@ -211,10 +211,10 @@ public class ValueTypeListLPElementClient extends ValueTypeLPElementBaseClient<V
         }
 
         @Override
-        public void renderBg(GuiGraphics guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
+        public void renderBg(GuiGraphicsExtractor guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
             super.renderBg(guiGraphics, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
 
-            valueTypeSelector.render(guiGraphics, mouseX, mouseY, partialTicks);
+            valueTypeSelector.extractRenderState(guiGraphics, mouseX, mouseY, partialTicks);
 
             if (element.getActiveElement() >= 0) {
                 int x = guiLeft + getX() + 10;

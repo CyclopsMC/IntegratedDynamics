@@ -28,13 +28,10 @@ public class SpecialModelRendererVariableOverlay implements SpecialModelRenderer
     }
 
     @Override
-    public void submit(@Nullable Pair<Boolean, ItemStack> stateIn, ItemDisplayContext displayContext, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int packedLight, int packedOverlay, boolean outline, int outlineColor) {
-        if (displayContext == ItemDisplayContext.GUI) {
-            IVariableFacade variableFacade = RegistryEntries.ITEM_VARIABLE.get().getVariableFacade(ValueDeseralizationContext.ofClient(), stateIn.getRight());
-            displayContext = ItemDisplayContext.GUI;
-            poseStack.translate(0.5F, 0.5F, 0.7F);
-            variableFacade.getClient().renderISTER(stateIn.getRight(), displayContext, poseStack, submitNodeCollector, packedLight, packedOverlay);
-        }
+    public void submit(@Nullable Pair<Boolean, ItemStack> stateIn, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
+        IVariableFacade variableFacade = RegistryEntries.ITEM_VARIABLE.get().getVariableFacade(ValueDeseralizationContext.ofClient(), stateIn.getRight());
+        poseStack.translate(0.5F, 0.5F, 0.7F);
+        variableFacade.getClient().renderISTER(stateIn.getRight(), ItemDisplayContext.GUI, poseStack, submitNodeCollector, lightCoords, overlayCoords);
     }
 
     @Override
@@ -42,7 +39,7 @@ public class SpecialModelRendererVariableOverlay implements SpecialModelRenderer
 
     }
 
-    public static record Unbaked() implements SpecialModelRenderer.Unbaked {
+    public static record Unbaked() implements SpecialModelRenderer.Unbaked<Pair<Boolean, ItemStack>> {
         public static final MapCodec<SpecialModelRendererVariableOverlay.Unbaked> MAP_CODEC = MapCodec.unit(SpecialModelRendererVariableOverlay.Unbaked::new);
 
         @Override
@@ -51,7 +48,7 @@ public class SpecialModelRendererVariableOverlay implements SpecialModelRenderer
         }
 
         @Override
-        public SpecialModelRenderer<?> bake(BakingContext bakingContext) {
+        public SpecialModelRenderer<Pair<Boolean, ItemStack>> bake(BakingContext bakingContext) {
             return new SpecialModelRendererVariableOverlay();
         }
     }

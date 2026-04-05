@@ -9,6 +9,6 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
  */
 public class LootFunctionCopyMechanicalMachineEnergyConfig extends LootFunctionConfigCommon<IModBase> {
     public LootFunctionCopyMechanicalMachineEnergyConfig() {
-        super(IntegratedDynamics._instance, "copy_mechanical_machine_energy", LootFunctionCopyMechanicalMachineEnergy.TYPE);
+        super(IntegratedDynamics._instance, "copy_mechanical_machine_energy", LootFunctionCopyMechanicalMachineEnergy.CODEC);
     }
 }

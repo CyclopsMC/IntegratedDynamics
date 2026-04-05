@@ -9,6 +9,6 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
  */
 public class LootFunctionCopyProxyIdConfig extends LootFunctionConfigCommon<IModBase> {
     public LootFunctionCopyProxyIdConfig() {
-        super(IntegratedDynamics._instance, "copy_proxy_id", LootFunctionCopyProxyId.TYPE);
+        super(IntegratedDynamics._instance, "copy_proxy_id", LootFunctionCopyProxyId.CODEC);
     }
 }

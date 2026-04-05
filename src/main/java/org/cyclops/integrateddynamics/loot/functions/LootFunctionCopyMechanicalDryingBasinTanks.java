@@ -6,7 +6,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunction;
-import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.fluids.SimpleFluidContent;
@@ -25,7 +24,6 @@ public class LootFunctionCopyMechanicalDryingBasinTanks extends LootItemConditio
     public static final MapCodec<LootFunctionCopyMechanicalDryingBasinTanks> CODEC = RecordCodecBuilder.mapCodec(
             builder -> commonFields(builder).apply(builder, LootFunctionCopyMechanicalDryingBasinTanks::new)
     );
-    public static final LootItemFunctionType<LootFunctionCopyMechanicalDryingBasinTanks> TYPE = new LootItemFunctionType<>(LootFunctionCopyMechanicalDryingBasinTanks.CODEC);
 
     protected LootFunctionCopyMechanicalDryingBasinTanks(List<LootItemCondition> conditionsIn) {
         super(conditionsIn);
@@ -44,8 +42,8 @@ public class LootFunctionCopyMechanicalDryingBasinTanks extends LootItemConditio
     }
 
     @Override
-    public LootItemFunctionType getType() {
-        return TYPE;
+    public MapCodec<? extends LootItemConditionalFunction> codec() {
+        return CODEC;
     }
 
 }

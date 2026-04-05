@@ -4,7 +4,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.cyclops.cyclopscore.helper.IModHelpers;
@@ -169,7 +169,7 @@ public abstract class ValueTypeLPElementBase<C extends ValueTypeLPElementBaseCli
     }
 
     @Override
-    public boolean slotClick(int slotId, Slot slot, int mouseButton, ClickType clickType, Player player) {
+    public boolean slotClick(int slotId, Slot slot, int mouseButton, ContainerInput clickType, Player player) {
         return false;
     }
 

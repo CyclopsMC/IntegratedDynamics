@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -96,8 +96,8 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
 
     @SuppressWarnings("unchecked")
     @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(guiGraphics, partialTicks, mouseX, mouseY);
+    public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractBackground(guiGraphics, mouseX, mouseY, partialTicks);
 
         // Reset button positions
         for(Map.Entry<IAspect, ButtonText> entry : this.aspectPropertyButtons.entrySet()) {
@@ -147,7 +147,7 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
         }
     }
 
-    protected abstract void drawAdditionalElementInfo(GuiGraphics guiGraphics, C container, int index, A aspect);
+    protected abstract void drawAdditionalElementInfo(GuiGraphicsExtractor guiGraphics, C container, int index, A aspect);
 
     protected Rectangle getElementPosition(C container, int i, boolean absolute) {
         return new Rectangle(ITEM_POSITION.x + offsetX + (absolute ? this.leftPos : 0),
@@ -157,7 +157,7 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
     }
 
     @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+    protected void extractLabels(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
         // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
         C container = getMenu();
         for(int i = 0; i < container.getPageSize(); i++) {
@@ -199,7 +199,7 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
         }
     }
 
-    protected abstract void drawAdditionalElementInfoForeground(GuiGraphics guiGraphics, C container, int index,
+    protected abstract void drawAdditionalElementInfoForeground(GuiGraphicsExtractor guiGraphics, C container, int index,
                                                                 A aspect, int mouseX, int mouseY);
 
     public int getMaxLabelWidth() {

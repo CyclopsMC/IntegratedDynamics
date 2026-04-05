@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.core.client.gui.container;
 
 import com.google.common.collect.Lists;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -131,18 +131,18 @@ public class ContainerScreenPartOffset<T extends ContainerPartOffset> extends Co
     }
 
     @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(guiGraphics, partialTicks, mouseX, mouseY);
+    public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractBackground(guiGraphics, mouseX, mouseY, partialTicks);
 
-        guiGraphics.drawString(font, Component.translatable("gui.integrateddynamics.part_offsets"), this.titleLabelX, this.titleLabelY, ARGB.opaque(4210752), false);
+        guiGraphics.text(font, Component.translatable("gui.integrateddynamics.part_offsets"), this.titleLabelX, this.titleLabelY, ARGB.opaque(4210752), false);
 
-        guiGraphics.drawString(font, "X", leftPos + 45 + 5, topPos + 19, ARGB.opaque(0), false);
-        guiGraphics.drawString(font, "Y", leftPos + 99 + 5, topPos + 19, ARGB.opaque(0), false);
-        guiGraphics.drawString(font, "Z", leftPos + 153 + 5, topPos + 19, ARGB.opaque(0), false);
+        guiGraphics.text(font, "X", leftPos + 45 + 5, topPos + 19, ARGB.opaque(0), false);
+        guiGraphics.text(font, "Y", leftPos + 99 + 5, topPos + 19, ARGB.opaque(0), false);
+        guiGraphics.text(font, "Z", leftPos + 153 + 5, topPos + 19, ARGB.opaque(0), false);
 
-        numberFieldX.render(guiGraphics, mouseX, mouseY, partialTicks);
-        numberFieldY.render(guiGraphics, mouseX, mouseY, partialTicks);
-        numberFieldZ.render(guiGraphics, mouseX, mouseY, partialTicks);
+        numberFieldX.extractRenderState(guiGraphics, mouseX, mouseY, partialTicks);
+        numberFieldY.extractRenderState(guiGraphics, mouseX, mouseY, partialTicks);
+        numberFieldZ.extractRenderState(guiGraphics, mouseX, mouseY, partialTicks);
 
         for (int i = 0; i < 3; i++) {
             int x = leftPos + 64 + i * 54;
@@ -158,7 +158,7 @@ public class ContainerScreenPartOffset<T extends ContainerPartOffset> extends Co
     }
 
     @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+    protected void extractLabels(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
         if (isHovering(0, 0, 90, 18, mouseX, mouseY)) {
             List<Component> lines = Lists.newArrayList(
                     Component.translatable("gui.integrateddynamics.partoffset.offsets"),

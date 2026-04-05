@@ -34,7 +34,7 @@ public class EntityItemTargetted extends ItemEntity {
     }
 
     public EntityItemTargetted(Level p_32001_, double p_32002_, double p_32003_, double p_32004_, ItemStack p_32005_) {
-        this(p_32001_, p_32002_, p_32003_, p_32004_, p_32005_, p_32001_.random.nextDouble() * 0.2 - 0.1, 0.2, p_32001_.random.nextDouble() * 0.2 - 0.1);
+        this(p_32001_, p_32002_, p_32003_, p_32004_, p_32005_, p_32001_.getRandom().nextDouble() * 0.2 - 0.1, 0.2, p_32001_.getRandom().nextDouble() * 0.2 - 0.1);
     }
 
     public EntityItemTargetted(
@@ -118,7 +118,7 @@ public class EntityItemTargetted extends ItemEntity {
     }
 
     protected void showEntityMoved() {
-        RandomSource rand = level().random;
+        RandomSource rand = level().getRandom();
         float scale = 0.10F;
         float red = rand.nextFloat() * 0.20F + 0.8F;
         float green = rand.nextFloat() * 0.20F + 0.8F;

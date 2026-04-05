@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer.client;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.world.Container;
 import org.apache.commons.lang3.tuple.Pair;
@@ -27,7 +27,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     }
 
     @Override
-    public void drawGuiContainerForegroundLayer(GuiGraphics guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, int mouseX, int mouseY) {
+    public void drawGuiContainerForegroundLayer(GuiGraphicsExtractor guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(guiGraphics, guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
         IConfigRenderPattern configRenderPattern = element.getRenderPattern();
         IOperator operator = element.getOperator();

@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.core.logicprogrammer;
 import com.google.common.collect.Iterables;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.cyclops.cyclopscore.helper.IModHelpers;
@@ -209,7 +209,7 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
     }
 
     @Override
-    public boolean slotClick(int slotId, Slot slot, int mouseButton, ClickType clickType, Player player) {
+    public boolean slotClick(int slotId, Slot slot, int mouseButton, ContainerInput clickType, Player player) {
         return false;
     }
 

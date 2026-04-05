@@ -1,6 +1,5 @@
 package org.cyclops.integrateddynamics.core.recipe.type;
 
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
@@ -16,7 +15,7 @@ public class RecipeNbtClear extends CustomRecipe {
     private final Ingredient inputIngredient;
 
     public RecipeNbtClear(Ingredient inputIngredient) {
-        super(CraftingBookCategory.MISC);
+        super();
         this.inputIngredient = inputIngredient;
     }
 
@@ -26,11 +25,11 @@ public class RecipeNbtClear extends CustomRecipe {
 
     @Override
     public boolean matches(CraftingInput inv, Level worldIn) {
-        return !assemble(inv, worldIn.registryAccess()).isEmpty();
+        return !assemble(inv).isEmpty();
     }
 
     @Override
-    public ItemStack assemble(CraftingInput inv, HolderLookup.Provider registryAccess) {
+    public ItemStack assemble(CraftingInput inv) {
         ItemStack ret = ItemStack.EMPTY;
         for(int j = 0; j < inv.size(); j++) {
             ItemStack element = inv.getItem(j);

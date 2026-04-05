@@ -5,11 +5,11 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemInstance;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
 
 /**
@@ -19,21 +19,20 @@ import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
 public class LootConditionMatchWrench implements LootItemCondition {
 
     public static final MapCodec<LootConditionMatchWrench> CODEC = RecordCodecBuilder.mapCodec(b -> b.point(new LootConditionMatchWrench()));
-    public static final LootItemConditionType TYPE = new LootItemConditionType(LootConditionMatchWrench.CODEC);
 
     @Override
     public boolean test(LootContext lootContext) {
-        ItemStack itemStack = lootContext.getOptionalParameter(LootContextParams.TOOL);
+        ItemInstance itemInstance = lootContext.getOptionalParameter(LootContextParams.TOOL);
         Entity entity = lootContext.getOptionalParameter(LootContextParams.THIS_ENTITY);
         BlockPos blockPos = BlockPos.containing(lootContext.getParameter(LootContextParams.ORIGIN));
-        return itemStack != null
+        return itemInstance instanceof ItemStack itemStack
                 && entity instanceof Player
                 && WrenchHelpers.isWrench((Player) entity, itemStack, entity.level(), blockPos, null);
     }
 
     @Override
-    public LootItemConditionType getType() {
-        return TYPE;
+    public MapCodec<? extends LootItemCondition> codec() {
+        return CODEC;
     }
 
 }

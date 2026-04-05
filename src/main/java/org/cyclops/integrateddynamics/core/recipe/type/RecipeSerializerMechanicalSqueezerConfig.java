@@ -14,7 +14,7 @@ public class RecipeSerializerMechanicalSqueezerConfig extends RecipeConfigCommon
         super(
                 IntegratedDynamics._instance,
                 "mechanical_squeezer",
-                eConfig -> new RecipeSerializerMechanicalSqueezer()
+                eConfig -> RecipeSerializerMechanicalSqueezer.SERIALIZER
         );
     }
 

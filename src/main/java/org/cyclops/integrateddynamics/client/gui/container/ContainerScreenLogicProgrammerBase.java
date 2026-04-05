@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -146,12 +146,12 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     }
 
     @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(guiGraphics, partialTicks, mouseX, mouseY);
+    public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractBackground(guiGraphics, mouseX, mouseY, partialTicks);
         subGuiHolder.renderBg(guiGraphics, this.leftPos, this.topPos, getMinecraft().getTextureManager(), font, partialTicks, mouseX, mouseY);
 
         // Draw container name
-        guiGraphics.drawString(font, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_FILTER),
+        guiGraphics.text(font, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_FILTER),
                 this.leftPos + offsetX + 5, this.topPos + offsetY + 208, IModHelpers.get().getBaseHelpers().RGBAToInt(80, 80, 80, 255),
                 false);
 
@@ -204,7 +204,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     }
 
     @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+    protected void extractLabels(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
         // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
         subGuiHolder.drawGuiContainerForegroundLayer(guiGraphics, this.leftPos, this.topPos, getMinecraft().getTextureManager(), font, mouseX, mouseY);
 
@@ -212,13 +212,13 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         if (subGuiHolder.isEmpty()) {
             // Create
             Images.ARROW_LEFT.draw(guiGraphics, offsetX + 85, offsetY + 17);
-            guiGraphics.drawString(font, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_INFO_CREATE),
+            guiGraphics.text(font, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_INFO_CREATE),
                     offsetX + 100, offsetY + 23, IModHelpers.get().getBaseHelpers().RGBAToInt(80, 80, 80, 255), false);
 
             // Modify
             Images.ARROW_DOWN.draw(guiGraphics, offsetX + 230, offsetY + 90);
             MutableComponent modifyComponent = Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_INFO_MODIFY);
-            guiGraphics.drawString(font, modifyComponent,
+            guiGraphics.text(font, modifyComponent,
                     offsetX + 230 - font.width(modifyComponent), offsetY + 95, IModHelpers.get().getBaseHelpers().RGBAToInt(80, 80, 80, 255), false);
 
             // Tooltip on write slot
@@ -393,7 +393,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
             return true;
         }
 
-        return subGuiHolder.charTyped(evt) || handleKeyCode(new KeyEvent(evt.codepoint(), evt.modifiers(), 0)) || super.charTyped(evt);
+        return subGuiHolder.charTyped(evt) || handleKeyCode(new KeyEvent(evt.codepoint(), 0, 0)) || super.charTyped(evt);
     }
 
     @Override
@@ -533,9 +533,9 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         }
 
         @Override
-        public void renderBg(GuiGraphics guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font font, float partialTicks, int mouseX, int mouseY) {
+        public void renderBg(GuiGraphicsExtractor guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font font, float partialTicks, int mouseX, int mouseY) {
             super.renderBg(guiGraphics, guiLeft, guiTop, textureManager, font, partialTicks, mouseX, mouseY);
-            this.searchField.render(guiGraphics, mouseX, mouseY, partialTicks);
+            this.searchField.extractRenderState(guiGraphics, mouseX, mouseY, partialTicks);
         }
 
         @Override

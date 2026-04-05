@@ -11,7 +11,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
  * Recipe serializer for NBT clear recipes.
  * @author rubensworks
  */
-public class RecipeSerializerNbtClear implements RecipeSerializer<RecipeNbtClear> {
+public class RecipeSerializerNbtClear {
 
     public static final MapCodec<RecipeNbtClear> CODEC = RecordCodecBuilder.mapCodec(
             builder -> builder.group(
@@ -23,14 +23,5 @@ public class RecipeSerializerNbtClear implements RecipeSerializer<RecipeNbtClear
             Ingredient.CONTENTS_STREAM_CODEC, RecipeNbtClear::getInputIngredient,
             RecipeNbtClear::new
     );
-
-    @Override
-    public MapCodec<RecipeNbtClear> codec() {
-        return CODEC;
-    }
-
-    @Override
-    public StreamCodec<RegistryFriendlyByteBuf, RecipeNbtClear> streamCodec() {
-        return STREAM_CODEC;
-    }
+    public static final RecipeSerializer<RecipeNbtClear> SERIALIZER = new RecipeSerializer<>(CODEC, STREAM_CODEC);
 }

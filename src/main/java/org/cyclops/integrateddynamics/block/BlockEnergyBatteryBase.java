@@ -55,8 +55,8 @@ public abstract class BlockEnergyBatteryBase extends BlockContainerCabled {
         if (player.getItemInHand(player.getUsedItemHand()).isEmpty()) {
             return IModHelpers.get().getBlockEntityHelpers().get(world, pos, BlockEntityEnergyBattery.class)
                     .<InteractionResult>map(tile -> {
-                        player.displayClientMessage(Helpers.getLocalizedEnergyLevel(
-                                tile.getEnergyStored(), tile.getMaxEnergyStored()), true);
+                        player.sendOverlayMessage(Helpers.getLocalizedEnergyLevel(
+                                tile.getEnergyStored(), tile.getMaxEnergyStored()));
                         return InteractionResult.SUCCESS;
                     })
                     .orElse(InteractionResult.PASS);

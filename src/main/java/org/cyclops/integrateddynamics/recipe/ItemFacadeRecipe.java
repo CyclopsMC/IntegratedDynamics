@@ -1,12 +1,10 @@
 package org.cyclops.integrateddynamics.recipe;
 
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.common.CommonHooks;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
 
@@ -19,12 +17,13 @@ public class ItemFacadeRecipe extends CustomRecipe {
 
     private NonNullList<Ingredient> ingredients;
 
-    public ItemFacadeRecipe(CraftingBookCategory craftingBookCategory) {
-        super(craftingBookCategory);
+    public ItemFacadeRecipe() {
+        super();
     }
+
     @Override
     public boolean matches(CraftingInput grid, Level world) {
-        return !assemble(grid, world.registryAccess()).isEmpty();
+        return !assemble(grid).isEmpty();
     }
 
     public ItemStack getResultItem() {
@@ -37,14 +36,15 @@ public class ItemFacadeRecipe extends CustomRecipe {
 
         for (int i = 0; i < aitemstack.size(); ++i) {
             ItemStack itemstack = inventory.getItem(i);
-            aitemstack.set(i, CommonHooks.getCraftingRemainder(itemstack));
+            net.minecraft.world.item.ItemStackTemplate remainder = itemstack.getItem().getCraftingRemainder(itemstack);
+            aitemstack.set(i, remainder != null ? remainder.create() : ItemStack.EMPTY);
         }
 
         return aitemstack;
     }
 
     @Override
-    public ItemStack assemble(CraftingInput grid, HolderLookup.Provider registryAccess) {
+    public ItemStack assemble(CraftingInput grid) {
         ItemStack output = getResultItem().copy();
 
         int facades = 0;

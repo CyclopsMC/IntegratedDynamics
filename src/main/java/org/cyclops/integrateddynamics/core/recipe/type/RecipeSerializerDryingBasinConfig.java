@@ -14,7 +14,7 @@ public class RecipeSerializerDryingBasinConfig extends RecipeConfigCommon<Recipe
         super(
                 IntegratedDynamics._instance,
                 "drying_basin",
-                eConfig -> new RecipeSerializerDryingBasin()
+                eConfig -> RecipeSerializerDryingBasin.SERIALIZER
         );
     }
 

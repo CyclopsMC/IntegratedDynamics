@@ -38,7 +38,14 @@ public class ItemFacadeConfigClient extends ItemClientConfig<IntegratedDynamics>
         @Override
         public int calculate(ItemStack itemStack, @Nullable ClientLevel level, @Nullable LivingEntity entity) {
             BlockState blockstate = ((ItemFacade) itemStack.getItem()).getFacadeBlock(itemStack);
-            return Minecraft.getInstance().getBlockColors().getColor(blockstate, null, null);
+            if (blockstate == null) {
+                return -1;
+            }
+            net.minecraft.client.color.block.BlockTintSource tintSource = Minecraft.getInstance().getBlockColors().getTintSource(blockstate, 0);
+            if (tintSource != null) {
+                return tintSource.color(blockstate);
+            }
+            return -1;
         }
 
         @Override

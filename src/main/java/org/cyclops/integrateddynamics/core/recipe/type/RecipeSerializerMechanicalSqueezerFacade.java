@@ -9,7 +9,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 
-public class RecipeSerializerMechanicalSqueezerFacade implements RecipeSerializer<RecipeMechanicalSqueezerFacade> {
+public class RecipeSerializerMechanicalSqueezerFacade {
 
     public static final MapCodec<RecipeMechanicalSqueezerFacade> CODEC = RecordCodecBuilder.mapCodec(
             builder -> builder.group(
@@ -27,15 +27,6 @@ public class RecipeSerializerMechanicalSqueezerFacade implements RecipeSerialize
             ByteBufCodecs.INT, RecipeMechanicalSqueezerFacade::getDuration,
             RecipeMechanicalSqueezerFacade::new
     );
-
-    @Override
-    public MapCodec<RecipeMechanicalSqueezerFacade> codec() {
-        return CODEC;
-    }
-
-    @Override
-    public StreamCodec<RegistryFriendlyByteBuf, RecipeMechanicalSqueezerFacade> streamCodec() {
-        return STREAM_CODEC;
-    }
+    public static final RecipeSerializer<RecipeMechanicalSqueezerFacade> SERIALIZER = new RecipeSerializer<>(CODEC, STREAM_CODEC);
 
 }

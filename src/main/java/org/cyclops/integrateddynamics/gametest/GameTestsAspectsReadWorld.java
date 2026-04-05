@@ -2,6 +2,9 @@ package org.cyclops.integrateddynamics.gametest;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.clock.WorldClocks;
+import net.minecraft.world.level.saveddata.WeatherData;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.cyclops.cyclopscore.gametest.GameTest;
@@ -72,7 +75,9 @@ public class GameTestsAspectsReadWorld {
 
     @GameTest(template = TEMPLATE_EMPTY, environment = Reference.MOD_ID + ":weather_clear2")
     public void testAspectsReadWorldRainCountdown(GameTestHelper helper) {
-        helper.getLevel().setWeatherParameters(0, 123, true, false);
+        WeatherData weatherData = helper.getLevel().getWeatherData();
+        weatherData.setRaining(true);
+        weatherData.setRainTime(123);
         testReadAspect(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.INTEGER_RAINCOUNTDOWN, ValueTypeInteger.ValueInteger.of(123));
     }
 
@@ -83,7 +88,9 @@ public class GameTestsAspectsReadWorld {
 
     @GameTest(template = TEMPLATE_EMPTY, environment = Reference.MOD_ID + ":time_day_far")
     public void testAspectsReadWorldDaytime(GameTestHelper helper) {
-        helper.getLevel().setDayTime(1000 + 10 * IModHelpers.get().getMinecraftHelpers().getDayLength());
+        long targetTicks = 1000 + 10L * IModHelpers.get().getMinecraftHelpers().getDayLength();
+        helper.getLevel().registryAccess().get(WorldClocks.OVERWORLD).ifPresent(clockHolder ->
+                ((ServerLevel) helper.getLevel()).clockManager().setTotalTicks(clockHolder, targetTicks));
         testReadAspect(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.INTEGER_DAYTIME, ValueTypeInteger.ValueInteger.of(1000));
     }
 
@@ -99,7 +106,9 @@ public class GameTestsAspectsReadWorld {
 
     @GameTest(template = TEMPLATE_EMPTY, environment = Reference.MOD_ID + ":time_day_far")
     public void testAspectsReadWorldTime(GameTestHelper helper) {
-        helper.getLevel().setDayTime(1000 + 10 * IModHelpers.get().getMinecraftHelpers().getDayLength());
+        long targetTicks = 1000 + 10L * IModHelpers.get().getMinecraftHelpers().getDayLength();
+        helper.getLevel().registryAccess().get(WorldClocks.OVERWORLD).ifPresent(clockHolder ->
+                ((ServerLevel) helper.getLevel()).clockManager().setTotalTicks(clockHolder, targetTicks));
         testReadAspect(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.LONG_TIME, ValueTypeLong.ValueLong.of(1000 + 10 * IModHelpers.get().getMinecraftHelpers().getDayLength()));
     }
 

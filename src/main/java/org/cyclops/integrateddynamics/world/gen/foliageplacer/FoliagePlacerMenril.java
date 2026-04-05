@@ -5,7 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.IntProvider;
-import net.minecraft.world.level.LevelSimulatedReader;
+import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerType;
@@ -27,7 +27,7 @@ public class FoliagePlacerMenril extends FoliagePlacer {
     }
 
     @Override
-    protected void createFoliage(LevelSimulatedReader world, FoliagePlacer.FoliageSetter callback, RandomSource rand, TreeConfiguration config,
+    protected void createFoliage(WorldGenLevel world, FoliagePlacer.FoliageSetter callback, RandomSource rand, TreeConfiguration config,
                                  int mimimumHeight, FoliagePlacer.FoliageAttachment foliage, int foliageHeight, int spread, int offset) {
         BlockPos blockpos = foliage.pos();
         for(int l = offset; l >= -foliageHeight; --l) {

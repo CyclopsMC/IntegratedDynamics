@@ -785,7 +785,7 @@ public class Aspects {
 
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_RAINCOUNTDOWN =
                     AspectReadBuilders.World.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(
-                        world -> ((ServerLevelData) world.getLevelData()).getRainTime()
+                        world -> ((net.minecraft.server.level.ServerLevel) world).getWeatherData().getRainTime()
                     ).handle(AspectReadBuilders.PROP_GET_INTEGER, "raincountdown").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_TICKTIME =
                     AspectReadBuilders.World.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(
@@ -793,7 +793,7 @@ public class Aspects {
                     ).handle(AspectReadBuilders.PROP_GET_INTEGER, "ticktime").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_DAYTIME =
                     AspectReadBuilders.World.BUILDER_INTEGER.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(
-                        world -> (int) (world.getDayTime() % IModHelpers.get().getMinecraftHelpers().getDayLength())
+                        world -> (int) (world.getOverworldClockTime() % IModHelpers.get().getMinecraftHelpers().getDayLength())
                     ).handle(AspectReadBuilders.PROP_GET_INTEGER, "daytime").buildRead();
             public static final IAspectRead<ValueTypeInteger.ValueInteger, ValueTypeInteger> INTEGER_LIGHTLEVEL =
                     AspectReadBuilders.World.BUILDER_INTEGER.handle(
@@ -807,7 +807,7 @@ public class Aspects {
 
             public static final IAspectRead<ValueTypeLong.ValueLong, ValueTypeLong> LONG_TIME =
                     AspectReadBuilders.World.BUILDER_LONG.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(
-                        net.minecraft.world.level.Level::getDayTime
+                        net.minecraft.world.level.Level::getOverworldClockTime
                     ).handle(AspectReadBuilders.PROP_GET_LONG, "time").buildRead();
             public static final IAspectRead<ValueTypeLong.ValueLong, ValueTypeLong> LONG_TOTALTIME =
                     AspectReadBuilders.World.BUILDER_LONG.handle(AspectReadBuilders.World.PROP_GET_WORLD).handle(

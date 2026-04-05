@@ -1,11 +1,12 @@
 package org.cyclops.integrateddynamics.core.recipe.type;
 
 import com.mojang.datafixers.util.Either;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.item.crafting.display.RecipeDisplay;
 import net.minecraft.world.item.crafting.display.SlotDisplay;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStackTemplate;
 import org.cyclops.cyclopscore.recipe.ItemStackFromIngredient;
 import org.cyclops.cyclopscore.recipe.type.IInventoryFluid;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -20,8 +21,8 @@ import java.util.Optional;
  */
 public class RecipeMechanicalDryingBasin extends RecipeDryingBasin {
 
-    public RecipeMechanicalDryingBasin(Optional<Ingredient> inputIngredient, Optional<FluidStack> inputFluid,
-                                       Optional<Either<ItemStack, ItemStackFromIngredient>> outputItem, Optional<FluidStack> outputFluid, int duration) {
+    public RecipeMechanicalDryingBasin(Optional<Ingredient> inputIngredient, Optional<FluidStackTemplate> inputFluid,
+                                       Optional<Either<ItemStackTemplate, ItemStackFromIngredient>> outputItem, Optional<FluidStackTemplate> outputFluid, int duration) {
         super(inputIngredient, inputFluid, outputItem, outputFluid, duration);
     }
 
@@ -45,7 +46,7 @@ public class RecipeMechanicalDryingBasin extends RecipeDryingBasin {
         return List.of(new RecipeDisplayDryingBasin(
                 this.getInputIngredient().map(Ingredient::display).orElse(SlotDisplay.Empty.INSTANCE),
                 this.getInputFluid().orElse(FluidStack.EMPTY),
-                this.getOutputItemFirst().<SlotDisplay>map(SlotDisplay.ItemStackSlotDisplay::new).orElse(SlotDisplay.Empty.INSTANCE),
+                this.getOutputItemFirst().<SlotDisplay>map(stack -> new SlotDisplay.ItemStackSlotDisplay(net.minecraft.world.item.ItemStackTemplate.fromNonEmptyStack(stack))).orElse(SlotDisplay.Empty.INSTANCE),
                 this.getOutputFluid().orElse(FluidStack.EMPTY),
                 new SlotDisplay.ItemSlotDisplay(RegistryEntries.BLOCK_MECHANICAL_DRYING_BASIN.get().asItem()),
                 this.getDuration()

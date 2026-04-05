@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.recipe.type;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
@@ -17,7 +18,7 @@ import java.util.Optional;
 
 public class RecipeSqueezerFacade extends RecipeSqueezer {
 
-    public static IngredientChance OUTPUT = new IngredientChance(Either.left(Pair.of(new ItemStack(RegistryEntries.ITEM_FACADE), 1.0f)));
+    public static IngredientChance OUTPUT = new IngredientChance(Either.left(Pair.of(new ItemStackTemplate(RegistryEntries.ITEM_FACADE), 1.0f)));
 
     public static final RecipeSqueezerFacade INSTANCE = new RecipeSqueezerFacade();
 
@@ -32,10 +33,11 @@ public class RecipeSqueezerFacade extends RecipeSqueezer {
 
     public static NonNullList<IngredientChance> getOutput(ItemStack inputItem) {
         ItemFacade inputFacade = (ItemFacade)inputItem.getItem();
-        ItemStack facadeBlockItem = inputFacade.getFacadeBlockItem(inputItem);
+        ItemStack facadeBlockItemStack = inputFacade.getFacadeBlockItem(inputItem);
 
-        if (facadeBlockItem == null) return NonNullList.of(OUTPUT, OUTPUT);
-        Either<ItemStack, ItemStackFromIngredient> inputItemEither = Either.left(facadeBlockItem);
+        if (facadeBlockItemStack == null) return NonNullList.of(OUTPUT, OUTPUT);
+        ItemStackTemplate facadeBlockItemTemplate = new ItemStackTemplate(facadeBlockItemStack.getItem(), facadeBlockItemStack.getComponentsPatch());
+        Either<ItemStackTemplate, ItemStackFromIngredient> inputItemEither = Either.left(facadeBlockItemTemplate);
         IngredientChance outputItemChance = new IngredientChance(inputItemEither.mapBoth(i -> Pair.of(i, 1.0f), i -> Pair.of(i, 1.0f)));
         return NonNullList.of(outputItemChance, outputItemChance, OUTPUT);
     }

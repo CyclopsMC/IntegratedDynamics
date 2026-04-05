@@ -6,7 +6,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunction;
-import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -23,7 +22,6 @@ public class LootFunctionCopyProxyId extends LootItemConditionalFunction {
     public static final MapCodec<LootFunctionCopyProxyId> CODEC = RecordCodecBuilder.mapCodec(
             builder -> commonFields(builder).apply(builder, LootFunctionCopyProxyId::new)
     );
-    public static final LootItemFunctionType<LootFunctionCopyProxyId> TYPE = new LootItemFunctionType<>(LootFunctionCopyProxyId.CODEC);
 
     protected LootFunctionCopyProxyId(List<LootItemCondition> conditionsIn) {
         super(conditionsIn);
@@ -39,8 +37,8 @@ public class LootFunctionCopyProxyId extends LootItemConditionalFunction {
     }
 
     @Override
-    public LootItemFunctionType getType() {
-        return TYPE;
+    public MapCodec<? extends LootItemConditionalFunction> codec() {
+        return CODEC;
     }
 
 }

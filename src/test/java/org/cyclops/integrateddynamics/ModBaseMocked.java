@@ -15,6 +15,7 @@ import org.cyclops.cyclopscore.proxy.ICommonProxyCommon;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * @author rubensworks
@@ -67,12 +68,12 @@ public class ModBaseMocked implements IModBase {
     }
 
     @Override
-    public void registerDefaultCreativeTabEntry(ItemStack itemStack, CreativeModeTab.TabVisibility visibility) {
+    public void registerDefaultCreativeTabEntry(Supplier<ItemStack> itemStack, CreativeModeTab.TabVisibility visibility) {
 
     }
 
     @Override
-    public List<Pair<ItemStack, CreativeModeTab.TabVisibility>> getDefaultCreativeTabEntries() {
+    public List<Pair<Supplier<ItemStack>, CreativeModeTab.TabVisibility>> getDefaultCreativeTabEntries() {
         return List.of();
     }
 }

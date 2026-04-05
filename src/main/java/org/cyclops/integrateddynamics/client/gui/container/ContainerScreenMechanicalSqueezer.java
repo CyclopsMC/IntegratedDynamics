@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.client.gui.container;
 
 import com.google.common.collect.Lists;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
@@ -47,8 +47,8 @@ public class ContainerScreenMechanicalSqueezer extends ContainerScreenMechanical
                 createServerPressable(ContainerMechanicalSqueezer.BUTTON_TOGGLE_FLUID_EJECT, (button) -> {}),imageArrowDownDisabled));
     }
 
-    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(guiGraphics, partialTicks, mouseX, mouseY);
+    public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractBackground(guiGraphics, mouseX, mouseY, partialTicks);
 
         // Update the image in the fluid eject toggle button
         buttonToggleFluidEject.setImage(getMenu().isAutoEjectFluids()
@@ -71,8 +71,8 @@ public class ContainerScreenMechanicalSqueezer extends ContainerScreenMechanical
     }
 
     @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        super.renderLabels(guiGraphics, mouseX, mouseY);
+    protected void extractLabels(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
+        super.extractLabels(guiGraphics, mouseX, mouseY);
 
         drawEnergyBarTooltip(guiGraphics, 8, 16, 18, 60, mouseX, mouseY);
         drawFluidTankTooltip(guiGraphics, getMenu().getFluidStack(), getMenu().getFluidCapacity(), 150, 10, 18, 60, mouseX, mouseY);

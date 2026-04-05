@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.client.gui.container;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.player.Inventory;
@@ -34,12 +34,12 @@ public class ContainerScreenPartReader<P extends IPartTypeReader<P, S>, S extend
     }
 
     @Override
-    protected void drawAdditionalElementInfoForeground(GuiGraphics guiGraphics, ContainerPartReader<P, S> container, int index, IAspectRead<?, ?> aspect, int mouseX, int mouseY) {
+    protected void drawAdditionalElementInfoForeground(GuiGraphicsExtractor guiGraphics, ContainerPartReader<P, S> container, int index, IAspectRead<?, ?> aspect, int mouseX, int mouseY) {
 
     }
 
     @Override
-    protected void drawAdditionalElementInfo(GuiGraphics guiGraphics, ContainerPartReader<P, S> container, int index, IAspectRead<?, ?> aspect) {
+    protected void drawAdditionalElementInfo(GuiGraphicsExtractor guiGraphics, ContainerPartReader<P, S> container, int index, IAspectRead<?, ?> aspect) {
         // Get current aspect value
         Pair<Component, Integer> readValues = container.getReadValue(aspect);
         if(readValues != null && readValues.getLeft() != null) {
@@ -53,7 +53,7 @@ public class ContainerScreenPartReader<P extends IPartTypeReader<P, S>, S extend
         ItemStack itemStack = container.writeAspectInfo(false, new ItemStack(RegistryEntries.ITEM_VARIABLE), container.getPlayerIInventory().player.level(), aspect);
         Rectangle pos = getElementPosition(container, index, true);
 
-        guiGraphics.renderItem(itemStack, pos.x, pos.y);
+        guiGraphics.item(itemStack, pos.x, pos.y);
     }
 
     @Override

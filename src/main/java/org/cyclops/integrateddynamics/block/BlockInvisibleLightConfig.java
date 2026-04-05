@@ -34,7 +34,7 @@ public class BlockInvisibleLightConfig extends BlockConfigCommon<IntegratedDynam
     }
 
     @Override
-    public Collection<ItemStack> getDefaultCreativeTabEntries() {
+    public Collection<java.util.function.Supplier<ItemStack>> getDefaultCreativeTabEntries() {
         return Collections.emptyList();
     }
 }

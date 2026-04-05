@@ -38,9 +38,9 @@ public record ItemModelFacade(FacadeModel facadeModel) implements ItemModel {
         }
 
         @Override
-        public ItemModel bake(BakingContext bakingContext) {
+        public ItemModel bake(BakingContext bakingContext, org.joml.Matrix4fc matrix) {
             return new ItemModelFacade(new FacadeModel(
-                    new BlockModelWrapper.Unbaked(modelEmpty, List.of(new Constant(-1))).bake(bakingContext),
+                    new CuboidItemModelWrapper.Unbaked(modelEmpty, java.util.Optional.empty(), List.of(new Constant(-1))).bake(bakingContext, matrix),
                     new ModelRenderProperties(false, null, bakingContext.blockModelBaker().getModel(modelEmpty).getTopTransforms())
             ));
         }

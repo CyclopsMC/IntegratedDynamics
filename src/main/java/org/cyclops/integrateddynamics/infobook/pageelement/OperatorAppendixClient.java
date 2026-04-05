@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.infobook.pageelement;
 
 import com.google.common.collect.Lists;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.ARGB;
 import org.cyclops.cyclopscore.helper.IModHelpers;
@@ -22,7 +22,7 @@ public class OperatorAppendixClient extends SectionAppendixClient<OperatorAppend
     }
 
     @Override
-    protected void drawElement(ScreenInfoBook gui, GuiGraphics guiGraphics, int x, int y, int width, int height, int page, int mx, int my) {
+    protected void drawElement(ScreenInfoBook gui, GuiGraphicsExtractor guiGraphics, int x, int y, int width, int height, int page, int mx, int my) {
         OperatorAppendix section = getSectionAppendix();
         IOperator operator = section.getOperator();
 
@@ -39,12 +39,12 @@ public class OperatorAppendixClient extends SectionAppendixClient<OperatorAppend
         IValueType[] inputTypes = operator.getInputTypes();
         int offsetY = 14;
         for(int i = 0; i < inputTypes.length; i++) {
-            guiGraphics.drawString(gui.getFont(), IModHelpers.get().getL10NHelpers().localize(L10NValues.GUI_INPUT, (i + 1) + ": "
+            guiGraphics.text(gui.getFont(), IModHelpers.get().getL10NHelpers().localize(L10NValues.GUI_INPUT, (i + 1) + ": "
                     + inputTypes[i].getDisplayColorFormat() + IModHelpers.get().getL10NHelpers().localize(inputTypes[i].getTranslationKey())), x, y + offsetY, ARGB.opaque(0), false);
             offsetY += 8;
         }
         String outputTypeName = IModHelpers.get().getL10NHelpers().localize(operator.getOutputType().getTranslationKey());
-        guiGraphics.drawString(gui.getFont(), IModHelpers.get().getL10NHelpers().localize(L10NValues.GUI_OUTPUT,
+        guiGraphics.text(gui.getFont(), IModHelpers.get().getL10NHelpers().localize(L10NValues.GUI_OUTPUT,
                 operator.getOutputType().getDisplayColorFormat() + outputTypeName), x, y + offsetY, ARGB.opaque(0), false);
 
         // Global/local names
@@ -60,7 +60,7 @@ public class OperatorAppendixClient extends SectionAppendixClient<OperatorAppend
     }
 
     @Override
-    protected void postDrawElement(ScreenInfoBook gui, GuiGraphics guiGraphics, int x, int y, int width, int height, int page, int mx, int my) {
+    protected void postDrawElement(ScreenInfoBook gui, GuiGraphicsExtractor guiGraphics, int x, int y, int width, int height, int page, int mx, int my) {
         if(mx >= x && my >= y && mx <= x + getSectionAppendix().getWidth() && my <= y + gui.getFont().lineHeight ) {
             List<Component> lines = Lists.newArrayList();
             getSectionAppendix().getOperator().loadTooltip(lines::add, true);

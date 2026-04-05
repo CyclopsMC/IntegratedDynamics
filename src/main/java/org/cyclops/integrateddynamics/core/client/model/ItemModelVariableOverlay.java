@@ -33,7 +33,7 @@ public record ItemModelVariableOverlay(ItemModelVariableOverlays variableModelBa
         }
 
         @Override
-        public ItemModel bake(BakingContext bakingContext) {
+        public ItemModel bake(BakingContext bakingContext, org.joml.Matrix4fc matrix) {
             ItemModelVariableOverlays bakedModel = new ItemModelVariableOverlays();
             for(IVariableModelProvider provider : VariableModelProviders.REGISTRY.getProviders()) {
                 bakedModel.setSubModels(provider, provider.bakeOverlayModels(bakingContext));

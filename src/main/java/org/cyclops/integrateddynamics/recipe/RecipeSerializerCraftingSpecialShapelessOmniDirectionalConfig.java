@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.recipe;
 
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import org.cyclops.cyclopscore.config.extendedconfig.RecipeConfigCommon;
 import org.cyclops.cyclopscore.init.ModBaseNeoForge;
 import org.cyclops.cyclopscore.recipe.type.RecipeCraftingShapelessCustomOutput;
@@ -17,8 +17,8 @@ public class RecipeSerializerCraftingSpecialShapelessOmniDirectionalConfig exten
         super(IntegratedDynamics._instance,
                 "crafting_special_shapeless_omni_directional",
                 eConfig -> new RecipeCraftingShapelessCustomOutput.Serializer(
-                        () -> new ItemStack(PartTypes.CONNECTOR_OMNI.getItem(), 2),
-                        PartTypeConnectorOmniDirectional::transformCraftingOutput)
+                        () -> new ItemStackTemplate(PartTypes.CONNECTOR_OMNI.getItem(), 2),
+                        PartTypeConnectorOmniDirectional::transformCraftingOutput).getRecipeSerializer()
         );
     }
 

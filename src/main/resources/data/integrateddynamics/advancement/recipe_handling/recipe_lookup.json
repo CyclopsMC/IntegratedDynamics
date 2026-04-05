@@ -34,11 +34,7 @@
             },
             "1": {
               "type": "value_type",
-              "value": {
-                "type": "serialized",
-                "value_type": "integrateddynamics:ingredients",
-                "value": "{v:{v:[{component:\"minecraft:itemstack\",instances:[{i:{id:\"minecraft:chest\",count:1}}]}]}}"
-              }
+              "value_type": "integrateddynamics:ingredients"
             }
           }
         }

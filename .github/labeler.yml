@@ -23,11 +23,13 @@ mc-1.20:
   - 'Minecraft: 1.20'
 mc-1.21:
   - 'Minecraft: 1.21'
-mc-1.22:
-  - 'Minecraft: 1.22'
-mc-1.23:
-  - 'Minecraft: 1.23'
-mc-1.24:
-  - 'Minecraft: 1.24'
-mc-1.25:
-  - 'Minecraft: 1.25'
+mc-26:
+  - 'Minecraft: 26'
+mc-27:
+  - 'Minecraft: 27'
+mc-28:
+  - 'Minecraft: 28'
+mc-29:
+  - 'Minecraft: 29'
+mc-30:
+  - 'Minecraft: 30'

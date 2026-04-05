@@ -5,6 +5,7 @@ import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.item.crafting.display.RecipeDisplay;
 import net.minecraft.world.item.crafting.display.SlotDisplay;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStackTemplate;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.core.recipe.display.RecipeDisplaySqueezer;
 
@@ -21,7 +22,7 @@ public class RecipeMechanicalSqueezer extends RecipeSqueezer {
 
     public RecipeMechanicalSqueezer(Ingredient inputIngredient,
                                     NonNullList<IngredientChance> outputItems,
-                                    Optional<FluidStack> outputFluid,
+                                    Optional<FluidStackTemplate> outputFluid,
                                     int duration) {
         super(inputIngredient, outputItems, outputFluid);
         this.duration = duration;

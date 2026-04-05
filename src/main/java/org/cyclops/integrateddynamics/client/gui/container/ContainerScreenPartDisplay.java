@@ -2,7 +2,7 @@ package org.cyclops.integrateddynamics.client.gui.container;
 
 import com.google.common.collect.Lists;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.ARGB;
@@ -49,8 +49,8 @@ public class ContainerScreenPartDisplay<P extends PartTypePanelVariableDriven<P,
     }
 
     @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(guiGraphics, partialTicks, mouseX, mouseY);
+    public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractBackground(guiGraphics, mouseX, mouseY, partialTicks);
 
         Component readValue = getMenu().getReadValue();
         int readValueColor = getMenu().getReadValueColor();
@@ -66,8 +66,8 @@ public class ContainerScreenPartDisplay<P extends PartTypePanelVariableDriven<P,
     }
 
     @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        super.renderLabels(guiGraphics, mouseX, mouseY);
+    protected void extractLabels(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
+        super.extractLabels(guiGraphics, mouseX, mouseY);
         // Render error tooltip
         displayErrors.drawForeground(guiGraphics, getMenu().getReadErrors(), ERROR_X, ERROR_Y, mouseX, mouseY, this, this.leftPos, this.topPos);
 

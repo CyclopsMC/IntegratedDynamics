@@ -9,6 +9,6 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
  */
 public class LootFunctionCopyEnergyBatteryDataConfig extends LootFunctionConfigCommon<IModBase> {
     public LootFunctionCopyEnergyBatteryDataConfig() {
-        super(IntegratedDynamics._instance, "copy_energy_battery_data", LootFunctionCopyEnergyBatteryData.TYPE);
+        super(IntegratedDynamics._instance, "copy_energy_battery_data", LootFunctionCopyEnergyBatteryData.CODEC);
     }
 }

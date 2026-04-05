@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.core.logicprogrammer;
 import com.google.common.collect.Sets;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
@@ -178,23 +178,23 @@ public abstract class ValueTypeRecipeAdapterLPElementPropertiesSubGui<E extends 
     }
 
     @Override
-    public void renderBg(GuiGraphics guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
+    public void renderBg(GuiGraphicsExtractor guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, float partialTicks, int mouseX, int mouseY) {
         super.renderBg(guiGraphics, guiLeft, guiTop, textureManager, fontRenderer, partialTicks, mouseX, mouseY);
 
         drawSlot(guiGraphics, getX() + guiLeft + 116, getY() + guiTop + 2);
 
-        this.inputNbt.render(guiGraphics, mouseX, mouseY, partialTicks);
-        guiGraphics.drawString(fontRenderer, IModHelpers.get().getL10NHelpers().localize(L10NValues.GUI_RECIPE_STRICTNBT), guiLeft + getX() + 24, guiTop + getY() + 3, ARGB.opaque(0), false);
-        this.inputReusable.render(guiGraphics, mouseX, mouseY, partialTicks);
-        guiGraphics.drawString(fontRenderer, IModHelpers.get().getL10NHelpers().localize(L10NValues.GUI_RECIPE_REUSABLE), guiLeft + getX() + 24, guiTop + getY() + 13, ARGB.opaque(0), false);
-        this.inputTags.render(guiGraphics, mouseX, mouseY, partialTicks);
-        guiGraphics.drawString(fontRenderer, IModHelpers.get().getL10NHelpers().localize(L10NValues.GUI_RECIPE_TAGVARIANTS), guiLeft + getX() + 24, guiTop + getY() + 23, ARGB.opaque(0), false);
-        this.inputSave.render(guiGraphics, mouseX, mouseY, partialTicks);
-        this.inputTagsDropdown.render(guiGraphics, mouseX, mouseY, partialTicks);
+        this.inputNbt.extractRenderState(guiGraphics, mouseX, mouseY, partialTicks);
+        guiGraphics.text(fontRenderer, IModHelpers.get().getL10NHelpers().localize(L10NValues.GUI_RECIPE_STRICTNBT), guiLeft + getX() + 24, guiTop + getY() + 3, ARGB.opaque(0), false);
+        this.inputReusable.extractRenderState(guiGraphics, mouseX, mouseY, partialTicks);
+        guiGraphics.text(fontRenderer, IModHelpers.get().getL10NHelpers().localize(L10NValues.GUI_RECIPE_REUSABLE), guiLeft + getX() + 24, guiTop + getY() + 13, ARGB.opaque(0), false);
+        this.inputTags.extractRenderState(guiGraphics, mouseX, mouseY, partialTicks);
+        guiGraphics.text(fontRenderer, IModHelpers.get().getL10NHelpers().localize(L10NValues.GUI_RECIPE_TAGVARIANTS), guiLeft + getX() + 24, guiTop + getY() + 23, ARGB.opaque(0), false);
+        this.inputSave.extractRenderState(guiGraphics, mouseX, mouseY, partialTicks);
+        this.inputTagsDropdown.extractRenderState(guiGraphics, mouseX, mouseY, partialTicks);
     }
 
     @Override
-    public void drawGuiContainerForegroundLayer(GuiGraphics guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, int mouseX, int mouseY) {
+    public void drawGuiContainerForegroundLayer(GuiGraphicsExtractor guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(guiGraphics, guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
 
         if (this.inputTagsDropdown.isFocused()) {
@@ -206,7 +206,7 @@ public abstract class ValueTypeRecipeAdapterLPElementPropertiesSubGui<E extends 
         }
     }
 
-    protected void drawTagsTooltip(GuiGraphics guiGraphics, IDropdownEntry<Identifier> hoveredPossibility, int guiLeft, int guiTop,
+    protected void drawTagsTooltip(GuiGraphicsExtractor guiGraphics, IDropdownEntry<Identifier> hoveredPossibility, int guiLeft, int guiTop,
                                    int mouseX, int mouseY, int columns, int offset) {
         int x = mouseX - guiLeft;
         int y = mouseY - guiTop;
@@ -217,7 +217,7 @@ public abstract class ValueTypeRecipeAdapterLPElementPropertiesSubGui<E extends 
                 .toList();
 
         // Draw background
-        TooltipRenderUtil.renderTooltipBackground(guiGraphics, x, y, Math.min(items.size(), columns) * offset,
+        TooltipRenderUtil.extractTooltipBackground(guiGraphics, x, y, Math.min(items.size(), columns) * offset,
                 ((items.size() % columns == 0 ? 0 : 1) + (items.size() / columns)) * offset, null);
 
         // Draw item grid
@@ -225,7 +225,7 @@ public abstract class ValueTypeRecipeAdapterLPElementPropertiesSubGui<E extends 
         guiGraphics.pose().translate(0, 0);
         int passed = 0;
         for (Item item : items) {
-            guiGraphics.renderItem(new ItemStack(item), x, y);
+            guiGraphics.item(new ItemStack(item), x, y);
             x += offset;
             if (passed++ % columns == columns - 1) {
                 y += offset;

@@ -388,10 +388,12 @@ public class TestBlockOperators {
     public void testBlockTag() throws EvaluationException {
         IValue res1 = Operators.OBJECT_BLOCK_TAG.evaluate(new IVariable[]{bSand});
         Asserts.check(res1 instanceof ValueTypeList.ValueList, "result is a list");
-        TestHelpers.assertEqual(((ValueTypeList.ValueList) res1).getRawValue().getLength(), 19, "size(tag(sand)) = 19");
+        int sandTagCount = (int) Blocks.SAND.defaultBlockState().getBlock().builtInRegistryHolder().tags().count();
+        TestHelpers.assertEqual(((ValueTypeList.ValueList) res1).getRawValue().getLength(), sandTagCount, "size(tag(sand)) = " + sandTagCount);
 
         IValue res2 = Operators.OBJECT_BLOCK_TAG.evaluate(new IVariable[]{bLeaves});
-        TestHelpers.assertEqual(((ValueTypeList.ValueList) res2).getRawValue().getLength(), 8, "size(tag(leaves)) = 8");
+        int leavesTagCount = (int) Blocks.OAK_LEAVES.defaultBlockState().getBlock().builtInRegistryHolder().tags().count();
+        TestHelpers.assertEqual(((ValueTypeList.ValueList) res2).getRawValue().getLength(), leavesTagCount, "size(tag(leaves)) = " + leavesTagCount);
     }
 
     @IntegrationTest(expected = EvaluationException.class)

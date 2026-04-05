@@ -1,10 +1,10 @@
 package org.cyclops.integrateddynamics.client.model;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.BlockModelShaper;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.block.BlockStateModelSet;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.resources.model.ResolvedModel;
 import net.minecraft.client.resources.model.UnbakedModel;
@@ -13,7 +13,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.ItemOwner;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.model.data.ModelData;
@@ -37,7 +37,7 @@ public class CableModel extends CableModelBase {
         super(level, state, facing, rand, modelData, renderType);
     }
 
-    public CableModel(ItemStack itemStack, Level world, ItemOwner entity) {
+    public CableModel(ItemStack itemStack, ClientLevel world, ItemOwner entity) {
         super(itemStack, world, entity);
     }
 
@@ -81,9 +81,8 @@ public class CableModel extends CableModelBase {
         IPartContainer partContainer = ModelHelpers.getSafeProperty(modelData, BlockCable.PARTCONTAINER, null);
         BlockState blockState = partContainer != null && partContainer.hasPart(side) ? partContainer.getPart(side).getBlockState(partContainer, side) : null;
         Minecraft mc = Minecraft.getInstance();
-        BlockRenderDispatcher blockRendererDispatcher = mc.getBlockRenderer();
-        BlockModelShaper blockModelShapes = blockRendererDispatcher.getBlockModelShaper();
-        return blockModelShapes.getBlockModel(blockState);
+        BlockStateModelSet blockModelSet = mc.getModelManager().getBlockStateModelSet();
+        return blockState != null ? blockModelSet.get(blockState) : blockModelSet.missingModel();
     }
 
     @Override
@@ -98,7 +97,7 @@ public class CableModel extends CableModelBase {
 
     @Override
     public List<BakedQuad> handleItemState(@Nullable ItemStack stack, @Nullable Level world, @Nullable ItemOwner entity) {
-        return new CableModel(stack, world, entity).getGeneralQuads();
+        return new CableModel(stack, (ClientLevel) world, entity).getGeneralQuads();
     }
 
     @Override

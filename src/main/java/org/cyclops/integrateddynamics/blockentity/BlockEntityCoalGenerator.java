@@ -7,6 +7,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -177,7 +178,10 @@ public class BlockEntityCoalGenerator extends BlockEntityCableConnectableInvento
                     if (getFuelTime(blockEntity.getInventory().getItem(SLOT_FUEL)) > 0
                             && !(fuel = blockEntity.getInventory().removeItem(SLOT_FUEL, 1)).isEmpty()) {
                         if(blockEntity.getInventory().getItem(SLOT_FUEL).isEmpty()) {
-                            blockEntity.getInventory().setItem(SLOT_FUEL, fuel.getItem().getCraftingRemainder(fuel));
+                            ItemStackTemplate remainder = fuel.getItem().getCraftingRemainder(fuel);
+                            if (remainder != null) {
+                                blockEntity.getInventory().setItem(SLOT_FUEL, remainder.create());
+                            }
                         }
                         blockEntity.currentlyBurningMax = getFuelTime(fuel);
                         blockEntity.currentlyBurning = 0;

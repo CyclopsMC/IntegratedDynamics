@@ -1,6 +1,8 @@
 package org.cyclops.integrateddynamics.recipe;
 
-import net.minecraft.world.item.crafting.CustomRecipe;
+import com.mojang.serialization.MapCodec;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import org.cyclops.cyclopscore.config.extendedconfig.RecipeConfigCommon;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
@@ -10,10 +12,15 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
  */
 public class ItemFacadeRecipeConfig extends RecipeConfigCommon<ItemFacadeRecipe, IntegratedDynamics> {
 
+    public static final RecipeSerializer<ItemFacadeRecipe> SERIALIZER = new RecipeSerializer<>(
+            MapCodec.unit(new ItemFacadeRecipe()),
+            StreamCodec.unit(new ItemFacadeRecipe())
+    );
+
     public ItemFacadeRecipeConfig() {
         super(IntegratedDynamics._instance,
                 "crafting_special_facade",
-                eConfig -> new CustomRecipe.Serializer<>(ItemFacadeRecipe::new));
+                eConfig -> SERIALIZER);
     }
 
 }

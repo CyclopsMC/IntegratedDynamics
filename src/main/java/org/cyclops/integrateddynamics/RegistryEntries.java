@@ -10,7 +10,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeBookCategory;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -157,8 +156,8 @@ public class RegistryEntries {
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<RecipeMechanicalSqueezer>> RECIPESERIALIZER_MECHANICAL_SQUEEZER_FACADE = DeferredHolder.create(Registries.RECIPE_SERIALIZER, Identifier.parse("integrateddynamics:mechanical_squeezer_facade"));
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<RecipeNbtClear>> RECIPESERIALIZER_NBT_CLEAR = DeferredHolder.create(Registries.RECIPE_SERIALIZER, Identifier.parse("integrateddynamics:crafting_special_nbt_clear"));
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<RecipeEnergyContainerCombination>> RECIPESERIALIZER_ENERGY_CONTAINER_COMBINATION = DeferredHolder.create(Registries.RECIPE_SERIALIZER, Identifier.parse("integrateddynamics:crafting_special_energycontainer_combination"));
-    public static final DeferredHolder<RecipeSerializer<?>, CustomRecipe.Serializer<ItemFacadeRecipe>> RECIPESERIALIZER_FACADE = DeferredHolder.create(Registries.RECIPE_SERIALIZER, Identifier.parse("integrateddynamics:crafting_special_facade"));
-    public static final DeferredHolder<RecipeSerializer<?>, CustomRecipe.Serializer<ItemVariableCopyRecipe>> RECIPESERIALIZER_VARIABLE_COPY = DeferredHolder.create(Registries.RECIPE_SERIALIZER, Identifier.parse("integrateddynamics:crafting_special_variable_copy"));
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ItemFacadeRecipe>> RECIPESERIALIZER_FACADE = DeferredHolder.create(Registries.RECIPE_SERIALIZER, Identifier.parse("integrateddynamics:crafting_special_facade"));
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ItemVariableCopyRecipe>> RECIPESERIALIZER_VARIABLE_COPY = DeferredHolder.create(Registries.RECIPE_SERIALIZER, Identifier.parse("integrateddynamics:crafting_special_variable_copy"));
 
     public static final DeferredHolder<SoundEvent, SoundEvent> SOUNDEVENT_EFFECT_PAGE_FLIPSINGLE = DeferredHolder.create(Registries.SOUND_EVENT, Identifier.parse("integrateddynamics:effect_page_flipsingle"));
     public static final DeferredHolder<SoundEvent, SoundEvent> SOUNDEVENT_EFFECT_PAGE_FLIPMULTIPLE = DeferredHolder.create(Registries.SOUND_EVENT, Identifier.parse("integrateddynamics:effect_page_flipmultiple"));

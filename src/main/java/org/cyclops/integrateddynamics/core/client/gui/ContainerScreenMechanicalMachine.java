@@ -1,7 +1,7 @@
 package org.cyclops.integrateddynamics.core.client.gui;
 
 import com.google.common.collect.Lists;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.player.Inventory;
@@ -24,7 +24,7 @@ public abstract class ContainerScreenMechanicalMachine<C extends ContainerMechan
         super(container, playerInventory, title);
     }
 
-    public void drawEnergyBarTooltip(GuiGraphics guiGraphics, int x, int y, int width, int height, int mouseX, int mouseY) {
+    public void drawEnergyBarTooltip(GuiGraphicsExtractor guiGraphics, int x, int y, int width, int height, int mouseX, int mouseY) {
         IModHelpers.get().getGuiHelpers().renderTooltipOptional(this, guiGraphics, 8, 16, 18, 60, mouseX, mouseY, () -> {
             int energyStored = getMenu().getEnergy();
             int energyMax = getMenu().getMaxEnergy();
@@ -37,7 +37,7 @@ public abstract class ContainerScreenMechanicalMachine<C extends ContainerMechan
         });
     }
 
-    public void drawFluidTankTooltip(GuiGraphics guiGraphics, FluidStack fluidStack, int fluidCapacity, int x, int y, int width, int height, int mouseX, int mouseY) {
+    public void drawFluidTankTooltip(GuiGraphicsExtractor guiGraphics, FluidStack fluidStack, int fluidCapacity, int x, int y, int width, int height, int mouseX, int mouseY) {
         IModHelpers.get().getGuiHelpers().renderTooltipOptional(this, guiGraphics, x, y, width, height, mouseX, mouseY, () -> {
             if (fluidStack != null && !fluidStack.isEmpty()) {
                 Component fluidName = fluidStack.getHoverName();
@@ -49,8 +49,8 @@ public abstract class ContainerScreenMechanicalMachine<C extends ContainerMechan
     }
 
     @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int x, int y) {
+    protected void extractLabels(GuiGraphicsExtractor guiGraphics, int x, int y) {
         // super.drawGuiContainerForegroundLayer(matrixStack, x, y);
-        guiGraphics.drawString(font, this.title, this.titleLabelX, this.titleLabelY, ARGB.opaque(4210752), false);
+        guiGraphics.text(font, this.title, this.titleLabelX, this.titleLabelY, ARGB.opaque(4210752), false);
     }
 }

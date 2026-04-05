@@ -1,6 +1,6 @@
 package org.cyclops.integrateddynamics.client.gui.container;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -131,19 +131,19 @@ public class ContainerScreenDelay extends ContainerScreenActiveVariableBase<Cont
     }
 
     @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(guiGraphics, partialTicks, mouseX, mouseY);
-        numberFieldUpdateInterval.render(guiGraphics, mouseX - leftPos, mouseY - topPos, partialTicks);
-        numberFieldCapacity.render(guiGraphics, mouseX - leftPos, mouseY - topPos, partialTicks);
+    public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractBackground(guiGraphics, mouseX, mouseY, partialTicks);
+        numberFieldUpdateInterval.extractRenderState(guiGraphics, mouseX - leftPos, mouseY - topPos, partialTicks);
+        numberFieldCapacity.extractRenderState(guiGraphics, mouseX - leftPos, mouseY - topPos, partialTicks);
         // MCP: drawString
-        guiGraphics.drawString(font, Component.translatable("gui.integrateddynamics.partsettings.update_interval"), leftPos + 8, topPos + 104, IModHelpers.get().getBaseHelpers().RGBAToInt(0, 0, 0, 255), false);
-        guiGraphics.drawString(font, Component.translatable("gui.integrateddynamics.delay.capacity"), leftPos + 8, topPos + 128, IModHelpers.get().getBaseHelpers().RGBAToInt(0, 0, 0, 255), false);
+        guiGraphics.text(font, Component.translatable("gui.integrateddynamics.partsettings.update_interval"), leftPos + 8, topPos + 104, IModHelpers.get().getBaseHelpers().RGBAToInt(0, 0, 0, 255), false);
+        guiGraphics.text(font, Component.translatable("gui.integrateddynamics.delay.capacity"), leftPos + 8, topPos + 128, IModHelpers.get().getBaseHelpers().RGBAToInt(0, 0, 0, 255), false);
     }
 
     @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+    protected void extractLabels(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
         // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
-        guiGraphics.drawString(font, this.title, this.titleLabelX, this.titleLabelY, ARGB.opaque(4210752), false);
+        guiGraphics.text(font, this.title, this.titleLabelX, this.titleLabelY, ARGB.opaque(4210752), false);
         displayErrors.drawForeground(guiGraphics, getMenu().getReadErrors(), getErrorX(), getErrorY(), mouseX, mouseY, this, this.leftPos, this.topPos);
     }
 

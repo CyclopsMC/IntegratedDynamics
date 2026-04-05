@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.client.render.valuetype;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -8,7 +9,6 @@ import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.helper.IModHelpers;
@@ -39,8 +39,7 @@ public class FluidValueTypeWorldRenderer implements IValueTypeWorldRenderer {
             // Fluid
             matrixStack.pushPose();
             TextureAtlasSprite icon = IModHelpersNeoForge.get().getRenderHelpers().getFluidIcon(fluidStack, Direction.UP);
-            IClientFluidTypeExtensions renderProperties = IClientFluidTypeExtensions.of(fluidStack.getFluid());
-            Triple<Float, Float, Float> color = IModHelpers.get().getBaseHelpers().intToRGB(renderProperties.getTintColor(fluidStack));
+            Triple<Float, Float, Float> color = IModHelpers.get().getBaseHelpers().intToRGB(Minecraft.getInstance().getModelManager().getFluidStateModelSet().get(fluidStack.getFluid().defaultFluidState()).fluidTintSource().colorAsStack(fluidStack));
 
             nodeCollector.submitCustomGeometry(matrixStack, RenderTypes.text(icon.atlasLocation()), (pose, vb) -> {
                 float min = 0F;

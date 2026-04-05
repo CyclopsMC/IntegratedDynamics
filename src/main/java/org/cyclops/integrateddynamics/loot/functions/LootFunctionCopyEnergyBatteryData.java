@@ -6,7 +6,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunction;
-import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.capabilities.Capabilities;
@@ -27,7 +26,6 @@ public class LootFunctionCopyEnergyBatteryData extends LootItemConditionalFuncti
     public static final MapCodec<LootFunctionCopyEnergyBatteryData> CODEC = RecordCodecBuilder.mapCodec(
             builder -> commonFields(builder).apply(builder, LootFunctionCopyEnergyBatteryData::new)
     );
-    public static final LootItemFunctionType<LootFunctionCopyEnergyBatteryData> TYPE = new LootItemFunctionType<>(LootFunctionCopyEnergyBatteryData.CODEC);
 
     protected LootFunctionCopyEnergyBatteryData(List<LootItemCondition> conditionsIn) {
         super(conditionsIn);
@@ -47,8 +45,8 @@ public class LootFunctionCopyEnergyBatteryData extends LootItemConditionalFuncti
     }
 
     @Override
-    public LootItemFunctionType getType() {
-        return TYPE;
+    public MapCodec<? extends LootItemConditionalFunction> codec() {
+        return CODEC;
     }
 
 }
