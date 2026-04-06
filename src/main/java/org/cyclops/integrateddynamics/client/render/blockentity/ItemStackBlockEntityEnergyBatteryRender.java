@@ -43,7 +43,7 @@ public class ItemStackBlockEntityEnergyBatteryRender implements SpecialModelRend
         BlockEnergyBatteryBase.itemStackToTile(itemStack, tile);
         BlockEntityRenderer<BlockEntityEnergyBattery, BlockEntityRenderState> renderer = this.blockEntityRenderDispatcher.getRenderer(tile);
         BlockEntityRenderState renderState = renderer.createRenderState();
-        renderer.extractRenderState(tile, renderer.createRenderState(), 0, Vec3.ZERO, null);
+        renderer.extractRenderState(tile, renderState, 0, Vec3.ZERO, null);
         this.blockEntityRenderDispatcher.submit(renderState, poseStack, submitNodeCollector, new CameraRenderState());
     }
 
