@@ -30,8 +30,13 @@ public class ValueObjectTypeRecipeClient extends ValueTypeBaseClient<ValueObject
                         if (!itemStacks.isEmpty()) {
                             ItemStack actualStack = itemStacks.get(0);
                             ItemStackRenderState renderState = new ItemStackRenderState();
-                            Minecraft.getInstance().getItemModelResolver().updateForTopItem(renderState, actualStack, ItemDisplayContext.FIXED, Minecraft.getInstance().level, null, 0);
+                            matrixStack.pushPose();
+                            matrixStack.translate(0.03F, 0F, 0F);
+                            matrixStack.translate(0F, 0F, -0.15F);
+                            matrixStack.scale(0.8F, 0.8F, 0.01F);
+                            Minecraft.getInstance().getItemModelResolver().updateForTopItem(renderState, actualStack, ItemDisplayContext.GUI, Minecraft.getInstance().level, null, 0);
                             renderState.submit(matrixStack, submitNodeCollector, 15728880, OverlayTexture.NO_OVERLAY, 0);
+                            matrixStack.popPose();
                         }
                     });
         }
