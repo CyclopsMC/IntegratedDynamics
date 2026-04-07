@@ -18,7 +18,7 @@ public class FluidLiquidChorusConfig extends FluidConfigNeoForge {
         super(
                 IntegratedDynamics._instance,
                 "liquid_chorus",
-                fluidConfig -> getDefaultFluidProperties(builder -> builder
+                fluidConfig -> getDefaultFluidProperties(fluidConfig, builder -> builder
                                 .density(1500)
                                 .viscosity(3000)
                                 .rarity(Rarity.EPIC)
