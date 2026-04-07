@@ -10,6 +10,8 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProvider;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
 
 /**
  * @author rubensworks
@@ -33,10 +35,13 @@ public record ItemModelVariableOverlay(ItemModelVariableOverlays variableModelBa
         }
 
         @Override
-        public ItemModel bake(BakingContext bakingContext, org.joml.Matrix4fc matrix) {
+        public ItemModel bake(BakingContext bakingContext, Matrix4fc matrix) {
             ItemModelVariableOverlays bakedModel = new ItemModelVariableOverlays();
+            Matrix4f matrixLocal = new Matrix4f(matrix);
+            float offset = 0;
             for(IVariableModelProvider provider : VariableModelProviders.REGISTRY.getProviders()) {
-                bakedModel.setSubModels(provider, provider.bakeOverlayModels(bakingContext));
+                offset += 0.01F;
+                bakedModel.setSubModels(provider, provider.bakeOverlayModels(bakingContext, matrixLocal.translate(0F, 0F, offset)));
             }
             return new ItemModelVariableOverlay(bakedModel);
         }

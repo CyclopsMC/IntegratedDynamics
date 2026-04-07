@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.api.client.model;
 
 import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.client.resources.model.ResolvableModel;
+import org.joml.Matrix4fc;
 
 /**
  * A provider of variable overlay models.
@@ -14,9 +15,10 @@ public interface IVariableModelProvider<B extends IVariableModelProvider.BakedMo
      * Load the models for this provider.
      *
      * @param bakingContext The facadeModel baker.
+     * @param matrix
      * @return The baked moderl provider.
      */
-    public B bakeOverlayModels(ItemModel.BakingContext bakingContext);
+    public B bakeOverlayModels(ItemModel.BakingContext bakingContext, Matrix4fc matrix);
 
     /**
      * Load all required models for this facadeModel provider into the given facadeModel loader.

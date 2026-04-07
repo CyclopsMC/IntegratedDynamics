@@ -6,6 +6,7 @@ import net.minecraft.client.resources.model.ResolvableModel;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProvider;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
+import org.joml.Matrix4fc;
 
 import java.util.Map;
 
@@ -15,13 +16,13 @@ import java.util.Map;
  */
 public class ValueTypeVariableModelProvider implements IVariableModelProvider<BakedMapVariableModelProvider<IValueType>> {
     @Override
-    public BakedMapVariableModelProvider<IValueType> bakeOverlayModels(ItemModel.BakingContext bakingContext) {
+    public BakedMapVariableModelProvider<IValueType> bakeOverlayModels(ItemModel.BakingContext bakingContext, Matrix4fc matrix) {
         Map<IValueType, ItemModel> bakedModels = Maps.newHashMap();
         for(IValueType valueType : ValueTypes.REGISTRY.getValueTypes()) {
             try {
                 ItemModel.Unbaked unbakedModel = ValueTypes.REGISTRY.getClient().getValueTypeModel(valueType);
                 if(unbakedModel != null) {
-                    ItemModel bakedModel = unbakedModel.bake(bakingContext, new org.joml.Matrix4f());
+                    ItemModel bakedModel = unbakedModel.bake(bakingContext, matrix);
                     bakedModels.put(valueType, bakedModel);
                 }
             } catch (Exception e) {

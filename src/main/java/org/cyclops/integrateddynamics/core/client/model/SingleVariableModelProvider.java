@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.client.resources.model.ResolvableModel;
 import net.minecraft.resources.Identifier;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProvider;
+import org.joml.Matrix4fc;
 
 import java.util.List;
 
@@ -22,8 +23,8 @@ public class SingleVariableModelProvider implements IVariableModelProvider<Baked
     }
 
     @Override
-    public BakedSingleVariableModelProvider bakeOverlayModels(ItemModel.BakingContext bakingContext) {
-        return new BakedSingleVariableModelProvider(this.modelUnbaked.bake(bakingContext, new org.joml.Matrix4f()));
+    public BakedSingleVariableModelProvider bakeOverlayModels(ItemModel.BakingContext bakingContext, Matrix4fc matrix) {
+        return new BakedSingleVariableModelProvider(this.modelUnbaked.bake(bakingContext, matrix));
     }
 
     @Override
