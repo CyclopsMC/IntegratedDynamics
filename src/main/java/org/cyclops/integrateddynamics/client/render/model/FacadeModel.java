@@ -15,6 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
+import org.joml.Matrix4f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +51,7 @@ public class FacadeModel implements ItemModel {
                     }
                 }
             }
-            new CuboidItemModelWrapper(List.of(new Constant(-1)), quadBuilder.build(), this.modelrenderproperties, null).update(renderState, itemStack, itemModelResolver, displayContext, level, entity, seed);
+            new CuboidItemModelWrapper(List.of(new Constant(-1)), quadBuilder.build(), this.modelrenderproperties, new Matrix4f()).update(renderState, itemStack, itemModelResolver, displayContext, level, entity, seed);
         }
     }
 }
