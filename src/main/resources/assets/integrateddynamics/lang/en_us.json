@@ -690,6 +690,10 @@
     "aspect.integrateddynamics.write.double.effect.particle.minecraft_trial_omen.info": "Emit a trial omen particle with a certain velocity.",
     "aspect.integrateddynamics.write.double.effect.particle.minecraft_firefly": "Particle: Firefly",
     "aspect.integrateddynamics.write.double.effect.particle.minecraft_firefly.info": "Emit a firefly particle with a certain velocity.",
+    "aspect.integrateddynamics.write.double.effect.particle.minecraft_pause_mob_growth": "Particle: Pause Mob Growth",
+    "aspect.integrateddynamics.write.double.effect.particle.minecraft_pause_mob_growth.info": "Emit a pause mob growth particle with a certain velocity.",
+    "aspect.integrateddynamics.write.double.effect.particle.minecraft_reset_mob_growth": "Particle: Reset Mob Growth",
+    "aspect.integrateddynamics.write.double.effect.particle.minecraft_reset_mob_growth.info": "Emit a reset mob growth particle with a certain velocity.",
 
     "_comment": "# Block aspects",
     "aspect.integrateddynamics.read.boolean.block.block": "Has Block",

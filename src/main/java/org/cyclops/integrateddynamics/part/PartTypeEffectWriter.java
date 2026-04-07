@@ -107,7 +107,9 @@ public class PartTypeEffectWriter extends PartTypeWriteBase<PartTypeEffectWriter
                 Aspects.Write.Effect.createForParticle(ParticleTypes.OMINOUS_SPAWNING),
                 Aspects.Write.Effect.createForParticle(ParticleTypes.RAID_OMEN),
                 Aspects.Write.Effect.createForParticle(ParticleTypes.TRIAL_OMEN),
-                Aspects.Write.Effect.createForParticle(ParticleTypes.FIREFLY)
+                Aspects.Write.Effect.createForParticle(ParticleTypes.FIREFLY),
+                Aspects.Write.Effect.createForParticle(ParticleTypes.PAUSE_MOB_GROWTH),
+                Aspects.Write.Effect.createForParticle(ParticleTypes.RESET_MOB_GROWTH)
         ));
     }
 
