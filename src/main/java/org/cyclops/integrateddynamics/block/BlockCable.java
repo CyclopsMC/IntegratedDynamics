@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.block;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.mojang.serialization.MapCodec;
+import net.minecraft.client.renderer.chunk.RenderSectionRegion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -14,7 +15,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.*;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
@@ -359,6 +359,10 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
         return this.getShape(pState, pLevel, pPos, new CollisionContextBlockSupport());
     }
 
+    @Override
+    public boolean shouldDisplayFluidOverlay(BlockState state, BlockAndLightGetter level, BlockPos pos, FluidState fluidState) {
+        return level instanceof RenderSectionRegion renderSectionRegion && CableHelpers.getFacade(renderSectionRegion.level, pos, state).isPresent();
+    }
 
     /* --------------- Start IDynamicRedstone --------------- */
 
