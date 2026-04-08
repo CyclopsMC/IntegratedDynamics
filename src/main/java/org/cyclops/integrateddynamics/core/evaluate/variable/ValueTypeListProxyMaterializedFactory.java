@@ -1,9 +1,11 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.ImmutableList;
+import net.minecraft.nbt.ByteTag;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.LongTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import org.cyclops.integrateddynamics.Reference;
@@ -67,12 +69,31 @@ public class ValueTypeListProxyMaterializedFactory implements IValueTypeListProx
         if (!tag.contains("valueType", Tag.TAG_STRING)) {
             throw new IValueTypeListProxyFactoryTypeRegistry.SerializationException(String.format("Could not deserialize the materialized list value '%s' as it is missing a valueType.", value));
         }
-        // This tag rewrite needed for loading variables in advancement icons
+        // These tag rewrites are needed for loading variables in advancement icons,
+        // and also to handle the case where Minecraft's NbtOps codec converts
+        // ListTag<ByteTag> -> ByteArrayTag, ListTag<IntTag> -> IntArrayTag, ListTag<LongTag> -> LongArrayTag
+        // during serialization (e.g. when saving item NBT).
         if (tag.contains("values", Tag.TAG_BYTE_ARRAY)) {
             byte[] byteArray = tag.getByteArray("values");
             ListTag list = new ListTag();
             for (byte b : byteArray) {
-                list.add(IntTag.valueOf(b));
+                list.add(ByteTag.valueOf(b));
+            }
+            tag.put("values", list);
+        }
+        if (tag.contains("values", Tag.TAG_INT_ARRAY)) {
+            int[] intArray = tag.getIntArray("values");
+            ListTag list = new ListTag();
+            for (int i : intArray) {
+                list.add(IntTag.valueOf(i));
+            }
+            tag.put("values", list);
+        }
+        if (tag.contains("values", Tag.TAG_LONG_ARRAY)) {
+            long[] longArray = tag.getLongArray("values");
+            ListTag list = new ListTag();
+            for (long l : longArray) {
+                list.add(LongTag.valueOf(l));
             }
             tag.put("values", list);
         }
