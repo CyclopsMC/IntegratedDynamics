@@ -15,6 +15,10 @@ import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
+import java.util.function.Supplier;
+
+import org.cyclops.integrateddynamics.api.part.aspect.IAspectVariable;
+
 import static org.cyclops.integrateddynamics.gametest.GameTestHelpersIntegratedDynamics.testReadAspect;
 import static org.cyclops.integrateddynamics.gametest.GameTestHelpersIntegratedDynamics.testReadAspectPredicate;
 
@@ -55,22 +59,42 @@ public class GameTestsAspectsReadWorld {
 
     @GameTest(template = TEMPLATE_EMPTY, environment = Reference.MOD_ID + ":time_day")
     public void testAspectsReadWorldIsDayTrue(GameTestHelper helper) {
-        testReadAspect(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.BOOLEAN_ISDAY, ValueTypeBoolean.ValueBoolean.of(true));
+        Supplier<IAspectVariable> variableSupplier = GameTestHelpersIntegratedDynamics.testReadAspectSetup(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.BOOLEAN_ISDAY);
+        helper.succeedWhen(() -> {
+            helper.getLevel().registryAccess().get(WorldClocks.OVERWORLD).ifPresent(clockHolder ->
+                    ((ServerLevel) helper.getLevel()).clockManager().setTotalTicks(clockHolder, 1000L));
+            GameTestHelpersIntegratedDynamics.assertValueEqual(helper, variableSupplier.get(), ValueTypeBoolean.ValueBoolean.of(true));
+        });
     }
 
     @GameTest(template = TEMPLATE_EMPTY, environment = Reference.MOD_ID + ":time_night")
     public void testAspectsReadWorldIsDayFalse(GameTestHelper helper) {
-        testReadAspect(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.BOOLEAN_ISDAY, ValueTypeBoolean.ValueBoolean.of(false));
+        Supplier<IAspectVariable> variableSupplier = GameTestHelpersIntegratedDynamics.testReadAspectSetup(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.BOOLEAN_ISDAY);
+        helper.succeedWhen(() -> {
+            helper.getLevel().registryAccess().get(WorldClocks.OVERWORLD).ifPresent(clockHolder ->
+                    ((ServerLevel) helper.getLevel()).clockManager().setTotalTicks(clockHolder, 13000L));
+            GameTestHelpersIntegratedDynamics.assertValueEqual(helper, variableSupplier.get(), ValueTypeBoolean.ValueBoolean.of(false));
+        });
     }
 
     @GameTest(template = TEMPLATE_EMPTY, environment = Reference.MOD_ID + ":time_night")
     public void testAspectsReadWorldIsNightTrue(GameTestHelper helper) {
-        testReadAspect(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.BOOLEAN_ISNIGHT, ValueTypeBoolean.ValueBoolean.of(true));
+        Supplier<IAspectVariable> variableSupplier = GameTestHelpersIntegratedDynamics.testReadAspectSetup(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.BOOLEAN_ISNIGHT);
+        helper.succeedWhen(() -> {
+            helper.getLevel().registryAccess().get(WorldClocks.OVERWORLD).ifPresent(clockHolder ->
+                    ((ServerLevel) helper.getLevel()).clockManager().setTotalTicks(clockHolder, 13000L));
+            GameTestHelpersIntegratedDynamics.assertValueEqual(helper, variableSupplier.get(), ValueTypeBoolean.ValueBoolean.of(true));
+        });
     }
 
     @GameTest(template = TEMPLATE_EMPTY, environment = Reference.MOD_ID + ":time_day")
     public void testAspectsReadWorldIsNightFalse(GameTestHelper helper) {
-        testReadAspect(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.BOOLEAN_ISNIGHT, ValueTypeBoolean.ValueBoolean.of(false));
+        Supplier<IAspectVariable> variableSupplier = GameTestHelpersIntegratedDynamics.testReadAspectSetup(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.BOOLEAN_ISNIGHT);
+        helper.succeedWhen(() -> {
+            helper.getLevel().registryAccess().get(WorldClocks.OVERWORLD).ifPresent(clockHolder ->
+                    ((ServerLevel) helper.getLevel()).clockManager().setTotalTicks(clockHolder, 1000L));
+            GameTestHelpersIntegratedDynamics.assertValueEqual(helper, variableSupplier.get(), ValueTypeBoolean.ValueBoolean.of(false));
+        });
     }
 
     @GameTest(template = TEMPLATE_EMPTY, environment = Reference.MOD_ID + ":weather_clear2")
