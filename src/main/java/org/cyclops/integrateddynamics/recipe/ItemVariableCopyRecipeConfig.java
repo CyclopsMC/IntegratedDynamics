@@ -12,10 +12,14 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
  */
 public class ItemVariableCopyRecipeConfig extends RecipeConfigCommon<ItemVariableCopyRecipe, IntegratedDynamics> {
 
-    public static final RecipeSerializer<ItemVariableCopyRecipe> SERIALIZER = new RecipeSerializer<>(
-            MapCodec.unit(new ItemVariableCopyRecipe()),
-            StreamCodec.unit(new ItemVariableCopyRecipe())
-    );
+    public static final RecipeSerializer<ItemVariableCopyRecipe> SERIALIZER;
+    static {
+        ItemVariableCopyRecipe recipe = new ItemVariableCopyRecipe();
+        SERIALIZER = new RecipeSerializer<>(
+                MapCodec.unit(recipe),
+                StreamCodec.unit(recipe)
+        );
+    }
 
     public ItemVariableCopyRecipeConfig() {
         super(IntegratedDynamics._instance,
