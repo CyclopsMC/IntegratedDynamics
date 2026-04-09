@@ -39,7 +39,8 @@ public class FluidValueTypeWorldRenderer implements IValueTypeWorldRenderer {
             // Fluid
             matrixStack.pushPose();
             TextureAtlasSprite icon = IModHelpersNeoForge.get().getRenderHelpers().getFluidIcon(fluidStack, Direction.UP);
-            Triple<Float, Float, Float> color = IModHelpers.get().getBaseHelpers().intToRGB(Minecraft.getInstance().getModelManager().getFluidStateModelSet().get(fluidStack.getFluid().defaultFluidState()).fluidTintSource().colorAsStack(fluidStack));
+            var fluidTintSource = Minecraft.getInstance().getModelManager().getFluidStateModelSet().get(fluidStack.getFluid().defaultFluidState()).fluidTintSource();
+            Triple<Float, Float, Float> color = IModHelpers.get().getBaseHelpers().intToRGB(fluidTintSource != null ? fluidTintSource.colorAsStack(fluidStack) : 0xFFFFFFFF);
 
             nodeCollector.submitCustomGeometry(matrixStack, RenderTypes.text(icon.atlasLocation()), (pose, vb) -> {
                 float min = 0F;

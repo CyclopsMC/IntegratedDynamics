@@ -68,7 +68,8 @@ public class RenderBlockEntityDryingBasin implements BlockEntityRenderer<BlockEn
             int i3 = brightness & 0xFFFF;
 
             TextureAtlasSprite icon = IModHelpersNeoForge.get().getRenderHelpers().getFluidIcon(fluid, Direction.UP);
-            Triple<Float, Float, Float> color = IModHelpers.get().getBaseHelpers().intToRGB(Minecraft.getInstance().getModelManager().getFluidStateModelSet().get(fluid.getFluid().defaultFluidState()).fluidTintSource().colorAsStack(fluid));
+            var fluidTintSource = Minecraft.getInstance().getModelManager().getFluidStateModelSet().get(fluid.getFluid().defaultFluidState()).fluidTintSource();
+            Triple<Float, Float, Float> color = IModHelpers.get().getBaseHelpers().intToRGB(fluidTintSource != null ? fluidTintSource.colorAsStack(fluid) : 0xFFFFFFFF);
 
             submitNodeCollector.submitCustomGeometry(poseStack, RenderTypes.text(icon.atlasLocation()), (pose, vb) -> {
                 vb.addVertex(pose, 0.0625F, height, 0.0625F).setColor(color.getLeft(), color.getMiddle(), color.getRight(), 1).setUv(icon.getU0(), icon.getV1()).setUv2(l2, i3);
