@@ -116,7 +116,8 @@ public class RenderBlockEntitySqueezer implements BlockEntityRenderer<BlockEntit
 
                 for(Direction side : DirectionHelpers.DIRECTIONS) {
                     TextureAtlasSprite icon = IModHelpersNeoForge.get().getRenderHelpers().getFluidIcon(fluid, Direction.UP);
-                    Triple<Float, Float, Float> color = IModHelpers.get().getBaseHelpers().intToRGB(Minecraft.getInstance().getModelManager().getFluidStateModelSet().get(fluid.getFluid().defaultFluidState()).fluidTintSource().colorAsStack(fluid));
+                    var fluidTintSource = Minecraft.getInstance().getModelManager().getFluidStateModelSet().get(fluid.getFluid().defaultFluidState()).fluidTintSource();
+                    Triple<Float, Float, Float> color = IModHelpers.get().getBaseHelpers().intToRGB(fluidTintSource != null ? fluidTintSource.colorAsStack(fluid) : 0xFFFFFFFF);
 
                     submitNodeCollector.submitCustomGeometry(poseStack, RenderTypes.text(icon.atlasLocation()), (pose, vb) -> {
                         float[][] c = coordinates[side.ordinal()];
