@@ -57,7 +57,7 @@ public class GameTestsAspectsReadWorld {
         testReadAspect(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.BOOLEAN_WEATHER_THUNDER, ValueTypeBoolean.ValueBoolean.of(false));
     }
 
-    @GameTest(template = TEMPLATE_EMPTY, environment = Reference.MOD_ID + ":time_day_isday")
+    @GameTest(template = TEMPLATE_EMPTY, environment = Reference.MOD_ID + ":time_day")
     public void testAspectsReadWorldIsDayTrue(GameTestHelper helper) {
         Supplier<IAspectVariable> variableSupplier = GameTestHelpersIntegratedDynamics.testReadAspectSetup(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.BOOLEAN_ISDAY);
         helper.succeedWhen(() -> {
@@ -77,7 +77,7 @@ public class GameTestsAspectsReadWorld {
         testReadAspect(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.BOOLEAN_ISNIGHT, ValueTypeBoolean.ValueBoolean.of(true));
     }
 
-    @GameTest(template = TEMPLATE_EMPTY, environment = Reference.MOD_ID + ":time_day_isnight_false")
+    @GameTest(template = TEMPLATE_EMPTY, environment = Reference.MOD_ID + ":time_day")
     public void testAspectsReadWorldIsNightFalse(GameTestHelper helper) {
         Supplier<IAspectVariable> variableSupplier = GameTestHelpersIntegratedDynamics.testReadAspectSetup(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.BOOLEAN_ISNIGHT);
         helper.succeedWhen(() -> {
