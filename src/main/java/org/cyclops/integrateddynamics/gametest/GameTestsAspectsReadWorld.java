@@ -53,7 +53,7 @@ public class GameTestsAspectsReadWorld {
         testReadAspect(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.BOOLEAN_WEATHER_THUNDER, ValueTypeBoolean.ValueBoolean.of(false));
     }
 
-    @GameTest(template = TEMPLATE_EMPTY, environment = Reference.MOD_ID + ":time_day")
+    @GameTest(template = TEMPLATE_EMPTY, environment = Reference.MOD_ID + ":time_day_isday")
     public void testAspectsReadWorldIsDayTrue(GameTestHelper helper) {
         testReadAspect(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.BOOLEAN_ISDAY, ValueTypeBoolean.ValueBoolean.of(true));
     }
@@ -68,7 +68,7 @@ public class GameTestsAspectsReadWorld {
         testReadAspect(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.BOOLEAN_ISNIGHT, ValueTypeBoolean.ValueBoolean.of(true));
     }
 
-    @GameTest(template = TEMPLATE_EMPTY, environment = Reference.MOD_ID + ":time_day")
+    @GameTest(template = TEMPLATE_EMPTY, environment = Reference.MOD_ID + ":time_day_isnight_false")
     public void testAspectsReadWorldIsNightFalse(GameTestHelper helper) {
         testReadAspect(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.BOOLEAN_ISNIGHT, ValueTypeBoolean.ValueBoolean.of(false));
     }
