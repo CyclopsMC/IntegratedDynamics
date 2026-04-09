@@ -69,12 +69,22 @@ public class GameTestsAspectsReadWorld {
 
     @GameTest(template = TEMPLATE_EMPTY, environment = Reference.MOD_ID + ":time_night")
     public void testAspectsReadWorldIsDayFalse(GameTestHelper helper) {
-        testReadAspect(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.BOOLEAN_ISDAY, ValueTypeBoolean.ValueBoolean.of(false));
+        Supplier<IAspectVariable> variableSupplier = GameTestHelpersIntegratedDynamics.testReadAspectSetup(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.BOOLEAN_ISDAY);
+        helper.succeedWhen(() -> {
+            helper.getLevel().registryAccess().get(WorldClocks.OVERWORLD).ifPresent(clockHolder ->
+                    ((ServerLevel) helper.getLevel()).clockManager().setTotalTicks(clockHolder, 13000L));
+            GameTestHelpersIntegratedDynamics.assertValueEqual(helper, variableSupplier.get(), ValueTypeBoolean.ValueBoolean.of(false));
+        });
     }
 
     @GameTest(template = TEMPLATE_EMPTY, environment = Reference.MOD_ID + ":time_night")
     public void testAspectsReadWorldIsNightTrue(GameTestHelper helper) {
-        testReadAspect(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.BOOLEAN_ISNIGHT, ValueTypeBoolean.ValueBoolean.of(true));
+        Supplier<IAspectVariable> variableSupplier = GameTestHelpersIntegratedDynamics.testReadAspectSetup(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.BOOLEAN_ISNIGHT);
+        helper.succeedWhen(() -> {
+            helper.getLevel().registryAccess().get(WorldClocks.OVERWORLD).ifPresent(clockHolder ->
+                    ((ServerLevel) helper.getLevel()).clockManager().setTotalTicks(clockHolder, 13000L));
+            GameTestHelpersIntegratedDynamics.assertValueEqual(helper, variableSupplier.get(), ValueTypeBoolean.ValueBoolean.of(true));
+        });
     }
 
     @GameTest(template = TEMPLATE_EMPTY, environment = Reference.MOD_ID + ":time_day")
