@@ -278,7 +278,7 @@ artifacts {
 // Replace properties in files
 processResources {
     def expandProps = [
-            'mod_version'                           : mod_version,
+            'mod_version'                           : project.version,
             'group'                                 : project.group, //Else we target the task's group.
             'minecraft_version'                     : minecraft_version,
             'mod_name'                              : mod_name,
