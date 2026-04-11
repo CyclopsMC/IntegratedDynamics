@@ -50,7 +50,7 @@ public class RecipeSqueezer implements Recipe<CraftingInput> {
     public List<Pair<? extends SlotDisplay, Float>> getOutputItemsAsSlots() {
         return this.getOutputItems().stream().map(i -> i.ingredient.map(
                 left -> Pair.of(new SlotDisplay.ItemSlotDisplay(left.getLeft().item()), left.getRight()),
-                right -> Pair.of(right.getLeft().getIngredient().display(), right.getRight())
+                right -> Pair.of((SlotDisplay) new SlotDisplay.TagSlotDisplay(right.getLeft().getTag()), right.getRight())
         )).toList();
     }
 
