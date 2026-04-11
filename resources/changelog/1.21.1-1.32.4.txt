@@ -1,0 +1,8 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.26.0 or higher.
+
+Changes:
+* Give Delayer its own energy consumption config separate from Proxy (#1641), Closes #1640
+
+Fixes:
+* Fix constant list Variable Card deserialization failure after world reload (#1639), Closes #1639
