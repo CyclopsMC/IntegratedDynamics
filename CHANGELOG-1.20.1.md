@@ -1,8 +1,15 @@
 # Changelog for Minecraft 1.20.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.20.1-1.30.3"></a>
+## [1.20.1-1.30.3](/compare/1.20.1-1.30.2...1.20.1-1.30.3) - 2026-04-11 19:53:57
+
+
+### Changed
+* Give Delayer its own energy consumption config separate from Proxy (#1641), Closes #1640
+
 <a name="1.20.1-1.30.2"></a>
-## [1.20.1-1.30.2](/compare/1.20.1-1.30.1...1.20.1-1.30.2) - 2026-03-28 09:55:51
+## [1.20.1-1.30.2](/compare/1.20.1-1.30.1...1.20.1-1.30.2) - 2026-03-28 09:55:51 +0100
 
 
 ### Added

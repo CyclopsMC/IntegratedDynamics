@@ -1,8 +1,18 @@
 # Changelog for Minecraft 1.21.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.21.1-1.32.4"></a>
+## [1.21.1-1.32.4](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.32.3...1.21.1-1.32.4) - 2026-04-11 19:55:58
+
+
+### Changed
+* Give Delayer its own energy consumption config separate from Proxy (#1641), Closes #1640
+
+### Fixed
+* Fix constant list Variable Card deserialization failure after world reload (#1639), Closes #1639
+
 <a name="1.21.1-1.32.3"></a>
-## [1.21.1-1.32.3](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.32.2...1.21.1-1.32.3) - 2026-03-28 10:18:26
+## [1.21.1-1.32.3](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.32.2...1.21.1-1.32.3) - 2026-03-28 10:18:26 +0100
 
 
 ### Added

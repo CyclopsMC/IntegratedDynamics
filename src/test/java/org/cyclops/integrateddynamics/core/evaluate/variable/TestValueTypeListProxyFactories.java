@@ -1,7 +1,10 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
 import com.google.common.collect.Lists;
+import net.minecraft.nbt.ByteArrayTag;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.IntArrayTag;
+import net.minecraft.nbt.LongArrayTag;
 import org.cyclops.cyclopscore.helper.CyclopsCoreInstance;
 import org.cyclops.integrateddynamics.ModBaseMocked;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxy;
@@ -61,6 +64,81 @@ public class TestValueTypeListProxyFactories {
                 ValueTypes.BOOLEAN,
                 Lists.newArrayList(ValueTypeBoolean.ValueBoolean.of(true))
         ));
+    }
+
+    @Test
+    public void testMaterializedIntegerListFromIntArrayTag() throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+        // Simulate codec round-trip: ListTag<IntTag> -> IntArrayTag (as done by Minecraft's NbtOps)
+        ValueTypeListProxyMaterialized<?, ?> proxy = new ValueTypeListProxyMaterialized<>(
+                ValueTypes.INTEGER,
+                Lists.newArrayList(ValueTypeInteger.ValueInteger.of(42))
+        );
+        CompoundTag tag = serialize(o -> {
+            try {
+                ValueTypeListProxyFactories.REGISTRY.serialize(o, proxy);
+            } catch (IValueTypeListProxyFactoryTypeRegistry.SerializationException e) {
+                throw new RuntimeException(e);
+            }
+        }, ValueDeseralizationContextMocked.get().holderLookupProvider());
+        tag.put("values", new IntArrayTag(new int[]{42}));
+        IValueTypeListProxy<?, ?> proxyNew = deserialize(tag, valueInput -> {
+            try {
+                return ValueTypeListProxyFactories.REGISTRY.deserialize(valueInput);
+            } catch (IValueTypeListProxyFactoryTypeRegistry.SerializationException e) {
+                throw new RuntimeException(e);
+            }
+        }, ValueDeseralizationContextMocked.get().holderLookupProvider());
+        assertThat(proxyNew, equalTo(proxy));
+    }
+
+    @Test
+    public void testMaterializedLongListFromLongArrayTag() throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+        // Simulate codec round-trip: ListTag<LongTag> -> LongArrayTag (as done by Minecraft's NbtOps)
+        ValueTypeListProxyMaterialized<?, ?> proxy = new ValueTypeListProxyMaterialized<>(
+                ValueTypes.LONG,
+                Lists.newArrayList(ValueTypeLong.ValueLong.of(123L))
+        );
+        CompoundTag tag = serialize(o -> {
+            try {
+                ValueTypeListProxyFactories.REGISTRY.serialize(o, proxy);
+            } catch (IValueTypeListProxyFactoryTypeRegistry.SerializationException e) {
+                throw new RuntimeException(e);
+            }
+        }, ValueDeseralizationContextMocked.get().holderLookupProvider());
+        tag.put("values", new LongArrayTag(new long[]{123L}));
+        IValueTypeListProxy<?, ?> proxyNew = deserialize(tag, valueInput -> {
+            try {
+                return ValueTypeListProxyFactories.REGISTRY.deserialize(valueInput);
+            } catch (IValueTypeListProxyFactoryTypeRegistry.SerializationException e) {
+                throw new RuntimeException(e);
+            }
+        }, ValueDeseralizationContextMocked.get().holderLookupProvider());
+        assertThat(proxyNew, equalTo(proxy));
+    }
+
+    @Test
+    public void testMaterializedBooleanListFromByteArrayTag() throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
+        // Simulate codec round-trip: ListTag<ByteTag> -> ByteArrayTag (as done by Minecraft's NbtOps)
+        ValueTypeListProxyMaterialized<?, ?> proxy = new ValueTypeListProxyMaterialized<>(
+                ValueTypes.BOOLEAN,
+                Lists.newArrayList(ValueTypeBoolean.ValueBoolean.of(true))
+        );
+        CompoundTag tag = serialize(o -> {
+            try {
+                ValueTypeListProxyFactories.REGISTRY.serialize(o, proxy);
+            } catch (IValueTypeListProxyFactoryTypeRegistry.SerializationException e) {
+                throw new RuntimeException(e);
+            }
+        }, ValueDeseralizationContextMocked.get().holderLookupProvider());
+        tag.put("values", new ByteArrayTag(new byte[]{(byte) 1}));
+        IValueTypeListProxy<?, ?> proxyNew = deserialize(tag, valueInput -> {
+            try {
+                return ValueTypeListProxyFactories.REGISTRY.deserialize(valueInput);
+            } catch (IValueTypeListProxyFactoryTypeRegistry.SerializationException e) {
+                throw new RuntimeException(e);
+            }
+        }, ValueDeseralizationContextMocked.get().holderLookupProvider());
+        assertThat(proxyNew, equalTo(proxy));
     }
 
     @Test
