@@ -1,0 +1,9 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.25.5 or higher.
+
+Changes:
+* Restore JEI and Terrablender mod compats
+
+Fixes:
+* Fix constant list Variable Card deserialization failure after world reload (#1639), Closes #1639
+* Give Delayer its own energy consumption config separate from Proxy (#1641), Closes #1640
