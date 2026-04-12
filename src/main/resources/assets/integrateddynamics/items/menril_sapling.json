@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "integrateddynamics:block/menril_sapling"
+    "model": "integrateddynamics:item/menril_sapling"
   }
 }
