@@ -85,10 +85,34 @@ public class BlockEntityMechanicalDryingBasin extends BlockEntityMechanicalMachi
         return new SingleCache.ICacheUpdater<Pair<ItemStack, FluidStack>, Optional<RecipeHolder<RecipeMechanicalDryingBasin>>>() {
             @Override
             public Optional<RecipeHolder<RecipeMechanicalDryingBasin>> getNewValue(Pair<ItemStack, FluidStack> key) {
+                // First, try matching with both item and fluid inputs
                 IInventoryFluid recipeInput = new InventoryFluid(
                         NonNullList.of(ItemStack.EMPTY, key.getLeft()),
                         NonNullList.of(FluidStack.EMPTY, key.getRight()));
-                return IModHelpers.get().getCraftingHelpers().findRecipe(getRecipeRegistry(), recipeInput, getLevel());
+                Optional<RecipeHolder<RecipeMechanicalDryingBasin>> recipe = IModHelpers.get().getCraftingHelpers().findRecipe(getRecipeRegistry(), recipeInput, getLevel());
+                if (recipe.isPresent()) {
+                    return recipe;
+                }
+
+                // If both item and fluid are present but no combined recipe was found,
+                // try item-only, then fluid-only, to handle the case where the machine has
+                // two separate types of inputs and should process one at a time.
+                if (!key.getLeft().isEmpty() && !key.getRight().isEmpty()) {
+                    recipeInput = new InventoryFluid(
+                            NonNullList.of(ItemStack.EMPTY, key.getLeft()),
+                            NonNullList.of(FluidStack.EMPTY, FluidStack.EMPTY));
+                    recipe = IModHelpers.get().getCraftingHelpers().findRecipe(getRecipeRegistry(), recipeInput, getLevel());
+                    if (recipe.isPresent()) {
+                        return recipe;
+                    }
+
+                    recipeInput = new InventoryFluid(
+                            NonNullList.of(ItemStack.EMPTY, ItemStack.EMPTY),
+                            NonNullList.of(FluidStack.EMPTY, key.getRight()));
+                    return IModHelpers.get().getCraftingHelpers().findRecipe(getRecipeRegistry(), recipeInput, getLevel());
+                }
+
+                return Optional.empty();
             }
 
             @Override

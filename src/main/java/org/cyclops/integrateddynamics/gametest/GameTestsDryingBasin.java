@@ -50,6 +50,24 @@ public class GameTestsDryingBasin {
         });
     }
 
+    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = 200)
+    public void testDryingBasinItemAndFluidInputs(GameTestHelper helper) {
+        // Place machine
+        helper.setBlock(POS, RegistryEntries.BLOCK_DRYING_BASIN.value());
+        BlockEntityDryingBasin machine = helper.getBlockEntity(POS, BlockEntityDryingBasin.class);
+
+        // Set both item and fluid inputs simultaneously
+        machine.getInventory().setItem(0, new ItemStack(Items.ROTTEN_FLESH));
+        machine.getTank().setFluid(new FluidStack(RegistryEntries.FLUID_MENRIL_RESIN.get(), 1_000));
+
+        helper.succeedWhen(() -> {
+            // The item-only recipe (rotten_flesh -> leather) should run despite fluid being present.
+            // The fluid recipe cannot run afterwards because leather (the output) occupies slot 0.
+            helper.assertValueEqual(machine.getInventory().getItem(0).getItem(), Items.LEATHER, Component.literal("Machine did not process item-only recipe (rotten flesh -> leather)"));
+            helper.assertValueEqual(machine.getTank().getFluid().getAmount(), 1_000, Component.literal("Menril resin should still be in tank (fluid recipe cannot run while leather is in slot 0)"));
+        });
+    }
+
     @GameTest(template = TEMPLATE_EMPTY)
     public void testDryingBasinPlaceSingleItem(GameTestHelper helper) {
         // Place machine
