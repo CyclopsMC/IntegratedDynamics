@@ -90,10 +90,26 @@ public class BlockEntityDryingBasin extends CyclopsBlockEntity {
         recipeCache = new SingleCache<>(new SingleCache.ICacheUpdater<Pair<ItemStack, FluidStack>, Optional<RecipeHolder<RecipeDryingBasin>>>() {
             @Override
             public Optional<RecipeHolder<RecipeDryingBasin>> getNewValue(Pair<ItemStack, FluidStack> key) {
+                // First, try matching with both item and fluid inputs
                 IInventoryFluid recipeInput = new InventoryFluid(
                         NonNullList.of(ItemStack.EMPTY, key.getLeft()),
                         NonNullList.of(FluidStack.EMPTY, key.getRight()));
-                return IModHelpers.get().getCraftingHelpers().findRecipe(getRegistry(), recipeInput, getLevel());
+                Optional<RecipeHolder<RecipeDryingBasin>> recipe = IModHelpers.get().getCraftingHelpers().findRecipe(getRegistry(), recipeInput, getLevel());
+                if (recipe.isPresent()) {
+                    return recipe;
+                }
+
+                // If both item and fluid are present but no combined recipe was found,
+                // try item-only, to handle the case where the machine has two separate
+                // types of inputs and should process one at a time.
+                if (!key.getLeft().isEmpty() && !key.getRight().isEmpty()) {
+                    recipeInput = new InventoryFluid(
+                            NonNullList.of(ItemStack.EMPTY, key.getLeft()),
+                            NonNullList.of(FluidStack.EMPTY, FluidStack.EMPTY));
+                    return IModHelpers.get().getCraftingHelpers().findRecipe(getRegistry(), recipeInput, getLevel());
+                }
+
+                return Optional.empty();
             }
 
             @Override
