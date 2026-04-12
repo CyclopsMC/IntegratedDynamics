@@ -1,9 +1,14 @@
 package org.cyclops.integrateddynamics.gametest;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BucketPickup;
 import net.minecraft.world.level.block.Blocks;
@@ -28,10 +33,14 @@ public class GameTestsFluids {
                 helper.getBlockState(POS).getBlock() == RegistryEntries.BLOCK_FLUID_MENRIL_RESIN.value(),
                 Component.literal("Menril resin fluid block was not placed"));
 
-        // Place a solid block where the fluid is
-        helper.setBlock(POS, Blocks.DIRT);
+        // Place a solid block where the fluid is using a player with an ItemStack,
+        // which triggers the replaceable check
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        ItemStack dirtStack = new ItemStack(Items.DIRT);
+        player.setItemInHand(InteractionHand.MAIN_HAND, dirtStack);
+        helper.placeAt(player, dirtStack, POS.south(), Direction.NORTH);
 
-        // Verify the fluid was replaced
+        // Verify the fluid was replaced by the placed block
         helper.succeedWhen(() -> helper.assertBlockPresent(Blocks.DIRT, POS));
     }
 
@@ -70,10 +79,14 @@ public class GameTestsFluids {
                 helper.getBlockState(POS).getBlock() == RegistryEntries.BLOCK_FLUID_LIQUID_CHORUS.value(),
                 Component.literal("Liquid chorus fluid block was not placed"));
 
-        // Place a solid block where the fluid is
-        helper.setBlock(POS, Blocks.DIRT);
+        // Place a solid block where the fluid is using a player with an ItemStack,
+        // which triggers the replaceable check
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        ItemStack dirtStack = new ItemStack(Items.DIRT);
+        player.setItemInHand(InteractionHand.MAIN_HAND, dirtStack);
+        helper.placeAt(player, dirtStack, POS.south(), Direction.NORTH);
 
-        // Verify the fluid was replaced
+        // Verify the fluid was replaced by the placed block
         helper.succeedWhen(() -> helper.assertBlockPresent(Blocks.DIRT, POS));
     }
 
