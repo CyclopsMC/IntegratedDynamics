@@ -93,7 +93,7 @@ public class BlockDryingBasin extends BlockWithEntityGui {
                         return InteractionResult.SUCCESS;
                     } else if (itemAccess.getAmount() > 0 && tileStack.isEmpty()) {
                         tile.getInventory().setItem(0, itemAccess.getResource().toStack());
-                        if(itemAccess.getAmount() == 1) player.getInventory().setItem(player.getInventory().getSelectedSlot(), ItemStack.EMPTY);
+                        player.getInventory().getItem(player.getInventory().getSelectedSlot()).shrink(1);
                         tile.sendUpdate();
                         return InteractionResult.SUCCESS;
                     }
