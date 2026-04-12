@@ -55,7 +55,7 @@ public class GameTestsFluids {
         ItemStack result = ((BucketPickup) state.getBlock()).pickupBlock(null, level, absPos, state);
 
         helper.succeedWhen(() -> {
-            helper.assertTrue(!result.isEmpty(), Component.literal("Bucket pickup returned an empty ItemStack"));
+            helper.assertFalse(result.isEmpty(), Component.literal("Bucket pickup returned an empty ItemStack"));
             helper.assertTrue(
                     result.getItem() == RegistryEntries.ITEM_BUCKET_MENRIL_RESIN.get(),
                     Component.literal("Bucket pickup returned wrong item: " + result));
@@ -97,7 +97,7 @@ public class GameTestsFluids {
         ItemStack result = ((BucketPickup) state.getBlock()).pickupBlock(null, level, absPos, state);
 
         helper.succeedWhen(() -> {
-            helper.assertTrue(!result.isEmpty(), Component.literal("Bucket pickup returned an empty ItemStack"));
+            helper.assertFalse(result.isEmpty(), Component.literal("Bucket pickup returned an empty ItemStack"));
             helper.assertTrue(
                     result.getItem() == RegistryEntries.ITEM_BUCKET_LIQUID_CHORUS.get(),
                     Component.literal("Bucket pickup returned wrong item: " + result));
