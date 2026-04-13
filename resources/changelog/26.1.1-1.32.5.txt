@@ -1,0 +1,12 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.25.5 or higher.
+
+Additions:
+* Add c:clumps tag to Crystalized Menril Chunk (#1659), Closes #1656
+* Add translations through Crowdin (#1649)
+
+Fixes:
+* Fix Menril Resin and Liquid Chorus fluids being non-interactable in world (#1658), Closes #1657
+* Fix drying basin stalling when both item and fluid inputs are present (#1655)
+* Fix drying basin not consuming items when right-clicked with a stack (#1654), Closes #1652
+* Fix incorrect item model for Menril Sapling
