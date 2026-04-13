@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.block;
 
 
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.material.PushReaction;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfigCommon;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
@@ -20,8 +21,12 @@ public class BlockFluidMenrilResinConfig extends BlockConfigCommon<IntegratedDyn
                 IntegratedDynamics._instance,
                 "block_menril_resin",
                 (eConfig, properties) -> new BlockFluidMenrilResin(properties
+                        .replaceable()
                         .noCollision()
-                        .strength(100.0F)),
+                        .strength(100.0F)
+                        .pushReaction(PushReaction.DESTROY)
+                        .noLootTable()
+                        .liquid()),
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );
     }

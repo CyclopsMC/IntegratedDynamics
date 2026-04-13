@@ -240,6 +240,7 @@ public class IntegratedDynamics extends ModBaseNeoForge<IntegratedDynamics> {
                 GameTestsDelayer.class,
                 GameTestsDryingBasin.class,
                 GameTestsFacades.class,
+                GameTestsFluids.class,
                 GameTestsFuzzing.class,
                 GameTestsGenerator.class,
                 GameTestsMaterializer.class,

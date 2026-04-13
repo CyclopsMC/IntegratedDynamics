@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.block;
 
 
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.material.PushReaction;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfigCommon;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
@@ -20,8 +21,12 @@ public class BlockFluidLiquidChorusConfig extends BlockConfigCommon<IntegratedDy
                 IntegratedDynamics._instance,
                 "block_liquid_chorus",
                 (eConfig, properties) -> new BlockFluidLiquidChorus(properties
+                        .replaceable()
                         .noCollision()
-                        .strength(100.0F)),
+                        .strength(100.0F)
+                        .pushReaction(PushReaction.DESTROY)
+                        .noLootTable()
+                        .liquid()),
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );
     }
