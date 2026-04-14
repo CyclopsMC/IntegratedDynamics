@@ -7,6 +7,7 @@ import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.TintedParticleLeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import org.cyclops.cyclopscore.config.extendedconfig.BlockClientConfig;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfigCommon;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 
@@ -45,6 +46,11 @@ public class BlockMenrilLeavesConfig extends BlockConfigCommon<IntegratedDynamic
     public void onRegistryRegistered() {
         super.onRegistryRegistered();
         ComposterBlock.COMPOSTABLES.put(getItemInstance(), 0.3F);
+    }
+
+    @Override
+    public BlockClientConfig<IntegratedDynamics> constructBlockClientConfig() {
+        return new BlockMenrilLeavesClientConfig(this);
     }
 
 }
