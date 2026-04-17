@@ -90,6 +90,7 @@ public abstract class BlockEnergyBatteryBase extends BlockContainerCabled {
     }
 
     public static void itemStackToTile(ItemStack itemStack, BlockEntityEnergyBattery tile) {
+        if (itemStack == null || itemStack.isEmpty()) return;
         Optional.ofNullable(itemStack.getCapability(Capabilities.Energy.ITEM, ItemAccess.forStack(itemStack)))
                 .ifPresent(energyStorage -> {
                     tile.setEnergyStored(energyStorage.getAmountAsInt());
