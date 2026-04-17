@@ -51,6 +51,7 @@ public class TrunkPlacerMenril extends TrunkPlacer {
                 && !TreeFeature.isAirOrLeaves(world, basePos.south())
                 && !TreeFeature.isAirOrLeaves(world, basePos.west())) {
             // all adjacent positions are blocked, skip
+            return ImmutableList.of();
         }
 
         // Ensure dirt is below tree
