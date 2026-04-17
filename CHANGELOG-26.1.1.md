@@ -1,8 +1,18 @@
 # Changelog for Minecraft 26.1.1
 All notable changes to this project will be documented in this file.
 
+<a name="26.1.1-1.32.6"></a>
+## [26.1.1-1.32.6](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.1-1.32.5...26.1.1-1.32.6) - 2026-04-17 16:49:22
+
+
+### Changed
+* Add leaf particle colors for Menril Leaves
+
+### Fixed
+* Fix crash when rendering empty battery item stack (#1661)
+
 <a name="26.1.1-1.32.5"></a>
-## [26.1.1-1.32.5](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.1-1.32.4...26.1.1-1.32.5) - 2026-04-13 16:48:01
+## [26.1.1-1.32.5](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.1-1.32.4...26.1.1-1.32.5) - 2026-04-13 16:48:01 +0200
 
 
 ### Added
