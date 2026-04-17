@@ -38,6 +38,7 @@ public class ItemStackBlockEntityEnergyBatteryRender implements SpecialModelRend
 
     @Override
     public void submit(@Nullable ItemStack itemStack, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
+        if (itemStack == null || itemStack.isEmpty()) return;
         BlockEntityEnergyBattery tile = new BlockEntityEnergyBattery(BlockPos.ZERO, RegistryEntries.BLOCK_ENERGY_BATTERY.get().defaultBlockState());
         tile.setLevel(Minecraft.getInstance().level);
         BlockEnergyBatteryBase.itemStackToTile(itemStack, tile);
