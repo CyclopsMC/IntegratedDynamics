@@ -1,8 +1,15 @@
 # Changelog for Minecraft 26.1.1
 All notable changes to this project will be documented in this file.
 
+<a name="26.1.1-1.32.7"></a>
+## [26.1.1-1.32.7](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.1-1.32.6...26.1.1-1.32.7) - 2026-04-17 18:30:20
+
+
+### Fixed
+* Fix worldgen: prevent menril trees from generating on top of other trees (#1662), Closes #1660
+
 <a name="26.1.1-1.32.6"></a>
-## [26.1.1-1.32.6](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.1-1.32.5...26.1.1-1.32.6) - 2026-04-17 16:49:22
+## [26.1.1-1.32.6](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.1-1.32.5...26.1.1-1.32.6) - 2026-04-17 16:49:22 +0200
 
 
 ### Changed
