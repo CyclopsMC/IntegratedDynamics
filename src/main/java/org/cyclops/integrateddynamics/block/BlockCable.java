@@ -422,6 +422,11 @@ public class BlockCable extends BlockWithEntity implements IDynamicModelElement,
         return CableHelpers.getFacade(world, pos).isPresent();
     }
 
+    @Override
+    public BlockState getAppearance(BlockState state, BlockAndTintGetter level, BlockPos pos, Direction side, @Nullable BlockState queryState, @Nullable BlockPos queryPos) {
+        return CableHelpers.getFacade(level, pos).orElseGet(() -> super.getAppearance(state, level, pos, side, queryState, queryPos));
+    }
+
     /* --------------- Start IDynamicRedstone --------------- */
 
     @SuppressWarnings("deprecation")
