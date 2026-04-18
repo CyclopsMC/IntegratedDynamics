@@ -1,8 +1,16 @@
 # Changelog for Minecraft 1.20.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.20.1-1.30.4"></a>
+## [1.20.1-1.30.4](/compare/1.20.1-1.30.3...1.20.1-1.30.4) - 2026-04-18 15:29:21
+
+
+### Changed
+* Add BlockCable#getAppearance for connected textures on facades
+  This adds basic support to facades on cables for mods that add connected texture support.
+
 <a name="1.20.1-1.30.3"></a>
-## [1.20.1-1.30.3](/compare/1.20.1-1.30.2...1.20.1-1.30.3) - 2026-04-11 19:53:57
+## [1.20.1-1.30.3](/compare/1.20.1-1.30.2...1.20.1-1.30.3) - 2026-04-11 19:53:57 +0200
 
 
 ### Changed
