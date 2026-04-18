@@ -1,8 +1,16 @@
 # Changelog for Minecraft 26.1.1
 All notable changes to this project will be documented in this file.
 
+<a name="26.1.1-1.32.8"></a>
+## [26.1.1-1.32.8](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.1-1.32.7...26.1.1-1.32.8) - 2026-04-18 15:35:10
+
+
+### Changed
+* Add BlockCable#getAppearance for connected textures on facades
+  This adds basic support to facades on cables for mods that add connected texture support.
+
 <a name="26.1.1-1.32.7"></a>
-## [26.1.1-1.32.7](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.1-1.32.6...26.1.1-1.32.7) - 2026-04-17 18:30:20
+## [26.1.1-1.32.7](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.1-1.32.6...26.1.1-1.32.7) - 2026-04-17 18:30:20 +0200
 
 
 ### Fixed
