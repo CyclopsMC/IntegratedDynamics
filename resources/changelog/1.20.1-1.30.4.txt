@@ -1,0 +1,6 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.20.0 or higher.
+
+Changes:
+* Add BlockCable#getAppearance for connected textures on facades
+  This adds basic support to facades on cables for mods that add connected texture support.

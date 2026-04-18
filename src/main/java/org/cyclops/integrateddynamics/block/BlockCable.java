@@ -364,6 +364,14 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
         return level instanceof RenderSectionRegion renderSectionRegion && CableHelpers.getFacade(renderSectionRegion.level, pos, state).isPresent();
     }
 
+    @Override
+    public BlockState getAppearance(BlockState state, BlockAndLightGetter level, BlockPos pos, Direction side, @Nullable BlockState queryState, @Nullable BlockPos queryPos) {
+        if (level instanceof ILevelExtension levelExtension) {
+            return CableHelpers.getFacade(levelExtension, pos, state).orElseGet(() -> super.getAppearance(state, level, pos, side, queryState, queryPos));
+        }
+        return super.getAppearance(state, level, pos, side, queryState, queryPos);
+    }
+
     /* --------------- Start IDynamicRedstone --------------- */
 
     @SuppressWarnings("deprecation")

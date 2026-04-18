@@ -1,8 +1,16 @@
 # Changelog for Minecraft 1.21.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.21.1-1.32.5"></a>
+## [1.21.1-1.32.5](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.32.4...1.21.1-1.32.5) - 2026-04-18 15:33:04
+
+
+### Changed
+* Add BlockCable#getAppearance for connected textures on facades
+  This adds basic support to facades on cables for mods that add connected texture support.
+
 <a name="1.21.1-1.32.4"></a>
-## [1.21.1-1.32.4](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.32.3...1.21.1-1.32.4) - 2026-04-11 19:55:58
+## [1.21.1-1.32.4](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.32.3...1.21.1-1.32.4) - 2026-04-11 19:55:58 +0200
 
 
 ### Changed
