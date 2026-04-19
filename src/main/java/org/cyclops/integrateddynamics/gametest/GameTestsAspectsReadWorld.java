@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.gametest;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.clock.WorldClocks;
@@ -10,8 +11,13 @@ import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.cyclops.cyclopscore.gametest.GameTest;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.Reference;
+import org.cyclops.integrateddynamics.api.part.PartPos;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.api.part.read.IPartStateReader;
+import org.cyclops.integrateddynamics.api.part.read.IPartTypeReader;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
+import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
@@ -57,43 +63,41 @@ public class GameTestsAspectsReadWorld {
         testReadAspect(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.BOOLEAN_WEATHER_THUNDER, ValueTypeBoolean.ValueBoolean.of(false));
     }
 
-    @GameTest(template = TEMPLATE_EMPTY, environment = Reference.MOD_ID + ":time_day")
-    public void testAspectsReadWorldIsDayTrue(GameTestHelper helper) {
-        Supplier<IAspectVariable> variableSupplier = GameTestHelpersIntegratedDynamics.testReadAspectSetup(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.BOOLEAN_ISDAY);
-        helper.succeedWhen(() -> {
-            IAspectVariable variable = variableSupplier.get();
-            variable.invalidate();
-            GameTestHelpersIntegratedDynamics.assertValueEqual(helper, variable, ValueTypeBoolean.ValueBoolean.of(true));
-        });
-    }
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAspectsReadWorldIsDayAndIsNight(GameTestHelper helper) {
+        // Day-phase cable at POS: check BOOLEAN_ISDAY=true and BOOLEAN_ISNIGHT=false at clock=1000 (day)
+        Supplier<IAspectVariable> isDayTrueSupplier = GameTestHelpersIntegratedDynamics.testReadAspectSetup(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.BOOLEAN_ISDAY);
+        PartPos partPosDay = PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.WEST);
+        PartHelpers.PartStateHolder<?, ?> dayStateHolder = PartHelpers.getPart(partPosDay);
+        IPartTypeReader dayPartReader = (IPartTypeReader) dayStateHolder.getPart();
+        IPartStateReader dayPartState = (IPartStateReader) dayStateHolder.getState();
+        Supplier<IAspectVariable> isNightFalseSupplier = () -> dayPartReader.getVariable(PartTarget.fromCenter(partPosDay), dayPartState, Aspects.Read.World.BOOLEAN_ISNIGHT);
 
-    @GameTest(template = TEMPLATE_EMPTY, environment = Reference.MOD_ID + ":time_night")
-    public void testAspectsReadWorldIsDayFalse(GameTestHelper helper) {
-        Supplier<IAspectVariable> variableSupplier = GameTestHelpersIntegratedDynamics.testReadAspectSetup(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.BOOLEAN_ISDAY);
-        helper.succeedWhen(() -> {
-            IAspectVariable variable = variableSupplier.get();
-            variable.invalidate();
-            GameTestHelpersIntegratedDynamics.assertValueEqual(helper, variable, ValueTypeBoolean.ValueBoolean.of(false));
-        });
-    }
+        // Night-phase cable at POS.offset(2,0,0): check BOOLEAN_ISDAY=false and BOOLEAN_ISNIGHT=true at clock=13000 (night)
+        // A separate cable is used so that the night-phase variables are computed fresh (no cached values from the day phase)
+        BlockPos posNight = POS.offset(2, 0, 0);
+        Supplier<IAspectVariable> isDayFalseSupplier = GameTestHelpersIntegratedDynamics.testReadAspectSetup(posNight, helper, PartTypes.WORLD_READER, Aspects.Read.World.BOOLEAN_ISDAY);
+        PartPos partPosNight = PartPos.of(helper.getLevel(), helper.absolutePos(posNight), Direction.WEST);
+        PartHelpers.PartStateHolder<?, ?> nightStateHolder = PartHelpers.getPart(partPosNight);
+        IPartTypeReader nightPartReader = (IPartTypeReader) nightStateHolder.getPart();
+        IPartStateReader nightPartState = (IPartStateReader) nightStateHolder.getState();
+        Supplier<IAspectVariable> isNightTrueSupplier = () -> nightPartReader.getVariable(PartTarget.fromCenter(partPosNight), nightPartState, Aspects.Read.World.BOOLEAN_ISNIGHT);
 
-    @GameTest(template = TEMPLATE_EMPTY, environment = Reference.MOD_ID + ":time_night")
-    public void testAspectsReadWorldIsNightTrue(GameTestHelper helper) {
-        Supplier<IAspectVariable> variableSupplier = GameTestHelpersIntegratedDynamics.testReadAspectSetup(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.BOOLEAN_ISNIGHT);
-        helper.succeedWhen(() -> {
-            IAspectVariable variable = variableSupplier.get();
-            variable.invalidate();
-            GameTestHelpersIntegratedDynamics.assertValueEqual(helper, variable, ValueTypeBoolean.ValueBoolean.of(true));
-        });
-    }
+        // Set clock to day; after 1 tick skyDarken reflects the new value
+        helper.getLevel().registryAccess().get(WorldClocks.OVERWORLD).ifPresent(clockHolder ->
+                ((ServerLevel) helper.getLevel()).clockManager().setTotalTicks(clockHolder, 1000L));
+        helper.runAfterDelay(1, () -> {
+            GameTestHelpersIntegratedDynamics.assertValueEqual(helper, isDayTrueSupplier.get(), ValueTypeBoolean.ValueBoolean.of(true));
+            GameTestHelpersIntegratedDynamics.assertValueEqual(helper, isNightFalseSupplier.get(), ValueTypeBoolean.ValueBoolean.of(false));
 
-    @GameTest(template = TEMPLATE_EMPTY, environment = Reference.MOD_ID + ":time_day")
-    public void testAspectsReadWorldIsNightFalse(GameTestHelper helper) {
-        Supplier<IAspectVariable> variableSupplier = GameTestHelpersIntegratedDynamics.testReadAspectSetup(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.BOOLEAN_ISNIGHT);
-        helper.succeedWhen(() -> {
-            IAspectVariable variable = variableSupplier.get();
-            variable.invalidate();
-            GameTestHelpersIntegratedDynamics.assertValueEqual(helper, variable, ValueTypeBoolean.ValueBoolean.of(false));
+            // Set clock to night; after 1 tick skyDarken reflects the new value
+            helper.getLevel().registryAccess().get(WorldClocks.OVERWORLD).ifPresent(clockHolder ->
+                    ((ServerLevel) helper.getLevel()).clockManager().setTotalTicks(clockHolder, 13000L));
+            helper.runAfterDelay(1, () -> {
+                GameTestHelpersIntegratedDynamics.assertValueEqual(helper, isDayFalseSupplier.get(), ValueTypeBoolean.ValueBoolean.of(false));
+                GameTestHelpersIntegratedDynamics.assertValueEqual(helper, isNightTrueSupplier.get(), ValueTypeBoolean.ValueBoolean.of(true));
+                helper.succeed();
+            });
         });
     }
 
