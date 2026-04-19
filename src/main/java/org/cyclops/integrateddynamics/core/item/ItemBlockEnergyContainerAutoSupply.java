@@ -77,7 +77,7 @@ public class ItemBlockEnergyContainerAutoSupply extends ItemBlockEnergyContainer
     @Override
     public void inventoryTick(ItemStack itemStack, ServerLevel world, Entity entity, @Nullable EquipmentSlot slot) {
         if (isActivated(itemStack)) {
-            EnergyHandler energyStorage = itemStack.getCapability(Capabilities.Energy.ITEM, null);
+            EnergyHandler energyStorage = itemStack.getCapability(Capabilities.Energy.ITEM, ItemAccess.forStack(itemStack));
             if (energyStorage != null) {
                 autofill(energyStorage, world, entity);
             }
