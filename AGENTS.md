@@ -132,6 +132,9 @@ The pre-commit script in `scripts/pre-commit` automatically formats staged files
 ln -s ../../scripts/pre-commit .git/hooks/pre-commit
 ```
 
+In general, try to use imports where possible.
+So avoid inlining things in like `net.minecraft.world.phys.Vec3` in the code, and instead, just add an import for `net.minecraft.world.phys.Vec3`.
+
 ## Development Workflow
 
 1. **Understand the change**: Read the issue/feature request thoroughly
