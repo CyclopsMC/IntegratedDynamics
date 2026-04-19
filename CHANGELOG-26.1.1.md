@@ -1,8 +1,18 @@
 # Changelog for Minecraft 26.1.1
 All notable changes to this project will be documented in this file.
 
+<a name="26.1.1-1.32.10"></a>
+## [26.1.1-1.32.10](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.1-1.32.9...26.1.1-1.32.10) - 2026-04-19 14:49:50
+
+
+### Added
+* Add translations through Crowdin (#1663)
+
+### Fixed
+* Fix Menril Saplings not growing with bonemeal, Closes #1664
+
 <a name="26.1.1-1.32.9"></a>
-## [26.1.1-1.32.9](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.1-1.32.8...26.1.1-1.32.9) - 2026-04-19 14:03:00
+## [26.1.1-1.32.9](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.1-1.32.8...26.1.1-1.32.9) - 2026-04-19 14:03:00 +0200
 
 
 ### Fixed

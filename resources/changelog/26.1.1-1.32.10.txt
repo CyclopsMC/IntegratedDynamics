@@ -1,0 +1,8 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.25.5 or higher.
+
+Additions:
+* Add translations through Crowdin (#1663)
+
+Fixes:
+* Fix Menril Saplings not growing with bonemeal, Closes #1664
