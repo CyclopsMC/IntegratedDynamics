@@ -1,0 +1,5 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.25.5 or higher.
+
+Fixes:
+* Fix NPE in EnergyStorageItemBlockEnergyContainer when itemAccess is null (#1665)

@@ -1,8 +1,15 @@
 # Changelog for Minecraft 26.1.1
 All notable changes to this project will be documented in this file.
 
+<a name="26.1.1-1.32.9"></a>
+## [26.1.1-1.32.9](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.1-1.32.8...26.1.1-1.32.9) - 2026-04-19 14:03:00
+
+
+### Fixed
+* Fix NPE in EnergyStorageItemBlockEnergyContainer when itemAccess is null (#1665)
+
 <a name="26.1.1-1.32.8"></a>
-## [26.1.1-1.32.8](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.1-1.32.7...26.1.1-1.32.8) - 2026-04-18 15:35:10
+## [26.1.1-1.32.8](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.1-1.32.7...26.1.1-1.32.8) - 2026-04-18 15:35:10 +0200
 
 
 ### Changed
