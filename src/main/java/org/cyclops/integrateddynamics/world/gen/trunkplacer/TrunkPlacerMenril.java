@@ -45,7 +45,7 @@ public class TrunkPlacerMenril extends TrunkPlacer {
     public List<FoliagePlacer.FoliageAttachment> placeTrunk(WorldGenLevel world, BiConsumer<BlockPos, BlockState> callback, RandomSource rand, int height,
                                                             BlockPos pos, TreeConfiguration config) {
         // Only generate if stump is fully on ground (other checks are done in TreeFeature.place)
-        BlockPos basePos = pos.below();
+        BlockPos basePos = pos;
         if (!TreeFeature.isAirOrLeaves(world, basePos.north())
                 && !TreeFeature.isAirOrLeaves(world, basePos.east())
                 && !TreeFeature.isAirOrLeaves(world, basePos.south())
