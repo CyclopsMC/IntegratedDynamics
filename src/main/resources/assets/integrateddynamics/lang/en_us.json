@@ -1937,12 +1937,12 @@
 
     "info_book.integrateddynamics.manual.machines.energy_battery": "Energy Battery",
     "info_book.integrateddynamics.manual.machines.energy_battery.text1": "&lIntegrated Dynamics&r networks can be configured to consume energy. For this, you can attach &lEnergy Batteries&r to the network to add energy storage capacity for it.",
-    "info_book.integrateddynamics.manual.machines.energy_battery.text2": "These batteries accept both &lRF&r-based and &lTesla&r power.",
+    "info_book.integrateddynamics.manual.machines.energy_battery.text2": "These batteries accept &lRF&r-based power.",
     "info_book.integrateddynamics.manual.machines.energy_battery.text3": "Applying a redstone signal will enable auto-export mode of energy to all sides.",
     "info_book.integrateddynamics.manual.machines.energy_battery.text4": "When this battery is held in your inventory, &lauto-supply&r mode can be enabled by shift+right clicking. When enabled, this battery will automatically try to fill the items you are holding in your two hands with energy.",
 
     "info_book.integrateddynamics.manual.machines.generator": "Generator",
-    "info_book.integrateddynamics.manual.machines.generator.text1": "When you need &lRF&r or &lTesla&r energy, you can use the &lGenerator&r to create energy from &oburnable&r items.",
+    "info_book.integrateddynamics.manual.machines.generator.text1": "When you need &lRF&r energy, you can use the &lGenerator&r to create energy from &oburnable&r items.",
 
     "info_book.integrateddynamics.manual.machines.mechanical_squeezer": "Mechanical Squeezer",
     "info_book.integrateddynamics.manual.machines.mechanical_squeezer.text1": "There will come a time, when you will have had enough of all this jumping on &lSqueezers&r. If you haven't automated your &lSqueezers&r by then, perhaps it's time to look into making a &lMechanical Squeezer&r. It does not require any manual effort, but it requires energy to run. This also makes it significantly faster than the regular &lSqueezers&r and allows more things to be squeezed with a higher yield.",
