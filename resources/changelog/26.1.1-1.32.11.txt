@@ -1,0 +1,6 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.25.5 or higher.
+
+Fixes:
+* Remove old Tesla references from language files
+* Fix battery capacity not persisting after world rejoin/restart (#1667)

@@ -1,8 +1,16 @@
 # Changelog for Minecraft 26.1.1
 All notable changes to this project will be documented in this file.
 
+<a name="26.1.1-1.32.11"></a>
+## [26.1.1-1.32.11](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.1-1.32.10...26.1.1-1.32.11) - 2026-04-20 18:51:08
+
+
+### Fixed
+* Remove old Tesla references from language files
+* Fix battery capacity not persisting after world rejoin/restart (#1667)
+
 <a name="26.1.1-1.32.10"></a>
-## [26.1.1-1.32.10](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.1-1.32.9...26.1.1-1.32.10) - 2026-04-19 14:49:50
+## [26.1.1-1.32.10](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.1-1.32.9...26.1.1-1.32.10) - 2026-04-19 14:49:50 +0200
 
 
 ### Added
