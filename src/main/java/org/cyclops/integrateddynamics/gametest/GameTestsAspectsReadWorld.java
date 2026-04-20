@@ -65,40 +65,39 @@ public class GameTestsAspectsReadWorld {
 
     @GameTest(template = TEMPLATE_EMPTY)
     public void testAspectsReadWorldIsDayAndIsNight(GameTestHelper helper) {
+        ServerLevel level = (ServerLevel) helper.getLevel();
+
         // Day-phase cable at POS: check BOOLEAN_ISDAY=true and BOOLEAN_ISNIGHT=false at clock=1000 (day)
         Supplier<IAspectVariable> isDayTrueSupplier = GameTestHelpersIntegratedDynamics.testReadAspectSetup(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.BOOLEAN_ISDAY);
-        PartPos partPosDay = PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.WEST);
+        PartPos partPosDay = PartPos.of(level, helper.absolutePos(POS), Direction.WEST);
         PartHelpers.PartStateHolder<?, ?> dayStateHolder = PartHelpers.getPart(partPosDay);
         IPartTypeReader dayPartReader = (IPartTypeReader) dayStateHolder.getPart();
         IPartStateReader dayPartState = (IPartStateReader) dayStateHolder.getState();
         Supplier<IAspectVariable> isNightFalseSupplier = () -> dayPartReader.getVariable(PartTarget.fromCenter(partPosDay), dayPartState, Aspects.Read.World.BOOLEAN_ISNIGHT);
 
-        // Night-phase cable at POS.offset(2,0,0): check BOOLEAN_ISDAY=false and BOOLEAN_ISNIGHT=true at clock=13000 (night)
-        // A separate cable is used so that the night-phase variables are computed fresh (no cached values from the day phase)
+        // Night-phase cable at POS.offset(2,0,0): use a separate cable so LazyAspectVariable instances are fresh
         BlockPos posNight = POS.offset(2, 0, 0);
         Supplier<IAspectVariable> isDayFalseSupplier = GameTestHelpersIntegratedDynamics.testReadAspectSetup(posNight, helper, PartTypes.WORLD_READER, Aspects.Read.World.BOOLEAN_ISDAY);
-        PartPos partPosNight = PartPos.of(helper.getLevel(), helper.absolutePos(posNight), Direction.WEST);
+        PartPos partPosNight = PartPos.of(level, helper.absolutePos(posNight), Direction.WEST);
         PartHelpers.PartStateHolder<?, ?> nightStateHolder = PartHelpers.getPart(partPosNight);
         IPartTypeReader nightPartReader = (IPartTypeReader) nightStateHolder.getPart();
         IPartStateReader nightPartState = (IPartStateReader) nightStateHolder.getState();
         Supplier<IAspectVariable> isNightTrueSupplier = () -> nightPartReader.getVariable(PartTarget.fromCenter(partPosNight), nightPartState, Aspects.Read.World.BOOLEAN_ISNIGHT);
 
-        // Set clock to day; after 1 tick skyDarken reflects the new value
-        helper.getLevel().registryAccess().get(WorldClocks.OVERWORLD).ifPresent(clockHolder ->
-                ((ServerLevel) helper.getLevel()).clockManager().setTotalTicks(clockHolder, 1000L));
-        helper.runAfterDelay(1, () -> {
-            GameTestHelpersIntegratedDynamics.assertValueEqual(helper, isDayTrueSupplier.get(), ValueTypeBoolean.ValueBoolean.of(true));
-            GameTestHelpersIntegratedDynamics.assertValueEqual(helper, isNightFalseSupplier.get(), ValueTypeBoolean.ValueBoolean.of(false));
+        // Set clock to day and immediately sync skyDarken (no runAfterDelay needed, avoids clock race conditions)
+        level.clockManager().setTotalTicks(level.registryAccess().getOrThrow(WorldClocks.OVERWORLD), 1000L);
+        level.environmentAttributes().invalidateTickCache();
+        level.updateSkyBrightness();
+        GameTestHelpersIntegratedDynamics.assertValueEqual(helper, isDayTrueSupplier.get(), ValueTypeBoolean.ValueBoolean.of(true));
+        GameTestHelpersIntegratedDynamics.assertValueEqual(helper, isNightFalseSupplier.get(), ValueTypeBoolean.ValueBoolean.of(false));
 
-            // Set clock to night; after 1 tick skyDarken reflects the new value
-            helper.getLevel().registryAccess().get(WorldClocks.OVERWORLD).ifPresent(clockHolder ->
-                    ((ServerLevel) helper.getLevel()).clockManager().setTotalTicks(clockHolder, 13000L));
-            helper.runAfterDelay(1, () -> {
-                GameTestHelpersIntegratedDynamics.assertValueEqual(helper, isDayFalseSupplier.get(), ValueTypeBoolean.ValueBoolean.of(false));
-                GameTestHelpersIntegratedDynamics.assertValueEqual(helper, isNightTrueSupplier.get(), ValueTypeBoolean.ValueBoolean.of(true));
-                helper.succeed();
-            });
-        });
+        // Set clock to night and immediately sync skyDarken
+        level.clockManager().setTotalTicks(level.registryAccess().getOrThrow(WorldClocks.OVERWORLD), 13000L);
+        level.environmentAttributes().invalidateTickCache();
+        level.updateSkyBrightness();
+        GameTestHelpersIntegratedDynamics.assertValueEqual(helper, isDayFalseSupplier.get(), ValueTypeBoolean.ValueBoolean.of(false));
+        GameTestHelpersIntegratedDynamics.assertValueEqual(helper, isNightTrueSupplier.get(), ValueTypeBoolean.ValueBoolean.of(true));
+        helper.succeed();
     }
 
     @GameTest(template = TEMPLATE_EMPTY, environment = Reference.MOD_ID + ":weather_clear2")
