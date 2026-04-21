@@ -1439,7 +1439,6 @@
     "info_book.integrateddynamics.manual.machines.energy_battery.text3": "레드스톤 신호를 적용하면 모든 면으로 에너지 자동 내보내기 모드가 활성화됩니다.",
     "info_book.integrateddynamics.manual.machines.energy_battery.text4": "이 배터리가 인벤토리에 있을 때 Shift+우클릭으로 &la자동 공급&r 모드를 활성화할 수 있습니다. 활성화되면 이 배터리는 자동으로 두 손에 들고 있는 아이템을 에너지로 채우려고 시도합니다.",
     "info_book.integrateddynamics.manual.machines.generator": "발전기",
-    "info_book.integrateddynamics.manual.machines.generator.text1": "&lRF&r 또는 &lTesla&r 에너지가 필요할 때 &l발전기&r를 사용하여 &o태울 수 있는&r 아이템에서 에너지를 생성할 수 있습니다.",
     "info_book.integrateddynamics.manual.machines.mechanical_squeezer": "기계식 압착기",
     "info_book.integrateddynamics.manual.machines.mechanical_drying_basin": "기계식 건조대",
     "info_book.integrateddynamics.manual.machines.mechanical_drying_basin.text1": "&l건조대&r로 건조하는 데 시간이 걸릴 수 있습니다. 더 빨리 진행하고 싶거나 더 많은 것을 말리고 싶다면 &l기계식 건조대&r를 사용할 수 있습니다. 이는 작동하는 데 에너지가 필요합니다.",

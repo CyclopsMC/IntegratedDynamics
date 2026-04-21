@@ -1579,7 +1579,6 @@
     "info_book.integrateddynamics.manual.machines.energy_battery.text3": "Подача сигнала красного камня включит режим автоматического экспорта энергии на все стороны.",
     "info_book.integrateddynamics.manual.machines.energy_battery.text4": "Когда эта батарея находится в вашем инвентаре, режим &lавто-подачи&r можно включить, нажав Shift + правый клик. Когда этот режим включен, батарея будет автоматически пытаться заряжать предметы, которые вы держите в руках.",
     "info_book.integrateddynamics.manual.machines.generator": "Генератор",
-    "info_book.integrateddynamics.manual.machines.generator.text1": "Когда вам нужна энергия &lRF&r или &lTesla&r, вы можете использовать &lГенератор&r для создания энергии из &oсжигаемых&r предметов.",
     "info_book.integrateddynamics.manual.machines.mechanical_squeezer": "Механический Пресс",
     "info_book.integrateddynamics.manual.machines.mechanical_drying_basin": "Механический Сушильный Бассейн",
     "info_book.integrateddynamics.manual.machines.mechanical_drying_basin.text1": "Сушка с помощью &lСушильного Бассейна&r может занять некоторое время. Если вы хотите ускорить процесс или иметь возможность сушить больше вещей, вы можете использовать &lМеханический Сушильный Бассейн&r, который работает за счет энергии.",

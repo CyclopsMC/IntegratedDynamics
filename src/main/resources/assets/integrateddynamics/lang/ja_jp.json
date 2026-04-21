@@ -1480,7 +1480,6 @@
     "info_book.integrateddynamics.manual.machines.energy_battery.text3": "レッドストーン信号を適用すると、すべての側面へのエネルギーの自動エクスポートモードが有効になります。",
     "info_book.integrateddynamics.manual.machines.energy_battery.text4": "このバッテリーがインベントリに保持されている場合、Shiftキーを押しながら右クリックすると、&l自動供給&rモードが有効になります。有効にすると、このバッテリーは両手に持っているアイテムに自動的にエネルギーを補給しようとします。",
     "info_book.integrateddynamics.manual.machines.generator": "発電機",
-    "info_book.integrateddynamics.manual.machines.generator.text1": "&lRF&rまたは&lTesla&rエネルギーが必要な場合は、&l発電機&rを使用して&o可燃&rアイテムからエネルギーを作成できます。",
     "info_book.integrateddynamics.manual.machines.mechanical_squeezer": "機械式圧搾器",
     "info_book.integrateddynamics.manual.machines.mechanical_drying_basin": "機械式乾燥槽",
     "info_book.integrateddynamics.manual.machines.mechanical_drying_basin.text1": "&l乾燥槽&rでの乾燥には時間がかかります。乾燥を早く終わらせたい場合や、より多くのものを乾燥させたい場合は、稼働に電力を必要とする&l機械式乾燥槽&rを使用することができます。",
