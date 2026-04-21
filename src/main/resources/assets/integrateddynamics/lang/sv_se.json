@@ -988,7 +988,6 @@
     "info_book.integrateddynamics.manual.machines.energy_battery.text1": "&lIntegrated Dynamics&r-nätverk kan konfigureras till att konsumera energi. För att göra detta kan du fästa &lenergibatterier&r till nätverket för att lägga till energilagringskapacitet.",
     "info_book.integrateddynamics.manual.machines.energy_battery.text3": "När en redstonesignal tillämpas kommer det automatiska energiexporteringsläget aktiveras på alla sidor.",
     "info_book.integrateddynamics.manual.machines.energy_battery.text4": "När du har detta batteri i din utrustning kan läget &lautofyll&r aktiveras genom att Shift+högerklicka på det. När det är aktiverat kommer detta batteri automatiskt försöka fylla föremålen du håller i båda händerna med energi.",
-    "info_book.integrateddynamics.manual.machines.generator.text1": "När du behöver &lRF&r- eller &lTesla&r-energi, kan du använda &lgeneratorn&r för att skapa energi från &obrännbara&r föremål.",
     "info_book.integrateddynamics.manual.machines.mechanical_squeezer": "Mekanisk pressare",
     "info_book.integrateddynamics.manual.machines.mechanical_drying_basin": "Mekaniskt torkningskar",
     "info_book.integrateddynamics.manual.machines.mechanical_drying_basin.text1": "Det kan ta en stund att torka med ett <orkningskar&r. Om du vill att saker och ting ska gå snabbare eller om du vill kunna torka fler saker kan du använda det &lmekaniska torkningskaret&r som behöver energi för att köras.",

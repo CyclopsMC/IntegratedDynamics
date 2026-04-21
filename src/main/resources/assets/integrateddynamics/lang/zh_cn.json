@@ -966,7 +966,6 @@
     "info_book.integrateddynamics.manual.machines.energy_battery.text3": "应用红石信号将使能量的自动出口模式到所有设置面。",
     "info_book.integrateddynamics.manual.machines.energy_battery.text4": "当这个电池在你的包裹中时, &l自动输出&r模式可以使用Shift+右键激活. 激活后,这个电池会尝试输出能量到你双手中的物品.",
     "info_book.integrateddynamics.manual.machines.generator": "发电机",
-    "info_book.integrateddynamics.manual.machines.generator.text1": "当您需要&lRF&r或&lTesla&r的能量时，您可以使用&l发电机&r来创建能量和可再生能源。",
     "info_book.integrateddynamics.manual.machines.mechanical_squeezer": "电动挤压机",
     "info_book.integrateddynamics.manual.machines.mechanical_drying_basin": "电动烘干池",
     "info_book.integrateddynamics.manual.machines.mechanical_drying_basin.text1": "使用&l烘干池&r进行烘干会需要一些时间.如果你想要烘干变得更快,或者你想能烘干更多的东西,你应该使用&l电动烘干池&r,它需要消耗能量来运行.",
