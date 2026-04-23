@@ -142,7 +142,7 @@ dependencies {
             transitive = false
         }
     } else {
-        shadow("org.cyclops.integrateddynamicscompat:integrateddynamicscompat-${project.minecraft_version}-neoforge:${project.integrateddynamicscompat_version}") {
+        shadow("org.cyclops.integrateddynamicscompat:integrateddynamicscompat-${project.integrateddynamicscompat_version}") {
             transitive = false
         }
     }
