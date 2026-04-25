@@ -360,7 +360,7 @@ publishing {
 
     publications { PublicationContainer publicationContainer ->
         publicationContainer.register("maven", MavenPublication) { MavenPublication publication ->
-            publication.artifacts = [shadowJar, javadocJar, sourcesJar]
+            publication.artifacts = [shadowJar, javadocJar, sourcesJar, jar]
             publication.artifactId = project.base.archivesName.get().toLowerCase() // GH can't handle uppercase...
         }
     }
