@@ -1,8 +1,15 @@
 # Changelog for Minecraft 26.1.2
 All notable changes to this project will be documented in this file.
 
+<a name="26.1.2-1.32.12"></a>
+## [26.1.2-1.32.12](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.32.11...26.1.2-1.32.12) - 2026-04-28 19:44:46
+
+
+### Fixed
+* Fix incorrect position of channel disabled tooltip in Integrated Crafting
+
 <a name="26.1.2-1.32.11"></a>
-## [26.1.2-1.32.11] - 2026-04-23 20:21:26
+## [26.1.2-1.32.11] - 2026-04-23 20:21:26 +0200
 
 
 Initial 26.1.2 release
