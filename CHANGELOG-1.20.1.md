@@ -1,8 +1,15 @@
 # Changelog for Minecraft 1.20.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.20.1-1.30.5"></a>
+## [1.20.1-1.30.5](/compare/1.20.1-1.30.4...1.20.1-1.30.5) - 2026-04-28 19:37:09
+
+
+### Fixed
+* Fix incorrect position of channel disabled tooltip in Integrated Crafting
+
 <a name="1.20.1-1.30.4"></a>
-## [1.20.1-1.30.4](/compare/1.20.1-1.30.3...1.20.1-1.30.4) - 2026-04-18 15:29:21
+## [1.20.1-1.30.4](/compare/1.20.1-1.30.3...1.20.1-1.30.4) - 2026-04-18 15:29:21 +0200
 
 
 ### Changed
