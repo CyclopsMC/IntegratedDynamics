@@ -1,8 +1,15 @@
 # Changelog for Minecraft 1.21.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.21.1-1.32.6"></a>
+## [1.21.1-1.32.6](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.32.5...1.21.1-1.32.6) - 2026-04-28 19:39:17
+
+
+### Fixed
+* Fix incorrect position of channel disabled tooltip in Integrated Crafting
+
 <a name="1.21.1-1.32.5"></a>
-## [1.21.1-1.32.5](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.32.4...1.21.1-1.32.5) - 2026-04-18 15:33:04
+## [1.21.1-1.32.5](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.32.4...1.21.1-1.32.5) - 2026-04-18 15:33:04 +0200
 
 
 ### Changed
