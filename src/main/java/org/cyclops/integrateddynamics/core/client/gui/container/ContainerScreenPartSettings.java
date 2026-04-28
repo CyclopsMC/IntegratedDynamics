@@ -266,7 +266,7 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
         if (!isChannelEnabled()) {
-            GuiHelpers.renderTooltip(this, guiGraphics.pose(), 8, 87, 100, 20, mouseX, mouseY,
+            GuiHelpers.renderTooltip(this, guiGraphics.pose(), 8, getFieldChannelY() + 3, 100, 20, mouseX, mouseY,
                     () -> Lists.<Component>newArrayList(Component.translatable("gui.integrateddynamics.partsettings.channel.disabledinfo")));
         }
     }
