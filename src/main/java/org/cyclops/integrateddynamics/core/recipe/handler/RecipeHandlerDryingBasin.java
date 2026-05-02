@@ -75,8 +75,8 @@ public class RecipeHandlerDryingBasin<T extends RecipeDryingBasin> extends Recip
     @Override
     protected IMixedIngredients getRecipeOutputIngredients(RecipeDryingBasin recipe) {
         Map<IngredientComponent<?, ?>, List<?>> outputIngredients = Maps.newIdentityHashMap();
-        if (!recipe.getOutputItemFirst().isEmpty()) {
-            outputIngredients.put(IngredientComponent.ITEMSTACK, Lists.newArrayList(recipe.getOutputItemFirst()));
+        if (recipe.getOutputItemFirst().isPresent()) {
+            outputIngredients.put(IngredientComponent.ITEMSTACK, Lists.newArrayList(recipe.getOutputItemFirst().get()));
         }
         if (!recipe.getOutputFluid().isEmpty()) {
             outputIngredients.put(IngredientComponent.FLUIDSTACK, Lists.newArrayList(recipe.getOutputFluid().get()));
