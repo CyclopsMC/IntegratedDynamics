@@ -85,7 +85,7 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
 
         ItemStack itemStack = player.getItemInHand(hand);
         IPartContainer partContainerFirst = PartHelpers.getPartContainer(world, pos, side).orElse(null);
-        if(partContainerFirst != null) {
+        if(partContainerFirst != null && !partContainerFirst.hasPart(side)) {
             // Add part to existing cable
             if(PartHelpers.addPart(world, pos, side, getPart(), itemStack)) {
                 if(world.isClientSide()) {
