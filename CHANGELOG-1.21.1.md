@@ -1,8 +1,25 @@
 # Changelog for Minecraft 1.21.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.21.1-1.33.1"></a>
+## [1.21.1-1.33.1](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.33.0...1.21.1-1.33.1) - 2026-05-22 11:29:25
+
+
+### Fixed
+* Fix parts not being directly placeable opposite to other parts
+
+### Changed
+* Remove unused RS skipcrafting aspect property
+
+<a name="1.21.1-1.33.0"></a>
+## [1.21.1-1.33.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.32.6...1.21.1-1.33.0) - 2026-05-04 16:37:29 +0200
+
+
+### Added
+* Update Refined Storage compat to v2, Closes CyclopsMC/IntegratedDynamics#1544
+
 <a name="1.21.1-1.32.6"></a>
-## [1.21.1-1.32.6](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.32.5...1.21.1-1.32.6) - 2026-04-28 19:39:17
+## [1.21.1-1.32.6](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.32.5...1.21.1-1.32.6) - 2026-04-28 19:39:17 +0200
 
 
 ### Fixed
