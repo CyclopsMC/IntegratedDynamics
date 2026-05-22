@@ -1,8 +1,15 @@
 # Changelog for Minecraft 1.20.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.20.1-1.30.6"></a>
+## [1.20.1-1.30.6](/compare/1.20.1-1.30.5...1.20.1-1.30.6) - 2026-05-22 11:26:53
+
+
+### Fixed
+* Fix parts not being directly placeable opposite to other parts
+
 <a name="1.20.1-1.30.5"></a>
-## [1.20.1-1.30.5](/compare/1.20.1-1.30.4...1.20.1-1.30.5) - 2026-04-28 19:37:09
+## [1.20.1-1.30.5](/compare/1.20.1-1.30.4...1.20.1-1.30.5) - 2026-04-28 19:37:09 +0200
 
 
 ### Fixed
