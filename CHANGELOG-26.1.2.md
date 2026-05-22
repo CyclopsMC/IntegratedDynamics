@@ -1,8 +1,18 @@
 # Changelog for Minecraft 26.1.2
 All notable changes to this project will be documented in this file.
 
+<a name="26.1.2-1.33.1"></a>
+## [26.1.2-1.33.1](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.33.0...26.1.2-1.33.1) - 2026-05-22 11:31:20
+
+
+### Added
+* Add translations through Crowdin
+
+### Fixed
+* Fix parts not being directly placeable opposite to other parts
+
 <a name="26.1.2-1.33.0"></a>
-## [26.1.2-1.33.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.32.13...26.1.2-1.33.0) - 2026-05-04 16:37:42
+## [26.1.2-1.33.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.32.13...26.1.2-1.33.0) - 2026-05-04 16:37:42 +0200
 
 
 ### Added
