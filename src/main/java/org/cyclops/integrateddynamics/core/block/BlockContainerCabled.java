@@ -46,7 +46,7 @@ public abstract class BlockContainerCabled extends BlockWithEntity {
     @Override
     public void onPlace(BlockState state, Level world, BlockPos pos, BlockState oldState, boolean isMoving) {
         super.onPlace(state, world, pos, oldState, isMoving);
-        if (!world.isClientSide()) {
+        if (!world.isClientSide() && oldState.getBlock() != this) {
             CableHelpers.onCableAdded(world, pos);
         }
     }
