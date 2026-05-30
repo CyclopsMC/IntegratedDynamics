@@ -51,7 +51,7 @@ public abstract class BlockWithEntityGuiCabled extends BlockWithEntityGui {
     @Override
     public void onPlace(BlockState blockState, Level world, BlockPos blockPos, BlockState oldState, boolean isMoving) {
         super.onPlace(blockState, world, blockPos, oldState, isMoving);
-        if (!world.isClientSide()) {
+        if (!world.isClientSide() && oldState.getBlock() != this) {
             CableHelpers.onCableAdded(world, blockPos);
         }
     }
