@@ -1,8 +1,23 @@
 # Changelog for Minecraft 26.1.2
 All notable changes to this project will be documented in this file.
 
+<a name="26.1.2-1.33.2"></a>
+## [26.1.2-1.33.2](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.33.1...26.1.2-1.33.2) - 2026-05-30 10:24:52
+
+
+### Fixed
+* Fix network reload when a machine state is changed
+
+This could cause issues where multiple instances of internal network
+states could be created, that are conflicting.
+Concretely, this fixes autocrafting issues where outputs from Mechanical
+machines could not be detected, as it coincided with a machine state
+change.
+
+Closes CyclopsMC/IntegratedCrafting#199
+
 <a name="26.1.2-1.33.1"></a>
-## [26.1.2-1.33.1](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.33.0...26.1.2-1.33.1) - 2026-05-22 11:31:20
+## [26.1.2-1.33.1](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.33.0...26.1.2-1.33.1) - 2026-05-22 11:31:20 +0200
 
 
 ### Added
