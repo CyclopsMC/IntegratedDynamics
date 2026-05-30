@@ -1,8 +1,23 @@
 # Changelog for Minecraft 1.20.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.20.1-1.30.7"></a>
+## [1.20.1-1.30.7](/compare/1.20.1-1.30.6...1.20.1-1.30.7) - 2026-05-30 10:22:44
+
+
+### Fixed
+* Fix network reload when a machine state is changed
+
+This could cause issues where multiple instances of internal network
+states could be created, that are conflicting.
+Concretely, this fixes autocrafting issues where outputs from Mechanical
+machines could not be detected, as it coincided with a machine state
+change.
+
+Closes CyclopsMC/IntegratedCrafting#199
+
 <a name="1.20.1-1.30.6"></a>
-## [1.20.1-1.30.6](/compare/1.20.1-1.30.5...1.20.1-1.30.6) - 2026-05-22 11:26:53
+## [1.20.1-1.30.6](/compare/1.20.1-1.30.5...1.20.1-1.30.6) - 2026-05-22 11:26:53 +0200
 
 
 ### Fixed
