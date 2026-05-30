@@ -266,7 +266,7 @@ public class BlockCable extends BlockWithEntity implements IDynamicModelElement,
     @Override
     public void onPlace(BlockState state, Level world, BlockPos pos, BlockState oldState, boolean isMoving) {
         super.onPlace(state, world, pos, oldState, isMoving);
-        if (!world.isClientSide()) {
+        if (!world.isClientSide() && oldState.getBlock() != this) {
             ICableFakeable cableFakeable = CableHelpers.getCableFakeable(world, pos, null).orElse(null);
             if (cableFakeable != null && cableFakeable.isRealCable()) {
                 CableHelpers.onCableAdded(world, pos);
