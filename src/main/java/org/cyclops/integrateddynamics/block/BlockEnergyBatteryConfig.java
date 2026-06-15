@@ -13,6 +13,7 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import org.cyclops.cyclopscore.RegistryEntries;
 import org.cyclops.cyclopscore.config.ConfigurableProperty;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -55,7 +56,7 @@ public class BlockEnergyBatteryConfig extends BlockConfig {
                         .sound(SoundType.METAL)
                         .strength(2.0F, 5.0F)),
                 (eConfig, block) -> new ItemBlockEnergyContainerAutoSupply(block,
-                        new Item.Properties()) {
+                        new Item.Properties().component(RegistryEntries.COMPONENT_ENERGY_STORAGE, 0)) {
                     @Override
                     @OnlyIn(Dist.CLIENT)
                     public void initializeClient(Consumer<IClientItemExtensions> consumer) {
