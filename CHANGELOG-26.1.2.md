@@ -1,8 +1,15 @@
 # Changelog for Minecraft 26.1.2
 All notable changes to this project will be documented in this file.
 
+<a name="26.1.2-1.33.3"></a>
+## [26.1.2-1.33.3](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.33.2...26.1.2-1.33.3) - 2026-06-16 16:39:30
+
+
+### Fixed
+* Initialize battery energy data component to zero, CyclopsMC/IntegratedCrafting#202
+
 <a name="26.1.2-1.33.2"></a>
-## [26.1.2-1.33.2](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.33.1...26.1.2-1.33.2) - 2026-05-30 10:24:52
+## [26.1.2-1.33.2](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.33.1...26.1.2-1.33.2) - 2026-05-30 10:24:52 +0200
 
 
 ### Fixed
