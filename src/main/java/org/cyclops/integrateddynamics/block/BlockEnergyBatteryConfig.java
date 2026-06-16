@@ -7,6 +7,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import org.cyclops.cyclopscore.RegistryEntries;
 import org.cyclops.cyclopscore.config.ConfigurablePropertyCommon;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockClientConfig;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfigCommon;
@@ -48,7 +49,8 @@ public class BlockEnergyBatteryConfig extends BlockConfigCommon<IntegratedDynami
                 (eConfig, properties) -> new BlockEnergyBattery(properties
                         .sound(SoundType.METAL)
                         .strength(2.0F, 5.0F)),
-                (eConfig, block) -> new ItemBlockEnergyContainerAutoSupply(block, eConfig.createDefaultItemProperties())
+                (eConfig, block) -> new ItemBlockEnergyContainerAutoSupply(block, eConfig.createDefaultItemProperties()
+                        .component(RegistryEntries.COMPONENT_ENERGY_STORAGE, 0))
         );
         IntegratedDynamics._instance.getModEventBus().addListener(this::registerCapability);
         IntegratedDynamics._instance.getModEventBus().addListener(this::fillCreativeTab);

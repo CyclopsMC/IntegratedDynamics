@@ -1,8 +1,15 @@
 # Changelog for Minecraft 1.21.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.21.1-1.33.3"></a>
+## [1.21.1-1.33.3](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.33.2...1.21.1-1.33.3) - 2026-06-16 16:37:23
+
+
+### Fixed
+* Initialize battery energy data component to zero, CyclopsMC/IntegratedCrafting#202
+
 <a name="1.21.1-1.33.2"></a>
-## [1.21.1-1.33.2](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.33.1...1.21.1-1.33.2) - 2026-05-30 10:24:11
+## [1.21.1-1.33.2](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.33.1...1.21.1-1.33.2) - 2026-05-30 10:24:11 +0200
 
 
 ### Fixed
