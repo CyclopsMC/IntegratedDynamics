@@ -1,8 +1,15 @@
 # Changelog for Minecraft 26.1.2
 All notable changes to this project will be documented in this file.
 
+<a name="26.1.2-1.33.4"></a>
+## [26.1.2-1.33.4](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.33.3...26.1.2-1.33.4) - 2026-06-18 19:58:11
+
+
+### Fixed
+* Fix broken Jade compat on cables, Closes CyclopsMC/IntegratedDynamics-Compat#40
+
 <a name="26.1.2-1.33.3"></a>
-## [26.1.2-1.33.3](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.33.2...26.1.2-1.33.3) - 2026-06-16 16:39:30
+## [26.1.2-1.33.3](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.33.2...26.1.2-1.33.3) - 2026-06-16 16:39:30 +0200
 
 
 ### Fixed
