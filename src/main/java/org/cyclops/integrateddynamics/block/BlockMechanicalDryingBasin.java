@@ -18,8 +18,8 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
-import net.neoforged.neoforge.transfer.fluid.FluidUtil;
 import net.neoforged.neoforge.fluids.SimpleFluidContent;
+import net.neoforged.neoforge.transfer.fluid.FluidUtil;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -64,8 +64,8 @@ public class BlockMechanicalDryingBasin extends BlockMechanicalMachine {
 
     @Override
     public InteractionResult useWithoutItem(BlockState blockState, Level world, BlockPos blockPos, Player player, BlockHitResult rayTraceResult) {
-        if (FluidUtil.interactWithFluidHandler(player, player.getUsedItemHand(), world, blockPos, Direction.UP)
-                || FluidUtil.interactWithFluidHandler(player, player.getUsedItemHand(), world, blockPos, Direction.DOWN)) {
+        if (FluidUtil.interactWithFluidHandler(player, player.getUsedItemHand(), world, blockPos, Direction.UP, null)
+                || FluidUtil.interactWithFluidHandler(player, player.getUsedItemHand(), world, blockPos, Direction.DOWN, null)) {
             return InteractionResult.SUCCESS;
         }
         return super.useWithoutItem(blockState, world, blockPos, player, rayTraceResult);

@@ -12,6 +12,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import org.cyclops.cyclopscore.client.particle.ParticleBlurData;
 import org.cyclops.cyclopscore.gametest.GameTest;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -165,11 +166,11 @@ public class GameTestsNetwork {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         ItemStack itemStack = new ItemStack(RegistryEntries.ITEM_WRENCH.value());
         player.setItemInHand(InteractionHand.MAIN_HAND, itemStack);
-        player.setPos(helper.absolutePos(POS.offset(1, 0, 0)).getCenter().add(0.25, -1.5, -0.5));
+        player.setPos(Vec3.atCenterOf(helper.absolutePos(POS.offset(1, 0, 0))).add(0.25, -1.5, -0.5));
         helper.getBlockState(POS.offset(1, 0, 0)).useItemOn(itemStack, helper.getLevel(), player,
                 InteractionHand.MAIN_HAND,
                 new BlockHitResult(
-                        helper.absolutePos(POS.offset(1, 0, 0)).getCenter(),
+                        Vec3.atCenterOf(helper.absolutePos(POS.offset(1, 0, 0))),
                         Direction.NORTH,
                         helper.absolutePos(POS.offset(1, 0, 0)),
                         false)
@@ -220,11 +221,11 @@ public class GameTestsNetwork {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         ItemStack itemStack = new ItemStack(RegistryEntries.ITEM_WRENCH.value());
         player.setItemInHand(InteractionHand.OFF_HAND, itemStack);
-        player.setPos(helper.absolutePos(POS.offset(1, 0, 0)).getCenter().add(0.25, -1.5, -0.5));
+        player.setPos(Vec3.atCenterOf(helper.absolutePos(POS.offset(1, 0, 0))).add(0.25, -1.5, -0.5));
         helper.getBlockState(POS.offset(1, 0, 0)).useItemOn(itemStack, helper.getLevel(), player,
                 InteractionHand.OFF_HAND,
                 new BlockHitResult(
-                        helper.absolutePos(POS.offset(1, 0, 0)).getCenter(),
+                        Vec3.atCenterOf(helper.absolutePos(POS.offset(1, 0, 0))),
                         Direction.NORTH,
                         helper.absolutePos(POS.offset(1, 0, 0)),
                         false)
@@ -275,24 +276,24 @@ public class GameTestsNetwork {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         ItemStack itemStack = new ItemStack(RegistryEntries.ITEM_WRENCH.value());
         player.setItemInHand(InteractionHand.MAIN_HAND, itemStack);
-        player.setPos(helper.absolutePos(POS.offset(1, 0, 0)).getCenter().add(0.25, -1.5, -0.5));
+        player.setPos(Vec3.atCenterOf(helper.absolutePos(POS.offset(1, 0, 0))).add(0.25, -1.5, -0.5));
         helper.getBlockState(POS.offset(1, 0, 0)).useItemOn(itemStack, helper.getLevel(), player,
                 InteractionHand.MAIN_HAND,
                 new BlockHitResult(
-                        helper.absolutePos(POS.offset(1, 0, 0)).getCenter(),
+                        Vec3.atCenterOf(helper.absolutePos(POS.offset(1, 0, 0))),
                         Direction.NORTH,
                         helper.absolutePos(POS.offset(1, 0, 0)),
                         false)
         );
 
         // And reconnect them using the wrench
-        player.setPos(helper.absolutePos(POS.offset(1, 0, 0)).getCenter().add(0.25, -1.5, 0));
+        player.setPos(Vec3.atCenterOf(helper.absolutePos(POS.offset(1, 0, 0))).add(0.25, -1.5, 0));
         player.setYRot(90);
         helper.getLevel().sendParticles(new ParticleBlurData(1, 1, 1, 1, 100), player.position().x, player.position().y + player.getEyeHeight(), player.position().z, 10, 0, 0, 0, 0); // TODO: for debugging
         helper.getBlockState(POS.offset(1, 0, 0)).useItemOn(itemStack, helper.getLevel(), player,
                 InteractionHand.MAIN_HAND,
                 new BlockHitResult(
-                        helper.absolutePos(POS.offset(1, 0, 0)).getCenter(),
+                        Vec3.atCenterOf(helper.absolutePos(POS.offset(1, 0, 0))),
                         Direction.EAST,
                         helper.absolutePos(POS.offset(1, 0, 0)),
                         false)
@@ -389,11 +390,11 @@ public class GameTestsNetwork {
         player.setShiftKeyDown(true); // To remove cable!
         ItemStack itemStack = new ItemStack(RegistryEntries.ITEM_WRENCH.value());
         player.setItemInHand(InteractionHand.MAIN_HAND, itemStack);
-        player.setPos(helper.absolutePos(POS.offset(1, 0, 0)).getCenter().add(0.25, -1.5, -0.5));
+        player.setPos(Vec3.atCenterOf(helper.absolutePos(POS.offset(1, 0, 0))).add(0.25, -1.5, -0.5));
         helper.getBlockState(POS.offset(1, 0, 0)).useItemOn(itemStack, helper.getLevel(), player,
                 InteractionHand.MAIN_HAND,
                 new BlockHitResult(
-                        helper.absolutePos(POS.offset(1, 0, 0)).getCenter(),
+                        Vec3.atCenterOf(helper.absolutePos(POS.offset(1, 0, 0))),
                         Direction.NORTH,
                         helper.absolutePos(POS.offset(1, 0, 0)),
                         false)
@@ -447,11 +448,11 @@ public class GameTestsNetwork {
         player.setShiftKeyDown(true); // To remove cable!
         ItemStack itemStack = new ItemStack(RegistryEntries.ITEM_WRENCH.value());
         player.setItemInHand(InteractionHand.OFF_HAND, itemStack);
-        player.setPos(helper.absolutePos(POS.offset(1, 0, 0)).getCenter().add(0.25, -1.5, -0.5));
+        player.setPos(Vec3.atCenterOf(helper.absolutePos(POS.offset(1, 0, 0))).add(0.25, -1.5, -0.5));
         helper.getBlockState(POS.offset(1, 0, 0)).useItemOn(itemStack, helper.getLevel(), player,
                 InteractionHand.OFF_HAND,
                 new BlockHitResult(
-                        helper.absolutePos(POS.offset(1, 0, 0)).getCenter(),
+                        Vec3.atCenterOf(helper.absolutePos(POS.offset(1, 0, 0))),
                         Direction.NORTH,
                         helper.absolutePos(POS.offset(1, 0, 0)),
                         false)
@@ -588,11 +589,11 @@ public class GameTestsNetwork {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         ItemStack itemStack = new ItemStack(RegistryEntries.ITEM_WRENCH.value());
         player.setItemInHand(InteractionHand.MAIN_HAND, itemStack);
-        player.setPos(helper.absolutePos(POS.east()).getCenter().add(-0.25, -1.5, -0.5));
+        player.setPos(Vec3.atCenterOf(helper.absolutePos(POS.east())).add(-0.25, -1.5, -0.5));
         helper.getBlockState(POS.east()).useItemOn(itemStack, helper.getLevel(), player,
                 InteractionHand.MAIN_HAND,
                 new BlockHitResult(
-                        helper.absolutePos(POS.east()).getCenter(),
+                        Vec3.atCenterOf(helper.absolutePos(POS.east())),
                         Direction.NORTH,
                         helper.absolutePos(POS.east()),
                         false)
@@ -634,11 +635,11 @@ public class GameTestsNetwork {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         player.setShiftKeyDown(true); // To remove store!
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(RegistryEntries.ITEM_WRENCH.value()));
-        player.setPos(helper.absolutePos(POS).getCenter());
+        player.setPos(Vec3.atCenterOf(helper.absolutePos(POS)));
         helper.getBlockState(POS).useItemOn(player.getItemInHand(InteractionHand.MAIN_HAND), helper.getLevel(), player,
                 InteractionHand.MAIN_HAND,
                 new BlockHitResult(
-                        helper.absolutePos(POS).getCenter(),
+                        Vec3.atCenterOf(helper.absolutePos(POS)),
                         Direction.SOUTH,
                         helper.absolutePos(POS),
                         false)
@@ -684,7 +685,7 @@ public class GameTestsNetwork {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         ItemStack toolStack = new ItemStack(Items.DIAMOND_PICKAXE);
         player.setItemInHand(InteractionHand.MAIN_HAND, toolStack);
-        player.setPos(helper.absolutePos(POS).getCenter());
+        player.setPos(Vec3.atCenterOf(helper.absolutePos(POS)));
         helper.getBlockState(POS).onDestroyedByPlayer(helper.getLevel(), helper.absolutePos(POS), player, toolStack, true, helper.getLevel().getFluidState(helper.absolutePos(POS)));
 
         helper.succeedWhen(() -> {
@@ -820,11 +821,11 @@ public class GameTestsNetwork {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         ItemStack itemStack = new ItemStack(RegistryEntries.ITEM_WRENCH.value());
         player.setItemInHand(InteractionHand.MAIN_HAND, itemStack);
-        player.setPos(helper.absolutePos(POS.east()).getCenter().add(-0.25, -1.5, -0.5));
+        player.setPos(Vec3.atCenterOf(helper.absolutePos(POS.east())).add(-0.25, -1.5, -0.5));
         helper.getBlockState(POS.east()).useItemOn(itemStack, helper.getLevel(), player,
                 InteractionHand.MAIN_HAND,
                 new BlockHitResult(
-                        helper.absolutePos(POS.east()).getCenter(),
+                        Vec3.atCenterOf(helper.absolutePos(POS.east())),
                         Direction.NORTH,
                         helper.absolutePos(POS.east()),
                         false)
@@ -866,11 +867,11 @@ public class GameTestsNetwork {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         player.setShiftKeyDown(true); // To remove store!
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(RegistryEntries.ITEM_WRENCH.value()));
-        player.setPos(helper.absolutePos(POS).getCenter());
+        player.setPos(Vec3.atCenterOf(helper.absolutePos(POS)));
         helper.getBlockState(POS).useItemOn(player.getItemInHand(InteractionHand.MAIN_HAND), helper.getLevel(), player,
                 InteractionHand.MAIN_HAND,
                 new BlockHitResult(
-                        helper.absolutePos(POS).getCenter(),
+                        Vec3.atCenterOf(helper.absolutePos(POS)),
                         Direction.SOUTH,
                         helper.absolutePos(POS),
                         false)
@@ -916,7 +917,7 @@ public class GameTestsNetwork {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         ItemStack toolStack = new ItemStack(Items.DIAMOND_PICKAXE);
         player.setItemInHand(InteractionHand.MAIN_HAND, toolStack);
-        player.setPos(helper.absolutePos(POS).getCenter());
+        player.setPos(Vec3.atCenterOf(helper.absolutePos(POS)));
         helper.getBlockState(POS).onDestroyedByPlayer(helper.getLevel(), helper.absolutePos(POS), player, toolStack, true, helper.getLevel().getFluidState(helper.absolutePos(POS)));
 
         helper.succeedWhen(() -> {
@@ -1052,11 +1053,11 @@ public class GameTestsNetwork {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         ItemStack itemStack = new ItemStack(RegistryEntries.ITEM_WRENCH.value());
         player.setItemInHand(InteractionHand.MAIN_HAND, itemStack);
-        player.setPos(helper.absolutePos(POS.east()).getCenter().add(-0.25, -1.5, -0.5));
+        player.setPos(Vec3.atCenterOf(helper.absolutePos(POS.east())).add(-0.25, -1.5, -0.5));
         helper.getBlockState(POS.east()).useItemOn(itemStack, helper.getLevel(), player,
                 InteractionHand.MAIN_HAND,
                 new BlockHitResult(
-                        helper.absolutePos(POS.east()).getCenter(),
+                        Vec3.atCenterOf(helper.absolutePos(POS.east())),
                         Direction.NORTH,
                         helper.absolutePos(POS.east()),
                         false)
@@ -1098,10 +1099,10 @@ public class GameTestsNetwork {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         player.setShiftKeyDown(true); // To remove store!
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(RegistryEntries.ITEM_WRENCH.value()));
-        player.setPos(helper.absolutePos(POS).getCenter());
+        player.setPos(Vec3.atCenterOf(helper.absolutePos(POS)));
         helper.getBlockState(POS).useItemOn(new ItemStack(RegistryEntries.ITEM_WRENCH.value()), helper.getLevel(), player, InteractionHand.MAIN_HAND,
                 new BlockHitResult(
-                        helper.absolutePos(POS).getCenter(),
+                        Vec3.atCenterOf(helper.absolutePos(POS)),
                         Direction.SOUTH,
                         helper.absolutePos(POS),
                         false)
@@ -1147,7 +1148,7 @@ public class GameTestsNetwork {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         ItemStack toolStack = new ItemStack(Items.DIAMOND_PICKAXE);
         player.setItemInHand(InteractionHand.MAIN_HAND, toolStack);
-        player.setPos(helper.absolutePos(POS).getCenter());
+        player.setPos(Vec3.atCenterOf(helper.absolutePos(POS)));
         helper.getBlockState(POS).onDestroyedByPlayer(helper.getLevel(), helper.absolutePos(POS), player, toolStack, true, helper.getLevel().getFluidState(helper.absolutePos(POS)));
 
         helper.succeedWhen(() -> {
@@ -1283,11 +1284,11 @@ public class GameTestsNetwork {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         ItemStack itemStack = new ItemStack(RegistryEntries.ITEM_WRENCH.value());
         player.setItemInHand(InteractionHand.MAIN_HAND, itemStack);
-        player.setPos(helper.absolutePos(POS.east()).getCenter().add(-0.25, -1.5, -0.5));
+        player.setPos(Vec3.atCenterOf(helper.absolutePos(POS.east())).add(-0.25, -1.5, -0.5));
         helper.getBlockState(POS.east()).useItemOn(itemStack, helper.getLevel(), player,
                 InteractionHand.MAIN_HAND,
                 new BlockHitResult(
-                        helper.absolutePos(POS.east()).getCenter(),
+                        Vec3.atCenterOf(helper.absolutePos(POS.east())),
                         Direction.NORTH,
                         helper.absolutePos(POS.east()),
                         false)
@@ -1329,11 +1330,11 @@ public class GameTestsNetwork {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         player.setShiftKeyDown(true); // To remove store!
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(RegistryEntries.ITEM_WRENCH.value()));
-        player.setPos(helper.absolutePos(POS).getCenter());
+        player.setPos(Vec3.atCenterOf(helper.absolutePos(POS)));
         helper.getBlockState(POS).useItemOn(player.getItemInHand(InteractionHand.MAIN_HAND), helper.getLevel(), player,
                 InteractionHand.MAIN_HAND,
                 new BlockHitResult(
-                        helper.absolutePos(POS).getCenter(),
+                        Vec3.atCenterOf(helper.absolutePos(POS)),
                         Direction.SOUTH,
                         helper.absolutePos(POS),
                         false)
@@ -1379,7 +1380,7 @@ public class GameTestsNetwork {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         ItemStack toolStack = new ItemStack(Items.DIAMOND_PICKAXE);
         player.setItemInHand(InteractionHand.MAIN_HAND, toolStack);
-        player.setPos(helper.absolutePos(POS).getCenter());
+        player.setPos(Vec3.atCenterOf(helper.absolutePos(POS)));
         helper.getBlockState(POS).onDestroyedByPlayer(helper.getLevel(), helper.absolutePos(POS), player, toolStack, true, helper.getLevel().getFluidState(helper.absolutePos(POS)));
 
         helper.succeedWhen(() -> {
@@ -1515,11 +1516,11 @@ public class GameTestsNetwork {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         ItemStack itemStack = new ItemStack(RegistryEntries.ITEM_WRENCH.value());
         player.setItemInHand(InteractionHand.MAIN_HAND, itemStack);
-        player.setPos(helper.absolutePos(POS.east()).getCenter().add(-0.25, -1.5, -0.5));
+        player.setPos(Vec3.atCenterOf(helper.absolutePos(POS.east())).add(-0.25, -1.5, -0.5));
         helper.getBlockState(POS.east()).useItemOn(itemStack, helper.getLevel(), player,
                 InteractionHand.MAIN_HAND,
                 new BlockHitResult(
-                        helper.absolutePos(POS.east()).getCenter(),
+                        Vec3.atCenterOf(helper.absolutePos(POS.east())),
                         Direction.NORTH,
                         helper.absolutePos(POS.east()),
                         false)
@@ -1561,11 +1562,11 @@ public class GameTestsNetwork {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         player.setShiftKeyDown(true); // To remove store!
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(RegistryEntries.ITEM_WRENCH.value()));
-        player.setPos(helper.absolutePos(POS).getCenter());
+        player.setPos(Vec3.atCenterOf(helper.absolutePos(POS)));
         helper.getBlockState(POS).useItemOn(player.getItemInHand(InteractionHand.MAIN_HAND), helper.getLevel(), player,
                 InteractionHand.MAIN_HAND,
                 new BlockHitResult(
-                        helper.absolutePos(POS).getCenter(),
+                        Vec3.atCenterOf(helper.absolutePos(POS)),
                         Direction.SOUTH,
                         helper.absolutePos(POS),
                         false)
@@ -1611,7 +1612,7 @@ public class GameTestsNetwork {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         ItemStack toolStack = new ItemStack(Items.DIAMOND_PICKAXE);
         player.setItemInHand(InteractionHand.MAIN_HAND, toolStack);
-        player.setPos(helper.absolutePos(POS).getCenter());
+        player.setPos(Vec3.atCenterOf(helper.absolutePos(POS)));
         helper.getBlockState(POS).onDestroyedByPlayer(helper.getLevel(), helper.absolutePos(POS), player, toolStack, true, helper.getLevel().getFluidState(helper.absolutePos(POS)));
 
         helper.succeedWhen(() -> {
@@ -1747,11 +1748,11 @@ public class GameTestsNetwork {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         ItemStack itemStack = new ItemStack(RegistryEntries.ITEM_WRENCH.value());
         player.setItemInHand(InteractionHand.MAIN_HAND, itemStack);
-        player.setPos(helper.absolutePos(POS.east()).getCenter().add(-0.25, -1.5, -0.5));
+        player.setPos(Vec3.atCenterOf(helper.absolutePos(POS.east())).add(-0.25, -1.5, -0.5));
         helper.getBlockState(POS.east()).useItemOn(itemStack, helper.getLevel(), player,
                 InteractionHand.MAIN_HAND,
                 new BlockHitResult(
-                        helper.absolutePos(POS.east()).getCenter(),
+                        Vec3.atCenterOf(helper.absolutePos(POS.east())),
                         Direction.NORTH,
                         helper.absolutePos(POS.east()),
                         false)
@@ -1793,11 +1794,11 @@ public class GameTestsNetwork {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         player.setShiftKeyDown(true); // To remove store!
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(RegistryEntries.ITEM_WRENCH.value()));
-        player.setPos(helper.absolutePos(POS).getCenter());
+        player.setPos(Vec3.atCenterOf(helper.absolutePos(POS)));
         helper.getBlockState(POS).useItemOn(player.getItemInHand(InteractionHand.MAIN_HAND), helper.getLevel(), player,
                 InteractionHand.MAIN_HAND,
                 new BlockHitResult(
-                        helper.absolutePos(POS).getCenter(),
+                        Vec3.atCenterOf(helper.absolutePos(POS)),
                         Direction.SOUTH,
                         helper.absolutePos(POS),
                         false)
@@ -1843,7 +1844,7 @@ public class GameTestsNetwork {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         ItemStack toolStack = new ItemStack(Items.DIAMOND_PICKAXE);
         player.setItemInHand(InteractionHand.MAIN_HAND, toolStack);
-        player.setPos(helper.absolutePos(POS).getCenter());
+        player.setPos(Vec3.atCenterOf(helper.absolutePos(POS)));
         helper.getBlockState(POS).onDestroyedByPlayer(helper.getLevel(), helper.absolutePos(POS), player, toolStack, true, helper.getLevel().getFluidState(helper.absolutePos(POS)));
 
         helper.succeedWhen(() -> {

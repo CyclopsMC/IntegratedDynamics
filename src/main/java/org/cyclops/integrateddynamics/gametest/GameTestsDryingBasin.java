@@ -10,6 +10,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.cyclops.cyclopscore.gametest.GameTest;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -79,7 +80,7 @@ public class GameTestsDryingBasin {
         player.getInventory().setItem(player.getInventory().getSelectedSlot(), new ItemStack(Items.DIRT, 1));
 
         BlockState blockState = helper.getLevel().getBlockState(helper.absolutePos(POS));
-        blockState.useWithoutItem(helper.getLevel(), player, new BlockHitResult(helper.absolutePos(POS).getCenter(), Direction.UP, helper.absolutePos(POS), false));
+        blockState.useWithoutItem(helper.getLevel(), player, new BlockHitResult(Vec3.atCenterOf(helper.absolutePos(POS)), Direction.UP, helper.absolutePos(POS), false));
 
         helper.succeedWhen(() -> {
             helper.assertValueEqual(machine.getInventory().getItem(0).getItem(), Items.DIRT, Component.literal("Basin did not receive item"));
@@ -98,7 +99,7 @@ public class GameTestsDryingBasin {
         player.getInventory().setItem(player.getInventory().getSelectedSlot(), new ItemStack(Items.DIRT, 5));
 
         BlockState blockState = helper.getLevel().getBlockState(helper.absolutePos(POS));
-        blockState.useWithoutItem(helper.getLevel(), player, new BlockHitResult(helper.absolutePos(POS).getCenter(), Direction.UP, helper.absolutePos(POS), false));
+        blockState.useWithoutItem(helper.getLevel(), player, new BlockHitResult(Vec3.atCenterOf(helper.absolutePos(POS)), Direction.UP, helper.absolutePos(POS), false));
 
         helper.succeedWhen(() -> {
             helper.assertValueEqual(machine.getInventory().getItem(0).getItem(), Items.DIRT, Component.literal("Basin did not receive item from stack"));

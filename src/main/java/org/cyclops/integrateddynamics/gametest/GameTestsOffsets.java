@@ -414,7 +414,7 @@ public class GameTestsOffsets {
         partPos.getPos().getLevel(true).getBlockState(partPos.getPos().getBlockPos()).useItemOn(itemStack, helper.getLevel(), player,
                 InteractionHand.MAIN_HAND,
                 new BlockHitResult(
-                        partPos.getPos().getBlockPos().getCenter(),
+                        Vec3.atCenterOf(partPos.getPos().getBlockPos()),
                         partPos.getSide(),
                         partPos.getPos().getBlockPos(),
                         false));
@@ -422,7 +422,7 @@ public class GameTestsOffsets {
 
     public static void facePlayerToPart(Player player, PartPos partPos) {
         player.setYRot(partPos.getSide().getRotation().y() * 180);
-        player.setPos(partPos.getPos().getBlockPos().getCenter()
+        player.setPos(Vec3.atCenterOf(partPos.getPos().getBlockPos())
                 .add(0, -1.5, 0)
                 .add(Vec3.atLowerCornerOf(partPos.getSide().getUnitVec3i()).multiply(0.75, 0.75, 0.75))
         );

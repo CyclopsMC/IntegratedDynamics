@@ -32,7 +32,7 @@ public class GameTestsFacades {
         // Place facade as player
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         ItemStack itemStackFacade = new ItemStack(RegistryEntries.ITEM_FACADE.value());
-        RegistryEntries.ITEM_FACADE.value().writeFacadeBlock(itemStackFacade, Blocks.COPPER_BLOCK.defaultBlockState());
+        RegistryEntries.ITEM_FACADE.value().writeFacadeBlock(itemStackFacade, Blocks.COPPER_BLOCK.weathering().exposed().defaultBlockState());
         player.setItemInHand(InteractionHand.MAIN_HAND, itemStackFacade);
         helper.placeAt(player, itemStackFacade, POS.south(), Direction.NORTH);
 
@@ -40,7 +40,7 @@ public class GameTestsFacades {
             INetwork network1 = NetworkHelpers.getNetworkChecked(helper.getLevel(), helper.absolutePos(POS), null);
             helper.assertTrue(network1 != null, Component.literal("Network is null"));
             helper.assertTrue(CableHelpers.hasFacade(helper.getLevel(), helper.absolutePos(POS), helper.getBlockState(POS)), Component.literal("Facade is not present"));
-            helper.assertValueEqual(CableHelpers.getFacade(helper.getLevel(), helper.absolutePos(POS), helper.getBlockState(POS)).get(), Blocks.COPPER_BLOCK.defaultBlockState(), Component.literal("Facade type is incorrect"));
+            helper.assertValueEqual(CableHelpers.getFacade(helper.getLevel(), helper.absolutePos(POS), helper.getBlockState(POS)).get(), Blocks.COPPER_BLOCK.weathering().exposed().defaultBlockState(), Component.literal("Facade type is incorrect"));
         });
     }
 
@@ -52,7 +52,7 @@ public class GameTestsFacades {
         // Place facade as player
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         ItemStack itemStackFacade = new ItemStack(RegistryEntries.ITEM_FACADE.value());
-        RegistryEntries.ITEM_FACADE.value().writeFacadeBlock(itemStackFacade, Blocks.COPPER_BLOCK.defaultBlockState());
+        RegistryEntries.ITEM_FACADE.value().writeFacadeBlock(itemStackFacade, Blocks.COPPER_BLOCK.weathering().exposed().defaultBlockState());
         player.setItemInHand(InteractionHand.MAIN_HAND, itemStackFacade);
         helper.placeAt(player, itemStackFacade, POS.south(), Direction.NORTH);
 
@@ -92,7 +92,7 @@ public class GameTestsFacades {
             );
 
             helper.assertTrue(CableHelpers.hasFacade(helper.getLevel(), helper.absolutePos(POS), helper.getBlockState(POS)), Component.literal("Facade is not present"));
-            helper.assertValueEqual(CableHelpers.getFacade(helper.getLevel(), helper.absolutePos(POS), helper.getBlockState(POS)).get(), Blocks.COPPER_BLOCK.defaultBlockState(), Component.literal("Facade type is incorrect"));
+            helper.assertValueEqual(CableHelpers.getFacade(helper.getLevel(), helper.absolutePos(POS), helper.getBlockState(POS)).get(), Blocks.COPPER_BLOCK.weathering().exposed().defaultBlockState(), Component.literal("Facade type is incorrect"));
         });
     }
 
@@ -107,7 +107,7 @@ public class GameTestsFacades {
         // Place facade as player
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         ItemStack itemStackFacade = new ItemStack(RegistryEntries.ITEM_FACADE.value());
-        RegistryEntries.ITEM_FACADE.value().writeFacadeBlock(itemStackFacade, Blocks.COPPER_BLOCK.defaultBlockState());
+        RegistryEntries.ITEM_FACADE.value().writeFacadeBlock(itemStackFacade, Blocks.COPPER_BLOCK.weathering().exposed().defaultBlockState());
         player.setItemInHand(InteractionHand.MAIN_HAND, itemStackFacade);
         helper.placeAt(player, itemStackFacade, POS.south(), Direction.NORTH);
 
@@ -115,7 +115,7 @@ public class GameTestsFacades {
             INetwork network1 = NetworkHelpers.getNetworkChecked(helper.getLevel(), helper.absolutePos(POS), null);
             helper.assertTrue(network1 != null, Component.literal("Network is null"));
             helper.assertTrue(CableHelpers.hasFacade(helper.getLevel(), helper.absolutePos(POS), helper.getBlockState(POS)), Component.literal("Facade is not present"));
-            helper.assertValueEqual(CableHelpers.getFacade(helper.getLevel(), helper.absolutePos(POS), helper.getBlockState(POS)).get(), Blocks.COPPER_BLOCK.defaultBlockState(), Component.literal("Facade type is incorrect"));
+            helper.assertValueEqual(CableHelpers.getFacade(helper.getLevel(), helper.absolutePos(POS), helper.getBlockState(POS)).get(), Blocks.COPPER_BLOCK.weathering().exposed().defaultBlockState(), Component.literal("Facade type is incorrect"));
         });
     }
 
@@ -127,7 +127,7 @@ public class GameTestsFacades {
         // Place facade as player
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         ItemStack itemStackFacade = new ItemStack(RegistryEntries.ITEM_FACADE.value());
-        RegistryEntries.ITEM_FACADE.value().writeFacadeBlock(itemStackFacade, Blocks.COPPER_BLOCK.defaultBlockState());
+        RegistryEntries.ITEM_FACADE.value().writeFacadeBlock(itemStackFacade, Blocks.COPPER_BLOCK.weathering().exposed().defaultBlockState());
         player.setItemInHand(InteractionHand.MAIN_HAND, itemStackFacade);
         helper.placeAt(player, itemStackFacade, POS.south(), Direction.NORTH);
 

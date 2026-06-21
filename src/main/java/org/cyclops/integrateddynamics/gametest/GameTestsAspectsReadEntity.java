@@ -3,7 +3,7 @@ package org.cyclops.integrateddynamics.gametest;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.chicken.Chicken;
 import net.minecraft.world.entity.animal.cow.Cow;
 import net.minecraft.world.entity.decoration.ItemFrame;
@@ -34,7 +34,7 @@ public class GameTestsAspectsReadEntity {
 
     @GameTest(template = TEMPLATE_EMPTY)
     public void testAspectsReadEntityItemFrameRotationValid(GameTestHelper helper) {
-        ItemFrame itemFrame = helper.spawn(EntityType.ITEM_FRAME, POS.west());
+        ItemFrame itemFrame = helper.spawn(EntityTypes.ITEM_FRAME, POS.west());
         itemFrame.setRotation(3);
         itemFrame.setYRot(Direction.WEST.toYRot());
         testReadAspect(POS, helper, PartTypes.ENTITY_READER, Aspects.Read.Entity.INTEGER_ITEMFRAMEROTATION, ValueTypeInteger.ValueInteger.of(3));
@@ -47,7 +47,7 @@ public class GameTestsAspectsReadEntity {
 
     @GameTest(template = TEMPLATE_EMPTY)
     public void testAspectsReadEntityItemFrameContentsValid(GameTestHelper helper) {
-        ItemFrame itemFrame = helper.spawn(EntityType.ITEM_FRAME, POS.west());
+        ItemFrame itemFrame = helper.spawn(EntityTypes.ITEM_FRAME, POS.west());
         itemFrame.setItem(new ItemStack(Items.COAL));
         itemFrame.setYRot(Direction.WEST.toYRot());
         testReadAspect(POS, helper, PartTypes.ENTITY_READER, Aspects.Read.Entity.ITEMSTACK_ITEMFRAMECONTENTS, ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.COAL)));
@@ -55,8 +55,8 @@ public class GameTestsAspectsReadEntity {
 
     @GameTest(template = TEMPLATE_EMPTY)
     public void testAspectsReadEntityEntities(GameTestHelper helper) {
-        Cow cow = helper.spawn(EntityType.COW, POS.west());
-        Chicken chicken = helper.spawn(EntityType.CHICKEN, POS.west());
+        Cow cow = helper.spawn(EntityTypes.COW, POS.west());
+        Chicken chicken = helper.spawn(EntityTypes.CHICKEN, POS.west());
         testReadAspect(POS, helper, PartTypes.ENTITY_READER, Aspects.Read.Entity.LIST_ENTITIES, ValueTypeList.ValueList.ofAll(
                 ValueObjectTypeEntity.ValueEntity.of(cow),
                 ValueObjectTypeEntity.ValueEntity.of(chicken)
@@ -65,7 +65,7 @@ public class GameTestsAspectsReadEntity {
 
     @GameTest(template = TEMPLATE_EMPTY)
     public void testAspectsReadEntityEntity(GameTestHelper helper) {
-        Cow cow = helper.spawn(EntityType.COW, POS.west());
+        Cow cow = helper.spawn(EntityTypes.COW, POS.west());
         testReadAspect(POS, helper, PartTypes.ENTITY_READER, Aspects.Read.Entity.ENTITY, ValueObjectTypeEntity.ValueEntity.of(cow));
     }
 

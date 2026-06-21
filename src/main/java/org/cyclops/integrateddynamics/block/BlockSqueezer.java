@@ -137,29 +137,26 @@ public class BlockSqueezer extends BlockWithEntity {
     }
 
     @Override
-    public void updateEntityMovementAfterFallOn(BlockGetter worldIn, Entity entityIn) {
+    public float getBounceRestitution(Level worldIn, BlockPos blockPos, BlockState blockState, Entity entityIn) {
         double motionY = entityIn.getDeltaMovement().y;
-        super.updateEntityMovementAfterFallOn(worldIn, entityIn);
-        if(!entityIn.level().isClientSide() && motionY <= -0.37D && entityIn instanceof LivingEntity) {
+        float ret = super.getBounceRestitution(worldIn, blockPos, blockState, entityIn);
+        if (!entityIn.level().isClientSide() && motionY <= -0.37D && entityIn instanceof LivingEntity) {
             // Same way of deriving blockPos as is done in Entity#moveEntity
             int i = Mth.floor(entityIn.getX());
             int j = Mth.floor(entityIn.getY() - 0.2D);
             int k = Mth.floor(entityIn.getZ());
-            BlockPos blockPos = new BlockPos(i, j, k);
-            BlockState blockState = worldIn.getBlockState(blockPos);
 
             // The faster the entity is falling, the more steps to advance by
             int steps = 1 + Mth.floor((-motionY - 0.37D) * 5);
 
-            if (blockState.getBlock() == this) { // Just to be sure...
-                if((entityIn.getY() - blockPos.getY()) - getRelativeTopPositionTop(worldIn, blockPos, blockState) <= 0.1F) {
-                    int newHeight = Math.min(7, blockState.getValue(HEIGHT) + steps);
-                    entityIn.level().setBlockAndUpdate(blockPos, blockState.setValue(HEIGHT, newHeight));
-                    IModHelpers.get().getBlockEntityHelpers().get(worldIn, blockPos, BlockEntitySqueezer.class)
-                            .ifPresent(tile -> tile.setItemHeight(Math.max(newHeight, tile.getItemHeight())));
-                }
+            if((entityIn.getY() - blockPos.getY()) - getRelativeTopPositionTop(worldIn, blockPos, blockState) <= 0.1F) {
+                int newHeight = Math.min(7, blockState.getValue(HEIGHT) + steps);
+                entityIn.level().setBlockAndUpdate(blockPos, blockState.setValue(HEIGHT, newHeight));
+                IModHelpers.get().getBlockEntityHelpers().get(worldIn, blockPos, BlockEntitySqueezer.class)
+                        .ifPresent(tile -> tile.setItemHeight(Math.max(newHeight, tile.getItemHeight())));
             }
         }
+        return ret;
     }
 
     @Override

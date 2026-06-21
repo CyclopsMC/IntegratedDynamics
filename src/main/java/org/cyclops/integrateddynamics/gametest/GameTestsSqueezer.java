@@ -4,7 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.goat.Goat;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -12,6 +12,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import org.cyclops.cyclopscore.datastructure.Wrapper;
 import org.cyclops.cyclopscore.gametest.GameTest;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -32,10 +33,10 @@ public class GameTestsSqueezer {
         machine.getInventory().setItem(0, new ItemStack(RegistryEntries.BLOCK_MENRIL_LOG.get()));
 
         // Let mob fall on the squeezer
-        Wrapper<Goat> entity = new Wrapper<>(helper.spawnWithNoFreeWill(EntityType.GOAT, POS.offset(0, 8, 0)));
+        Wrapper<Goat> entity = new Wrapper<>(helper.spawnWithNoFreeWill(EntityTypes.GOAT, POS.offset(0, 8, 0)));
         helper.runAfterDelay(20, () -> {
             entity.get().die(helper.getLevel().damageSources().generic());
-            entity.set(helper.spawnWithNoFreeWill(EntityType.GOAT, POS.offset(0, 8, 0)));
+            entity.set(helper.spawnWithNoFreeWill(EntityTypes.GOAT, POS.offset(0, 8, 0)));
         });
 
         helper.succeedWhen(() -> {
@@ -55,7 +56,7 @@ public class GameTestsSqueezer {
         player.getInventory().setItem(player.getInventory().getSelectedSlot(), new ItemStack(Items.DIRT, 1));
 
         BlockState blockState = helper.getLevel().getBlockState(helper.absolutePos(POS));
-        blockState.useWithoutItem(helper.getLevel(), player, new BlockHitResult(helper.absolutePos(POS).getCenter(), Direction.UP, helper.absolutePos(POS), false));
+        blockState.useWithoutItem(helper.getLevel(), player, new BlockHitResult(Vec3.atCenterOf(helper.absolutePos(POS)), Direction.UP, helper.absolutePos(POS), false));
 
         helper.succeedWhen(() -> {
             helper.assertValueEqual(machine.getInventory().getItem(0).getItem(), Items.DIRT, Component.literal("Squeezer did not receive item"));
@@ -74,7 +75,7 @@ public class GameTestsSqueezer {
         player.getInventory().setItem(player.getInventory().getSelectedSlot(), new ItemStack(Items.DIRT, 5));
 
         BlockState blockState = helper.getLevel().getBlockState(helper.absolutePos(POS));
-        blockState.useWithoutItem(helper.getLevel(), player, new BlockHitResult(helper.absolutePos(POS).getCenter(), Direction.UP, helper.absolutePos(POS), false));
+        blockState.useWithoutItem(helper.getLevel(), player, new BlockHitResult(Vec3.atCenterOf(helper.absolutePos(POS)), Direction.UP, helper.absolutePos(POS), false));
 
         helper.succeedWhen(() -> {
             helper.assertValueEqual(machine.getInventory().getItem(0).getItem(), Items.DIRT, Component.literal("Squeezer did not receive item from stack"));

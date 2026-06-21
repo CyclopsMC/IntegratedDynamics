@@ -1,18 +1,16 @@
 package org.cyclops.integrateddynamics.client.render.level;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.gizmos.GizmoStyle;
+import net.minecraft.gizmos.Gizmos;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
-import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
 import org.cyclops.integrateddynamics.core.network.PartOffsetsClientNotifier;
@@ -71,7 +69,7 @@ public class PartOffsetsOverlayRenderer {
 
             Vec3 eyePos = event.getLevelRenderState().cameraRenderState.pos;
             for (PartOffsetsClientNotifier.Entry entry : this.data) {
-                this.renderOffset(event.getPoseStack(), Minecraft.getInstance().renderBuffers().bufferSource(), entry, eyePos);
+                this.renderOffset(entry, eyePos);
             }
 
         } else if (subscribedToServerChanges) {
@@ -80,11 +78,7 @@ public class PartOffsetsOverlayRenderer {
         }
     }
 
-    private void renderOffset(PoseStack matrixStack, MultiBufferSource renderTypeBuffer, PartOffsetsClientNotifier.Entry entry, Vec3 eyePos) {
-        double offsetX = eyePos.x;
-        double offsetY = eyePos.y;
-        double offsetZ = eyePos.z;
-
+    private void renderOffset(PartOffsetsClientNotifier.Entry entry, Vec3 eyePos) {
         Random posRand = new Random(entry.source().asLong());
         float r = 0.5F + posRand.nextFloat() / 2;
         float g = 0.5F + posRand.nextFloat() / 2;
@@ -92,15 +86,21 @@ public class PartOffsetsOverlayRenderer {
         float a = 0.90F;
 
         // Draw line from center to target
-        VertexConsumer vb = renderTypeBuffer.getBuffer(RenderTypes.SECONDARY_BLOCK_OUTLINE);
-        float minX = entry.source().getX() - (float) offsetX + 0.5F + entry.sourceSide().getStepX() * 0.5F;
-        float minY = entry.source().getY() - (float) offsetY + 0.5F + entry.sourceSide().getStepY() * 0.5F;
-        float minZ = entry.source().getZ() - (float) offsetZ + 0.5F + entry.sourceSide().getStepZ() * 0.5F;
-        float maxX = entry.source().getX() - (float) offsetX + 0.5F + entry.targetOffset().getX() + (entry.targetSide().getAxis() != entry.sourceSide().getAxis() ? entry.targetSide().getStepX() * 0.5F : 0);
-        float maxY = entry.source().getY() - (float) offsetY + 0.5F + entry.targetOffset().getY() + (entry.targetSide().getAxis() != entry.sourceSide().getAxis() ? entry.targetSide().getStepY() * 0.5F : 0);
-        float maxZ = entry.source().getZ() - (float) offsetZ + 0.5F + entry.targetOffset().getZ() + (entry.targetSide().getAxis() != entry.sourceSide().getAxis() ? entry.targetSide().getStepZ() * 0.5F : 0);
-        vb.addVertex(matrixStack.last().pose(), minX, minY, minZ).setLineWidth(2).setColor(r, g, b, a).setNormal(0.0F, 0.0F, 0.0F);
-        vb.addVertex(matrixStack.last().pose(), maxX, maxY, maxZ).setLineWidth(2).setColor(r, g, b, a).setNormal(0.0F, 0.0F, 0.0F);
+        Gizmos.line(
+                Vec3.atCenterOf(entry.source())
+                        .add(
+                                entry.sourceSide().getStepX() * 0.5F,
+                                entry.sourceSide().getStepY() * 0.5F,
+                                entry.sourceSide().getStepZ() * 0.5F
+                        ),
+                Vec3.atCenterOf(entry.source()
+                        .offset(entry.targetOffset()))
+                        .add(
+                                entry.targetSide().getAxis() != entry.sourceSide().getAxis() ? entry.targetSide().getStepX() * 0.5F : 0,
+                                entry.targetSide().getAxis() != entry.sourceSide().getAxis() ? entry.targetSide().getStepY() * 0.5F : 0,
+                                entry.targetSide().getAxis() != entry.sourceSide().getAxis() ? entry.targetSide().getStepZ() * 0.5F : 0
+                        ),
+                ARGB.colorFromFloat(a, r, g, b));
 
         // Draw target face
         AABB bb = new AABB(entry.targetSide().getStepX() == 1 ? 0.9 : 0, entry.targetSide().getStepY() == 1 ? 0.9 : 0, entry.targetSide().getStepZ() == 1 ? 0.9 : 0,
@@ -108,11 +108,10 @@ public class PartOffsetsOverlayRenderer {
         bb = bb
                 .move(entry.source())
                 .move(entry.targetOffset().getX(), entry.targetOffset().getY(), entry.targetOffset().getZ())
-                .move(-offsetX, -offsetY, -offsetZ)
                 .inflate(0.05, 0.05, 0.05)
                 .inflate(-0.05, -0.05, -0.05);
-        IModHelpers.get().getRenderHelpers().renderLineBox(matrixStack, renderTypeBuffer.getBuffer(RenderTypes.lines()),
-                bb, r, g, b, a, 2.5f);
+        // Inspired by SupportBlockRenderer
+        Gizmos.cuboid(bb, GizmoStyle.stroke(ARGB.colorFromFloat(a, r, g, b), 2.5f));
     }
 
 }

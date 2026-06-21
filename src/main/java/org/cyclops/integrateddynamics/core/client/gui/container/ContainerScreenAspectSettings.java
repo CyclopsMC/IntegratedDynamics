@@ -8,7 +8,7 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
-import net.minecraft.client.resources.language.I18n;
+import net.minecraft.locale.Language;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -130,7 +130,7 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
                     1.0F, 140, IModHelpers.get().getBaseHelpers().RGBAToInt(10, 10, 10, 255), false, Font.DisplayMode.NORMAL);
             if (IModHelpers.get().getRenderHelpers().isPointInRegion(this.leftPos + 40, this.topPos, 110, 20, mouseX, mouseY)) {
                 String unlocalizedInfo = activeProperty.getTranslationKey() + ".info";
-                if (I18n.exists(unlocalizedInfo)) {
+                if (Language.getInstance().has(unlocalizedInfo)) {
                     drawTooltip(Lists.newArrayList(Component.translatable(unlocalizedInfo)
                             .withStyle(ChatFormatting.GRAY)), guiGraphics, mouseX, mouseY + 20);
                 }

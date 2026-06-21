@@ -9,7 +9,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -496,7 +496,7 @@ public class GameTestsAdvancements {
     public void testAdvancementCreeperTaming(GameTestHelper helper) {
         ServerPlayer player = mockServerPlayer(helper);
         // Spawn a creeper as the input entity
-        net.minecraft.world.entity.Entity creeper = helper.spawn(EntityType.CREEPER, POS.above());
+        net.minecraft.world.entity.Entity creeper = helper.spawn(EntityTypes.CREEPER, POS.above());
         Variable<ValueObjectTypeEntity.ValueEntity> creeperVar = new Variable<>(
                 ValueTypes.OBJECT_ENTITY, ValueObjectTypeEntity.ValueEntity.of(creeper));
         LazyExpression<ValueTypeDouble.ValueDouble> opVar =
@@ -997,7 +997,7 @@ public class GameTestsAdvancements {
     public void testAdvancementCreeperTamingNegative(GameTestHelper helper) {
         ServerPlayer player = mockServerPlayer(helper);
         // Use SHEEP instead of CREEPER - should NOT trigger creeper_taming
-        net.minecraft.world.entity.Entity sheep = helper.spawn(EntityType.SHEEP, POS.above());
+        net.minecraft.world.entity.Entity sheep = helper.spawn(EntityTypes.SHEEP, POS.above());
         Variable<ValueObjectTypeEntity.ValueEntity> sheepVar = new Variable<>(
                 ValueTypes.OBJECT_ENTITY, ValueObjectTypeEntity.ValueEntity.of(sheep));
         LazyExpression<ValueTypeDouble.ValueDouble> opVar =

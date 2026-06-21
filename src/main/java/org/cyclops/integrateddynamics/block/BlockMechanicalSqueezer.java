@@ -62,7 +62,7 @@ public class BlockMechanicalSqueezer extends BlockMechanicalMachine {
 
     @Override
     public InteractionResult useWithoutItem(BlockState blockState, Level world, BlockPos blockPos, Player player, BlockHitResult rayTraceResult) {
-        if (FluidUtil.interactWithFluidHandler(player, player.getUsedItemHand(), world, blockPos, rayTraceResult.getDirection())) {
+        if (FluidUtil.interactWithFluidHandler(player, player.getUsedItemHand(), world, blockPos, rayTraceResult.getDirection(), null)) {
             return InteractionResult.SUCCESS;
         }
         return super.useWithoutItem(blockState, world, blockPos, player, rayTraceResult);

@@ -98,7 +98,7 @@ public class TestItemStackOperators {
         ItemStack appleStack = new ItemStack(Items.APPLE);
         appleStack.set(DataComponents.OMINOUS_BOTTLE_AMPLIFIER, new OminousBottleAmplifier(2));
         iAppleTag = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(appleStack));
-        iBeef = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.RED_BED)));
+        iBeef = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.BED.red())));
         iEnderPearl = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.ENDER_PEARL)));
         iHoe = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.DIAMOND_HOE)));
         iHoe100 = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.DIAMOND_HOE)));
@@ -118,7 +118,7 @@ public class TestItemStackOperators {
         BlockEnergyBatteryBase.fill(energyStorage);
         iEnergyBatteryFull = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(energyBatteryFull));
         iIronOre = new DummyVariableItemStack(ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Blocks.IRON_ORE)));
-        ItemStack shulkerBox = new ItemStack(Blocks.BLACK_SHULKER_BOX);
+        ItemStack shulkerBox = new ItemStack(Items.DYED_SHULKER_BOX.black());
         ResourceHandler<ItemResource> itemHandler = shulkerBox.getCapability(Capabilities.Item.ITEM, ItemAccess.forStack(shulkerBox));
         try (var tx = Transaction.openRoot()) {
             itemHandler.insert(0, ItemResource.of(Items.APPLE), 1, tx);
@@ -824,7 +824,7 @@ public class TestItemStackOperators {
     public void testItemStackTag() throws EvaluationException {
         IValue res1 = Operators.OBJECT_ITEMSTACK_TAG.evaluate(new IVariable[]{iStone});
         Asserts.check(res1 instanceof ValueTypeList.ValueList, "result is a list");
-        TestHelpers.assertEqual(((ValueTypeList.ValueList) res1).getRawValue().getLength(), 2, "size(tag(stone)) = 2");
+        TestHelpers.assertEqual(((ValueTypeList.ValueList) res1).getRawValue().getLength(), 4, "size(tag(stone)) = 4");
 
         IValue res2 = Operators.OBJECT_ITEMSTACK_TAG.evaluate(new IVariable[]{iWrench});
         TestHelpers.assertEqual(((ValueTypeList.ValueList) res2).getRawValue().getLength(), 2, "size(tag(wrench)) = 2");

@@ -13,6 +13,7 @@ import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import org.cyclops.cyclopscore.gametest.GameTest;
 import org.cyclops.integrateddynamics.RegistryEntries;
 
@@ -30,7 +31,7 @@ public class GameTestsWrench {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         ItemStack itemStack = new ItemStack(RegistryEntries.ITEM_WRENCH.value());
         player.setItemInHand(InteractionHand.MAIN_HAND, itemStack);
-        InteractionResult result = itemStack.useOn(new UseOnContext(player, player.getUsedItemHand(), new BlockHitResult(POS.getCenter(), facingDirection, helper.absolutePos(POS), false)));
+        InteractionResult result = itemStack.useOn(new UseOnContext(player, player.getUsedItemHand(), new BlockHitResult(Vec3.atCenterOf(POS), facingDirection, helper.absolutePos(POS), false)));
 
         helper.succeedWhen(() -> {
             helper.assertValueEqual(result, InteractionResult.SUCCESS, Component.literal("Interaction failed"));

@@ -7,7 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.animal.chicken.Chicken;
 import net.minecraft.world.entity.animal.cow.Cow;
@@ -106,7 +106,7 @@ public class TestEntityOperators {
             }
         };
         eZombieEating = new DummyVariableEntity(makeEntity(zombieEating));
-        eChicken = new DummyVariableEntity(makeEntity(new Chicken(EntityType.CHICKEN, world)));
+        eChicken = new DummyVariableEntity(makeEntity(new Chicken(EntityTypes.CHICKEN, world)));
         eItem = new DummyVariableEntity(makeEntity(new ItemEntity(world, 0, 0, 0, ItemStack.EMPTY)));
         eItemFrame = new DummyVariableEntity(makeEntity(new ItemFrame(world, new BlockPos(0, 0, 0), Direction.NORTH)));
         if (IModHelpers.get().getMinecraftHelpers().isClientSide()) {
@@ -123,7 +123,7 @@ public class TestEntityOperators {
         zombieHeldItems.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.APPLE));
         zombieHeldItems.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(Items.POTATO));
         eZombieHeldItems = new DummyVariableEntity(makeEntity(zombieHeldItems));
-        Boat boat = new Boat(EntityType.ACACIA_BOAT, world, () -> ItemStack.EMPTY.getItem());
+        Boat boat = new Boat(EntityTypes.ACACIA_BOAT, world, () -> ItemStack.EMPTY.getItem());
         eZombie.getValue().getRawValue().get().startRiding(boat, true, true);
         eBoat = new DummyVariableEntity(makeEntity(boat));
         ItemFrame itemframe = new ItemFrame(world, new BlockPos(0, 0, 0), Direction.NORTH);
@@ -140,28 +140,28 @@ public class TestEntityOperators {
         Zombie zombieBaby = new Zombie(world);
         zombieBaby.setBaby(true);
         eZombieBaby = new DummyVariableEntity(makeEntity(zombieBaby));
-        eCow = new DummyVariableEntity(makeEntity(new Cow(EntityType.COW, world)));
-        eCowAlreadyBred = new DummyVariableEntity(makeEntity(new Cow(EntityType.COW, world) {
+        eCow = new DummyVariableEntity(makeEntity(new Cow(EntityTypes.COW, world)));
+        eCowAlreadyBred = new DummyVariableEntity(makeEntity(new Cow(EntityTypes.COW, world) {
             @Override
             public int getAge() {
                 return 10;
             }
         }));
-        eCowBaby = new DummyVariableEntity(makeEntity(new Cow(EntityType.COW, world) {
+        eCowBaby = new DummyVariableEntity(makeEntity(new Cow(EntityTypes.COW, world) {
             @Override
             public int getAge() {
                 return -10;
             }
         }));
-        eCowInLove = new DummyVariableEntity(makeEntity(new Cow(EntityType.COW, world) {
+        eCowInLove = new DummyVariableEntity(makeEntity(new Cow(EntityTypes.COW, world) {
             @Override
             public boolean isInLove() {
                 return true;
             }
         }));
-        ePig = new DummyVariableEntity(makeEntity(new Pig(EntityType.PIG, world)));
-        eSheep = new DummyVariableEntity(makeEntity(new Sheep(EntityType.SHEEP, world)));
-        Sheep sheepSheared = new Sheep(EntityType.SHEEP, world);
+        ePig = new DummyVariableEntity(makeEntity(new Pig(EntityTypes.PIG, world)));
+        eSheep = new DummyVariableEntity(makeEntity(new Sheep(EntityTypes.SHEEP, world)));
+        Sheep sheepSheared = new Sheep(EntityTypes.SHEEP, world);
         sheepSheared.setSheared(true);
         eSheepSheared = new DummyVariableEntity(makeEntity(sheepSheared));
 

@@ -1,7 +1,6 @@
 package org.cyclops.integrateddynamics.client.render.blockentity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -12,6 +11,7 @@ import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.phys.Vec3;
 import org.cyclops.cyclopscore.datastructure.EnumFacingMap;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityEnergyBattery;
@@ -91,7 +91,7 @@ public class RenderBlockEntityEnergyBattery implements BlockEntityRenderer<Block
         renderState.maxEnergyStored = blockEntity.getMaxEnergyStored();
         renderState.combinedLights = new EnumFacingMap<>();
         for(Direction side : Direction.Plane.HORIZONTAL) {
-            renderState.combinedLights.put(side, LevelRenderer.getLightCoords(blockEntity.getLevel(), blockEntity.getBlockPos().offset(side.getUnitVec3i())));
+            renderState.combinedLights.put(side, LightCoordsUtil.getLightCoords(blockEntity.getLevel(), blockEntity.getBlockPos().offset(side.getUnitVec3i())));
         }
         renderState.creative = blockEntity.isCreative();
         renderState.gameTime = blockEntity.getLevel().getGameTime();

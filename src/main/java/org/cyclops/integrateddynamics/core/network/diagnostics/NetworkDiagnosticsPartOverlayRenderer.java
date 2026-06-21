@@ -3,7 +3,9 @@ package org.cyclops.integrateddynamics.core.network.diagnostics;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.gizmos.GizmoStyle;
+import net.minecraft.gizmos.Gizmos;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -12,7 +14,6 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
-import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 
@@ -57,9 +58,6 @@ public class NetworkDiagnosticsPartOverlayRenderer {
             Player player = Minecraft.getInstance().player;
 
             Vec3 eyePos = event.getLevelRenderState().cameraRenderState.pos;
-            double offsetX = eyePos.x;
-            double offsetY = eyePos.y;
-            double offsetZ = eyePos.z;
 
             List<PartPos> partList = Lists.newArrayList(partPositions);
             for (PartPos partPos : partList) {
@@ -75,11 +73,10 @@ public class NetworkDiagnosticsPartOverlayRenderer {
                     AABB bb = shape
                             .bounds()
                             .move(partPos.getPos().getBlockPos())
-                            .move(-offsetX, -offsetY, -offsetZ)
                             .inflate(0.05, 0.05, 0.05)
                             .inflate(-0.05, -0.05, -0.05);
-                    IModHelpers.get().getRenderHelpers().renderLineBox(event.getPoseStack(), Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderTypes.lines()),
-                            bb, 1, 0.2f, 0.1f, 0.8f, 6f);
+                    // Inspired by SupportBlockRenderer
+                    Gizmos.cuboid(bb, GizmoStyle.stroke(ARGB.colorFromFloat(0.8f, 1, 0.2f, 0.1f), 6f));
                 }
             }
         }

@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.client.render.blockentity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -14,6 +13,7 @@ import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -107,7 +107,7 @@ public class RenderBlockEntitySqueezer implements BlockEntityRenderer<BlockEntit
 
         if(!renderState.fluidStack.isEmpty()) {
             FluidStack fluid = renderState.fluidStack;
-            int combinedLightCorrected = LevelRenderer.getLightCoords(renderState.level, renderState.blockPos.offset(Direction.UP.getUnitVec3i()));
+            int combinedLightCorrected = LightCoordsUtil.getLightCoords(renderState.level, renderState.blockPos.offset(Direction.UP.getUnitVec3i()));
             IModHelpersNeoForge.get().getRenderHelpers().renderFluidContext(fluid, poseStack, () -> {
                 float height = Math.max(0.0625F - OFFSET, fluid.getAmount() * 0.0625F / IModHelpersNeoForge.get().getFluidHelpers().getBucketVolume() + 0.0625F - OFFSET);
                 int brightness = Math.max(combinedLightCorrected, fluid.getFluid().getFluidType().getLightLevel(fluid));

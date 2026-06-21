@@ -6,13 +6,14 @@ import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import org.cyclops.cyclopscore.gametest.GameTest;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
@@ -146,11 +147,11 @@ public class GameTestsParts {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         player.setShiftKeyDown(true); // To remove part!
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(RegistryEntries.ITEM_WRENCH.value()));
-        player.setPos(helper.absolutePos(POS).getCenter().add(0.25, -1.5, -0.5));
+        player.setPos(Vec3.atCenterOf(helper.absolutePos(POS)).add(0.25, -1.5, -0.5));
         helper.getBlockState(POS).useItemOn(player.getItemInHand(InteractionHand.MAIN_HAND), helper.getLevel(), player,
                 InteractionHand.MAIN_HAND,
                 new BlockHitResult(
-                        helper.absolutePos(POS).getCenter(),
+                        Vec3.atCenterOf(helper.absolutePos(POS)),
                         Direction.NORTH,
                         helper.absolutePos(POS),
                         false)
@@ -161,7 +162,7 @@ public class GameTestsParts {
             helper.assertTrue(partStateHolder == null, Component.literal("Part was not removed"));
 
             helper.assertItemEntityPresent(PartTypes.REDSTONE_READER.getItem());
-            helper.assertTrue(helper.getEntities(EntityType.ITEM).get(0).getItem().has(RegistryEntries.DATACOMPONENT_PART_STATE), Component.literal("Dropped part must have a state"));
+            helper.assertTrue(helper.getEntities(EntityTypes.ITEM).get(0).getItem().has(RegistryEntries.DATACOMPONENT_PART_STATE), Component.literal("Dropped part must have a state"));
             helper.assertItemEntityNotPresent(RegistryEntries.ITEM_CABLE.get());
             helper.assertBlockPresent(RegistryEntries.BLOCK_CABLE.value(), POS);
         });
@@ -180,11 +181,11 @@ public class GameTestsParts {
         // Remove redstone reader as player with wrench
         player.setShiftKeyDown(true); // To remove part!
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(RegistryEntries.ITEM_WRENCH.value()));
-        player.setPos(helper.absolutePos(POS).getCenter().add(0.25, -1.5, -0.5));
+        player.setPos(Vec3.atCenterOf(helper.absolutePos(POS)).add(0.25, -1.5, -0.5));
         helper.getBlockState(POS).useItemOn(player.getItemInHand(InteractionHand.MAIN_HAND), helper.getLevel(), player,
                 InteractionHand.MAIN_HAND,
                 new BlockHitResult(
-                        helper.absolutePos(POS).getCenter(),
+                        Vec3.atCenterOf(helper.absolutePos(POS)),
                         Direction.NORTH,
                         helper.absolutePos(POS),
                         false)
@@ -195,7 +196,7 @@ public class GameTestsParts {
             helper.assertTrue(partStateHolder == null, Component.literal("Part was not removed"));
 
             helper.assertItemEntityPresent(PartTypes.REDSTONE_READER.getItem());
-            helper.assertTrue(helper.getEntities(EntityType.ITEM).get(0).getItem().has(RegistryEntries.DATACOMPONENT_PART_STATE), Component.literal("Dropped part must have a state"));
+            helper.assertTrue(helper.getEntities(EntityTypes.ITEM).get(0).getItem().has(RegistryEntries.DATACOMPONENT_PART_STATE), Component.literal("Dropped part must have a state"));
             helper.assertItemEntityNotPresent(RegistryEntries.ITEM_CABLE.get());
             helper.assertBlockNotPresent(RegistryEntries.BLOCK_CABLE.value(), POS);
         });
@@ -213,7 +214,7 @@ public class GameTestsParts {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         ItemStack toolStack = new ItemStack(Items.DIAMOND_PICKAXE);
         player.setItemInHand(InteractionHand.MAIN_HAND, toolStack);
-        player.setPos(helper.absolutePos(POS).getCenter().add(0.25, -1.5, -0.5));
+        player.setPos(Vec3.atCenterOf(helper.absolutePos(POS)).add(0.25, -1.5, -0.5));
         helper.getBlockState(POS).onDestroyedByPlayer(helper.getLevel(), helper.absolutePos(POS), player, toolStack, true, helper.getLevel().getFluidState(helper.absolutePos(POS)));
 
         helper.succeedWhen(() -> {
@@ -221,7 +222,7 @@ public class GameTestsParts {
             helper.assertTrue(partStateHolder == null, Component.literal("Part was not removed"));
 
             helper.assertItemEntityPresent(PartTypes.REDSTONE_READER.getItem());
-            helper.assertTrue(!helper.getEntities(EntityType.ITEM).get(0).getItem().has(RegistryEntries.DATACOMPONENT_PART_STATE), Component.literal("Dropped part must not have a state"));
+            helper.assertTrue(!helper.getEntities(EntityTypes.ITEM).get(0).getItem().has(RegistryEntries.DATACOMPONENT_PART_STATE), Component.literal("Dropped part must not have a state"));
             helper.assertItemEntityNotPresent(RegistryEntries.ITEM_CABLE.get());
             helper.assertBlockPresent(RegistryEntries.BLOCK_CABLE.value(), POS);
         });
@@ -240,7 +241,7 @@ public class GameTestsParts {
         // Remove redstone reader as player with pickaxe
         ItemStack toolStack = new ItemStack(Items.DIAMOND_PICKAXE);
         player.setItemInHand(InteractionHand.MAIN_HAND, toolStack);
-        player.setPos(helper.absolutePos(POS).getCenter().add(0.25, -1.5, -0.5));
+        player.setPos(Vec3.atCenterOf(helper.absolutePos(POS)).add(0.25, -1.5, -0.5));
         helper.getBlockState(POS).onDestroyedByPlayer(helper.getLevel(), helper.absolutePos(POS), player, toolStack, true, helper.getLevel().getFluidState(helper.absolutePos(POS)));
 
         helper.succeedWhen(() -> {
@@ -248,7 +249,7 @@ public class GameTestsParts {
             helper.assertTrue(partStateHolder == null, Component.literal("Part was not removed"));
 
             helper.assertItemEntityPresent(PartTypes.REDSTONE_READER.getItem());
-            helper.assertTrue(!helper.getEntities(EntityType.ITEM).get(0).getItem().has(RegistryEntries.DATACOMPONENT_PART_STATE), Component.literal("Dropped part must not have a state"));
+            helper.assertTrue(!helper.getEntities(EntityTypes.ITEM).get(0).getItem().has(RegistryEntries.DATACOMPONENT_PART_STATE), Component.literal("Dropped part must not have a state"));
             helper.assertItemEntityNotPresent(RegistryEntries.ITEM_CABLE.get());
             helper.assertBlockNotPresent(RegistryEntries.BLOCK_CABLE.value(), POS);
         });
@@ -288,12 +289,12 @@ public class GameTestsParts {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         player.setShiftKeyDown(true); // To remove part!
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(RegistryEntries.ITEM_WRENCH.value()));
-        player.setPos(helper.absolutePos(POS).getCenter().add(0, -1.5, 0.5));
+        player.setPos(Vec3.atCenterOf(helper.absolutePos(POS)).add(0, -1.5, 0.5));
         player.setYRot(180);
         helper.getBlockState(POS).useItemOn(player.getItemInHand(InteractionHand.MAIN_HAND), helper.getLevel(), player,
                 InteractionHand.MAIN_HAND,
                 new BlockHitResult(
-                        helper.absolutePos(POS).getCenter(),
+                        Vec3.atCenterOf(helper.absolutePos(POS)),
                         Direction.SOUTH,
                         helper.absolutePos(POS),
                         false)
@@ -325,7 +326,7 @@ public class GameTestsParts {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         ItemStack toolStack = new ItemStack(Items.DIAMOND_PICKAXE);
         player.setItemInHand(InteractionHand.MAIN_HAND, toolStack);
-        player.setPos(helper.absolutePos(POS).getCenter().add(0, -1.5, 0.5));
+        player.setPos(Vec3.atCenterOf(helper.absolutePos(POS)).add(0, -1.5, 0.5));
         player.setYRot(180);
         helper.getBlockState(POS).onDestroyedByPlayer(helper.getLevel(), helper.absolutePos(POS), player, toolStack, true, helper.getLevel().getFluidState(helper.absolutePos(POS)));
 
@@ -360,7 +361,7 @@ public class GameTestsParts {
             helper.assertTrue(partStateHolder == null, Component.literal("Placed part is not missing"));
 
             helper.assertItemEntityPresent(PartTypes.REDSTONE_READER.getItem());
-            helper.assertTrue(!helper.getEntities(EntityType.ITEM).get(0).getItem().has(RegistryEntries.DATACOMPONENT_PART_STATE), Component.literal("Dropped part must not have a state"));
+            helper.assertTrue(!helper.getEntities(EntityTypes.ITEM).get(0).getItem().has(RegistryEntries.DATACOMPONENT_PART_STATE), Component.literal("Dropped part must not have a state"));
             helper.assertBlockNotPresent(RegistryEntries.BLOCK_CABLE.value(), POS);
         });
     }

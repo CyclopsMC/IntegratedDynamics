@@ -264,7 +264,7 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
     }
 
     public int getHoveredVisiblePossibility(double mouseX, double mouseY) {
-        Font fontRenderer = Minecraft.getInstance().gui.getFont();
+        Font fontRenderer = Minecraft.getInstance().gui.hud.getFont();
         int yOffset = fontRenderer.lineHeight + 3;
 
         int x = this.getX();

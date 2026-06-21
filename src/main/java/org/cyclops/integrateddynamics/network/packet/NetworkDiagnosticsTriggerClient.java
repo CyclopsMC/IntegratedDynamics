@@ -62,7 +62,7 @@ public class NetworkDiagnosticsTriggerClient extends PacketCodec {
                     ClientProxy.DIAGNOSTICS_SERVER.initialize();
                     Minecraft.getInstance().execute(() -> {
                         try {
-                            player.sendOverlayMessage(
+                            player.sendSystemMessage(
                                     Component.literal("Diagnostics server has been started on ")
                                             .append(Component.literal(ClientProxy.DIAGNOSTICS_SERVER.getUrl())
                                                     .setStyle(Style.EMPTY
@@ -77,7 +77,7 @@ public class NetworkDiagnosticsTriggerClient extends PacketCodec {
             } else {
                 Minecraft.getInstance().execute(() -> {
                     try {
-                        player.sendOverlayMessage(
+                        player.sendSystemMessage(
                                 Component.literal("Diagnostics server is already running on ")
                                         .append(Component.literal(ClientProxy.DIAGNOSTICS_SERVER.getUrl())
                                                 .setStyle(Style.EMPTY
