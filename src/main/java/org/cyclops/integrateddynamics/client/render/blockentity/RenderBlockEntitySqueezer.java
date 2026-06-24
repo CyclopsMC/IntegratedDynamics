@@ -140,8 +140,9 @@ public class RenderBlockEntitySqueezer implements BlockEntityRenderer<BlockEntit
         poseStack.pushPose();
         float yTop = (9 - renderStateSqueezer.itemHeight) * 0.125F;
         poseStack.translate(1F, (yTop - 1F) / 2 + 1F, 1F);
-        if (renderState.isOversizedInGui()) {
-            poseStack.scale(1.7F, 1.7F, 1.7F);
+        if (renderState.getModelBoundingBox().maxY < 0.5F) {
+            float scale = 1.2F + ((float) renderState.getModelBoundingBox().maxY) / 0.5F;
+            poseStack.scale(scale, scale, scale);
         }
         poseStack.scale(1F, yTop - 0.125F, 1F);
 

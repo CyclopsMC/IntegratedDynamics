@@ -98,12 +98,12 @@ public class NetworkDiagnosticsTriggerClient extends PacketCodec {
                     ClientProxy.DIAGNOSTICS_SERVER.deinitialize();
                     ClientProxy.DIAGNOSTICS_SERVER = null;
                     Minecraft.getInstance().execute(() -> {
-                        player.sendOverlayMessage(Component.literal("Stopped diagnostics server"));
+                        player.sendSystemMessage(Component.literal("Stopped diagnostics server"));
                     });
                 }).start();
             } else {
                 Minecraft.getInstance().execute(() -> {
-                    player.sendOverlayMessage(Component.literal("No diagnostics server is running"));
+                    player.sendSystemMessage(Component.literal("No diagnostics server is running"));
                 });
             }
         }
