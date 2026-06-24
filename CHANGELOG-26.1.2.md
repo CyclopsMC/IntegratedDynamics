@@ -1,8 +1,18 @@
 # Changelog for Minecraft 26.1.2
 All notable changes to this project will be documented in this file.
 
+<a name="26.1.2-1.33.5"></a>
+## [26.1.2-1.33.5](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.33.4...26.1.2-1.33.5) - 2026-06-24 19:53:17
+
+
+### Changed
+* Show network diagnostics messages in chat
+
+### Fixed
+* Fix full blocks not rendering at full size in Squeezer
+
 <a name="26.1.2-1.33.4"></a>
-## [26.1.2-1.33.4](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.33.3...26.1.2-1.33.4) - 2026-06-18 19:58:11
+## [26.1.2-1.33.4](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.33.3...26.1.2-1.33.4) - 2026-06-18 19:58:11 +0200
 
 
 ### Fixed
