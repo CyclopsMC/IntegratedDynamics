@@ -207,6 +207,14 @@ Changes may also include fixing merge conflicts.
 
 IMPORTANT: Some changes may be non-trivial,
 for which you can find detail background information for each seperate Minecraft update within these primers: https://github.com/neoforged/.github/tree/main/primers
+You can use these primers to learn how certain classes or systems were changed across Minecraft versions.
+Since primers can be quite large, download them first, and then use grep on the downloaded file to find information related to a relevant class or system.
 The blogs of https://neoforged.net/ and https://fabricmc.net/blog/ may also contain useful porting help.
 
 After making all necessary changes, make sure the code fully compiles and the (game) tests pass.
+
+## Finding code in dependencies
+
+When searching for dependencies in `~/.gradle`, take into account that this directory may be very large,
+so make sure that lookups are as selective as possible (name, version, ...) to avoid slow lookups.
+When possible, lookup the relevant jar first, and only then look for specific classes within that jar.
