@@ -2596,7 +2596,11 @@ public final class Operators {
                         Entity e = entity.getRawValue().get();
                         try (ProblemReporter.ScopedCollector scopedCollector = new ProblemReporter.ScopedCollector(e.problemPath(), LOGGER)) {
                             TagValueOutput valueOutput = TagValueOutput.createWithContext(scopedCollector, e.level().registryAccess());
-                            e.save(valueOutput);
+                            if (e.getType().canSerialize()) {
+                                e.save(valueOutput);
+                            } else {
+                                e.saveWithoutId(valueOutput);
+                            }
                             return ValueTypeNbt.ValueNbt.of(valueOutput.buildResult());
                         }
                     }

@@ -1,8 +1,18 @@
 # Changelog for Minecraft 26.1.2
 All notable changes to this project will be documented in this file.
 
+<a name="26.1.2-1.33.6"></a>
+## [26.1.2-1.33.6](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.33.5...26.1.2-1.33.6) - 2026-07-13 18:54:41
+
+
+### Added
+* Add french translation file (#1678)
+
+### Fixed
+* Fix Player NBT data not being readable with operator
+
 <a name="26.1.2-1.33.5"></a>
-## [26.1.2-1.33.5](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.33.4...26.1.2-1.33.5) - 2026-06-24 19:53:17
+## [26.1.2-1.33.5](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.33.4...26.1.2-1.33.5) - 2026-06-24 19:53:17 +0200
 
 
 ### Changed
