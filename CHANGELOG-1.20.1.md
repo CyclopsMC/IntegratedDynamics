@@ -1,8 +1,25 @@
 # Changelog for Minecraft 1.20.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.20.1-1.30.8"></a>
+## [1.20.1-1.30.8](/compare/1.20.1-1.30.7...1.20.1-1.30.8) - 2026-07-19 20:36:24
+
+
+### Added
+* Add stripped Menril logs to vanilla `logs` and `logs_that_burn` tags (#1685), Closes #1684
+
+### Fixed
+* Fix autocrafting result detection on hopper insertion to importer
+
+The problem was that IngredientChannelAdapterWrapperSlotted did not make
+use of the IIngredientChannelInsertPreConsumers yet, which is the one
+being used when external blocks such as hoppers directly push to network
+components. Now, it does, similar to IngredientChannelAdapter.
+
+Closes CyclopsMC/IntegratedCrafting#207
+
 <a name="1.20.1-1.30.7"></a>
-## [1.20.1-1.30.7](/compare/1.20.1-1.30.6...1.20.1-1.30.7) - 2026-05-30 10:22:44
+## [1.20.1-1.30.7](/compare/1.20.1-1.30.6...1.20.1-1.30.7) - 2026-05-30 10:22:45 +0200
 
 
 ### Fixed

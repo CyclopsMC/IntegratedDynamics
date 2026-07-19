@@ -142,6 +142,11 @@ public class IngredientChannelAdapterWrapperSlotted<T, M> implements IIngredient
 
     @Override
     public T insert(int slotAbsolute, @Nonnull T ingredient, TransactionContext transaction) {
+        // First run the ingredient instance through the pre-consumers.
+        for (IIngredientChannelInsertPreConsumer<T> insertPreConsumer : this.channel.getNetwork().getInsertPreConsumers()) {
+            ingredient = insertPreConsumer.insert(this.channel.getChannel(), ingredient, transaction);
+        }
+
         Triple<IIngredientComponentStorage<T, M>, Integer, PartPos> storageAndSlot = getStorageAndRelativeSlot(slotAbsolute);
         IIngredientComponentStorage<T, M> storage = storageAndSlot.getLeft();
         int slotRelative = storageAndSlot.getMiddle();
