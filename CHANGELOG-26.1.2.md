@@ -1,8 +1,26 @@
 # Changelog for Minecraft 26.1.2
 All notable changes to this project will be documented in this file.
 
+<a name="26.1.2-1.33.7"></a>
+## [26.1.2-1.33.7](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.33.6...26.1.2-1.33.7) - 2026-07-19 20:44:19
+
+
+### Added
+* Add translations through Crowdin (#1681)
+* Add stripped Menril logs to vanilla `logs` and `logs_that_burn` tags (#1685), Closes #1684
+
+### Fixed
+* Fix autocrafting result detection on hopper insertion to importer
+
+The problem was that IngredientChannelAdapterWrapperSlotted did not make
+use of the IIngredientChannelInsertPreConsumers yet, which is the one
+being used when external blocks such as hoppers directly push to network
+components. Now, it does, similar to IngredientChannelAdapter.
+
+Closes CyclopsMC/IntegratedCrafting#207
+
 <a name="26.1.2-1.33.6"></a>
-## [26.1.2-1.33.6](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.33.5...26.1.2-1.33.6) - 2026-07-13 18:54:41
+## [26.1.2-1.33.6](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.33.5...26.1.2-1.33.6) - 2026-07-13 18:54:41 +0200
 
 
 ### Added
