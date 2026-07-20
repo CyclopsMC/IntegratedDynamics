@@ -327,7 +327,7 @@ task publishCurseForge(type: TaskPublishCurseForge) {
         apiToken = System.getenv().CURSEFORGE_KEY_SECRET
     }
     def mainFile = upload("236307", shadowJar)
-    mainFile.releaseType = secrets.build_number.equals("RELEASE") ? Constants.RELEASE_TYPE_RELEASE : Constants.RELEASE_TYPE_BETA
+    mainFile.releaseType = Constants.RELEASE_TYPE_RELEASE
     mainFile.changelogType = "markdown"
     mainFile.changelog = ""
     if (new File("resources/changelog/${project.version}.txt").exists()) {
