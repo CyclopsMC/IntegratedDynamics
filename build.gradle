@@ -310,7 +310,7 @@ task publishCurseForge(type: TaskPublishCurseForge) {
     mainFile.changelogType = "markdown"
     mainFile.changelog = secrets.changelog
     mainFile.addJavaVersion("Java ${project.java_version}")
-    mainFile.addGameVersion(project.minecraft_version)
+    mainFile.addGameVersion(project.minecraft_version, 'Client', 'Server')
     mainFile.addModLoader("NeoForge")
 
     mainFile.addRequirement("cyclops-core")
