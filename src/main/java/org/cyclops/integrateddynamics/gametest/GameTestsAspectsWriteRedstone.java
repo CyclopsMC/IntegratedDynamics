@@ -50,13 +50,14 @@ public class GameTestsAspectsWriteRedstone {
         helper.succeedWhen(() -> helper.assertBlockProperty(POS.west(), RedStoneWireBlock.POWER, 10));
     }
 
-    @GameTest(template = TEMPLATE_EMPTY)
+    @GameTest(template = TEMPLATE_EMPTY, environment = "integrateddynamics:redstonepulse1")
     public void testAspectsWriteRedstoneBooleanPulse(GameTestHelper helper) {
         helper.setBlock(POS.west().below(), Blocks.STONE);
         helper.setBlock(POS.west(), Blocks.REDSTONE_WIRE);
         helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
         PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS), Direction.EAST, PartTypes.REDSTONE_READER, new ItemStack(PartTypes.REDSTONE_READER.getItem()));
         testWriteAspectSetup(POS, helper, PartTypes.REDSTONE_WRITER, Aspects.Write.Redstone.BOOLEAN_PULSE, createVariableFromReader(helper.getLevel(), PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.EAST), Aspects.Read.Redstone.BOOLEAN_CLOCK));
+        setAspectProperty(PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.EAST), Aspects.Write.Redstone.BOOLEAN_PULSE, AspectWriteBuilders.Redstone.PROP_PULSE_LENGTH, ValueTypeInteger.ValueInteger.of(4));
         helper.startSequence()
                 .thenWaitUntil(() -> helper.assertBlockProperty(POS.west(), RedStoneWireBlock.POWER, 0))
                 .thenWaitUntil(() -> helper.assertBlockProperty(POS.west(), RedStoneWireBlock.POWER, 15))
@@ -64,7 +65,7 @@ public class GameTestsAspectsWriteRedstone {
                 .thenSucceed();
     }
 
-    @GameTest(template = TEMPLATE_EMPTY)
+    @GameTest(template = TEMPLATE_EMPTY, environment = "integrateddynamics:redstonepulse2")
     public void testAspectsWriteRedstoneIntegerPulse(GameTestHelper helper) {
         helper.setBlock(POS.west().below(), Blocks.STONE);
         helper.setBlock(POS.west(), Blocks.REDSTONE_WIRE);
@@ -77,6 +78,7 @@ public class GameTestsAspectsWriteRedstone {
 
         // Writer redstone signal from redstone reader to variable card
         ItemStack variableClock = createVariableFromReader(helper.getLevel(), PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.EAST), Aspects.Read.Redstone.BOOLEAN_CLOCK);
+        setAspectProperty(PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.EAST), Aspects.Write.Redstone.BOOLEAN_PULSE, AspectWriteBuilders.Redstone.PROP_PULSE_LENGTH, ValueTypeInteger.ValueInteger.of(4));
         variableStore.getInventory().setItem(0, variableClock);
 
         // Create 1 and 0 constants
@@ -101,8 +103,9 @@ public class GameTestsAspectsWriteRedstone {
                 .thenSucceed();
     }
 
-    @GameTest(template = TEMPLATE_EMPTY)
+    @GameTest(template = TEMPLATE_EMPTY, environment = "integrateddynamics:redstonepulse3")
     public void testAspectsWriteRedstoneBooleanPulseLengthLong(GameTestHelper helper) {
+        helper.setBlock(POS.west().below(), Blocks.STONE);
         helper.setBlock(POS.west(), Blocks.REDSTONE_WIRE);
         helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
         PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS), Direction.EAST, PartTypes.REDSTONE_READER, new ItemStack(PartTypes.REDSTONE_READER.getItem()));
@@ -127,8 +130,9 @@ public class GameTestsAspectsWriteRedstone {
                 .thenSucceed();
     }
 
-    @GameTest(template = TEMPLATE_EMPTY)
+    @GameTest(template = TEMPLATE_EMPTY, environment = "integrateddynamics:redstonepulse4")
     public void testAspectsWriteRedstoneIntegerPulseLengthLong(GameTestHelper helper) {
+        helper.setBlock(POS.west().below(), Blocks.STONE);
         helper.setBlock(POS.west(), Blocks.REDSTONE_WIRE);
         helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
         PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS), Direction.EAST, PartTypes.REDSTONE_READER, new ItemStack(PartTypes.REDSTONE_READER.getItem()));
