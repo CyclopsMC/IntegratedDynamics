@@ -52,7 +52,7 @@ public class GameTestsAspectsWriteRedstone {
         helper.succeedWhen(() -> helper.assertBlockProperty(POS.west(), RedStoneWireBlock.POWER, 10));
     }
 
-    @GameTest(template = TEMPLATE_EMPTY, environment = "integrateddynamics:redstonepulse1")
+    @GameTest(template = TEMPLATE_EMPTY, batch = "integrateddynamics:redstonepulse1")
     public void testAspectsWriteRedstoneBooleanPulse(GameTestHelper helper) {
         helper.setBlock(POS.west(), Blocks.REDSTONE_WIRE);
         helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
@@ -66,7 +66,7 @@ public class GameTestsAspectsWriteRedstone {
                 .thenSucceed();
     }
 
-    @GameTest(template = TEMPLATE_EMPTY, environment = "integrateddynamics:redstonepulse2")
+    @GameTest(template = TEMPLATE_EMPTY, batch = "integrateddynamics:redstonepulse2")
     public void testAspectsWriteRedstoneIntegerPulse(GameTestHelper helper) {
         helper.setBlock(POS.west(), Blocks.REDSTONE_WIRE);
         helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
@@ -103,7 +103,7 @@ public class GameTestsAspectsWriteRedstone {
                 .thenSucceed();
     }
 
-    @GameTest(template = TEMPLATE_EMPTY, environment = "integrateddynamics:redstonepulse3")
+    @GameTest(template = TEMPLATE_EMPTY, batch = "integrateddynamics:redstonepulse3")
     public void testAspectsWriteRedstoneBooleanPulseLengthLong(GameTestHelper helper) {
         helper.setBlock(POS.west().below(), Blocks.STONE);
         helper.setBlock(POS.west(), Blocks.REDSTONE_WIRE);
@@ -130,7 +130,7 @@ public class GameTestsAspectsWriteRedstone {
                 .thenSucceed();
     }
 
-    @GameTest(template = TEMPLATE_EMPTY, environment = "integrateddynamics:redstonepulse4")
+    @GameTest(template = TEMPLATE_EMPTY, batch = "integrateddynamics:redstonepulse4")
     public void testAspectsWriteRedstoneIntegerPulseLengthLong(GameTestHelper helper) {
         helper.setBlock(POS.west().below(), Blocks.STONE);
         helper.setBlock(POS.west(), Blocks.REDSTONE_WIRE);

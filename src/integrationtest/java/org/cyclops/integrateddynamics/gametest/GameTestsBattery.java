@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.CrafterBlockEntity;
@@ -42,6 +43,15 @@ public class GameTestsBattery {
         });
     }
 
+    protected static ItemStack getBatteryItemEntity(GameTestHelper helper) {
+        return helper.findEntities(EntityType.ITEM, POS.getX(), POS.getY(), POS.getZ(), 10)
+                .stream()
+                .filter(i -> i.getItem().getItem() == RegistryEntries.ITEM_ENERGY_BATTERY.get())
+                .findFirst()
+                .map(ItemEntity::getItem)
+                .orElse(ItemStack.EMPTY);
+    }
+
     @GameTest(template = TEMPLATE_EMPTY)
     public void testBatteryCombineEmpty(GameTestHelper helper) {
         // Set crafter
@@ -54,7 +64,7 @@ public class GameTestsBattery {
         crafter.setItem(1, new ItemStack(RegistryEntries.ITEM_ENERGY_BATTERY));
 
         helper.succeedWhen(() -> {
-            ItemStack result = helper.findOneEntity(EntityType.ITEM).getItem();
+            ItemStack result = getBatteryItemEntity(helper);
             helper.assertValueEqual(result.getItem(), RegistryEntries.ITEM_ENERGY_BATTERY.get(), "Result item is incorrect");
             helper.assertValueEqual(result.get(org.cyclops.cyclopscore.RegistryEntries.COMPONENT_CAPACITY), BlockEnergyBatteryConfig.capacity * 2, "Result item capacity is incorrect");
             helper.assertValueEqual(result.get(org.cyclops.cyclopscore.RegistryEntries.COMPONENT_ENERGY_STORAGE), 0, "Result item energy content is incorrect");
@@ -77,7 +87,7 @@ public class GameTestsBattery {
         crafter.getItem(1).set(org.cyclops.cyclopscore.RegistryEntries.COMPONENT_ENERGY_STORAGE, 10_000);
 
         helper.succeedWhen(() -> {
-            ItemStack result = helper.findOneEntity(EntityType.ITEM).getItem();
+            ItemStack result = getBatteryItemEntity(helper);
             helper.assertValueEqual(result.getItem(), RegistryEntries.ITEM_ENERGY_BATTERY.get(), "Result item is incorrect");
             helper.assertValueEqual(result.get(org.cyclops.cyclopscore.RegistryEntries.COMPONENT_CAPACITY), BlockEnergyBatteryConfig.capacity * 2, "Result item capacity is incorrect");
             helper.assertValueEqual(result.get(org.cyclops.cyclopscore.RegistryEntries.COMPONENT_ENERGY_STORAGE), 20_000, "Result item energy content is incorrect");
@@ -104,7 +114,7 @@ public class GameTestsBattery {
         crafter.getItem(1).set(org.cyclops.cyclopscore.RegistryEntries.COMPONENT_ENERGY_STORAGE, 10_000);
 
         helper.succeedWhen(() -> {
-            ItemStack result = helper.findOneEntity(EntityType.ITEM).getItem();
+            ItemStack result = getBatteryItemEntity(helper);
             helper.assertValueEqual(result.getItem(), RegistryEntries.ITEM_ENERGY_BATTERY.get(), "Result item is incorrect");
             helper.assertValueEqual(result.get(org.cyclops.cyclopscore.RegistryEntries.COMPONENT_CAPACITY), BlockEnergyBatteryConfig.capacity * 4, "Result item capacity is incorrect");
             helper.assertValueEqual(result.get(org.cyclops.cyclopscore.RegistryEntries.COMPONENT_ENERGY_STORAGE), 20_000, "Result item energy content is incorrect");
