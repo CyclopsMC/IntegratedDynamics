@@ -185,6 +185,13 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
     }
 
     private void addFacadeQuad(List<BakedQuad> quads, BakedQuad originalQuad, float u0, float v0, float u1, float v1, Direction side) {
+        // MODEL_BAKER is populated lazily when the cable *item* model is baked (see ItemModelCable.Unbaked#bake).
+        // Under deferred/lazy model baking (e.g. ModernFix's dynamic_resources) that may not have happened yet when a
+        // chunk section containing a facade is first meshed, leaving MODEL_BAKER null and crashing FaceBakery#bakeQuad.
+        // Skip the facade quad in that case instead of crashing; it will render once the item model has been baked.
+        if (MODEL_BAKER == null) {
+            return;
+        }
         Vector3f from = new Vector3f(u0 * 16f, v0 * 16f, 0f);
         Vector3f to = new Vector3f(u1 * 16f, v1 * 16f, 0f);
         TextureAtlasSprite texture = originalQuad.materialInfo().sprite();
