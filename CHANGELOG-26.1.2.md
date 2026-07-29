@@ -1,8 +1,15 @@
 # Changelog for Minecraft 26.1.2
 All notable changes to this project will be documented in this file.
 
+<a name="26.1.2-1.33.8"></a>
+## [26.1.2-1.33.8](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.33.7...26.1.2-1.33.8) - 2026-07-29 14:23:01
+
+
+### Changed
+* Restore REI support
+
 <a name="26.1.2-1.33.7"></a>
-## [26.1.2-1.33.7](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.33.6...26.1.2-1.33.7) - 2026-07-19 20:44:19
+## [26.1.2-1.33.7](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.33.6...26.1.2-1.33.7) - 2026-07-20 05:57:48 +0200
 
 
 ### Added
