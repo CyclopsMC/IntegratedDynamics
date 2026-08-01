@@ -10,7 +10,6 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.cyclops.cyclopscore.client.model.DynamicItemAndBlockModel;
 import org.cyclops.integrateddynamics.client.model.CableModel;
-import org.cyclops.integrateddynamics.client.model.CableModelBase;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 
@@ -42,7 +41,6 @@ public record ItemModelCable(DynamicItemAndBlockModel model) implements ItemMode
 
         @Override
         public ItemModel bake(BakingContext bakingContext, org.joml.Matrix4fc matrix) {
-            CableModelBase.MODEL_BAKER = bakingContext.blockModelBaker(); // Yes, this is a hack...
             return new ItemModelCable(new CableModel());
         }
 
