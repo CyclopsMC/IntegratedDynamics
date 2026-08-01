@@ -1,8 +1,15 @@
 # Changelog for Minecraft 26.1.2
 All notable changes to this project will be documented in this file.
 
+<a name="26.1.2-1.33.9"></a>
+## [26.1.2-1.33.9](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.33.8...26.1.2-1.33.9) - 2026-08-01 10:37:39
+
+
+### Fixed
+* Fix facade rendering being incompatible with ModernFix dynamic resources, Closes #1690
+
 <a name="26.1.2-1.33.8"></a>
-## [26.1.2-1.33.8](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.33.7...26.1.2-1.33.8) - 2026-07-29 14:23:01
+## [26.1.2-1.33.8](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.33.7...26.1.2-1.33.8) - 2026-07-29 14:23:01 +0200
 
 
 ### Changed
