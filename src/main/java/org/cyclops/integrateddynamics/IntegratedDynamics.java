@@ -28,6 +28,7 @@ import org.cyclops.cyclopscore.init.ModBaseNeoForge;
 import org.cyclops.cyclopscore.persist.world.GlobalCounters;
 import org.cyclops.cyclopscore.proxy.IClientProxy;
 import org.cyclops.cyclopscore.proxy.ICommonProxy;
+import org.cyclops.integrateddynamics.api.block.cable.ICableRayTraceHandlerRegistry;
 import org.cyclops.integrateddynamics.api.client.model.IVariableModelProviderRegistry;
 import org.cyclops.integrateddynamics.api.client.render.part.IPartOverlayRendererRegistry;
 import org.cyclops.integrateddynamics.api.client.render.valuetype.IValueTypeWorldRendererRegistry;
@@ -54,6 +55,7 @@ import org.cyclops.integrateddynamics.command.CommandNetworkDiagnostics;
 import org.cyclops.integrateddynamics.command.CommandTest;
 import org.cyclops.integrateddynamics.core.NoteBlockEventReceiver;
 import org.cyclops.integrateddynamics.core.TickHandler;
+import org.cyclops.integrateddynamics.core.block.cable.CableRayTraceHandlerRegistry;
 import org.cyclops.integrateddynamics.core.client.model.VariableModelProviderRegistry;
 import org.cyclops.integrateddynamics.core.client.model.VariableModelProviders;
 import org.cyclops.integrateddynamics.core.evaluate.DelayVariableFacadeHandler;
@@ -117,6 +119,7 @@ public class IntegratedDynamics extends ModBaseNeoForge<IntegratedDynamics> {
         getRegistryManager().addRegistry(IAspectRegistry.class, AspectRegistry.getInstance());
         getRegistryManager().addRegistry(IOperatorRegistry.class, OperatorRegistry.getInstance());
         getRegistryManager().addRegistry(ILogicProgrammerElementTypeRegistry.class, LogicProgrammerElementTypeRegistry.getInstance());
+        getRegistryManager().addRegistry(ICableRayTraceHandlerRegistry.class, CableRayTraceHandlerRegistry.getInstance());
         if(getModHelpers().getMinecraftHelpers().isClientSide()) {
             getRegistryManager().addRegistry(IPartOverlayRendererRegistry.class, PartOverlayRendererRegistry.getInstance());
             getRegistryManager().addRegistry(IValueTypeWorldRendererRegistry.class, ValueTypeWorldRendererRegistry.getInstance());
