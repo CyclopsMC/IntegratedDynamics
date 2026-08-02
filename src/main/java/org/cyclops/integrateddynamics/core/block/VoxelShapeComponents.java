@@ -25,7 +25,9 @@ import net.minecraft.world.phys.shapes.DiscreteVoxelShape;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.apache.commons.lang3.tuple.Pair;
+import org.cyclops.integrateddynamics.api.block.cable.ICableRayTraceHandler;
 import org.cyclops.integrateddynamics.block.shapes.CollisionContextBlockSupport;
+import org.cyclops.integrateddynamics.core.block.cable.CableRayTraceHandlers;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -205,6 +207,83 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
         return null;
     }
 
+    // A modified version of #clip, but with a Vec3 param
+    @Nullable
+    public BlockRayTraceResultComponent clipVec(Vec3 startVec, Vec3 endVec, BlockPos pos, Vec3 posVec) {
+        // Find component with shape that is closest to the startVec
+        double distanceMin = Double.POSITIVE_INFINITY;
+        VoxelShapeComponents.IComponent componentMin = null;
+        BlockHitResult resultMin = null;
+
+        for (Pair<VoxelShape, IComponent> entry : entries) {
+            VoxelShape shape = entry.getLeft();
+            BlockHitResult result = shapeClipVec(shape, startVec, endVec, pos, posVec);
+            if (result != null) {
+                double distance = result.getLocation().distanceToSqr(startVec);
+                if (distance < distanceMin) {
+                    // If the previous match was a part and the current one is a facade,
+                    // check if the direction of that part matches with the matched face of the facade,
+                    // and if so, don't match the facade,
+                    // because we want the user to be able to select parts within facades.
+                    if (resultMin == null || !(entry.getRight().isRaytraceLastForFace() && componentMin.getRaytraceDirection() == result.getDirection())) {
+                        distanceMin = distance;
+                        componentMin = entry.getRight();
+                        resultMin = result;
+                    }
+                }
+            }
+        }
+
+        // Store the component in the ray trace result when we found one.
+        if (resultMin != null) {
+            return new BlockRayTraceResultComponent(resultMin, componentMin);
+        }
+
+        return null;
+    }
+
+    @Nullable // A modified version of VoxelShape#clip, but with a Vec3 param
+    public BlockHitResult shapeClipVec(VoxelShape shape, Vec3 startVec, Vec3 endVec, BlockPos pos, Vec3 posVec) {
+        if (shape.isEmpty()) {
+            return null;
+        } else {
+            Vec3 vec3 = endVec.subtract(startVec);
+            if (vec3.lengthSqr() < 1.0E-7) {
+                return null;
+            } else {
+                Vec3 vec31 = startVec.add(vec3.scale(0.001));
+                return shape.shape
+                        .isFullWide(
+                                shape.findIndex(Direction.Axis.X, vec31.x - posVec.x()),
+                                shape.findIndex(Direction.Axis.Y, vec31.y - posVec.y()),
+                                shape.findIndex(Direction.Axis.Z, vec31.z - posVec.z())
+                        )
+                        ? new BlockHitResult(vec31, Direction.getApproximateNearest(vec3.x, vec3.y, vec3.z).getOpposite(), pos, true)
+                        : aabbClip(shape.toAabbs(), startVec, endVec, pos, posVec);
+            }
+        }
+    }
+
+    @Nullable // A modified version of AABB#clip, but with a Vec3 param
+    public static BlockHitResult aabbClip(Iterable<AABB> boxes, Vec3 start, Vec3 end, BlockPos pos, Vec3 posVec) {
+        double[] adouble = new double[]{1.0};
+        Direction direction = null;
+        double d0 = end.x - start.x;
+        double d1 = end.y - start.y;
+        double d2 = end.z - start.z;
+
+        for (AABB aabb : boxes) {
+            direction = AABB.getDirection(aabb.move(posVec), start, adouble, direction, d0, d1, d2);
+        }
+
+        if (direction == null) {
+            return null;
+        } else {
+            double d3 = adouble[0];
+            return new BlockHitResult(start.add(d3 * d0, d3 * d1, d3 * d2), direction, pos, false);
+        }
+    }
+
     /**
      * Do a ray trace for the current look direction of the player.
      * @param pos The block position to perform a ray trace for.
@@ -213,6 +292,22 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
      */
     @Nullable
     public BlockRayTraceResultComponent rayTrace(BlockPos pos, @Nullable Entity entity) {
+        for (ICableRayTraceHandler handler : CableRayTraceHandlers.REGISTRY.getHandlers()) {
+            if (handler.canHandle(pos, entity)) {
+                return handler.rayTrace(pos, entity, this::rayTraceInnerVec);
+            }
+        }
+        return rayTraceInner(pos, entity);
+    }
+
+    /**
+     * Do a ray trace for the current look direction of the player.
+     * @param pos The block position to perform a ray trace for.
+     * @param entity The entity.
+     * @return A holder object with information on the ray tracing.
+     */
+    @Nullable
+    protected BlockRayTraceResultComponent rayTraceInner(BlockPos pos, @Nullable Entity entity) {
         if(entity == null) {
             return null;
         }
@@ -225,6 +320,28 @@ public class VoxelShapeComponents extends VoxelShape implements Iterable<VoxelSh
         Vec3 direction = origin.add(lookVec.x * reachDistance, lookVec.y * reachDistance, lookVec.z * reachDistance);
 
         return clip(origin, direction, pos);
+    }
+
+    /**
+     * Do a ray trace for the current look direction of the player.
+     * @param pos The block position to perform a ray trace for.
+     * @param entity The entity.
+     * @return A holder object with information on the ray tracing.
+     */
+    @Nullable
+    protected BlockRayTraceResultComponent rayTraceInnerVec(BlockPos pos, @Nullable Entity entity, Vec3 posVec) {
+        if(entity == null) {
+            return null;
+        }
+        AttributeInstance reachDistanceAttribute = entity instanceof LivingEntity ? ((LivingEntity) entity).getAttribute(Attributes.BLOCK_INTERACTION_RANGE) : null;
+        double reachDistance = reachDistanceAttribute == null ? 5 : reachDistanceAttribute.getValue();
+
+        double eyeHeight = entity.level().isClientSide() ? entity.getEyeHeight() : entity.getEyeHeight(); // Client removed :  - player.getDefaultEyeHeight()
+        Vec3 lookVec = entity.getLookAngle();
+        Vec3 origin = new Vec3(entity.getX(), entity.getY() + eyeHeight, entity.getZ());
+        Vec3 direction = origin.add(lookVec.x * reachDistance, lookVec.y * reachDistance, lookVec.z * reachDistance);
+
+        return clipVec(origin, direction, pos, posVec);
     }
 
     @Override

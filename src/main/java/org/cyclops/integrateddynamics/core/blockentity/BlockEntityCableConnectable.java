@@ -115,7 +115,7 @@ public abstract class BlockEntityCableConnectable extends CyclopsBlockEntity {
         super.preRemoveSideEffects(pos, state);
 
         if (!CableHelpers.isRemovingCable()) {
-            CableHelpers.onCableRemoving(level, pos, false, false, state, this);
+            CableHelpers.onCableRemoving(level, pos, false, false, state, this, false);
         }
     }
 

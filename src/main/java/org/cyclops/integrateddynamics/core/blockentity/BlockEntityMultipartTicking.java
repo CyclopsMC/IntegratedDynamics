@@ -384,7 +384,7 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
         super.preRemoveSideEffects(pos, state);
 
         if (!CableHelpers.isRemovingCable()) {
-            CableHelpers.onCableRemoving(level, pos, false, false, state, this);
+            CableHelpers.onCableRemoving(level, pos, false, false, state, this, false);
         }
     }
 

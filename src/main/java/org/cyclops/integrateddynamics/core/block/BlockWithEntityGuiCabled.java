@@ -66,7 +66,7 @@ public abstract class BlockWithEntityGuiCabled extends BlockWithEntityGui {
 
     @Override
     public void destroy(LevelAccessor world, BlockPos blockPos, BlockState blockState) {
-        CableHelpers.onCableRemoving((Level) world, blockPos, true, false, blockState, world.getBlockEntity(blockPos));
+        CableHelpers.onCableRemoving((Level) world, blockPos, true, false, blockState, world.getBlockEntity(blockPos), false);
         super.destroy(world, blockPos, blockState);
         CableHelpers.onCableRemoved((Level) world, blockPos);
     }
@@ -74,7 +74,7 @@ public abstract class BlockWithEntityGuiCabled extends BlockWithEntityGui {
     @Override
     public void onBlockExploded(BlockState state, ServerLevel world, BlockPos blockPos, Explosion explosion) {
         CableHelpers.setRemovingCable(true);
-        CableHelpers.onCableRemoving(world, blockPos, true, false, state, world.getBlockEntity(blockPos));
+        CableHelpers.onCableRemoving(world, blockPos, true, false, state, world.getBlockEntity(blockPos), false);
         super.onBlockExploded(state, world, blockPos, explosion);
         CableHelpers.onCableRemoved(world, blockPos);
         CableHelpers.setRemovingCable(false);
