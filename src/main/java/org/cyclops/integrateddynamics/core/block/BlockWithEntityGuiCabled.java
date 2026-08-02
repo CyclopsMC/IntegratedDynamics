@@ -69,7 +69,7 @@ public abstract class BlockWithEntityGuiCabled extends BlockWithEntityGui {
 
     @Override
     public void destroy(LevelAccessor world, BlockPos blockPos, BlockState blockState) {
-        CableHelpers.onCableRemoving((Level) world, blockPos, true, false, blockState);
+        CableHelpers.onCableRemoving((Level) world, blockPos, true, false, blockState, false);
         Collection<Direction> connectedCables = CableHelpers.getExternallyConnectedCables((Level) world, blockPos);
         super.destroy(world, blockPos, blockState);
         CableHelpers.onCableRemoved((Level) world, blockPos, connectedCables);
@@ -78,7 +78,7 @@ public abstract class BlockWithEntityGuiCabled extends BlockWithEntityGui {
     @Override
     public void onBlockExploded(BlockState state, Level world, BlockPos blockPos, Explosion explosion) {
         CableHelpers.setRemovingCable(true);
-        CableHelpers.onCableRemoving(world, blockPos, true, false, state);
+        CableHelpers.onCableRemoving(world, blockPos, true, false, state, false);
         Collection<Direction> connectedCables = CableHelpers.getExternallyConnectedCables(world, blockPos);
         super.onBlockExploded(state, world, blockPos, explosion);
         CableHelpers.onCableRemoved(world, blockPos, connectedCables);
@@ -107,7 +107,7 @@ public abstract class BlockWithEntityGuiCabled extends BlockWithEntityGui {
                     .ifPresent(tile -> InventoryHelpers.dropItems(world, tile.getInventory(), blockPos));
             Collection<Direction> connectedCables = null;
             if (!CableHelpers.isRemovingCable()) {
-                CableHelpers.onCableRemoving(world, blockPos, true, false, oldState);
+                CableHelpers.onCableRemoving(world, blockPos, true, false, oldState, isMoving);
                 connectedCables = CableHelpers.getExternallyConnectedCables(world, blockPos);
             }
             super.onRemove(oldState, world, blockPos, newState, isMoving);

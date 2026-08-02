@@ -365,19 +365,36 @@ public class CableHelpers {
      * @param saveState If the element state should be saved in the item.
      * @return If the cable was removed from the network.
      */
+    @Deprecated // TODO: rm in next major
     public static boolean onCableRemoving(Level world, BlockPos pos, boolean dropMainElement, boolean saveState, BlockState blockState) {
+        return onCableRemoving(world, pos, dropMainElement, saveState, blockState, false);
+    }
+
+    /**
+     * This should be called when a cable is being removed, while the part entity is still present.
+     * This method won't do anything when called client-side.
+     * @param world The world.
+     * @param pos The position.
+     * @param dropMainElement If the main part element should be dropped.
+     * @param saveState If the element state should be saved in the item.
+     * @param isMoving If the cable is being moved to another location. If false, items won't be dropped.
+     * @return If the cable was removed from the network.
+     */
+    public static boolean onCableRemoving(Level world, BlockPos pos, boolean dropMainElement, boolean saveState, BlockState blockState, boolean isMoving) {
         if (!world.isClientSide() && CableHelpers.isNoFakeCable(world, pos, null)) {
             INetworkCarrier networkCarrier = NetworkHelpers.getNetworkCarrier(world, pos, null, blockState).orElse(null);
 
             // Get all drops from the network elements this cable provides.
-            List<ItemStack> itemStacks = Lists.newLinkedList();
-            INetworkElementProvider networkElementProvider = NetworkHelpers.getNetworkElementProvider(world, pos, null, blockState).orElse(null);
-            if (networkElementProvider != null) {
-                for (INetworkElement networkElement : networkElementProvider.createNetworkElements(world, pos)) {
-                    networkElement.addDrops(blockState, itemStacks, dropMainElement, saveState);
-                }
-                for (ItemStack itemStack : itemStacks) {
-                    Block.popResource(world, pos, itemStack);
+            if (!isMoving) {
+                List<ItemStack> itemStacks = Lists.newLinkedList();
+                INetworkElementProvider networkElementProvider = NetworkHelpers.getNetworkElementProvider(world, pos, null, blockState).orElse(null);
+                if (networkElementProvider != null) {
+                    for (INetworkElement networkElement : networkElementProvider.createNetworkElements(world, pos)) {
+                        networkElement.addDrops(blockState, itemStacks, dropMainElement, saveState);
+                    }
+                    for (ItemStack itemStack : itemStacks) {
+                        Block.popResource(world, pos, itemStack);
+                    }
                 }
             }
 
@@ -447,7 +464,7 @@ public class CableHelpers {
         }
 
         Collection<Direction> connectedCables = getCableConnections(cable);
-        CableHelpers.onCableRemoving(world, pos, false, false, blockState);
+        CableHelpers.onCableRemoving(world, pos, false, false, blockState, false);
         // If the cable has no parts or is not fakeable, remove the block,
         // otherwise mark the cable as being fake.
         if (cableFakeable == null || partContainer == null || !partContainer.hasParts()) {

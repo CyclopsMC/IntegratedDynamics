@@ -181,7 +181,7 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
     @Override
     public void onBlockExploded(BlockState state, Level world, BlockPos blockPos, Explosion explosion) {
         CableHelpers.setRemovingCable(true);
-        CableHelpers.onCableRemoving(world, blockPos, true, false, state);
+        CableHelpers.onCableRemoving(world, blockPos, true, false, state, false);
         Collection<Direction> connectedCables = CableHelpers.getExternallyConnectedCables(world, blockPos);
         super.onBlockExploded(state, world, blockPos, explosion);
         CableHelpers.onCableRemoved(world, blockPos, connectedCables);
@@ -203,7 +203,7 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
         if (newState.getBlock() != this) {
             Collection<Direction> connectedCables = null;
             if (!CableHelpers.isRemovingCable()) {
-                CableHelpers.onCableRemoving(world, blockPos, false, false, state);
+                CableHelpers.onCableRemoving(world, blockPos, false, false, state, isMoving);
                 connectedCables = CableHelpers.getExternallyConnectedCables(world, blockPos);
             }
             super.onRemove(state, world, blockPos, newState, isMoving);

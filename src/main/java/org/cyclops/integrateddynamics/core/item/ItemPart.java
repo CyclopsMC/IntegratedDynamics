@@ -113,7 +113,7 @@ public class ItemPart<P extends IPartType<P, S>, S extends IPartState<P>> extend
                         if(!world.isClientSide()) {
                             PartHelpers.addPart(world, target, side.getOpposite(), getPart(), itemStack);
                             if (cableFakeable != null) {
-                                CableHelpers.onCableRemoving(world, target, false, false, world.getBlockState(target));
+                                CableHelpers.onCableRemoving(world, target, false, false, world.getBlockState(target), false);
                                 cableFakeable.setRealCable(false);
                                 CableHelpers.onCableRemoved(world, target, CableHelpers.ALL_SIDES);
                             } else {
