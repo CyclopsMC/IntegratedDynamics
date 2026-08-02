@@ -1,8 +1,21 @@
 # Changelog for Minecraft 1.21.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.21.1-1.34.0"></a>
+## [1.21.1-1.34.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.33.4...1.21.1-1.34.0) - 2026-08-02 19:41:05
+
+
+### Added
+* Add base compatibility with Create Aeronautics
+  This allows ray trace handlers for cables to be registered, which will
+  be done in the compat mod for Create Aeronautics.
+  Furthermore, this commits ensures that no items are dropped when the
+  isMoving flag is false within Block#onRemove.
+  Closes #1674
+* Add cable ray tracing support for Create Aeronautics
+
 <a name="1.21.1-1.33.4"></a>
-## [1.21.1-1.33.4](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.33.3...1.21.1-1.33.4) - 2026-07-19 20:39:29
+## [1.21.1-1.33.4](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.33.3...1.21.1-1.33.4) - 2026-07-20 05:52:01 +0200
 
 
 ### Added
