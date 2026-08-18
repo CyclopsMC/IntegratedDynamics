@@ -1,8 +1,15 @@
 # Changelog for Minecraft 1.21.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.21.1-1.34.1"></a>
+## [1.21.1-1.34.1](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.34.0...1.21.1-1.34.1) - 2026-08-18 19:51:33
+
+
+### Fixed
+* Fix writer parts breaking after world restart, Closes #1628, #1697
+
 <a name="1.21.1-1.34.0"></a>
-## [1.21.1-1.34.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.33.4...1.21.1-1.34.0) - 2026-08-02 19:41:05
+## [1.21.1-1.34.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.33.4...1.21.1-1.34.0) - 2026-08-02 19:41:05 +0200
 
 
 ### Added

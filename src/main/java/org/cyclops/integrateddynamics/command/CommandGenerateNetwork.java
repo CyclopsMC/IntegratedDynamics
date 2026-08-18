@@ -317,7 +317,7 @@ public class CommandGenerateNetwork implements Command<CommandSourceStack> {
                         // Place variable in writer's BOOLEAN aspect
                         org.cyclops.integrateddynamics.api.part.PartPos westPartPos = org.cyclops.integrateddynamics.api.part.PartPos.of(level, westPos, Direction.WEST);
                         GameTestHelpersIntegratedDynamics.placeVariableInWriter(null, level, westPartPos,
-                                Aspects.Write.Redstone.BOOLEAN, variableCard);
+                                Aspects.Write.Redstone.BOOLEAN, variableCard, null);
                     }
                 }
             }
@@ -430,7 +430,7 @@ public class CommandGenerateNetwork implements Command<CommandSourceStack> {
                             // Place CHOICE variable in writer's INTEGER aspect
                             org.cyclops.integrateddynamics.api.part.PartPos westPartPos = org.cyclops.integrateddynamics.api.part.PartPos.of(level, westPos, Direction.WEST);
                             GameTestHelpersIntegratedDynamics.placeVariableInWriter(null, level, westPartPos,
-                                    Aspects.Write.Redstone.INTEGER, variableChoice);
+                                    Aspects.Write.Redstone.INTEGER, variableChoice, null);
 
                             currentSlot += currentSlotIncrement;
                         }

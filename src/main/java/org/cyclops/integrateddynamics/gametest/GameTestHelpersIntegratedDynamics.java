@@ -5,7 +5,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -110,6 +112,10 @@ public class GameTestHelpersIntegratedDynamics {
     }
 
     public static void placeVariableInWriter(GameTestHelper helper, Level level, PartPos partPos, final IAspectWrite<?, ?> aspect, ItemStack variableAspect) {
+        placeVariableInWriter(helper, level, partPos, aspect, variableAspect, helper.makeMockPlayer(GameType.SURVIVAL));
+    }
+
+    public static void placeVariableInWriter(GameTestHelper helper, Level level, PartPos partPos, final IAspectWrite<?, ?> aspect, ItemStack variableAspect, @Nullable Player player) {
         PartHelpers.PartStateHolder<?, ?> partStateHolder = PartHelpers.getPart(partPos);
         IPartTypeWriter<?, ?> part = (IPartTypeWriter<?, ?>) partStateHolder.getPart();
         IPartStateWriter<?> state = (IPartStateWriter<?>) partStateHolder.getState();
@@ -129,7 +135,7 @@ public class GameTestHelpersIntegratedDynamics {
         state.getInventory().setItem(aspectIndex, variableAspect);
 
         // Activate aspect
-        ((IPartTypeWriter) part).updateActivation(PartTarget.fromCenter(partPos), state, null, false);
+        ((IPartTypeWriter) part).updateActivation(PartTarget.fromCenter(partPos), state, player, false);
     }
 
     public static Pair<PartTypePanelDisplay, PartTypePanelDisplay.State> placeVariableInDisplayPanel(Level level, PartPos partPos, ItemStack variableAspect) {
