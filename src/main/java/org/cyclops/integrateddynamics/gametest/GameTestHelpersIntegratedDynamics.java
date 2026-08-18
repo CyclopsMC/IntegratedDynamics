@@ -4,7 +4,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -108,7 +110,19 @@ public class GameTestHelpersIntegratedDynamics {
         }, level, null, null);
     }
 
+    /**
+     * @deprecated Use {@link #placeVariableInWriter(GameTestHelper, PartPos, IAspectWrite, ItemStack)} instead.
+     */
+    @Deprecated // TODO: rm in next major
     public static void placeVariableInWriter(Level level, PartPos partPos, final IAspectWrite<?, ?> aspect, ItemStack variableAspect) {
+        placeVariableInWriter(partPos, aspect, variableAspect, null);
+    }
+
+    public static void placeVariableInWriter(GameTestHelper helper, PartPos partPos, final IAspectWrite<?, ?> aspect, ItemStack variableAspect) {
+        placeVariableInWriter(partPos, aspect, variableAspect, helper.makeMockPlayer(GameType.SURVIVAL));
+    }
+
+    public static void placeVariableInWriter(PartPos partPos, final IAspectWrite<?, ?> aspect, ItemStack variableAspect, @Nullable Player player) {
         PartHelpers.PartStateHolder<?, ?> partStateHolder = PartHelpers.getPart(partPos);
         IPartTypeWriter<?, ?> part = (IPartTypeWriter<?, ?>) partStateHolder.getPart();
         IPartStateWriter<?> state = (IPartStateWriter<?>) partStateHolder.getState();
@@ -128,7 +142,7 @@ public class GameTestHelpersIntegratedDynamics {
         state.getInventory().setItem(aspectIndex, variableAspect);
 
         // Activate aspect
-        ((IPartTypeWriter) part).updateActivation(PartTarget.fromCenter(partPos), state, null);
+        ((IPartTypeWriter) part).updateActivation(PartTarget.fromCenter(partPos), state, player);
     }
 
     public static Pair<PartTypePanelDisplay, PartTypePanelDisplay.State> placeVariableInDisplayPanel(Level level, PartPos partPos, ItemStack variableAspect) {
@@ -224,7 +238,7 @@ public class GameTestHelpersIntegratedDynamics {
         // Place part
         PartHelpers.addPart(helper.getLevel(), helper.absolutePos(pos), Direction.WEST, partType, new ItemStack(partType.getItem()));
         PartPos partPos = PartPos.of(helper.getLevel(), helper.absolutePos(pos), Direction.WEST);
-        placeVariableInWriter(helper.getLevel(), partPos, aspectWrite, variableAspect);
+        placeVariableInWriter(helper, partPos, aspectWrite, variableAspect);
     }
 
     public static <V extends IValue> void testWriteAspectSetup(BlockPos pos, GameTestHelper helper, IPartTypeWriter<?, ?> partType, IAspectWrite<V, ?> aspectWrite, V value) {

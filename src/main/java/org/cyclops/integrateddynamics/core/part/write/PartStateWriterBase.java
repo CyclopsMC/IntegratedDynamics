@@ -80,16 +80,19 @@ public class PartStateWriterBase<P extends IPartTypeWriter>
             // We skip network content updates during network init,
             // as it will be called once for all parts right after network init.
             // This is to avoid re-updating variable contents many times during network init, which can get expensive.
+            // We also skip updating activeAspect during network init to avoid clearing it,
+            // as that would break world saves (the activeAspect would be null at save time).
             onVariableContentsUpdated(partType, target);
+
+            IAspectWrite activeAspect = getActiveAspect();
+            if(activeAspect != null && activeAspect != newAspect) {
+                activeAspect.onDeactivate(partType, target, this);
+            }
+            if(newAspect != null && activeAspect != newAspect) {
+                newAspect.onActivate(partType, target, this);
+            }
+            this.activeAspect = newAspect;
         }
-        IAspectWrite activeAspect = getActiveAspect();
-        if(activeAspect != null && activeAspect != newAspect) {
-            activeAspect.onDeactivate(partType, target, this);
-        }
-        if(newAspect != null && activeAspect != newAspect) {
-            newAspect.onActivate(partType, target, this);
-        }
-        this.activeAspect = newAspect;
     }
 
     @Override

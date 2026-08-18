@@ -23,6 +23,7 @@ import org.cyclops.integrateddynamics.core.block.IgnoredBlockStatus;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
@@ -59,7 +60,7 @@ public class GameTestsCombinedAspects {
         ItemStack variableAspect = createVariableFromReader(helper.getLevel(), PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.WEST), Aspects.Read.Redstone.INTEGER_VALUE);
 
         // Place variable in writer
-        placeVariableInWriter(helper.getLevel(), PartPos.of(helper.getLevel(), helper.absolutePos(POS.east()), Direction.EAST), Aspects.Write.Redstone.INTEGER, variableAspect);
+        placeVariableInWriter(helper, PartPos.of(helper.getLevel(), helper.absolutePos(POS.east()), Direction.EAST), Aspects.Write.Redstone.INTEGER, variableAspect);
 
         // Place redstone wire next to redstone writer
         helper.setBlock(POS.east().east(), Blocks.REDSTONE_WIRE);
@@ -130,7 +131,7 @@ public class GameTestsCombinedAspects {
         ItemStack variableAspect = createVariableFromReader(helper.getLevel(), PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.WEST), Aspects.Read.Redstone.INTEGER_VALUE);
 
         // Place variable in writer
-        placeVariableInWriter(helper.getLevel(), PartPos.of(helper.getLevel(), helper.absolutePos(POS.east().east()), Direction.EAST), Aspects.Write.Redstone.INTEGER, variableAspect);
+        placeVariableInWriter(helper, PartPos.of(helper.getLevel(), helper.absolutePos(POS.east().east()), Direction.EAST), Aspects.Write.Redstone.INTEGER, variableAspect);
 
         // Place redstone wire next to redstone writer
         helper.setBlock(POS.east().east().east(), Blocks.REDSTONE_WIRE);
@@ -650,6 +651,46 @@ public class GameTestsCombinedAspects {
 
         helper.succeedOnTickWhen(6, () -> {
             assertValueEqual(partAndState.getRight().getDisplayValue(), ValueTypeInteger.ValueInteger.of(29));
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testCombinedAspectsWriterPersistsAfterNetworkRebuild(GameTestHelper helper) {
+        // Place three cables in a chain: A - B - C
+        BlockPos posA = POS;
+        BlockPos posB = POS.east();
+        BlockPos posC = POS.east().east();
+
+        helper.setBlock(posA, RegistryEntries.BLOCK_CABLE.value());
+        helper.setBlock(posB, RegistryEntries.BLOCK_CABLE.value());
+        helper.setBlock(posC, RegistryEntries.BLOCK_CABLE.value());
+
+        // Place redstone writer on cable A
+        PartHelpers.addPart(helper.getLevel(), helper.absolutePos(posA), Direction.WEST, PartTypes.REDSTONE_WRITER, new ItemStack(PartTypes.REDSTONE_WRITER.getItem()));
+
+        // Place redstone wire next to redstone writer output
+        helper.setBlock(posA.west(), Blocks.REDSTONE_WIRE);
+
+        // Create and place a constant true boolean variable in the writer
+        PartPos writerPos = PartPos.of(helper.getLevel(), helper.absolutePos(posA), Direction.WEST);
+        placeVariableInWriter(helper, writerPos, Aspects.Write.Redstone.BOOLEAN, createVariableForValue(helper.getLevel(), ValueTypes.BOOLEAN, ValueTypeBoolean.ValueBoolean.of(true)));
+
+        // Verify writer works (redstone signal is 15)
+        helper.runAtTickTime(5, () -> {
+            helper.assertBlockProperty(posA.west(), RedStoneWireBlock.POWER, 15);
+
+            // Now simulate a network rebuild by removing cable B (the middle cable)
+            // This will trigger beforeNetworkKill on the old network and afterNetworkAlive on the new network for cable A's writer
+            helper.destroyBlock(posB);
+        });
+
+        // After the network rebuild, the writer should still have its activeAspect and still write the value
+        helper.succeedWhen(() -> {
+            helper.assertBlockProperty(posA.west(), RedStoneWireBlock.POWER, 15);
+
+            IPartStateWriter partStateWriter = (IPartStateWriter) PartHelpers.getPart(writerPos).getState();
+            helper.assertFalse(partStateWriter.isDeactivated(), "Writer is deactivated after network rebuild");
+            helper.assertValueEqual(partStateWriter.getActiveAspect(), Aspects.Write.Redstone.BOOLEAN, "Active aspect was lost after network rebuild");
         });
     }
 

@@ -138,7 +138,7 @@ public class GameTestsAspectsReadNetwork {
     public void testAspectsReadNetworkValueInvalidWrongSide(GameTestHelper helper) {
         helper.setBlock(POS.west(), RegistryEntries.BLOCK_CABLE.get());
         PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS.west()), Direction.NORTH, PartTypes.REDSTONE_WRITER, new ItemStack(PartTypes.REDSTONE_WRITER.getItem()));
-        placeVariableInWriter(helper.getLevel(), PartPos.of(helper.getLevel(), helper.absolutePos(POS.west()), Direction.NORTH), Aspects.Write.Redstone.BOOLEAN, new ItemStack(RegistryEntries.ITEM_VARIABLE));
+        placeVariableInWriter(helper, PartPos.of(helper.getLevel(), helper.absolutePos(POS.west()), Direction.NORTH), Aspects.Write.Redstone.BOOLEAN, new ItemStack(RegistryEntries.ITEM_VARIABLE));
         testReadAspectThrows(POS, helper, PartTypes.NETWORK_READER, Aspects.Read.Network.ANY_VALUE);
     }
 
@@ -146,7 +146,7 @@ public class GameTestsAspectsReadNetwork {
     public void testAspectsReadNetworkValueValid(GameTestHelper helper) {
         helper.setBlock(POS.west(), RegistryEntries.BLOCK_CABLE.get());
         PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS.west()), Direction.EAST, PartTypes.REDSTONE_WRITER, new ItemStack(PartTypes.REDSTONE_WRITER.getItem()));
-        placeVariableInWriter(helper.getLevel(), PartPos.of(helper.getLevel(), helper.absolutePos(POS.west()), Direction.EAST), Aspects.Write.Redstone.BOOLEAN, new ItemStack(RegistryEntries.ITEM_VARIABLE));
+        placeVariableInWriter(helper, PartPos.of(helper.getLevel(), helper.absolutePos(POS.west()), Direction.EAST), Aspects.Write.Redstone.BOOLEAN, new ItemStack(RegistryEntries.ITEM_VARIABLE));
         testReadAspect(POS, helper, PartTypes.NETWORK_READER, Aspects.Read.Network.ANY_VALUE, ValueTypeBoolean.ValueBoolean.of(true));
     }
 

@@ -64,7 +64,7 @@ public class GameTestsOffsets {
         ItemStack variableAspect = createVariableFromReader(helper.getLevel(), PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.WEST), Aspects.Read.Redstone.INTEGER_VALUE);
 
         // Place variable in writer
-        placeVariableInWriter(helper.getLevel(), PartPos.of(helper.getLevel(), helper.absolutePos(POS.east()), Direction.EAST), Aspects.Write.Redstone.INTEGER, variableAspect);
+        placeVariableInWriter(helper, PartPos.of(helper.getLevel(), helper.absolutePos(POS.east()), Direction.EAST), Aspects.Write.Redstone.INTEGER, variableAspect);
 
         // Place redstone wire next to redstone writer
         helper.setBlock(POS.offset(2, 0, 0).east().east(), Blocks.REDSTONE_WIRE);
@@ -116,7 +116,7 @@ public class GameTestsOffsets {
         ItemStack variableAspect = createVariableFromReader(helper.getLevel(), PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.WEST), Aspects.Read.Redstone.INTEGER_VALUE);
 
         // Place variable in writer
-        placeVariableInWriter(helper.getLevel(), PartPos.of(helper.getLevel(), helper.absolutePos(POS.east()), Direction.EAST), Aspects.Write.Redstone.INTEGER, variableAspect);
+        placeVariableInWriter(helper, PartPos.of(helper.getLevel(), helper.absolutePos(POS.east()), Direction.EAST), Aspects.Write.Redstone.INTEGER, variableAspect);
 
         // Place redstone wire next to redstone writer
         helper.setBlock(POS.offset(2, 0, 0).east().east(), Blocks.REDSTONE_WIRE);
@@ -170,7 +170,7 @@ public class GameTestsOffsets {
         ItemStack variableAspect = createVariableFromReader(helper.getLevel(), PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.WEST), Aspects.Read.Redstone.INTEGER_VALUE);
 
         // Place variable in writer
-        placeVariableInWriter(helper.getLevel(), PartPos.of(helper.getLevel(), helper.absolutePos(POS.east()), Direction.EAST), Aspects.Write.Redstone.INTEGER, variableAspect);
+        placeVariableInWriter(helper, PartPos.of(helper.getLevel(), helper.absolutePos(POS.east()), Direction.EAST), Aspects.Write.Redstone.INTEGER, variableAspect);
 
         // Place redstone wire next to redstone writer
         helper.setBlock(POS.offset(2, 0, 0).east().east(), Blocks.REDSTONE_WIRE);
@@ -222,7 +222,7 @@ public class GameTestsOffsets {
         ItemStack variableAspect = createVariableFromReader(helper.getLevel(), PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.WEST), Aspects.Read.Redstone.INTEGER_VALUE);
 
         // Place variable in writer
-        placeVariableInWriter(helper.getLevel(), PartPos.of(helper.getLevel(), helper.absolutePos(POS.east()), Direction.EAST), Aspects.Write.Redstone.INTEGER, variableAspect);
+        placeVariableInWriter(helper, PartPos.of(helper.getLevel(), helper.absolutePos(POS.east()), Direction.EAST), Aspects.Write.Redstone.INTEGER, variableAspect);
 
         // Place redstone wire next to redstone writer
         helper.setBlock(POS.east().east(), Blocks.REDSTONE_WIRE);
@@ -269,7 +269,7 @@ public class GameTestsOffsets {
         ItemStack variableAspect = createVariableFromReader(helper.getLevel(), PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.WEST), Aspects.Read.Redstone.INTEGER_VALUE);
 
         // Place variable in writer
-        placeVariableInWriter(helper.getLevel(), PartPos.of(helper.getLevel(), helper.absolutePos(POS.east()), Direction.EAST), Aspects.Write.Redstone.INTEGER, variableAspect);
+        placeVariableInWriter(helper, PartPos.of(helper.getLevel(), helper.absolutePos(POS.east()), Direction.EAST), Aspects.Write.Redstone.INTEGER, variableAspect);
 
         // Place redstone wire next to redstone writer
         helper.setBlock(POS.offset(2, 0, 0).east().east(), Blocks.REDSTONE_WIRE);
@@ -311,7 +311,7 @@ public class GameTestsOffsets {
         ItemStack variableAspect = createVariableFromReader(helper.getLevel(), PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.WEST), Aspects.Read.Redstone.INTEGER_VALUE);
 
         // Place variable in writer
-        placeVariableInWriter(helper.getLevel(), PartPos.of(helper.getLevel(), helper.absolutePos(POS.east()), Direction.EAST), Aspects.Write.Redstone.INTEGER, variableAspect);
+        placeVariableInWriter(helper, PartPos.of(helper.getLevel(), helper.absolutePos(POS.east()), Direction.EAST), Aspects.Write.Redstone.INTEGER, variableAspect);
 
         // Place redstone wire next to redstone writer
         helper.setBlock(POS.offset(2, 0, 0).east().east(), Blocks.REDSTONE_WIRE);

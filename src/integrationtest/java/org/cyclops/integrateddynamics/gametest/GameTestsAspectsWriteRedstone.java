@@ -114,7 +114,7 @@ public class GameTestsAspectsWriteRedstone {
         PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS), Direction.WEST, PartTypes.REDSTONE_WRITER, new ItemStack(PartTypes.REDSTONE_WRITER.getItem()));
         PartPos partPos = PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.WEST);
         ItemStack variableClock = createVariableFromReader(helper.getLevel(), PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.EAST), Aspects.Read.Redstone.BOOLEAN_CLOCK);
-        placeVariableInWriter(helper.getLevel(), partPos, Aspects.Write.Redstone.BOOLEAN_PULSE, variableClock);
+        placeVariableInWriter(helper, partPos, Aspects.Write.Redstone.BOOLEAN_PULSE, variableClock);
 
         // Set pulse length to 10 ticks
         setAspectProperty(partPos, Aspects.Write.Redstone.BOOLEAN_PULSE,
@@ -161,7 +161,7 @@ public class GameTestsAspectsWriteRedstone {
         // Setup part with variable
         PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS), Direction.WEST, PartTypes.REDSTONE_WRITER, new ItemStack(PartTypes.REDSTONE_WRITER.getItem()));
         PartPos partPos = PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.WEST);
-        placeVariableInWriter(helper.getLevel(), partPos, Aspects.Write.Redstone.INTEGER_PULSE, variableChoice);
+        placeVariableInWriter(helper, partPos, Aspects.Write.Redstone.INTEGER_PULSE, variableChoice);
 
         // Set pulse length to 10 ticks
         setAspectProperty(partPos, Aspects.Write.Redstone.INTEGER_PULSE,
