@@ -1,7 +1,7 @@
 plugins {
     id 'net.neoforged.moddev' version '2.0.141'
     id 'net.darkhax.curseforgegradle' version '1.1.28'
-    id 'com.diffplug.spotless' version '6.25.0'
+    id 'com.diffplug.spotless' version '7.2.1'
     id 'com.gradleup.shadow' version '8.3.8'
 	id 'com.modrinth.minotaur' version '2.+'
 }
@@ -68,9 +68,13 @@ def getChangelog() {
     if (System.getenv().RELEASE) {
         return file("./CHANGELOG-${project.minecraft_version}.md").getText();
     } else {
-        // Check if any release tag exists for this Minecraft version
-        def proc = ['git', 'tag', '--list', "${project.minecraft_version}-*"].execute([], project.rootProject.projectDir)
-        def tags = proc.text.trim()
+        // Check if any release tag exists for this Minecraft version.
+        // Uses providers.exec so the process is not started during configuration,
+        // which would be incompatible with the configuration cache.
+        def tags = providers.exec {
+            workingDir = project.rootProject.projectDir
+            commandLine 'git', 'tag', '--list', "${project.minecraft_version}-*"
+        }.standardOutput.asText.get().trim()
         if (tags) {
             return "Changes since last release: ${project.github_url}/compare/${project.minecraft_version}-${project.mod_version}...${System.getenv().GITHUB_SHA}"
         } else {
@@ -400,7 +404,7 @@ spotless {
         endWithNewline()
         trimTrailingWhitespace()
         removeUnusedImports()
-        indentWithSpaces()
+        leadingTabsToSpaces()
     }
 }
 
