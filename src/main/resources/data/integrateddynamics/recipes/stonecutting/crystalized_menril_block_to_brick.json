@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "integrateddynamics:crystalized_menril_block"
+  },
+  "result": "integrateddynamics:crystalized_menril_brick",
+  "count": 1
+}
