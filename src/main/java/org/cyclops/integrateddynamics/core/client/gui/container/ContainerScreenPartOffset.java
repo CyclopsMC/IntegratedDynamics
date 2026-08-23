@@ -93,6 +93,14 @@ public class ContainerScreenPartOffset<T extends ContainerPartOffset> extends Co
     }
 
     @Override
+    public void onClose() {
+        // Auto-save the offsets when the gui is closed,
+        // so that players don't have to explicitly confirm their changes.
+        onSave();
+        super.onClose();
+    }
+
+    @Override
     public boolean charTyped(char typedChar, int keyCode) {
         if (!this.numberFieldX.charTyped(typedChar, keyCode)
                 && !this.numberFieldY.charTyped(typedChar, keyCode)
