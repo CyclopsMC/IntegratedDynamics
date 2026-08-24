@@ -1,0 +1,13 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.29.5 or higher.
+
+Additions:
+* Allow add-ons to make their ingredients draggable into the logic programmer (#41)
+  Required for CyclopsMC/IntegratedMekanism#9
+* Add Crystalized Menril stonecutter recipes (#1698)
+
+Changes:
+* Auto-save part settings and offsets when closing the gui (#1700), Refs CyclopsMC/IntegratedTunnels#161
+
+Fixes:
+* Fix writer parts breaking after world restart, Closes #1628, Closes #1697

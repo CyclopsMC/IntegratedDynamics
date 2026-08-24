@@ -1,8 +1,23 @@
 # Changelog for Minecraft 26.1.2
 All notable changes to this project will be documented in this file.
 
+<a name="26.1.2-1.34.0"></a>
+## [26.1.2-1.34.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.33.9...26.1.2-1.34.0) - 2026-08-24 19:38:51
+
+
+### Added
+* Allow add-ons to make their ingredients draggable into the logic programmer (#41)
+  Required for CyclopsMC/IntegratedMekanism#9
+* Add Crystalized Menril stonecutter recipes (#1698)
+
+### Changed
+* Auto-save part settings and offsets when closing the gui (#1700), Refs CyclopsMC/IntegratedTunnels#161
+
+### Fixed
+* Fix writer parts breaking after world restart, Closes #1628, Closes #1697
+
 <a name="26.1.2-1.33.9"></a>
-## [26.1.2-1.33.9](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.33.8...26.1.2-1.33.9) - 2026-08-01 10:37:39
+## [26.1.2-1.33.9](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.33.8...26.1.2-1.33.9) - 2026-08-01 10:37:39 +0200
 
 
 ### Fixed
