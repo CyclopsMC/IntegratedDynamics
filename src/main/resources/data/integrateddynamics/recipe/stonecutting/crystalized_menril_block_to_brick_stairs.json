@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": "integrateddynamics:crystalized_menril_block",
+  "result": {
+    "id": "integrateddynamics:crystalized_menril_brick_stairs",
+    "count": 1
+  }
+}

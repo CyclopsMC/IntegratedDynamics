@@ -1,8 +1,22 @@
 # Changelog for Minecraft 1.20.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.20.1-1.31.0"></a>
+## [1.20.1-1.31.0](/compare/1.20.1-1.30.8...1.20.1-1.31.0) - 2026-08-24 19:27:16
+
+
+### Added
+* Allow add-ons to make their ingredients draggable into the logic programmer (#41)
+  Required for CyclopsMC/IntegratedMekanism#9
+* Add Crystalized Menril stonecutter recipes (#1698)
+
+### Changed
+* Auto-save part settings and offsets when closing the gui (#1700), Refs CyclopsMC/IntegratedTunnels#161
+
+### Fixed
+
 <a name="1.20.1-1.30.8"></a>
-## [1.20.1-1.30.8](/compare/1.20.1-1.30.7...1.20.1-1.30.8) - 2026-07-19 20:36:24
+## [1.20.1-1.30.8](/compare/1.20.1-1.30.7...1.20.1-1.30.8) - 2026-07-20 05:45:20 +0200
 
 
 ### Added

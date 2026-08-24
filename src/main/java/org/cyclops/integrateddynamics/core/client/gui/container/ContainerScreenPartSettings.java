@@ -141,6 +141,14 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
         this.refreshValues();
     }
 
+    @Override
+    public void onClose() {
+        // Auto-save the settings when the gui is closed,
+        // so that players don't have to explicitly confirm their changes.
+        onSave();
+        super.onClose();
+    }
+
     protected int getFieldSideY() {
         return 9;
     }
