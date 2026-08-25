@@ -1,5 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.variable;
 
+import com.google.common.collect.Lists;
+import net.minecraft.resources.ResourceLocation;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -11,6 +13,8 @@ import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
@@ -825,6 +829,42 @@ public class TestOperatorOperators {
     public void testConditionalOutputTypesPredicatePipe() throws EvaluationException {
         assertThat(Operators.OPERATOR_PIPE.getConditionalOutputType(new IVariable[]{oArithmeticIncrement, oArithmeticIncrement}),
                 CoreMatchers.<IValueType>is(ValueTypes.OPERATOR));
+    }
+
+    @Test
+    public void testMaterializePredicatePipe() throws EvaluationException {
+        // A list that is only resolved when it is iterated over, just like the world-based list proxies.
+        List<ValueTypeInteger.ValueInteger> mutableValues = Lists.newArrayList(i0.getValue(), i1.getValue());
+        DummyVariableList lmutable = new DummyVariableList(ValueTypeList.ValueList.ofFactory(
+                new ValueTypeListProxyBase<ValueTypeInteger, ValueTypeInteger.ValueInteger>(
+                        new ResourceLocation("integrateddynamics", "test_mutable"), ValueTypes.INTEGER) {
+                    @Override
+                    public int getLength() {
+                        return mutableValues.size();
+                    }
+
+                    @Override
+                    public ValueTypeInteger.ValueInteger get(int index) {
+                        return mutableValues.get(index);
+                    }
+                }));
+
+        // contains([0, 1]) . not
+        DummyVariableOperator containsMutable = new DummyVariableOperator((ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{oListContains, lmutable}));
+        ValueTypeOperator.ValueOperator piped = (ValueTypeOperator.ValueOperator)
+                Operators.OPERATOR_PIPE.evaluate(new IVariable[]{containsMutable, oLogicalNot});
+        DummyVariableOperator materialized = new DummyVariableOperator(ValueTypes.OPERATOR.materialize(piped));
+
+        // Changing the underlying list must not affect the materialized operator anymore
+        mutableValues.clear();
+
+        assertThat("materialized not|contains([0, 1], 1) == false",
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{materialized, i1}),
+                equalTo((IValue) ValueTypeBoolean.ValueBoolean.of(false)));
+        assertThat("non-materialized not|contains([], 1) == true",
+                Operators.OPERATOR_APPLY.evaluate(new IVariable[]{new DummyVariableOperator(piped), i1}),
+                equalTo((IValue) ValueTypeBoolean.ValueBoolean.of(true)));
     }
 
     /**
