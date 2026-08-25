@@ -222,7 +222,7 @@ public interface IPartState<P extends IPartType> {
     public default void loadInventoryNamed(String name, Container inventory) {
         NonNullList<ItemStack> tabItems = this.getInventoryNamed(name);
         if (tabItems != null) {
-            for (int i = 0; i < tabItems.size(); i++) {
+            for (int i = 0; i < Math.min(tabItems.size(), inventory.getContainerSize()); i++) {
                 inventory.setItem(i, tabItems.get(i));
             }
         }
@@ -295,6 +295,53 @@ public interface IPartState<P extends IPartType> {
      * @return If the part contains variable-driven offsets that require updating.
      */
     public boolean requiresOffsetUpdates();
+
+    /**
+     * Tick any internal aspect setting variables.
+     * @param partType The part type.
+     * @param network The network.
+     * @param partNetwork The part network.
+     * @param target The part target.
+     */
+    public default void updateAspectVariables(P partType, INetwork network, IPartNetwork partNetwork, PartTarget target) {
+
+    }
+
+    /**
+     * Indicate that the contents of one of the aspect setting variables inventories have changed.
+     */
+    public default void markAspectVariablesChanged() {
+
+    }
+
+    /**
+     * Indicate that the statically configured properties of the given aspect have changed.
+     * @param aspect An aspect.
+     */
+    public default void markAspectPropertiesChanged(IAspect aspect) {
+
+    }
+
+    /**
+     * @param aspect An aspect.
+     * @param slot The aspect property slot.
+     * @return The current error, or null if no error.
+     */
+    @Nullable
+    public default MutableComponent getAspectVariableError(IAspect aspect, int slot) {
+        return null;
+    }
+
+    /**
+     * Get the properties of the given aspect after applying all variable-driven property values.
+     * @param aspect An aspect.
+     * @param baseProperties The statically configured properties of the aspect.
+     * @return The derived properties, or null if this aspect has no variable-driven property values.
+     */
+    @Nullable
+    public default IAspectProperties getAspectPropertiesVariableDriven(IAspect aspect, IAspectProperties baseProperties) {
+        return null;
+    }
 
     /**
      * @return The max offset allowed in this part.

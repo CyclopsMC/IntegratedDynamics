@@ -4,11 +4,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.tuple.Pair;
+import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -21,6 +23,7 @@ import org.cyclops.integrateddynamics.api.item.IAspectVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.part.IPartState;
+import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
@@ -41,6 +44,7 @@ import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.item.AspectVariableFacade;
 import org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElement;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementBase;
+import org.cyclops.integrateddynamics.core.part.PartStateAspectVariablesHandler;
 import org.cyclops.integrateddynamics.part.PartTypePanelDisplay;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
@@ -245,6 +249,63 @@ public class GameTestHelpersIntegratedDynamics {
         testWriteAspectSetup(pos, helper, partType, aspectWrite, createVariableForValue(helper.getLevel(), value.getType(), value));
     }
 
+    /**
+     * Place a variable in the aspect setting slot of the given aspect property.
+     * @param partPos The part position.
+     * @param aspect The aspect.
+     * @param property The aspect property.
+     * @param variable The variable item, or an empty item stack to clear the slot.
+     */
+    public static void setAspectPropertyVariable(PartPos partPos, IAspect aspect, IAspectPropertyTypeInstance<?, ?> property, ItemStack variable) {
+        int index = PartStateAspectVariablesHandler.getPropertyTypes(aspect).indexOf(property);
+        if (index < 0) {
+            throw new GameTestAssertException(String.format("Could not find property %s in aspect %s", property, aspect));
+        }
+        setAspectPropertyVariable(partPos, aspect, index, variable);
+    }
+
+    /**
+     * Place a variable in the aspect setting slot at the given property index.
+     * @param partPos The part position.
+     * @param aspect The aspect.
+     * @param propertyIndex The index of the aspect property.
+     * @param variable The variable item, or an empty item stack to clear the slot.
+     */
+    public static void setAspectPropertyVariable(PartPos partPos, IAspect aspect, int propertyIndex, ItemStack variable) {
+        PartHelpers.PartStateHolder<?, ?> partStateHolder = PartHelpers.getPart(partPos);
+        IPartType partType = (IPartType) partStateHolder.getPart();
+        IPartState partState = partStateHolder.getState();
+
+        SimpleInventory inventory = PartStateAspectVariablesHandler.getVariablesInventory(partState, aspect);
+        inventory.setItem(propertyIndex, variable);
+        partState.saveInventoryNamed(PartStateAspectVariablesHandler.getInventoryName(aspect), inventory);
+        partType.onAspectVariablesChanged(PartTarget.fromCenter(partPos), partState);
+    }
+
+    /**
+     * @param partPos The part position.
+     * @param aspect The aspect.
+     * @param property The aspect property.
+     * @return The current error in the aspect setting variable slot, or null if there is no error.
+     */
+    @Nullable
+    public static Component getAspectPropertyVariableError(PartPos partPos, IAspect aspect, IAspectPropertyTypeInstance<?, ?> property) {
+        IPartState<?> partState = PartHelpers.getPart(partPos).getState();
+        return partState.getAspectVariableError(aspect, PartStateAspectVariablesHandler.getPropertyTypes(aspect).indexOf(property));
+    }
+
+    /**
+     * @param partPos The part position.
+     * @param aspect The aspect.
+     * @param property The aspect property.
+     * @return The effective value of the given aspect property, after applying any variable-driven values.
+     */
+    public static <T extends IValueType<V>, V extends IValue> V getEffectiveAspectProperty(PartPos partPos, IAspect aspect, IAspectPropertyTypeInstance<T, V> property) {
+        PartHelpers.PartStateHolder<?, ?> partStateHolder = PartHelpers.getPart(partPos);
+        return (V) ((IAspect) aspect).getProperties((IPartType) partStateHolder.getPart(), PartTarget.fromCenter(partPos), partStateHolder.getState())
+                .getValue(property);
+    }
+
     public static <T extends IValueType<V>, V extends IValue> void setAspectProperty(PartPos partPos, IAspect aspect, IAspectPropertyTypeInstance<T, V> property, V value) {
         PartHelpers.PartStateHolder<?, ?> partStateHolder = PartHelpers.getPart(partPos);
         IPartState<?> state = partStateHolder.getState();
@@ -252,7 +313,8 @@ public class GameTestHelpersIntegratedDynamics {
         // Get or create aspect properties
         IAspectProperties properties = state.getAspectProperties(aspect);
         if (properties == null) {
-            properties = aspect.getDefaultProperties();
+            // Clone, as the default properties are shared between all parts
+            properties = aspect.getDefaultProperties().clone();
         }
 
         // Set the property value

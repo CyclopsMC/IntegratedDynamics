@@ -22,6 +22,7 @@ import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetworkElement;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
+import org.cyclops.integrateddynamics.core.part.PartStateAspectVariablesHandler;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -146,13 +147,25 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     }
 
     @Override
+    public void onAspectVariablesChanged(PartTarget target, S state) {
+        state.markAspectVariablesChanged();
+    }
+
+    protected boolean hasAspectVariables(S state) {
+        return state.getInventoriesNamed().entrySet().stream()
+                .anyMatch(entry -> entry.getKey().startsWith(PartStateAspectVariablesHandler.INVENTORY_NAME_PREFIX)
+                        && entry.getValue().stream().anyMatch(item -> !item.isEmpty()));
+    }
+
+    @Override
     public boolean isUpdate(S state) {
-        return hasOffsetVariables(state);
+        return hasOffsetVariables(state) || hasAspectVariables(state);
     }
 
     @Override
     public void update(INetwork network, IPartNetwork partNetwork, PartTarget target, S state) {
         state.updateOffsetVariables((P) this, network, partNetwork, target);
+        state.updateAspectVariables((P) this, network, partNetwork, target);
     }
 
     @Override
@@ -167,8 +180,9 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
 
     @Override
     public void afterNetworkReAlive(INetwork network, IPartNetwork partNetwork, PartTarget target, S state) {
-        // This resets any errored offset variables and forces them to reload.
+        // This resets any errored offset and aspect variables and forces them to reload.
         state.markOffsetVariablesChanged();
+        state.markAspectVariablesChanged();
     }
 
     @Override

@@ -57,6 +57,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     private boolean enabled = true;
     private final Map<String, NonNullList<ItemStack>> inventoriesNamed = Maps.newHashMap();
     private final PartStateOffsetHandler<P> offsetHandler = new PartStateOffsetHandler<>();
+    private final PartStateAspectVariablesHandler<P> aspectVariablesHandler = new PartStateAspectVariablesHandler<>();
 
     private IdentityHashMap<PartCapability<?>, Optional<Object>> volatileCapabilities = new IdentityHashMap<>();
 
@@ -273,6 +274,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     @Override
     public void setAspectProperties(IAspect aspect, IAspectProperties properties) {
         aspectProperties.put(aspect, properties);
+        markAspectPropertiesChanged(aspect);
         sendUpdate();
     }
 
@@ -297,6 +299,33 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     public void setInventoryNamed(String name, NonNullList<ItemStack> inventory) {
         this.inventoriesNamed.put(name, inventory);
         onDirty();
+    }
+
+    @Override
+    public void updateAspectVariables(P partType, INetwork network, IPartNetwork partNetwork, PartTarget target) {
+        this.aspectVariablesHandler.updateAspectVariables(partType, this, network, partNetwork, target);
+    }
+
+    @Override
+    public void markAspectVariablesChanged() {
+        this.aspectVariablesHandler.markAspectVariablesChanged();
+    }
+
+    @Override
+    public void markAspectPropertiesChanged(IAspect aspect) {
+        this.aspectVariablesHandler.invalidateDerivedProperties(aspect);
+    }
+
+    @Nullable
+    @Override
+    public MutableComponent getAspectVariableError(IAspect aspect, int slot) {
+        return this.aspectVariablesHandler.getAspectVariableError(aspect, slot);
+    }
+
+    @Nullable
+    @Override
+    public IAspectProperties getAspectPropertiesVariableDriven(IAspect aspect, IAspectProperties baseProperties) {
+        return this.aspectVariablesHandler.getDerivedProperties(aspect, baseProperties);
     }
 
     @Override
@@ -344,6 +373,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     @Override
     public void initializeOffsets(PartTarget target) {
         this.offsetHandler.initializeVariableEvaluators(this.offsetHandler.getOffsetVariablesInventory(this), target);
+        this.aspectVariablesHandler.markAspectVariablesChanged();
     }
 
     @Override
