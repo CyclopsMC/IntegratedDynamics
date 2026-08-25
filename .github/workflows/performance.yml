@@ -38,7 +38,7 @@ jobs:
       - name: 'Parse benchmark results'
         run: bash .github/parse_benchmark_results.sh
       - name: Determine benchmarks total results target directory name
-        run: echo "BENCHMARK_DATA_DIR_PATH=CyclopsMC/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}/benchmarks" >> $GITHUB_ENV
+        run: echo "BENCHMARK_DATA_DIR_PATH=CyclopsMC/IntegratedDynamics/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}/benchmarks" >> $GITHUB_ENV
       - name: 'Store benchmark result'
         uses: benchmark-action/github-action-benchmark@v1
         with:
@@ -56,7 +56,7 @@ jobs:
           gh-pages-branch: master
           benchmark-data-dir-path: ${{ env.BENCHMARK_DATA_DIR_PATH }}
       - name: Prepare comment on commit with link to performance results
-        run: echo -e "Performance benchmarks succeeded! 🚀\n\n\[[Results](https://CyclopsMC.github.io/cyclops-performance-results/CyclopsMC/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}/benchmarks/)\]" > ./commit-comment-body.txt
+        run: echo -e "Performance benchmarks succeeded! 🚀\n\n\[[Results](https://CyclopsMC.github.io/cyclops-performance-results/CyclopsMC/IntegratedDynamics/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}/benchmarks/)\]" > ./commit-comment-body.txt
       - name: Comment on commit with link to performance results
         uses: peter-evans/commit-comment@v4
         with:
