@@ -18,7 +18,6 @@ import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.inventory.container.ScrollingInventoryContainer;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.api.PartStateException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.item.IAspectVariableFacade;
@@ -36,12 +35,7 @@ import org.cyclops.integrateddynamics.core.item.AspectVariableFacade;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Container for parts.
@@ -129,14 +123,10 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
     public void broadcastChanges() {
         super.broadcastChanges();
 
-        try {
-            if (!player.level().isClientSide()) {
-                for (Map.Entry<IAspect, Integer> entry : this.aspectPropertyValueIds.entrySet()) {
-                    ValueNotifierHelpers.setValue(this, entry.getValue(), getModifiedAspectPropertyValues(entry.getKey()));
-                }
+        if (!player.level().isClientSide()) {
+            for (Map.Entry<IAspect, Integer> entry : this.aspectPropertyValueIds.entrySet()) {
+                ValueNotifierHelpers.setValue(this, entry.getValue(), getModifiedAspectPropertyValues(entry.getKey()));
             }
-        } catch (PartStateException e) {
-            player.closeContainer();
         }
     }
 
