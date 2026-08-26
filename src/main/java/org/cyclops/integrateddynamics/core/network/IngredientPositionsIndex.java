@@ -13,6 +13,7 @@ import org.cyclops.cyclopscore.ingredient.collection.IIngredientCollapsedCollect
 import org.cyclops.cyclopscore.ingredient.collection.IIngredientMapMutable;
 import org.cyclops.cyclopscore.ingredient.collection.IngredientCollectionHelpers;
 import org.cyclops.cyclopscore.ingredient.collection.IngredientHashMap;
+import org.cyclops.cyclopscore.ingredient.collection.IngredientMapSingleClassified;
 import org.cyclops.integrateddynamics.api.ingredient.IIngredientPositionsIndex;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PrioritizedPartPos;
@@ -132,7 +133,7 @@ public class IngredientPositionsIndex<T, M> implements IIngredientPositionsIndex
         int priority = getInternalPriority(pos);
         IIngredientMapMutable<T, M, ObjectOpenHashSet<PartPos>> positionsMap = this.prioritizedPositionsMap.get(priority);
         if (positionsMap == null) {
-            positionsMap = new IngredientHashMap<>(getComponent());
+            positionsMap = createPositionsMap();
             this.prioritizedPositionsMap.put(priority, positionsMap);
         }
 
@@ -151,6 +152,26 @@ public class IngredientPositionsIndex<T, M> implements IIngredientPositionsIndex
             }
             positions.addTo(pos.getPartPos(), 1);
         }
+    }
+
+    /**
+     * Create a map for storing the positions of one priority level.
+     *
+     * Instances are classified by their first category type when the component has more than one,
+     * so that lookups by that category don't have to scan over all indexed instances.
+     *
+     * @return A new positions map.
+     */
+    // If this would ever be needed in other places as well, let's move this to IngredientCollectionHelpers
+    protected IIngredientMapMutable<T, M, ObjectOpenHashSet<PartPos>> createPositionsMap() {
+        IngredientComponent<T, M> ingredientComponent = getComponent();
+        if (ingredientComponent.getCategoryTypes().size() == 1) {
+            return new IngredientHashMap<>(ingredientComponent);
+        }
+        return new IngredientMapSingleClassified<>(
+                ingredientComponent,
+                () -> new IngredientHashMap<>(ingredientComponent),
+                ingredientComponent.getCategoryTypes().get(0));
     }
 
     @Override
