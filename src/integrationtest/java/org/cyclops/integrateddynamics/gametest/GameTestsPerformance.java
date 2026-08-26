@@ -46,7 +46,7 @@ public class GameTestsPerformance {
      *
      * @return true if PERFORMANCE_BENCHMARK_ENABLED environment variable is set to "true"
      */
-    private static boolean isBenchmarkingEnabled() {
+    static boolean isBenchmarkingEnabled() {
         // Check environment variable first
         String envVar = System.getenv("PERFORMANCE_BENCHMARK_ENABLED");
         if (envVar != null && "true".equalsIgnoreCase(envVar)) {
@@ -183,7 +183,7 @@ public class GameTestsPerformance {
         });
     }
 
-    private static void ensureResultsDirectory() {
+    static void ensureResultsDirectory() {
         try {
             Files.createDirectories(Paths.get("logs"));
         } catch (IOException e) {
@@ -191,7 +191,7 @@ public class GameTestsPerformance {
         }
     }
 
-    private static synchronized void writeResults(List<String> results, boolean append) {
+    static synchronized void writeResults(List<String> results, boolean append) {
         try {
             String content = String.join("\n", results);
             if (append && Files.exists(Paths.get(RESULTS_FILE))) {
