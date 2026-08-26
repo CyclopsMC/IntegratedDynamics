@@ -16,6 +16,7 @@ import org.cyclops.integrateddynamics.api.part.PrioritizedPartPos;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Objects;
 
 /**
  * An index that maps ingredients to positions that contain that instance.
@@ -62,11 +63,27 @@ public class IngredientPositionsIndex<T, M> implements IIngredientPositionsIndex
         if (matcher.getExactMatchNoQuantityCondition().equals(matchFlags)) {
             matchFlags = matcher.getExactMatchCondition();
         }
-        M finalMatchFlags = matchFlags;
 
+        if (matcher.getExactMatchCondition().equals(matchFlags)) {
+            // Fast path: instances are stored by prototype, and the position maps hash their keys by exact equality,
+            // so a single hash-based lookup per priority level suffices.
+            // (IIngredientMap#getAll would instead construct an intermediate key set
+            //  that is pre-allocated for the size of the whole map.)
+            T prototype = getPrototype(instance);
+            return this.prioritizedPositionsMap.values()
+                    .stream()
+                    .map(positionsMap -> positionsMap.get(prototype))
+                    .filter(Objects::nonNull)
+                    .flatMap(Collection::stream)
+                    .distinct()
+                    .iterator();
+        }
+
+        T prototype = getPrototype(instance);
+        M finalMatchFlags = matchFlags;
         return this.prioritizedPositionsMap.values()
                 .stream()
-                .flatMap(ingredientCollection -> ingredientCollection.getAll(getPrototype(instance), finalMatchFlags).stream())
+                .flatMap(positionsMap -> positionsMap.getAll(prototype, finalMatchFlags).stream())
                 .flatMap(Collection::stream)
                 .distinct()
                 .iterator();
