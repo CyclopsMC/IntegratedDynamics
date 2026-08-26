@@ -32,6 +32,7 @@ while IFS= read -r line; do
     size=$(echo "$line" | sed -n 's/.*size=\([0-9]*\).*/\1/p')
     networkTickTime=$(echo "$line" | sed -n 's/.*avgNetworkTickTime=\([0-9.]*\).*/\1/p')
     serverTickTime=$(echo "$line" | sed -n 's/.*avgServerTickTime=\([0-9.]*\).*/\1/p')
+    operationTime=$(echo "$line" | sed -n 's/.*avgOperationTime=\([0-9.]*\).*/\1/p')
 
     if [ -n "$preset" ] && [ -n "$size" ] && [ -n "$networkTickTime" ]; then
         # Output network tick time metric
@@ -46,6 +47,23 @@ while IFS= read -r line; do
     "name": "NETWORK LOAD: ${preset}_size_${size}",
     "unit": "tick time (ms)",
     "value": $networkTickTime
+  }
+EOF
+    fi
+
+    # Output operation time metric if available
+    if [ -n "$preset" ] && [ -n "$size" ] && [ -n "$operationTime" ]; then
+        if [ "$FIRST" = true ]; then
+            FIRST=false
+        else
+            echo "," >> "$BENCH_FILE"
+        fi
+
+        cat >> "$BENCH_FILE" << EOF
+  {
+    "name": "INDEX LOAD: ${preset}_size_${size}",
+    "unit": "operation time (ms)",
+    "value": $operationTime
   }
 EOF
     fi
