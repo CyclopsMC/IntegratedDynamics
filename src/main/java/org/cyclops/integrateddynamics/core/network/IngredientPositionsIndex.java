@@ -1,5 +1,7 @@
 package org.cyclops.integrateddynamics.core.network;
 
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Sets;
 import it.unimi.dsi.fastutil.ints.AbstractInt2ObjectSortedMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectAVLTreeMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -15,8 +17,10 @@ import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PrioritizedPartPos;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
-import java.util.Objects;
+import java.util.Set;
+import java.util.function.Function;
 
 /**
  * An index that maps ingredients to positions that contain that instance.
@@ -70,23 +74,41 @@ public class IngredientPositionsIndex<T, M> implements IIngredientPositionsIndex
             // (IIngredientMap#getAll would instead construct an intermediate key set
             //  that is pre-allocated for the size of the whole map.)
             T prototype = getPrototype(instance);
-            return this.prioritizedPositionsMap.values()
-                    .stream()
-                    .map(positionsMap -> positionsMap.get(prototype))
-                    .filter(Objects::nonNull)
-                    .flatMap(Collection::stream)
-                    .distinct()
-                    .iterator();
+            return iteratePrioritized(positionsMap -> {
+                ObjectOpenHashSet<PartPos> positions = positionsMap.get(prototype);
+                return positions == null ? Collections.emptyIterator() : positions.iterator();
+            });
         }
 
         T prototype = getPrototype(instance);
         M finalMatchFlags = matchFlags;
-        return this.prioritizedPositionsMap.values()
-                .stream()
-                .flatMap(positionsMap -> positionsMap.getAll(prototype, finalMatchFlags).stream())
-                .flatMap(Collection::stream)
-                .distinct()
-                .iterator();
+        return iteratePrioritized(positionsMap -> Iterators.concat(Iterators.transform(
+                positionsMap.getAll(prototype, finalMatchFlags).iterator(), Collection::iterator)));
+    }
+
+    /**
+     * Lazily iterate over the positions of all priority levels, in priority order, without duplicates.
+     *
+     * Iteration is lazy because callers commonly stop iterating
+     * as soon as they have found a usable position.
+     *
+     * @param positionsGetter A callback for iterating over the matching positions within one priority level.
+     * @return An iterator over all matching positions.
+     */
+    protected Iterator<PartPos> iteratePrioritized(Function<IIngredientMapMutable<T, M, ObjectOpenHashSet<PartPos>>, Iterator<PartPos>> positionsGetter) {
+        return distinct(Iterators.concat(Iterators.transform(
+                this.prioritizedPositionsMap.values().iterator(), positionsGetter::apply)));
+    }
+
+    /**
+     * Filter out duplicate positions, as the same position can hold multiple instances.
+     *
+     * @param positions An iterator over positions.
+     * @return An iterator over distinct positions.
+     */
+    protected Iterator<PartPos> distinct(Iterator<PartPos> positions) {
+        Set<PartPos> seenPositions = Sets.newHashSet();
+        return Iterators.filter(positions, seenPositions::add);
     }
 
     @Override
