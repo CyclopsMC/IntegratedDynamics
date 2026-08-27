@@ -694,4 +694,29 @@ public class GameTestsCombinedAspects {
         });
     }
 
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testCombinedAspectsWriterActivatesWithoutPlayer(GameTestHelper helper) {
+        // Writers are also activated without a player being involved,
+        // for example when a network is initialized after a world restart,
+        // or when an add-on configures a part programmatically.
+        helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
+        PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS), Direction.WEST, PartTypes.REDSTONE_WRITER, new ItemStack(PartTypes.REDSTONE_WRITER.getItem()));
+
+        // Place redstone wire next to redstone writer output
+        helper.setBlock(POS.west(), Blocks.REDSTONE_WIRE);
+
+        // Create and place a constant true boolean variable in the writer, without a player
+        PartPos writerPos = PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.WEST);
+        placeVariableInWriter(writerPos, Aspects.Write.Redstone.BOOLEAN,
+                createVariableForValue(helper.getLevel(), ValueTypes.BOOLEAN, ValueTypeBoolean.ValueBoolean.of(true)), null);
+
+        helper.succeedWhen(() -> {
+            IPartStateWriter partStateWriter = (IPartStateWriter) PartHelpers.getPart(writerPos).getState();
+            // Not assertValueEqual, as that throws a NullPointerException when no aspect is active
+            helper.assertTrue(partStateWriter.getActiveAspect() == Aspects.Write.Redstone.BOOLEAN,
+                    "Aspect was not activated without a player, but was " + partStateWriter.getActiveAspect());
+            helper.assertBlockProperty(POS.west(), RedStoneWireBlock.POWER, 15);
+        });
+    }
+
 }
