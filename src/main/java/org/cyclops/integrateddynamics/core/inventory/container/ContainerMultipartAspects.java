@@ -136,23 +136,33 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
      * The returned list has one entry for each of the aspect's property types,
      * in the order of {@link IAspect#getPropertyTypes()}.
      * Properties that still have their default value are represented by an empty component.
+     * Properties that are driven by a variable are always included,
+     * as their value can change at any time.
      *
      * @param aspect An aspect that has properties.
      * @return The modified property values, in the order of the aspect's property types.
      */
     @SuppressWarnings("unchecked")
-    protected List<MutableComponent> getModifiedAspectPropertyValues(IAspect aspect) {
+    public List<MutableComponent> getModifiedAspectPropertyValues(IAspect aspect) {
+        IPartState<P> partState = getPartState();
         IAspectProperties defaultProperties = aspect.getDefaultProperties();
-        IAspectProperties properties = getPartState().getAspectProperties(aspect);
+        IAspectProperties properties = partState.getAspectProperties(aspect);
         if (properties == null) {
             properties = defaultProperties;
         }
+        // Variables take precedence over the statically configured values
+        IAspectProperties variableDrivenProperties = partState.getAspectPropertiesVariableDriven(aspect, properties);
+        if (variableDrivenProperties != null) {
+            properties = variableDrivenProperties;
+        }
 
         List<MutableComponent> values = Lists.newArrayList();
+        int propertyIndex = 0;
         for (IAspectPropertyTypeInstance property : (Collection<IAspectPropertyTypeInstance>) aspect.getPropertyTypes()) {
             IValue value = properties.getValue(property);
             IValue defaultValue = defaultProperties.getValue(property);
-            if (value == null || ValueHelpers.areValuesEqual(value, defaultValue)) {
+            boolean variableDriven = partState.getAspectVariableValue(aspect, propertyIndex) != null;
+            if (value == null || (!variableDriven && ValueHelpers.areValuesEqual(value, defaultValue))) {
                 values.add(Component.empty());
             } else {
                 IValueType valueType = value.getType();
@@ -161,6 +171,7 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
                         ? Component.empty()
                         : compactValue.withStyle(valueType.getDisplayColorFormat()));
             }
+            propertyIndex++;
         }
         return values;
     }

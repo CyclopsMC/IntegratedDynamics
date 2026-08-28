@@ -17,6 +17,7 @@ import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.cyclopscore.persist.nbt.NBTClassType;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
@@ -320,6 +321,12 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     @Override
     public MutableComponent getAspectVariableError(IAspect aspect, int slot) {
         return this.aspectVariablesHandler.getAspectVariableError(aspect, slot);
+    }
+
+    @Nullable
+    @Override
+    public IValue getAspectVariableValue(IAspect aspect, int slot) {
+        return this.aspectVariablesHandler.getAspectVariableValue(aspect, slot);
     }
 
     @Nullable

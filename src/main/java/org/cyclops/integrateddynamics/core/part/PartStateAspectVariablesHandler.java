@@ -130,6 +130,18 @@ public class PartStateAspectVariablesHandler<P extends IPartType> {
     /**
      * @param aspect An aspect.
      * @param slot A property slot.
+     * @return The value that the variable in the given slot currently produces,
+     *         or null if the slot has no (valid) variable.
+     */
+    @Nullable
+    public IValue getAspectVariableValue(IAspect aspect, int slot) {
+        AspectVariables variables = this.aspectVariables.get(aspect);
+        return variables == null ? null : variables.getSlotValue(slot);
+    }
+
+    /**
+     * @param aspect An aspect.
+     * @param slot A property slot.
      * @return The current error in the given slot, or null if there is no error.
      */
     @Nullable
@@ -240,6 +252,11 @@ public class PartStateAspectVariablesHandler<P extends IPartType> {
                 this.derivedPropertiesBase = baseProperties;
             }
             return this.derivedProperties;
+        }
+
+        @Nullable
+        public IValue getSlotValue(int slot) {
+            return this.slotValues.get(slot);
         }
 
         @Nullable

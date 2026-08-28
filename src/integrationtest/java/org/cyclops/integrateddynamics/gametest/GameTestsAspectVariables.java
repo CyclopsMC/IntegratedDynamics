@@ -7,6 +7,7 @@ import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -32,12 +33,14 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerAspectSettings;
+import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipartAspects;
 import org.cyclops.integrateddynamics.core.part.PartStateAspectVariablesHandler;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 import org.cyclops.integrateddynamics.part.aspect.read.AspectReadBuilders;
 import org.cyclops.integrateddynamics.part.aspect.write.AspectWriteBuilders;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 import static org.cyclops.integrateddynamics.gametest.GameTestHelpersIntegratedDynamics.assertValueEqual;
@@ -76,6 +79,29 @@ public class GameTestsAspectVariables {
             throw new GameTestAssertException("The aspect settings container could not be created");
         }
         return container;
+    }
+
+    /**
+     * Construct the part gui container for the given part,
+     * in the same way as it is constructed when a player opens the part gui.
+     */
+    protected static ContainerMultipartAspects openPartGui(GameTestHelper helper, PartPos partPos, IPartType<?, ?> partType) {
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        AbstractContainerMenu menu = partType.getContainerProvider(partPos)
+                .orElseThrow(() -> new GameTestAssertException("The part has no gui container"))
+                .createMenu(1, player.getInventory(), player);
+        if (!(menu instanceof ContainerMultipartAspects container)) {
+            throw new GameTestAssertException("The part gui container could not be created");
+        }
+        return container;
+    }
+
+    /**
+     * @return The value that the part gui shows for the given aspect property in its properties tooltip,
+     *         which is empty for properties that still have their default value.
+     */
+    protected static String propertyTooltipValue(ContainerMultipartAspects container, IAspect aspect, int propertyIndex) {
+        return ((List<MutableComponent>) container.getModifiedAspectPropertyValues(aspect)).get(propertyIndex).getString();
     }
 
     /**
@@ -243,6 +269,111 @@ public class GameTestsAspectVariables {
         });
     }
 
+    // The value that the gui shows for a setting must follow the variable that drives it.
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAspectVariablesDisplayedValueFollowsVariable(GameTestHelper helper) {
+        prepareChest(helper, POS);
+        testReadAspectSetup(POS, helper, PartTypes.INVENTORY_READER, Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT);
+        PartPos partPos = partPos(helper, POS);
+        setAspectProperty(partPos, Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT,
+                AspectReadBuilders.Inventory.PROPERTY_SLOTID, ValueTypeInteger.ValueInteger.of(1));
+        ContainerAspectSettings container = openAspectSettings(helper, partPos, Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT);
+
+        helper.startSequence()
+                // Without a variable, the statically configured value is shown
+                .thenExecute(() -> assertValueEqual(container.getEffectivePropertyValue(0), ValueTypeInteger.ValueInteger.of(1)))
+                // With a variable, the value that the variable produces is shown
+                .thenExecute(() -> setAspectPropertyVariable(partPos, Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT,
+                        AspectReadBuilders.Inventory.PROPERTY_SLOTID,
+                        createVariableForValue(helper.getLevel(), ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(2))))
+                .thenWaitUntil(() -> assertValueEqual(container.getEffectivePropertyValue(0), ValueTypeInteger.ValueInteger.of(2)))
+                // After removing the variable, the statically configured value is shown again
+                .thenExecute(() -> setAspectPropertyVariable(partPos, Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT,
+                        AspectReadBuilders.Inventory.PROPERTY_SLOTID, ItemStack.EMPTY))
+                .thenWaitUntil(() -> assertValueEqual(container.getEffectivePropertyValue(0), ValueTypeInteger.ValueInteger.of(1)))
+                .thenSucceed();
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAspectVariablesDisplayedValueFollowsDynamicVariable(GameTestHelper helper) {
+        prepareChest(helper, POS);
+        testReadAspectSetup(POS, helper, PartTypes.INVENTORY_READER, Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT);
+        PartPos partPos = partPos(helper, POS);
+
+        // Drive the slot id with the number of filled slots in a second chest
+        helper.setBlock(POS.north(), Blocks.CHEST);
+        ChestBlockEntity driverChest = helper.getBlockEntity(POS.north());
+        PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS), Direction.NORTH, PartTypes.INVENTORY_READER,
+                new ItemStack(PartTypes.INVENTORY_READER.getItem()));
+        setAspectPropertyVariable(partPos, Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT,
+                AspectReadBuilders.Inventory.PROPERTY_SLOTID,
+                createVariableFromReader(helper.getLevel(),
+                        PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.NORTH),
+                        Aspects.Read.Inventory.INTEGER_SLOTSFILLED));
+
+        ContainerAspectSettings container = openAspectSettings(helper, partPos, Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT);
+
+        helper.startSequence()
+                .thenWaitUntil(() -> assertValueEqual(container.getEffectivePropertyValue(0), ValueTypeInteger.ValueInteger.of(0)))
+                .thenExecute(() -> {
+                    driverChest.setItem(0, new ItemStack(Items.STICK));
+                    driverChest.setItem(1, new ItemStack(Items.STICK));
+                    driverChest.setChanged();
+                })
+                .thenWaitUntil(() -> assertValueEqual(container.getEffectivePropertyValue(0), ValueTypeInteger.ValueInteger.of(2)))
+                .thenSucceed();
+    }
+
+    // The aspect properties tooltip of the part gui must show the effective (variable-driven) values.
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAspectVariablesPartGuiPropertyValues(GameTestHelper helper) {
+        prepareChest(helper, POS);
+        testReadAspectSetup(POS, helper, PartTypes.INVENTORY_READER, Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT);
+        PartPos partPos = partPos(helper, POS);
+        setAspectProperty(partPos, Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT,
+                AspectReadBuilders.Inventory.PROPERTY_SLOTID, ValueTypeInteger.ValueInteger.of(1));
+
+        ContainerMultipartAspects container = openPartGui(helper, partPos, PartTypes.INVENTORY_READER);
+
+        helper.startSequence()
+                .thenExecute(() -> helper.assertValueEqual(
+                        propertyTooltipValue(container, Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT, 0), "1",
+                        "The statically configured property value"))
+                .thenExecute(() -> setAspectPropertyVariable(partPos, Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT,
+                        AspectReadBuilders.Inventory.PROPERTY_SLOTID,
+                        createVariableForValue(helper.getLevel(), ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(2))))
+                .thenWaitUntil(() -> helper.assertValueEqual(
+                        propertyTooltipValue(container, Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT, 0), "2",
+                        "The variable-driven property value"))
+                .thenSucceed();
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAspectVariablesPartGuiPropertyValuesDefaultValue(GameTestHelper helper) {
+        prepareChest(helper, POS);
+        testReadAspectSetup(POS, helper, PartTypes.INVENTORY_READER, Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT);
+        PartPos partPos = partPos(helper, POS);
+
+        ContainerMultipartAspects container = openPartGui(helper, partPos, PartTypes.INVENTORY_READER);
+
+        helper.startSequence()
+                // Properties that still have their default value are not shown
+                .thenExecute(() -> helper.assertValueEqual(
+                        propertyTooltipValue(container, Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT, 0), "",
+                        "The default property value"))
+                // But variable-driven properties are always shown, even if they produce the default value,
+                // as their value can change at any time
+                .thenExecute(() -> setAspectPropertyVariable(partPos, Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT,
+                        AspectReadBuilders.Inventory.PROPERTY_SLOTID,
+                        createVariableForValue(helper.getLevel(), ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(0))))
+                .thenWaitUntil(() -> helper.assertValueEqual(
+                        propertyTooltipValue(container, Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT, 0), "0",
+                        "The variable-driven property value"))
+                .thenSucceed();
+    }
+
     // Aspect setting variables must also apply to writers.
 
     @GameTest(template = TEMPLATE_EMPTY, batch = "integrateddynamics:aspectvariablesredstonepulse")
@@ -263,6 +394,89 @@ public class GameTestsAspectVariables {
         helper.startSequence()
                 .thenWaitUntil(() -> helper.assertBlockProperty(POS.west(), RedStoneWireBlock.POWER, 0))
                 .thenWaitUntil(() -> helper.assertBlockProperty(POS.west(), RedStoneWireBlock.POWER, 7))
+                .thenWaitUntil(() -> helper.assertBlockProperty(POS.west(), RedStoneWireBlock.POWER, 0))
+                .thenSucceed();
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAspectVariablesWriteRedstoneStrongPowerTrue(GameTestHelper helper) {
+        // A redstone wire on top of a solid block is only powered when that block is strongly powered
+        helper.setBlock(POS.west(), Blocks.STONE);
+        helper.setBlock(POS.west().above(), Blocks.REDSTONE_WIRE);
+        testWriteAspectSetup(POS, helper, PartTypes.REDSTONE_WRITER, Aspects.Write.Redstone.INTEGER,
+                ValueTypeInteger.ValueInteger.of(15));
+        setAspectPropertyVariable(partPos(helper, POS), Aspects.Write.Redstone.INTEGER,
+                AspectWriteBuilders.Redstone.PROP_STRONG_POWER,
+                createVariableForValue(helper.getLevel(), ValueTypes.BOOLEAN, ValueTypeBoolean.ValueBoolean.of(true)));
+        helper.succeedWhen(() -> helper.assertBlockProperty(POS.west().above(), RedStoneWireBlock.POWER, 15));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAspectVariablesWriteRedstoneStrongPowerFalse(GameTestHelper helper) {
+        helper.setBlock(POS.west(), Blocks.STONE);
+        helper.setBlock(POS.west().above(), Blocks.REDSTONE_WIRE);
+        testWriteAspectSetup(POS, helper, PartTypes.REDSTONE_WRITER, Aspects.Write.Redstone.INTEGER,
+                ValueTypeInteger.ValueInteger.of(15));
+        setAspectPropertyVariable(partPos(helper, POS), Aspects.Write.Redstone.INTEGER,
+                AspectWriteBuilders.Redstone.PROP_STRONG_POWER,
+                createVariableForValue(helper.getLevel(), ValueTypes.BOOLEAN, ValueTypeBoolean.ValueBoolean.of(false)));
+        helper.succeedWhen(() -> helper.assertBlockProperty(POS.west().above(), RedStoneWireBlock.POWER, 0));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY, batch = "integrateddynamics:aspectvariablesredstonestrongpower")
+    public void testAspectVariablesWriteRedstoneStrongPowerDynamic(GameTestHelper helper) {
+        helper.setBlock(POS.west(), Blocks.STONE);
+        helper.setBlock(POS.west().above(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
+
+        // Drive the strong power setting with a redstone clock, so that it keeps toggling
+        PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS), Direction.EAST, PartTypes.REDSTONE_READER,
+                new ItemStack(PartTypes.REDSTONE_READER.getItem()));
+        // Widen the clock pulses, as a single-tick pulse is too narrow to reliably observe in a game test
+        setAspectProperty(PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.EAST),
+                Aspects.Read.Redstone.BOOLEAN_CLOCK, AspectReadBuilders.Redstone.PROPERTY_LENGTH,
+                ValueTypeInteger.ValueInteger.of(10));
+        testWriteAspectSetup(POS, helper, PartTypes.REDSTONE_WRITER, Aspects.Write.Redstone.INTEGER,
+                ValueTypeInteger.ValueInteger.of(15));
+        setAspectPropertyVariable(partPos(helper, POS), Aspects.Write.Redstone.INTEGER,
+                AspectWriteBuilders.Redstone.PROP_STRONG_POWER,
+                createVariableFromReader(helper.getLevel(),
+                        PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.EAST),
+                        Aspects.Read.Redstone.BOOLEAN_CLOCK));
+
+        helper.startSequence()
+                .thenWaitUntil(() -> helper.assertTrue(getEffectiveAspectProperty(partPos(helper, POS),
+                                Aspects.Write.Redstone.INTEGER, AspectWriteBuilders.Redstone.PROP_STRONG_POWER).getRawValue(),
+                        "The strong power setting was never driven to true by its variable"))
+                .thenWaitUntil(() -> helper.assertBlockProperty(POS.west().above(), RedStoneWireBlock.POWER, 15))
+                .thenWaitUntil(() -> helper.assertBlockProperty(POS.west().above(), RedStoneWireBlock.POWER, 0))
+                .thenWaitUntil(() -> helper.assertBlockProperty(POS.west().above(), RedStoneWireBlock.POWER, 15))
+                .thenSucceed();
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY, batch = "integrateddynamics:aspectvariablesredstonepulselength")
+    public void testAspectVariablesWriteRedstonePulseLength(GameTestHelper helper) {
+        helper.setBlock(POS.west().below(), Blocks.STONE);
+        helper.setBlock(POS.west(), Blocks.REDSTONE_WIRE);
+        helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
+        PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS), Direction.EAST, PartTypes.REDSTONE_READER,
+                new ItemStack(PartTypes.REDSTONE_READER.getItem()));
+        testWriteAspectSetup(POS, helper, PartTypes.REDSTONE_WRITER, Aspects.Write.Redstone.BOOLEAN_PULSE,
+                createVariableFromReader(helper.getLevel(),
+                        PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.EAST),
+                        Aspects.Read.Redstone.BOOLEAN_CLOCK));
+
+        // Drive the pulse length with a variable
+        setAspectPropertyVariable(partPos(helper, POS), Aspects.Write.Redstone.BOOLEAN_PULSE,
+                AspectWriteBuilders.Redstone.PROP_PULSE_LENGTH,
+                createVariableForValue(helper.getLevel(), ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(10)));
+
+        helper.startSequence()
+                .thenWaitUntil(() -> helper.assertBlockProperty(POS.west(), RedStoneWireBlock.POWER, 0))
+                .thenWaitUntil(() -> helper.assertBlockProperty(POS.west(), RedStoneWireBlock.POWER, 15))
+                // Verify that the pulse is still active after several ticks
+                .thenIdle(5)
+                .thenExecute(() -> helper.assertBlockProperty(POS.west(), RedStoneWireBlock.POWER, 15))
                 .thenWaitUntil(() -> helper.assertBlockProperty(POS.west(), RedStoneWireBlock.POWER, 0))
                 .thenSucceed();
     }

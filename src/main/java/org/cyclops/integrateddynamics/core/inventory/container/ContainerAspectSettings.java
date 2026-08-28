@@ -56,7 +56,7 @@ public class ContainerAspectSettings extends InventoryContainer {
     /**
      * The position of the variable slot of the active property.
      */
-    public static final int VARIABLE_SLOT_X = 71;
+    public static final int VARIABLE_SLOT_X = 80;
     public static final int VARIABLE_SLOT_Y = 110;
 
     private final Optional<PartTarget> target;
@@ -71,6 +71,7 @@ public class ContainerAspectSettings extends InventoryContainer {
     private int activePropertyIndex = 0;
 
     private final SimpleInventory variablesInventory;
+    private final boolean[] propertyVariableDriven;
     private boolean dirtyInv = false;
 
     public ContainerAspectSettings(int id, Inventory playerInventory, FriendlyByteBuf packetBuffer) {
@@ -102,6 +103,7 @@ public class ContainerAspectSettings extends InventoryContainer {
         for (int i = 0; i < this.propertyTypes.size(); i++) {
             this.propertyVariableSlotErrorIds.add(getNextValueId());
         }
+        this.propertyVariableDriven = new boolean[this.propertyTypes.size()];
         // Add one variable slot for each property.
         // All of them are placed at the same position,
         // as only the slot of the active property is visible at any time.
@@ -248,7 +250,60 @@ public class ContainerAspectSettings extends InventoryContainer {
                 ValueNotifierHelpers.setValue(this, this.propertyVariableSlotErrorIds.get(i),
                         error == null ? Component.empty() : error);
             }
+
+            broadcastVariableDrivenValues(partState);
         }
+    }
+
+    /**
+     * Show the value that the variable of a setting currently produces,
+     * so that players can inspect what a variable-driven setting evaluates to.
+     * Settings that are not driven by a variable keep showing their statically configured value.
+     * @param partState The part state.
+     */
+    protected void broadcastVariableDrivenValues(IPartState partState) {
+        for (int i = 0; i < this.propertyTypes.size(); i++) {
+            boolean driven = partState.getAspectVariableValue(aspect, i) != null;
+            if (driven || this.propertyVariableDriven[i]) {
+                // Also send one final update when a variable was removed or became invalid,
+                // so that the statically configured value is shown again.
+                this.propertyVariableDriven[i] = driven;
+                IValue value = getEffectivePropertyValue(i);
+                if (value != null) {
+                    setValue(ValueDeseralizationContext.ofAllEnabled(), this.propertyTypes.get(i), value);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param index A property index.
+     * @return The value that is shown for the given property:
+     *         the value that its variable produces if it is driven by one,
+     *         and the statically configured value otherwise.
+     *         This can only be called server-side.
+     */
+    @Nullable
+    public IValue getEffectivePropertyValue(int index) {
+        if (index < 0 || index >= this.propertyTypes.size()) {
+            return null;
+        }
+        return getPartState()
+                .map(partState -> {
+                    IValue value = partState.getAspectVariableValue(aspect, index);
+                    return value != null ? value : aspect
+                            .getStaticProperties(getPartType().get(), getTarget().get(), partState)
+                            .getValue(this.propertyTypes.get(index));
+                })
+                .orElse(null);
+    }
+
+    /**
+     * @param index A property index.
+     * @return If the value of the given property is currently determined by its variable.
+     */
+    public boolean isPropertyVariableDriven(int index) {
+        return index >= 0 && index < this.propertyVariableDriven.length && this.propertyVariableDriven[index];
     }
 
     @Override
@@ -284,7 +339,7 @@ public class ContainerAspectSettings extends InventoryContainer {
         super.onUpdate(valueId, value);
         if(!world.isClientSide()) {
             IAspectPropertyTypeInstance property = propertyIds.get(valueId);
-            if (property != null) {
+            if (property != null && !isPropertyVariableFilled(this.propertyTypes.indexOf(property))) {
                 IPartType partType = getPartType().get();
                 PartTarget target = getTarget().get();
                 IPartState partState = getPartState().get();

@@ -44,7 +44,7 @@ import java.util.Optional;
  */
 public class ContainerScreenAspectSettings extends ContainerScreenExtended<ContainerAspectSettings> {
 
-    private static final int VARIABLE_SIGNAL_X = 95;
+    private static final int VARIABLE_SIGNAL_X = 100;
     private static final int VARIABLE_SIGNAL_Y = 112;
 
     private static final int ERROR_WIDTH = 13;
@@ -79,7 +79,9 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
     }
 
     protected void saveSetting() {
-        if(guiElement != null && lastError == null) {
+        // Don't save while the setting is driven by a variable,
+        // as the shown value is the variable's value, and not the statically configured value.
+        if(guiElement != null && lastError == null && !container.isPropertyVariableFilled(getActivePropertyIndex())) {
             container.setValue(ValueDeseralizationContext.ofClient(), getActiveProperty(), guiElement.getValue());
         }
     }

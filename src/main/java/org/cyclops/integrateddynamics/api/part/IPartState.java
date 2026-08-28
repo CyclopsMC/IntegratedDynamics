@@ -7,6 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
@@ -329,6 +330,17 @@ public interface IPartState<P extends IPartType> {
      */
     @Nullable
     public default MutableComponent getAspectVariableError(IAspect aspect, int slot) {
+        return null;
+    }
+
+    /**
+     * @param aspect An aspect.
+     * @param slot The aspect property slot.
+     * @return The value that the variable in the given aspect property slot currently produces,
+     *         or null if that slot has no (valid) variable.
+     */
+    @Nullable
+    public default IValue getAspectVariableValue(IAspect aspect, int slot) {
         return null;
     }
 
