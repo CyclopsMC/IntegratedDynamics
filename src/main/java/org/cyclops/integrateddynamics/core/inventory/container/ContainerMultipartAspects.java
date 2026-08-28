@@ -1,6 +1,9 @@
 package org.cyclops.integrateddynamics.core.inventory.container;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
@@ -10,10 +13,13 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
+import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.inventory.container.ScrollingInventoryContainer;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.item.IAspectVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
@@ -21,16 +27,15 @@ import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
+import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties;
+import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTypeInstance;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.item.AspectVariableFacade;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Container for parts.
@@ -50,6 +55,7 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
     private final P partType;
     private final Level world;
     private final Map<IAspect, String> aspectPropertyButtons = Maps.newHashMap();
+    private final Map<IAspect, Integer> aspectPropertyValueIds = Maps.newIdentityHashMap();
 
     protected final Container inputSlots;
 
@@ -83,6 +89,7 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
             if (aspect.hasProperties()) {
                 String buttonId = "button_aspect_" + aspect.getUniqueName();
                 aspectPropertyButtons.put(aspect, buttonId);
+                aspectPropertyValueIds.put(aspect, getNextValueId());
                 putButtonAction(buttonId, (s, containerExtended) -> {
                     if (!world.isClientSide()) {
                         PartHelpers.openContainerAspectSettings((ServerPlayer) player, target.getCenter(), aspect);
@@ -110,6 +117,67 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
 
     public Map<IAspect, String> getAspectPropertyButtons() {
         return Collections.unmodifiableMap(this.aspectPropertyButtons);
+    }
+
+    @Override
+    public void broadcastChanges() {
+        super.broadcastChanges();
+
+        if (!player.level().isClientSide()) {
+            for (Map.Entry<IAspect, Integer> entry : this.aspectPropertyValueIds.entrySet()) {
+                ValueNotifierHelpers.setValue(this, entry.getValue(), getModifiedAspectPropertyValues(entry.getKey()));
+            }
+        }
+    }
+
+    /**
+     * Determine the values of all properties of the given aspect that deviate from their default value.
+     *
+     * The returned list has one entry for each of the aspect's property types,
+     * in the order of {@link IAspect#getPropertyTypes()}.
+     * Properties that still have their default value are represented by an empty component.
+     *
+     * @param aspect An aspect that has properties.
+     * @return The modified property values, in the order of the aspect's property types.
+     */
+    @SuppressWarnings("unchecked")
+    protected List<MutableComponent> getModifiedAspectPropertyValues(IAspect aspect) {
+        IAspectProperties defaultProperties = aspect.getDefaultProperties();
+        IAspectProperties properties = getPartState().getAspectProperties(aspect);
+        if (properties == null) {
+            properties = defaultProperties;
+        }
+
+        List<MutableComponent> values = Lists.newArrayList();
+        for (IAspectPropertyTypeInstance property : (Collection<IAspectPropertyTypeInstance>) aspect.getPropertyTypes()) {
+            IValue value = properties.getValue(property);
+            IValue defaultValue = defaultProperties.getValue(property);
+            if (value == null || ValueHelpers.areValuesEqual(value, defaultValue)) {
+                values.add(Component.empty());
+            } else {
+                IValueType valueType = value.getType();
+                MutableComponent compactValue = valueType.toCompactString(value);
+                values.add(compactValue == null
+                        ? Component.empty()
+                        : compactValue.withStyle(valueType.getDisplayColorFormat()));
+            }
+        }
+        return values;
+    }
+
+    /**
+     * Get the modified property values of the given aspect, as synced from the server.
+     * @param aspect An aspect.
+     * @return The modified property values, in the order of {@link IAspect#getPropertyTypes()},
+     *         or null if they are unknown.
+     */
+    @Nullable
+    public List<MutableComponent> getModifiedAspectPropertyValuesSynced(IAspect aspect) {
+        Integer valueId = this.aspectPropertyValueIds.get(aspect);
+        if (valueId == null) {
+            return null;
+        }
+        return ValueNotifierHelpers.getValueTextComponentList(this, valueId);
     }
 
     public abstract int getAspectBoxHeight();
