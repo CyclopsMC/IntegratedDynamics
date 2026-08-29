@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.inventory.container;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
@@ -19,6 +20,7 @@ import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.inventory.container.ScrollingInventoryContainer;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.PartStateException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.item.IAspectVariableFacade;
@@ -33,6 +35,7 @@ import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTy
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.item.AspectVariableFacade;
+import org.cyclops.integrateddynamics.core.part.PartStateAspectVariablesHandler;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 import javax.annotation.Nullable;
@@ -137,7 +140,7 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
      * The returned list has one entry for each of the aspect's property types,
      * in the order of {@link IAspect#getPropertyTypes()}.
      * Properties that still have their default value are represented by an empty component.
-     * Properties that are driven by a variable are always included,
+     * Properties that have a variable in their slot are always included,
      * as their value can change at any time.
      * If the variable of a property is erroring, its value is shown in red,
      * as the shown value is then the statically configured fallback value.
@@ -162,13 +165,18 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
         if (variableDrivenProperties != null) {
             properties = variableDrivenProperties;
         }
+        // The variables themselves are part of the part state, so they are known on both sides,
+        // even though only the server knows the values they produce.
+        NonNullList<ItemStack> variables = partState.getInventoryNamed(PartStateAspectVariablesHandler.getInventoryName(aspect));
 
         List<MutableComponent> values = Lists.newArrayList();
         int propertyIndex = 0;
         for (IAspectPropertyTypeInstance property : (Collection<IAspectPropertyTypeInstance>) aspect.getPropertyTypes()) {
             IValue value = properties.getValue(property);
             IValue defaultValue = defaultProperties.getValue(property);
-            boolean variableDriven = partState.getAspectVariableValue(aspect, propertyIndex) != null;
+            boolean hasVariable = variables != null && propertyIndex < variables.size()
+                    && !variables.get(propertyIndex).isEmpty();
+            boolean variableDriven = hasVariable || partState.getAspectVariableValue(aspect, propertyIndex) != null;
             boolean variableErrored = partState.getAspectVariableError(aspect, propertyIndex) != null;
             if (value == null || (!variableDriven && !variableErrored
                     && ValueHelpers.areValuesEqual(value, defaultValue))) {
@@ -223,12 +231,19 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
      * @return The property values to show, in the order of {@link IAspect#getPropertyTypes()}.
      */
     public List<MutableComponent> getShownAspectPropertyValues(IAspect aspect) {
-        List<MutableComponent> values = getModifiedAspectPropertyValues(aspect);
         List<MutableComponent> syncedValues = getModifiedAspectPropertyValuesSynced(aspect);
+        List<MutableComponent> values;
+        try {
+            values = getModifiedAspectPropertyValues(aspect);
+        } catch (PartStateException e) {
+            // The part may have been removed in the meantime,
+            // in which case we can only rely on what the server has sent before.
+            return syncedValues;
+        }
         if (syncedValues != null) {
             for (int i = 0; i < Math.min(values.size(), syncedValues.size()); i++) {
                 MutableComponent syncedValue = syncedValues.get(i);
-                if (!syncedValue.getString().isEmpty()) {
+                if (syncedValue != null && !syncedValue.getString().isEmpty()) {
                     values.set(i, syncedValue);
                 }
             }

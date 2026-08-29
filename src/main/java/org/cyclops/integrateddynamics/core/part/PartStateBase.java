@@ -94,6 +94,19 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
             NBTClassType.writeNbt(MutableComponent.class, String.valueOf(entry.getIntKey()), entry.getValue(), errorsTag, valueDeseralizationContext.holderLookupProvider());
         }
         tag.put("offsetVariablesSlotMessages", errorsTag);
+
+        // Write the aspect setting variable errors, so that they are also known client-side
+        CompoundTag aspectErrorsTag = new CompoundTag();
+        for (Map.Entry<IAspect, Int2ObjectMap<MutableComponent>> entry : this.aspectVariablesHandler.getAspectVariablesSlotMessages().entrySet()) {
+            CompoundTag slotsTag = new CompoundTag();
+            for (Int2ObjectMap.Entry<MutableComponent> slotEntry : entry.getValue().int2ObjectEntrySet()) {
+                NBTClassType.writeNbt(MutableComponent.class, String.valueOf(slotEntry.getIntKey()), slotEntry.getValue(), slotsTag, valueDeseralizationContext.holderLookupProvider());
+            }
+            if (!slotsTag.isEmpty()) {
+                aspectErrorsTag.put(entry.getKey().getUniqueName().toString(), slotsTag);
+            }
+        }
+        tag.put("aspectVariablesSlotMessages", aspectErrorsTag);
     }
 
     @Override
@@ -124,6 +137,21 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
         for (String slot : errorsTag.getAllKeys()) {
             MutableComponent unlocalizedString = NBTClassType.readNbt(MutableComponent.class, slot, errorsTag, valueDeseralizationContext.holderLookupProvider());
             this.offsetHandler.offsetVariablesSlotMessages.put(Integer.parseInt(slot), unlocalizedString);
+        }
+
+        this.aspectVariablesHandler.getAspectVariablesSlotMessages().clear();
+        CompoundTag aspectErrorsTag = tag.getCompound("aspectVariablesSlotMessages");
+        for (String aspectName : aspectErrorsTag.getAllKeys()) {
+            ResourceLocation aspectId = ResourceLocation.tryParse(aspectName);
+            IAspect aspect = aspectId == null ? null : Aspects.REGISTRY.getAspect(aspectId);
+            if (aspect != null) {
+                CompoundTag slotsTag = aspectErrorsTag.getCompound(aspectName);
+                Int2ObjectMap<MutableComponent> slotMessages = this.aspectVariablesHandler.getAspectVariablesSlotMessages(aspect);
+                for (String slot : slotsTag.getAllKeys()) {
+                    slotMessages.put(Integer.parseInt(slot),
+                            NBTClassType.readNbt(MutableComponent.class, slot, slotsTag, valueDeseralizationContext.holderLookupProvider()));
+                }
+            }
         }
     }
 

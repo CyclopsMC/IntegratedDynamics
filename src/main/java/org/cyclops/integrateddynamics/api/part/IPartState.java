@@ -318,6 +318,14 @@ public interface IPartState<P extends IPartType> {
     }
 
     /**
+     * Enable a flag that tells the part container to send an NBT update to the client(s).
+     */
+    // TODO: make non-default in nextmajor
+    public default void sendUpdate() {
+
+    }
+
+    /**
      * Indicate that the statically configured properties of the given aspect have changed.
      * @param aspect An aspect.
      */

@@ -13,6 +13,8 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -26,6 +28,7 @@ import net.minecraft.world.level.block.RedStoneWireBlock;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
 import org.cyclops.cyclopscore.inventory.IValueNotifier;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
@@ -35,8 +38,12 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationC
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartPos;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
+import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectVariable;
+import org.cyclops.integrateddynamics.api.part.write.IPartStateWriter;
+import org.cyclops.integrateddynamics.api.part.write.IPartTypeWriter;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityVariablestore;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeItemStack;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
@@ -47,12 +54,15 @@ import org.cyclops.integrateddynamics.core.inventory.container.ContainerAspectSe
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerMultipartAspects;
 import org.cyclops.integrateddynamics.core.part.PartStateAspectVariablesHandler;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
+import org.cyclops.integrateddynamics.core.part.PartTypeBase;
+import org.cyclops.integrateddynamics.inventory.container.ContainerPartWriter;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 import org.cyclops.integrateddynamics.part.aspect.read.AspectReadBuilders;
 import org.cyclops.integrateddynamics.part.aspect.write.AspectWriteBuilders;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -133,6 +143,58 @@ public class GameTestsAspectVariables {
     }
 
     /**
+     * A writer part gui container that records the values that would be synced to the client,
+     * instead of sending them over the network.
+     */
+    public static class RecordingContainerPartWriter extends ContainerPartWriter {
+
+        private final Map<Integer, CompoundTag> recordedValues = Maps.newHashMap();
+
+        public RecordingContainerPartWriter(int id, Inventory playerInventory, Container inventory,
+                                            PartTarget target, Optional<IPartContainer> partContainer,
+                                            IPartTypeWriter partType) {
+            super(id, playerInventory, inventory, target, partContainer, partType);
+        }
+
+        @Override
+        public void setValue(int id, CompoundTag value) {
+            this.recordedValues.put(id, value);
+        }
+
+        @Override
+        public CompoundTag getValue(int id) {
+            return this.recordedValues.get(id);
+        }
+    }
+
+    /**
+     * Construct the writer part gui container in the same way as it is constructed
+     * when a player opens the part gui, but with all value syncing recorded in-memory.
+     */
+    protected static RecordingContainerPartWriter openPartGuiWriter(GameTestHelper helper, PartPos partPos) {
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        Triple<IPartContainer, PartTypeBase, PartTarget> data = PartHelpers.getContainerPartConstructionData(partPos);
+        IPartStateWriter partState = (IPartStateWriter) data.getLeft().getPartState(data.getRight().getCenter().getSide());
+        return new RecordingContainerPartWriter(1, player.getInventory(), partState.getInventory(),
+                data.getRight(), Optional.of(data.getLeft()), (IPartTypeWriter) data.getMiddle());
+    }
+
+    /**
+     * Construct the writer part gui container in the same way as it is constructed client-side,
+     * from the data that the server sends when the gui is opened.
+     */
+    protected static ContainerMultipartAspects openPartGuiWriterFromNetwork(GameTestHelper helper, PartPos partPos, IPartType<?, ?> partType) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        RegistryFriendlyByteBuf packetBuffer = new RegistryFriendlyByteBuf(Unpooled.buffer(), helper.getLevel().registryAccess());
+        partType.writeExtraGuiData(packetBuffer, partPos, player);
+        AbstractContainerMenu menu = RegistryEntries.CONTAINER_PART_WRITER.get().create(1, player.getInventory(), packetBuffer);
+        if (!(menu instanceof ContainerMultipartAspects container)) {
+            throw new GameTestAssertException("The client-side writer part gui container could not be created");
+        }
+        return container;
+    }
+
+    /**
      * A minimal value notifier that captures values in-memory,
      * so that the server-to-client value syncing can be verified without a network connection.
      */
@@ -173,6 +235,12 @@ public class GameTestsAspectVariables {
     protected static List<MutableComponent> syncPropertyValues(GameTestHelper helper, ContainerMultipartAspects container, IAspect aspect) {
         CapturingValueNotifier notifier = new CapturingValueNotifier(helper.getLevel().registryAccess());
         ValueNotifierHelpers.setValue(notifier, 0, container.getModifiedAspectPropertyValues(aspect));
+
+        // Pass the value through the same wire encoding as the value notify packet does
+        RegistryFriendlyByteBuf packetBuffer = new RegistryFriendlyByteBuf(Unpooled.buffer(), helper.getLevel().registryAccess());
+        packetBuffer.writeNbt(notifier.getValue(0));
+        notifier.setValue(0, packetBuffer.readNbt());
+
         return ValueNotifierHelpers.getValueTextComponentList(notifier, 0);
     }
 
@@ -526,6 +594,103 @@ public class GameTestsAspectVariables {
         });
     }
 
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAspectVariablesPartGuiWriterPropertyValues(GameTestHelper helper) {
+        helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
+        PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS), Direction.WEST, PartTypes.REDSTONE_WRITER,
+                new ItemStack(PartTypes.REDSTONE_WRITER.getItem()));
+        PartPos partPos = partPos(helper, POS);
+        setAspectPropertyVariable(partPos, Aspects.Write.Redstone.INTEGER,
+                AspectWriteBuilders.Redstone.PROP_STRONG_POWER,
+                createVariableForValue(helper.getLevel(), ValueTypes.BOOLEAN, ValueTypeBoolean.ValueBoolean.of(true)));
+
+        ContainerMultipartAspects container = openPartGui(helper, partPos, PartTypes.REDSTONE_WRITER);
+
+        helper.succeedWhen(() -> {
+            List<MutableComponent> values = container.getModifiedAspectPropertyValues(Aspects.Write.Redstone.INTEGER);
+            helper.assertValueEqual(values.get(0).getString(), "true", "The variable-driven strong power value");
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAspectVariablesPartGuiBroadcastChanges(GameTestHelper helper) {
+        helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
+        PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS), Direction.WEST, PartTypes.REDSTONE_WRITER,
+                new ItemStack(PartTypes.REDSTONE_WRITER.getItem()));
+        PartPos partPos = partPos(helper, POS);
+        setAspectPropertyVariable(partPos, Aspects.Write.Redstone.INTEGER,
+                AspectWriteBuilders.Redstone.PROP_STRONG_POWER,
+                createVariableForValue(helper.getLevel(), ValueTypes.BOOLEAN, ValueTypeBoolean.ValueBoolean.of(true)));
+
+        ContainerMultipartAspects container = openPartGui(helper, partPos, PartTypes.REDSTONE_WRITER);
+
+        helper.succeedWhen(() -> {
+            // Determining the values for all aspects must never fail,
+            // as that would abort the syncing of all of them.
+            for (Object aspectObject : container.getAspectPropertyButtons().keySet()) {
+                IAspect aspect = (IAspect) aspectObject;
+                try {
+                    container.getModifiedAspectPropertyValues(aspect);
+                } catch (Exception e) {
+                    throw new GameTestAssertException("Determining the property values of aspect "
+                            + aspect.getUniqueName() + " failed: " + e);
+                }
+            }
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAspectVariablesPartGuiBroadcastSyncsVariableDrivenValue(GameTestHelper helper) {
+        helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
+        PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS), Direction.WEST, PartTypes.REDSTONE_WRITER,
+                new ItemStack(PartTypes.REDSTONE_WRITER.getItem()));
+        PartPos partPos = partPos(helper, POS);
+        setAspectPropertyVariable(partPos, Aspects.Write.Redstone.INTEGER,
+                AspectWriteBuilders.Redstone.PROP_STRONG_POWER,
+                createVariableForValue(helper.getLevel(), ValueTypes.BOOLEAN, ValueTypeBoolean.ValueBoolean.of(true)));
+
+        RecordingContainerPartWriter container = openPartGuiWriter(helper, partPos);
+
+        helper.succeedWhen(() -> {
+            // This is what the server does every tick while the part gui is open
+            container.broadcastChanges();
+
+            List<MutableComponent> values = container
+                    .getModifiedAspectPropertyValuesSynced(Aspects.Write.Redstone.INTEGER);
+            if (values == null) {
+                throw new GameTestAssertException("The property values of the strong power setting were not synced");
+            }
+            helper.assertValueEqual(values.get(0).getString(), "true", "The synced strong power value");
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAspectVariablesPartGuiBroadcastSyncsErroredValue(GameTestHelper helper) {
+        helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
+        PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS), Direction.WEST, PartTypes.REDSTONE_WRITER,
+                new ItemStack(PartTypes.REDSTONE_WRITER.getItem()));
+        PartPos partPos = partPos(helper, POS);
+        setAspectPropertyVariable(partPos, Aspects.Write.Redstone.INTEGER,
+                AspectWriteBuilders.Redstone.PROP_STRONG_POWER,
+                createVariableForValue(helper.getLevel(), ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(1)));
+
+        RecordingContainerPartWriter container = openPartGuiWriter(helper, partPos);
+
+        helper.succeedWhen(() -> {
+            container.broadcastChanges();
+
+            List<MutableComponent> values = container
+                    .getModifiedAspectPropertyValuesSynced(Aspects.Write.Redstone.INTEGER);
+            if (values == null) {
+                throw new GameTestAssertException("The property values of the strong power setting were not synced");
+            }
+            // The statically configured fallback value is shown in red when the variable errors
+            helper.assertValueEqual(values.get(0).getString(), "false", "The synced strong power fallback value");
+            helper.assertValueEqual(values.get(0).getStyle().getColor(),
+                    TextColor.fromLegacyFormat(ChatFormatting.RED), "The synced strong power value color");
+        });
+    }
+
     // The value ids under which the property values are synced must be identical
     // in the server-side and the client-side container.
 
@@ -545,6 +710,88 @@ public class GameTestsAspectVariables {
                         serverContainer.getAspectPropertyValueId(aspect),
                         "The property value id of aspect " + aspect.getUniqueName());
             }
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAspectVariablesPartGuiWriterPropertyValueIdsSymmetric(GameTestHelper helper) {
+        helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
+        PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS), Direction.WEST, PartTypes.REDSTONE_WRITER,
+                new ItemStack(PartTypes.REDSTONE_WRITER.getItem()));
+        PartPos partPos = partPos(helper, POS);
+
+        RecordingContainerPartWriter serverContainer = openPartGuiWriter(helper, partPos);
+        ContainerMultipartAspects clientContainer = openPartGuiWriterFromNetwork(helper, partPos, PartTypes.REDSTONE_WRITER);
+
+        helper.succeedWhen(() -> {
+            for (Object aspectObject : serverContainer.getAspectPropertyButtons().keySet()) {
+                IAspect aspect = (IAspect) aspectObject;
+                helper.assertValueEqual(clientContainer.getAspectPropertyValueId(aspect),
+                        serverContainer.getAspectPropertyValueId(aspect),
+                        "The property value id of aspect " + aspect.getUniqueName());
+            }
+        });
+    }
+
+    /**
+     * The full server-to-client path: the server determines the values, syncs them under a value id,
+     * and the client-side container shows them in its tooltip.
+     */
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAspectVariablesPartGuiWriterSyncedToClient(GameTestHelper helper) {
+        helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
+        PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS), Direction.WEST, PartTypes.REDSTONE_WRITER,
+                new ItemStack(PartTypes.REDSTONE_WRITER.getItem()));
+        PartPos partPos = partPos(helper, POS);
+        setAspectPropertyVariable(partPos, Aspects.Write.Redstone.INTEGER,
+                AspectWriteBuilders.Redstone.PROP_STRONG_POWER,
+                createVariableForValue(helper.getLevel(), ValueTypes.BOOLEAN, ValueTypeBoolean.ValueBoolean.of(true)));
+
+        RecordingContainerPartWriter serverContainer = openPartGuiWriter(helper, partPos);
+        ContainerMultipartAspects clientContainer = openPartGuiWriterFromNetwork(helper, partPos, PartTypes.REDSTONE_WRITER);
+
+        helper.succeedWhen(() -> {
+            serverContainer.broadcastChanges();
+
+            // Deliver all values that the server would have sent to the client-side container
+            for (Object aspectObject : serverContainer.getAspectPropertyButtons().keySet()) {
+                IAspect aspect = (IAspect) aspectObject;
+                Integer valueId = serverContainer.getAspectPropertyValueId(aspect);
+                CompoundTag value = serverContainer.getValue(valueId);
+                if (value != null) {
+                    clientContainer.onUpdate(valueId, value);
+                }
+            }
+
+            List<MutableComponent> shown = clientContainer.getShownAspectPropertyValues(Aspects.Write.Redstone.INTEGER);
+            helper.assertValueEqual(shown.get(0).getString(), "true", "The strong power value shown client-side");
+        });
+    }
+
+    /**
+     * Even when the server has not synced any values yet, the client must show that a setting
+     * is driven by a variable, as the variables themselves are part of the (synced) part state.
+     */
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAspectVariablesPartGuiWriterUnsyncedShowsVariableDrivenValue(GameTestHelper helper) {
+        helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
+        PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS), Direction.WEST, PartTypes.REDSTONE_WRITER,
+                new ItemStack(PartTypes.REDSTONE_WRITER.getItem()));
+        PartPos partPos = partPos(helper, POS);
+        setAspectPropertyVariable(partPos, Aspects.Write.Redstone.INTEGER,
+                AspectWriteBuilders.Redstone.PROP_STRONG_POWER,
+                createVariableForValue(helper.getLevel(), ValueTypes.BOOLEAN, ValueTypeBoolean.ValueBoolean.of(true)));
+
+        // This container has never received any synced values
+        ContainerMultipartAspects clientContainer = openPartGuiWriterFromNetwork(helper, partPos, PartTypes.REDSTONE_WRITER);
+
+        helper.succeedWhen(() -> {
+            helper.assertTrue(clientContainer.getModifiedAspectPropertyValuesSynced(
+                    Aspects.Write.Redstone.INTEGER) == null, "Expected no synced values");
+            List<MutableComponent> shown = clientContainer.getShownAspectPropertyValues(Aspects.Write.Redstone.INTEGER);
+            // The statically configured fallback value is shown until the server syncs the variable's value
+            helper.assertValueEqual(shown.get(0).getString(), "false",
+                    "The strong power fallback value shown client-side");
         });
     }
 
@@ -748,6 +995,38 @@ public class GameTestsAspectVariables {
             helper.assertTrue(!inventory.getItem(0).isEmpty(), "The aspect setting variable was not persisted");
             helper.assertValueEqual(inventory.getItem(0).getItem(), RegistryEntries.ITEM_VARIABLE.get(),
                     "The persisted aspect setting variable is not a variable");
+        });
+    }
+
+    /**
+     * The errors of aspect setting variables are part of the part state,
+     * so that the client also knows about them, and can render them in the part gui tooltip.
+     */
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAspectVariablesErrorPersistence(GameTestHelper helper) {
+        prepareChest(helper, POS);
+        testReadAspectSetup(POS, helper, PartTypes.INVENTORY_READER, Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT);
+        PartPos partPos = partPos(helper, POS);
+        // A boolean variable in an integer setting is an invalid type
+        setAspectPropertyVariable(partPos, Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT,
+                AspectReadBuilders.Inventory.PROPERTY_SLOTID,
+                createVariableForValue(helper.getLevel(), ValueTypes.BOOLEAN, ValueTypeBoolean.ValueBoolean.of(true)));
+
+        helper.succeedWhen(() -> {
+            helper.assertTrue(getAspectPropertyVariableError(partPos, Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT,
+                    AspectReadBuilders.Inventory.PROPERTY_SLOTID) != null, "Expected an error in the variable slot");
+
+            PartHelpers.PartStateHolder<?, ?> partStateHolder = PartHelpers.getPart(partPos);
+            IPartType partType = (IPartType) partStateHolder.getPart();
+            ValueDeseralizationContext context = ValueDeseralizationContext.of(helper.getLevel());
+
+            // This is the same serialization as the one that syncs the part state to the client
+            CompoundTag tag = new CompoundTag();
+            partStateHolder.getState().writeToNBT(context, tag);
+            IPartState restoredState = partType.fromNBT(context, tag);
+
+            helper.assertTrue(restoredState.getAspectVariableError(Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT, 0) != null,
+                    "The aspect setting variable error was not persisted");
         });
     }
 

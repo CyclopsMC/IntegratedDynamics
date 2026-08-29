@@ -34,6 +34,7 @@ import org.cyclops.integrateddynamics.part.aspect.Aspects;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -53,6 +54,12 @@ public class PartStateAspectVariablesHandler<P extends IPartType> {
     public static final String INVENTORY_NAME_PREFIX = "aspectVariables_";
 
     protected final Map<IAspect, AspectVariables> aspectVariables = Maps.newIdentityHashMap();
+    /**
+     * The errors of all aspect setting variable slots, by aspect.
+     * These are part of the part state, so that they are also known client-side,
+     * without having to be synced by every gui that wants to show them.
+     */
+    protected final Map<IAspect, Int2ObjectMap<MutableComponent>> aspectVariablesSlotMessages = Maps.newIdentityHashMap();
     protected boolean dirty = true;
 
     /**
@@ -146,8 +153,23 @@ public class PartStateAspectVariablesHandler<P extends IPartType> {
      */
     @Nullable
     public MutableComponent getAspectVariableError(IAspect aspect, int slot) {
-        AspectVariables variables = this.aspectVariables.get(aspect);
-        return variables == null ? null : variables.getSlotError(slot);
+        Int2ObjectMap<MutableComponent> slotMessages = this.aspectVariablesSlotMessages.get(aspect);
+        return slotMessages == null ? null : slotMessages.get(slot);
+    }
+
+    /**
+     * @param aspect An aspect.
+     * @return The mutable errors of all setting variable slots of the given aspect.
+     */
+    public Int2ObjectMap<MutableComponent> getAspectVariablesSlotMessages(IAspect aspect) {
+        return this.aspectVariablesSlotMessages.computeIfAbsent(aspect, a -> new Int2ObjectArrayMap<>());
+    }
+
+    /**
+     * @return The errors of all aspect setting variable slots, by aspect.
+     */
+    public Map<IAspect, Int2ObjectMap<MutableComponent>> getAspectVariablesSlotMessages() {
+        return this.aspectVariablesSlotMessages;
     }
 
     /**
@@ -199,6 +221,10 @@ public class PartStateAspectVariablesHandler<P extends IPartType> {
 
         // Forget about aspects that no longer have variables
         this.aspectVariables.keySet().retainAll(presentAspects);
+        if (this.aspectVariablesSlotMessages.keySet().retainAll(presentAspects)) {
+            partState.markDirty();
+            partState.sendUpdate();
+        }
 
         // (Re)load all aspects that have variables
         for (IAspect aspect : presentAspects) {
@@ -219,7 +245,6 @@ public class PartStateAspectVariablesHandler<P extends IPartType> {
         private final IAspect aspect;
         private final List<IAspectPropertyTypeInstance> propertyTypes;
         private final List<InventoryVariableEvaluator<IValue>> evaluators = Lists.newArrayList();
-        private final Int2ObjectMap<MutableComponent> slotMessages = new Int2ObjectArrayMap<>();
         private final Int2ObjectMap<IValue> slotValues = new Int2ObjectArrayMap<>();
         private final Int2ObjectMap<IVariable> slotVariables = new Int2ObjectArrayMap<>();
         private final Int2ObjectMap<IVariable> slotListenedVariables = new Int2ObjectArrayMap<>();
@@ -231,6 +256,14 @@ public class PartStateAspectVariablesHandler<P extends IPartType> {
         public AspectVariables(IAspect aspect) {
             this.aspect = aspect;
             this.propertyTypes = getPropertyTypes(aspect);
+        }
+
+        /**
+         * The slot errors are stored inside the part state,
+         * so that they are also available client-side.
+         */
+        protected Int2ObjectMap<MutableComponent> getSlotMessages() {
+            return getAspectVariablesSlotMessages(this.aspect);
         }
 
         public void invalidateDerivedProperties() {
@@ -261,14 +294,14 @@ public class PartStateAspectVariablesHandler<P extends IPartType> {
 
         @Nullable
         public MutableComponent getSlotError(int slot) {
-            return this.slotMessages.get(slot);
+            return getSlotMessages().get(slot);
         }
 
         protected void setSlotErrors(int slot, List<MutableComponent> errors) {
             if (errors.isEmpty()) {
-                this.slotMessages.remove(slot);
+                getSlotMessages().remove(slot);
             } else {
-                this.slotMessages.put(slot, errors.get(0));
+                getSlotMessages().put(slot, errors.get(0));
             }
         }
 
@@ -316,7 +349,7 @@ public class PartStateAspectVariablesHandler<P extends IPartType> {
         }
 
         protected void reloadSlot(P partType, IPartState<P> partState, INetwork network, IPartNetwork partNetwork, PartTarget target, int slot) {
-            this.slotMessages.remove(slot);
+            MutableComponent lastMessage = getSlotMessages().remove(slot);
             IVariable lastVariable = this.slotVariables.get(slot);
             if (lastVariable != null) {
                 lastVariable.invalidate();
@@ -345,20 +378,17 @@ public class PartStateAspectVariablesHandler<P extends IPartType> {
                             setSlotValue(slot, value);
                         } else {
                             setSlotValue(slot, null);
-                            this.slotMessages.put(slot, Component.translatable("gui.integrateddynamics.aspectsettings.slot.message.invalidvalue"));
-                            partState.markDirty();
+                            getSlotMessages().put(slot, Component.translatable("gui.integrateddynamics.aspectsettings.slot.message.invalidvalue"));
                         }
                     } else {
                         setSlotValue(slot, null);
-                        this.slotMessages.put(slot, Component.translatable("gui.integrateddynamics.aspectsettings.slot.message.invalidtype",
+                        getSlotMessages().put(slot, Component.translatable("gui.integrateddynamics.aspectsettings.slot.message.invalidtype",
                                 Component.translatable(propertyType.getType().getTranslationKey()),
                                 Component.translatable(value.getType().getTranslationKey())));
-                        partState.markDirty();
                     }
                 } catch (EvaluationException e) {
                     setSlotValue(slot, null);
-                    this.slotMessages.put(slot, e.getErrorMessage());
-                    partState.markDirty();
+                    getSlotMessages().put(slot, e.getErrorMessage());
                 }
             } else {
                 setSlotValue(slot, null);
@@ -367,6 +397,12 @@ public class PartStateAspectVariablesHandler<P extends IPartType> {
                     // The variable could not be resolved yet, try again later
                     this.dirtySlots.add(slot);
                 }
+            }
+
+            // The slot errors are part of the part state, so make sure that any change reaches the client
+            if (!Objects.equals(lastMessage, getSlotMessages().get(slot))) {
+                partState.markDirty();
+                partState.sendUpdate();
             }
 
             try {
