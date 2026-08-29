@@ -200,6 +200,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param target The target block.
      * @param state The state.
      */
+    // TODO: make non-default in nextmajor
     public default void onAspectVariablesChanged(PartTarget target, S state) {
         state.markAspectVariablesChanged();
     }

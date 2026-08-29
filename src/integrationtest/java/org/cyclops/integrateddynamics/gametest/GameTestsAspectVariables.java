@@ -1,13 +1,22 @@
 package org.cyclops.integrateddynamics.gametest;
 
+import com.google.common.collect.Maps;
+import io.netty.buffer.Unpooled;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -17,6 +26,8 @@ import net.minecraft.world.level.block.RedStoneWireBlock;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
+import org.cyclops.cyclopscore.inventory.IValueNotifier;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -41,6 +52,8 @@ import org.cyclops.integrateddynamics.part.aspect.read.AspectReadBuilders;
 import org.cyclops.integrateddynamics.part.aspect.write.AspectWriteBuilders;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
 
 import static org.cyclops.integrateddynamics.gametest.GameTestHelpersIntegratedDynamics.assertValueEqual;
@@ -102,6 +115,65 @@ public class GameTestsAspectVariables {
      */
     protected static String propertyTooltipValue(ContainerMultipartAspects container, IAspect aspect, int propertyIndex) {
         return ((List<MutableComponent>) container.getModifiedAspectPropertyValues(aspect)).get(propertyIndex).getString();
+    }
+
+    /**
+     * Construct the part gui container in the same way as it is constructed client-side,
+     * from the data that the server sends when the gui is opened.
+     */
+    protected static ContainerMultipartAspects openPartGuiFromNetwork(GameTestHelper helper, PartPos partPos, IPartType<?, ?> partType) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        RegistryFriendlyByteBuf packetBuffer = new RegistryFriendlyByteBuf(Unpooled.buffer(), helper.getLevel().registryAccess());
+        partType.writeExtraGuiData(packetBuffer, partPos, player);
+        AbstractContainerMenu menu = RegistryEntries.CONTAINER_PART_READER.get().create(1, player.getInventory(), packetBuffer);
+        if (!(menu instanceof ContainerMultipartAspects container)) {
+            throw new GameTestAssertException("The client-side part gui container could not be created");
+        }
+        return container;
+    }
+
+    /**
+     * A minimal value notifier that captures values in-memory,
+     * so that the server-to-client value syncing can be verified without a network connection.
+     */
+    protected static class CapturingValueNotifier implements IValueNotifier {
+
+        private final HolderLookup.Provider holderLookupProvider;
+        private final Map<Integer, CompoundTag> values = Maps.newHashMap();
+
+        public CapturingValueNotifier(HolderLookup.Provider holderLookupProvider) {
+            this.holderLookupProvider = holderLookupProvider;
+        }
+
+        @Override
+        public void setValue(int id, CompoundTag value) {
+            this.values.put(id, value);
+        }
+
+        @Override
+        public Set<Integer> getValueIds() {
+            return this.values.keySet();
+        }
+
+        @Override
+        public CompoundTag getValue(int id) {
+            return this.values.get(id);
+        }
+
+        @Override
+        public HolderLookup.Provider getHolderLookupProvider() {
+            return this.holderLookupProvider;
+        }
+    }
+
+    /**
+     * @return The aspect property values after passing them through the value notifier serialization,
+     *         exactly like they are sent from the server to the client.
+     */
+    protected static List<MutableComponent> syncPropertyValues(GameTestHelper helper, ContainerMultipartAspects container, IAspect aspect) {
+        CapturingValueNotifier notifier = new CapturingValueNotifier(helper.getLevel().registryAccess());
+        ValueNotifierHelpers.setValue(notifier, 0, container.getModifiedAspectPropertyValues(aspect));
+        return ValueNotifierHelpers.getValueTextComponentList(notifier, 0);
     }
 
     /**
@@ -323,6 +395,157 @@ public class GameTestsAspectVariables {
                 })
                 .thenWaitUntil(() -> assertValueEqual(container.getEffectivePropertyValue(0), ValueTypeInteger.ValueInteger.of(2)))
                 .thenSucceed();
+    }
+
+    // The values that the part gui shows in its aspect properties tooltip must survive being sent to the client.
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAspectVariablesPartGuiPropertyValuesSync(GameTestHelper helper) {
+        prepareChest(helper, POS);
+        testReadAspectSetup(POS, helper, PartTypes.INVENTORY_READER, Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT);
+        PartPos partPos = partPos(helper, POS);
+        setAspectProperty(partPos, Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT,
+                AspectReadBuilders.Inventory.PROPERTY_SLOTID, ValueTypeInteger.ValueInteger.of(1));
+
+        ContainerMultipartAspects container = openPartGui(helper, partPos, PartTypes.INVENTORY_READER);
+
+        helper.succeedWhen(() -> {
+            List<MutableComponent> synced = syncPropertyValues(helper, container, Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT);
+            helper.assertTrue(synced != null, "The property values were not synced");
+            helper.assertValueEqual(synced.size(), 1, "Unexpected number of synced property values");
+            helper.assertValueEqual(synced.get(0).getString(), "1", "The synced property value");
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAspectVariablesPartGuiPropertyValuesSyncMultiple(GameTestHelper helper) {
+        helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
+        PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS), Direction.WEST, PartTypes.REDSTONE_WRITER,
+                new ItemStack(PartTypes.REDSTONE_WRITER.getItem()));
+        PartPos partPos = partPos(helper, POS);
+        // Only modify the last property, so that the leading ones stay at their default value
+        setAspectProperty(partPos, Aspects.Write.Redstone.BOOLEAN_PULSE,
+                AspectWriteBuilders.Redstone.PROP_PULSE_LENGTH, ValueTypeInteger.ValueInteger.of(7));
+
+        ContainerMultipartAspects container = openPartGui(helper, partPos, PartTypes.REDSTONE_WRITER);
+
+        helper.succeedWhen(() -> {
+            List<MutableComponent> synced = syncPropertyValues(helper, container, Aspects.Write.Redstone.BOOLEAN_PULSE);
+            helper.assertTrue(synced != null, "The property values were not synced");
+            helper.assertValueEqual(synced.size(),
+                    PartStateAspectVariablesHandler.getPropertyTypes(Aspects.Write.Redstone.BOOLEAN_PULSE).size(),
+                    "Unexpected number of synced property values");
+            helper.assertValueEqual(synced.get(synced.size() - 1).getString(), "7", "The synced property value");
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAspectVariablesPartGuiPropertyValuesSyncVariableDriven(GameTestHelper helper) {
+        prepareChest(helper, POS);
+        testReadAspectSetup(POS, helper, PartTypes.INVENTORY_READER, Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT);
+        PartPos partPos = partPos(helper, POS);
+        setAspectPropertyVariable(partPos, Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT,
+                AspectReadBuilders.Inventory.PROPERTY_SLOTID,
+                createVariableForValue(helper.getLevel(), ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(2)));
+
+        ContainerMultipartAspects container = openPartGui(helper, partPos, PartTypes.INVENTORY_READER);
+
+        helper.succeedWhen(() -> {
+            List<MutableComponent> synced = syncPropertyValues(helper, container, Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT);
+            helper.assertTrue(synced != null, "The property values were not synced");
+            helper.assertValueEqual(synced.get(0).getString(), "2", "The synced variable-driven property value");
+        });
+    }
+
+    // Erroring variables must show their fallback value in red.
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAspectVariablesPartGuiPropertyValuesError(GameTestHelper helper) {
+        prepareChest(helper, POS);
+        testReadAspectSetup(POS, helper, PartTypes.INVENTORY_READER, Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT);
+        PartPos partPos = partPos(helper, POS);
+        setAspectProperty(partPos, Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT,
+                AspectReadBuilders.Inventory.PROPERTY_SLOTID, ValueTypeInteger.ValueInteger.of(1));
+        // The slot id property only allows positive values, so this variable will error
+        setAspectPropertyVariable(partPos, Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT,
+                AspectReadBuilders.Inventory.PROPERTY_SLOTID,
+                createVariableForValue(helper.getLevel(), ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(-1)));
+
+        ContainerMultipartAspects container = openPartGui(helper, partPos, PartTypes.INVENTORY_READER);
+
+        helper.succeedWhen(() -> {
+            List<MutableComponent> values = container.getModifiedAspectPropertyValues(Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT);
+            // The statically configured fallback value is shown
+            helper.assertValueEqual(values.get(0).getString(), "1", "The shown property value");
+            // And it is shown in red, to indicate that its variable is erroring
+            helper.assertValueEqual(values.get(0).getStyle().getColor(),
+                    TextColor.fromLegacyFormat(ChatFormatting.RED), "The shown property value color");
+        });
+    }
+
+    // The gui must fall back to locally determined values when the server has not synced them (yet).
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAspectVariablesPartGuiPropertyValuesUnsyncedFallback(GameTestHelper helper) {
+        prepareChest(helper, POS);
+        testReadAspectSetup(POS, helper, PartTypes.INVENTORY_READER, Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT);
+        PartPos partPos = partPos(helper, POS);
+        setAspectProperty(partPos, Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT,
+                AspectReadBuilders.Inventory.PROPERTY_SLOTID, ValueTypeInteger.ValueInteger.of(1));
+
+        // This container has never received any synced values
+        ContainerMultipartAspects container = openPartGuiFromNetwork(helper, partPos, PartTypes.INVENTORY_READER);
+
+        helper.succeedWhen(() -> {
+            helper.assertTrue(container.getModifiedAspectPropertyValuesSynced(
+                    Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT) == null, "Expected no synced values");
+            List<MutableComponent> shown = container.getShownAspectPropertyValues(Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT);
+            helper.assertValueEqual(shown.get(0).getString(), "1", "The locally determined property value");
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAspectVariablesPartGuiPropertyValuesEmptySyncFallback(GameTestHelper helper) {
+        prepareChest(helper, POS);
+        testReadAspectSetup(POS, helper, PartTypes.INVENTORY_READER, Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT);
+        PartPos partPos = partPos(helper, POS);
+        setAspectProperty(partPos, Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT,
+                AspectReadBuilders.Inventory.PROPERTY_SLOTID, ValueTypeInteger.ValueInteger.of(1));
+
+        ContainerMultipartAspects container = openPartGuiFromNetwork(helper, partPos, PartTypes.INVENTORY_READER);
+
+        // Simulate the server syncing values that hold no information for this property
+        CapturingValueNotifier notifier = new CapturingValueNotifier(helper.getLevel().registryAccess());
+        ValueNotifierHelpers.setValue(notifier, 0, java.util.List.of(Component.empty()));
+        container.onUpdate(container.getAspectPropertyValueId(Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT),
+                notifier.getValue(0));
+
+        helper.succeedWhen(() -> {
+            List<MutableComponent> shown = container.getShownAspectPropertyValues(Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT);
+            helper.assertValueEqual(shown.get(0).getString(), "1", "The locally determined property value");
+        });
+    }
+
+    // The value ids under which the property values are synced must be identical
+    // in the server-side and the client-side container.
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAspectVariablesPartGuiPropertyValueIdsSymmetric(GameTestHelper helper) {
+        prepareChest(helper, POS);
+        testReadAspectSetup(POS, helper, PartTypes.INVENTORY_READER, Aspects.Read.Inventory.OBJECT_ITEM_STACK_SLOT);
+        PartPos partPos = partPos(helper, POS);
+
+        ContainerMultipartAspects serverContainer = openPartGui(helper, partPos, PartTypes.INVENTORY_READER);
+        ContainerMultipartAspects clientContainer = openPartGuiFromNetwork(helper, partPos, PartTypes.INVENTORY_READER);
+
+        helper.succeedWhen(() -> {
+            for (Object aspectObject : serverContainer.getAspectPropertyButtons().keySet()) {
+                IAspect aspect = (IAspect) aspectObject;
+                helper.assertValueEqual(clientContainer.getAspectPropertyValueId(aspect),
+                        serverContainer.getAspectPropertyValueId(aspect),
+                        "The property value id of aspect " + aspect.getUniqueName());
+            }
+        });
     }
 
     // The aspect properties tooltip of the part gui must show the effective (variable-driven) values.

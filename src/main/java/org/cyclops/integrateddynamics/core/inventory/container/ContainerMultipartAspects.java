@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.inventory.container;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
@@ -138,6 +139,12 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
      * Properties that still have their default value are represented by an empty component.
      * Properties that are driven by a variable are always included,
      * as their value can change at any time.
+     * If the variable of a property is erroring, its value is shown in red,
+     * as the shown value is then the statically configured fallback value.
+     *
+     * This can be called on both sides.
+     * Client-side, the values that are driven by variables are unknown,
+     * so the statically configured values are returned for those.
      *
      * @param aspect An aspect that has properties.
      * @return The modified property values, in the order of the aspect's property types.
@@ -162,18 +169,31 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
             IValue value = properties.getValue(property);
             IValue defaultValue = defaultProperties.getValue(property);
             boolean variableDriven = partState.getAspectVariableValue(aspect, propertyIndex) != null;
-            if (value == null || (!variableDriven && ValueHelpers.areValuesEqual(value, defaultValue))) {
+            boolean variableErrored = partState.getAspectVariableError(aspect, propertyIndex) != null;
+            if (value == null || (!variableDriven && !variableErrored
+                    && ValueHelpers.areValuesEqual(value, defaultValue))) {
                 values.add(Component.empty());
             } else {
                 IValueType valueType = value.getType();
                 MutableComponent compactValue = valueType.toCompactString(value);
                 values.add(compactValue == null
                         ? Component.empty()
-                        : compactValue.withStyle(valueType.getDisplayColorFormat()));
+                        : compactValue.withStyle(variableErrored
+                                ? ChatFormatting.RED : valueType.getDisplayColorFormat()));
             }
             propertyIndex++;
         }
         return values;
+    }
+
+    /**
+     * @param aspect An aspect.
+     * @return The value id under which the property values of the given aspect are synced to the client,
+     *         or null if the given aspect has no properties.
+     */
+    @Nullable
+    public Integer getAspectPropertyValueId(IAspect aspect) {
+        return this.aspectPropertyValueIds.get(aspect);
     }
 
     /**
@@ -189,6 +209,31 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
             return null;
         }
         return ValueNotifierHelpers.getValueTextComponentList(this, valueId);
+    }
+
+    /**
+     * Get the property values of the given aspect that must be shown in the gui.
+     *
+     * The statically configured values are determined locally,
+     * which is possible because the part state they are stored in is available on both sides.
+     * Values that the server has synced are layered on top of those,
+     * as only the server knows the values that are driven by variables.
+     *
+     * @param aspect An aspect that has properties.
+     * @return The property values to show, in the order of {@link IAspect#getPropertyTypes()}.
+     */
+    public List<MutableComponent> getShownAspectPropertyValues(IAspect aspect) {
+        List<MutableComponent> values = getModifiedAspectPropertyValues(aspect);
+        List<MutableComponent> syncedValues = getModifiedAspectPropertyValuesSynced(aspect);
+        if (syncedValues != null) {
+            for (int i = 0; i < Math.min(values.size(), syncedValues.size()); i++) {
+                MutableComponent syncedValue = syncedValues.get(i);
+                if (!syncedValue.getString().isEmpty()) {
+                    values.set(i, syncedValue);
+                }
+            }
+        }
+        return values;
     }
 
     public abstract int getAspectBoxHeight();
