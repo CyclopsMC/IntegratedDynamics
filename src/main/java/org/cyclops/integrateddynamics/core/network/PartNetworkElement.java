@@ -98,12 +98,14 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
 
     @Override
     public int getPriority() {
-        return hasPartState() ? part.getPriority(getPartState()) : 0;
+        S partState = getPartStateOptional();
+        return partState != null ? part.getPriority(partState) : 0;
     }
 
     @Override
     public int getChannel() {
-        return hasPartState() ? part.getChannel(getPartState()) : IPositionedAddonsNetwork.DEFAULT_CHANNEL;
+        S partState = getPartStateOptional();
+        return partState != null ? part.getChannel(partState) : IPositionedAddonsNetwork.DEFAULT_CHANNEL;
     }
 
     @Override
@@ -131,6 +133,34 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
                     .orElse(false);
         }
         return false;
+    }
+
+    /**
+     * Resolve the part state of this element using a single part container lookup,
+     * or null if this element is not loaded or has no part.
+     *
+     * Contrary to calling {@link #hasPartState()} and {@link #getPartState()} in sequence,
+     * this only requires a single (relatively expensive) part container lookup.
+     *
+     * @return The part state, or null.
+     */
+    @Nullable
+    protected S getPartStateOptional() {
+        return isLoaded() ? getPartStateOptionalLoaded() : null;
+    }
+
+    /**
+     * Resolve the part state of this element using a single part container lookup,
+     * assuming that this element is loaded, or null if it has no part.
+     * @return The part state, or null.
+     */
+    @Nullable
+    protected S getPartStateOptionalLoaded() {
+        IPartContainer partContainer = getPartContainerOptional().orElse(null);
+        if (partContainer == null || !partContainer.hasPart(this.center.getSide())) {
+            return null;
+        }
+        return (S) partContainer.getPartState(this.center.getSide());
     }
 
     @Override
@@ -321,10 +351,8 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
 
     @Override
     public int getId() {
-        if (!hasPartState()) {
-            return -1;
-        }
-        return getPartState().getId();
+        S partState = getPartStateOptional();
+        return partState != null ? partState.getId() : -1;
     }
 
     @Override
