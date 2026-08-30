@@ -214,9 +214,17 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
                 return false;
             }
         } else {
-            saveSetting();
-            return super.keyPressed(typedChar, keyCode, modifiers);
+            // Don't close all GUIs, but go back to the part's aspect overview GUI.
+            exitToPartGui();
+            return true;
         }
+    }
+
+    /**
+     * Save the current setting and go back to the aspect overview GUI of the part.
+     */
+    protected void exitToPartGui() {
+        buttonExit.onPress();
     }
 
     @Override
