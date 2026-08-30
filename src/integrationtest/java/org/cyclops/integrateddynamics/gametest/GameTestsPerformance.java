@@ -36,6 +36,7 @@ public class GameTestsPerformance {
     public static final int EXECUTION_SECONDS = 10;
     public static final int WARMUP_TICKS = 200;
     public static final int RADIUS = 10; // Max 10, as it would otherwise leak out of the template.
+    public static final int APPEND_CABLE_COUNT = 100;
     public static final String TEMPLATE_EMPTY = "empty10";
     public static final BlockPos START_POS = BlockPos.ZERO.offset(1, 1, 1);
 
@@ -89,7 +90,7 @@ public class GameTestsPerformance {
     public void testPerformanceEmptyNetworkAppend(GameTestHelper helper) {
         testPerformance(helper, "empty_append", (measureServerTickTimeNow) -> {
             CommandGenerateNetwork.NetworkGenerationHelper.generateEmptyNetwork(helper.getLevel(), helper.absolutePos(START_POS), RADIUS);
-            addCablesPostWarmup(helper, 100, WARMUP_TICKS);
+            addCablesPostWarmup(helper, WARMUP_TICKS);
             helper.runAfterDelay(WARMUP_TICKS + 100, measureServerTickTimeNow); // Measure server tick time right after cables have been added
         });
     }
@@ -98,7 +99,7 @@ public class GameTestsPerformance {
     public void testPerformanceIdleNetworkAppend(GameTestHelper helper) {
         testPerformance(helper, "redstoneioclock_append", (measureServerTickTimeNow) -> {
             CommandGenerateNetwork.NetworkGenerationHelper.generateRedstoneNetwork(helper.getLevel(), helper.absolutePos(START_POS), RADIUS);
-            addCablesPostWarmup(helper, 100, WARMUP_TICKS);
+            addCablesPostWarmup(helper, WARMUP_TICKS);
             helper.runAfterDelay(WARMUP_TICKS + 100, measureServerTickTimeNow); // Measure server tick time right after cables have been added
         });
     }
@@ -180,6 +181,7 @@ public class GameTestsPerformance {
             writeResults(results, true);
 
             CommandGenerateNetwork.NetworkGenerationHelper.clearCables(helper.getLevel(), helper.absolutePos(START_POS), RADIUS);
+            clearAppendedCables(helper);
         });
     }
 
@@ -204,15 +206,36 @@ public class GameTestsPerformance {
         }
     }
 
-    private static void addCablesPostWarmup(GameTestHelper helper, int count, int delayOffset) {
-        for (int i = 0; i < count; i++) {
+    /**
+     * The position of the cable that {@link #addCablesPostWarmup} appends to the network at the given index.
+     * Note that these are placed outside of the generated network cube.
+     */
+    private static BlockPos getAppendedCablePos(GameTestHelper helper, int index) {
+        return helper.absolutePos(START_POS).offset(0, index, - 1);
+    }
+
+    private static void addCablesPostWarmup(GameTestHelper helper, int delayOffset) {
+        for (int i = 0; i < APPEND_CABLE_COUNT; i++) {
             final int index = i;
             helper.runAfterDelay(delayOffset + i, () -> {
                 // Add a cable at the correct position
-                BlockPos pos = helper.absolutePos(START_POS).offset(0, index, - 1);
-                CommandGenerateNetwork.NetworkGenerationHelper.placeCable(helper.getLevel(), pos);
+                CommandGenerateNetwork.NetworkGenerationHelper.placeCable(helper.getLevel(), getAppendedCablePos(helper, index));
             });
         }
+    }
+
+    /**
+     * Remove the cables that {@link #addCablesPostWarmup} appended to the network.
+     *
+     * These are placed outside of the generated network cube,
+     * so they are not covered by the regular cleanup of that cube.
+     * Leaving them behind would keep their network alive for the remainder of the server run,
+     * which distorts the measurements of all tests that run afterwards,
+     * and would persist into subsequent runs that reuse the same world.
+     */
+    private static void clearAppendedCables(GameTestHelper helper) {
+        CommandGenerateNetwork.NetworkGenerationHelper.clearCables(helper.getLevel(),
+                getAppendedCablePos(helper, 0), getAppendedCablePos(helper, APPEND_CABLE_COUNT - 1));
     }
 
     private static void removeCablesPostWarmup(GameTestHelper helper, int radius, int count, int delayOffset) {

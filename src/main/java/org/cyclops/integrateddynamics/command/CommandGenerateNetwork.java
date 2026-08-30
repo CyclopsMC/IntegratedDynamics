@@ -224,12 +224,19 @@ public class CommandGenerateNetwork implements Command<CommandSourceStack> {
          * Clear all cable blocks within a radius of the given position.
          */
         public static void clearCables(ServerLevel level, BlockPos centerPos, int radius) {
+            clearCables(level, centerPos.offset(-radius, -radius, -radius), centerPos.offset(radius, radius, radius));
+        }
+
+        /**
+         * Clear all cable blocks within the given bounding box, both corners inclusive.
+         */
+        public static void clearCables(ServerLevel level, BlockPos from, BlockPos to) {
             BlockCable.SKIP_NETWORK_INIT = true;
 
             try {
-                for (int x = centerPos.getX() - radius; x <= centerPos.getX() + radius; x++) {
-                    for (int y = centerPos.getY() - radius; y <= centerPos.getY() + radius; y++) {
-                        for (int z = centerPos.getZ() - radius; z <= centerPos.getZ() + radius; z++) {
+                for (int x = Math.min(from.getX(), to.getX()); x <= Math.max(from.getX(), to.getX()); x++) {
+                    for (int y = Math.min(from.getY(), to.getY()); y <= Math.max(from.getY(), to.getY()); y++) {
+                        for (int z = Math.min(from.getZ(), to.getZ()); z <= Math.max(from.getZ(), to.getZ()); z++) {
                             BlockPos pos = new BlockPos(x, y, z);
                             if (level.getBlockState(pos).getBlock() == RegistryEntries.BLOCK_CABLE.value()) {
                                 level.destroyBlock(pos, false);
