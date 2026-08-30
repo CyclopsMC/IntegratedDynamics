@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.inventory.container;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Lists;
+import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -191,7 +192,8 @@ public class ContainerAspectSettings extends InventoryContainer {
         }
         // An empty component is used to indicate the absence of an error,
         // as null values are not sent over to the client.
-        Component error = ValueNotifierHelpers.getValueTextComponent(this, this.propertyVariableSlotErrorIds.get(index));
+        Component error = ValueNotifierHelpers.getValueTextComponent(this, this.propertyVariableSlotErrorIds.get(index))
+                .withStyle(ChatFormatting.RED);
         return error == null || error.getString().isEmpty() ? null : error;
     }
 
