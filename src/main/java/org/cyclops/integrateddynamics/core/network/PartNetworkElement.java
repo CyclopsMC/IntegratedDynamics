@@ -313,27 +313,37 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     public int compareTo(INetworkElement o) {
         if (o instanceof IPartNetworkElement) {
             IPartNetworkElement p = (IPartNetworkElement) o;
-            int compClass = this.getPart().getUniqueName().compareTo(p.getPart().getUniqueName());
-            if (compClass == 0) {
-                // If this or the other part is not loaded, we IGNORE the priority,
-                // because that depends on tile entity data, which requires loading the part/chunk.
-                int compPriority = !isLoaded() || !p.isLoaded() ? 0 : -Integer.compare(this.getPriority(), p.getPriority());
-                if (compPriority == 0) {
-                    int compPart = getPart().getTranslationKey().compareTo(p.getPart().getTranslationKey());
-                    if (compPart == 0) {
-                        int compPos = this.center.getPos().compareTo(p.getPosition());
-                        if (compPos == 0) {
-                            return this.center.getSide().compareTo(p.getSide());
-                        }
-                        return compPos;
-                    }
-                    return compPart;
-                } else {
-                    return compPriority;
+
+            // Part types are singletons, so identical part types are guaranteed to have
+            // an identical unique name and translation key.
+            // Comparing them by identity avoids those (much more expensive) string comparisons.
+            boolean samePartType = this.getPart() == p.getPart();
+            if (!samePartType) {
+                int compClass = this.getPart().getUniqueName().compareTo(p.getPart().getUniqueName());
+                if (compClass != 0) {
+                    return compClass;
                 }
-            } else {
-                return compClass;
             }
+
+            // If this or the other part is not loaded, we IGNORE the priority,
+            // because that depends on tile entity data, which requires loading the part/chunk.
+            int compPriority = !isLoaded() || !p.isLoaded() ? 0 : -Integer.compare(this.getPriority(), p.getPriority());
+            if (compPriority != 0) {
+                return compPriority;
+            }
+
+            if (!samePartType) {
+                int compPart = getPart().getTranslationKey().compareTo(p.getPart().getTranslationKey());
+                if (compPart != 0) {
+                    return compPart;
+                }
+            }
+
+            int compPos = this.center.getPos().compareTo(p.getPosition());
+            if (compPos != 0) {
+                return compPos;
+            }
+            return this.center.getSide().compareTo(p.getSide());
         }
 
         return this.getClass().getName().compareTo(o.getClass().getName());
