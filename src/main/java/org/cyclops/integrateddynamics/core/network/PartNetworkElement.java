@@ -327,7 +327,8 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
 
             // If this or the other part is not loaded, we IGNORE the priority,
             // because that depends on tile entity data, which requires loading the part/chunk.
-            int compPriority = !isLoaded() || !p.isLoaded() ? 0 : -Integer.compare(this.getPriority(), p.getPriority());
+            int compPriority = !isLoaded() || !p.isLoaded() ? 0
+                    : -Integer.compare(this.getPriorityLoaded(), getPriorityOfLoaded(p));
             if (compPriority != 0) {
                 return compPriority;
             }
@@ -347,6 +348,23 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
         }
 
         return this.getClass().getName().compareTo(o.getClass().getName());
+    }
+
+    /**
+     * @return The priority of this element, assuming that it is loaded.
+     */
+    protected int getPriorityLoaded() {
+        S partState = getPartStateOptionalLoaded();
+        return partState != null ? part.getPriority(partState) : 0;
+    }
+
+    /**
+     * @param element A loaded part network element.
+     * @return The priority of the given element.
+     */
+    protected static int getPriorityOfLoaded(IPartNetworkElement element) {
+        return element instanceof PartNetworkElement
+                ? ((PartNetworkElement<?, ?>) element).getPriorityLoaded() : element.getPriority();
     }
 
     @Override
