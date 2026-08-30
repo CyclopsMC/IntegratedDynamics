@@ -58,7 +58,7 @@ public class GameTestsAspectsWriteRedstone {
         helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
         PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS), Direction.EAST, PartTypes.REDSTONE_READER, new ItemStack(PartTypes.REDSTONE_READER.getItem()));
         testWriteAspectSetup(POS, helper, PartTypes.REDSTONE_WRITER, Aspects.Write.Redstone.BOOLEAN_PULSE, createVariableFromReader(helper.getLevel(), PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.EAST), Aspects.Read.Redstone.BOOLEAN_CLOCK));
-        setAspectProperty(PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.EAST), Aspects.Write.Redstone.BOOLEAN_PULSE, AspectWriteBuilders.Redstone.PROP_PULSE_LENGTH, ValueTypeInteger.ValueInteger.of(4));
+        setAspectProperty(PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.WEST), Aspects.Write.Redstone.BOOLEAN_PULSE, AspectWriteBuilders.Redstone.PROP_PULSE_LENGTH, ValueTypeInteger.ValueInteger.of(4));
         helper.startSequence()
                 .thenWaitUntil(() -> helper.assertBlockProperty(POS.west(), RedStoneWireBlock.POWER, 0))
                 .thenWaitUntil(() -> helper.assertBlockProperty(POS.west(), RedStoneWireBlock.POWER, 15))
@@ -78,7 +78,6 @@ public class GameTestsAspectsWriteRedstone {
 
         // Writer redstone signal from redstone reader to variable card
         ItemStack variableClock = createVariableFromReader(helper.getLevel(), PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.EAST), Aspects.Read.Redstone.BOOLEAN_CLOCK);
-        setAspectProperty(PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.EAST), Aspects.Write.Redstone.BOOLEAN_PULSE, AspectWriteBuilders.Redstone.PROP_PULSE_LENGTH, ValueTypeInteger.ValueInteger.of(4));
         variableStore.getInventory().setItem(0, variableClock);
 
         // Create 1 and 0 constants
@@ -95,6 +94,7 @@ public class GameTestsAspectsWriteRedstone {
         });
 
         testWriteAspectSetup(POS, helper, PartTypes.REDSTONE_WRITER, Aspects.Write.Redstone.INTEGER_PULSE, variableChoice);
+        setAspectProperty(PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.WEST), Aspects.Write.Redstone.INTEGER_PULSE, AspectWriteBuilders.Redstone.PROP_PULSE_LENGTH, ValueTypeInteger.ValueInteger.of(4));
 
         helper.startSequence()
                 .thenWaitUntil(() -> helper.assertBlockProperty(POS.west(), RedStoneWireBlock.POWER, 0))

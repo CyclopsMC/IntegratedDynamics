@@ -2,6 +2,8 @@ package org.cyclops.integrateddynamics.core.inventory.container;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
@@ -18,6 +20,7 @@ import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.inventory.container.ScrollingInventoryContainer;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.PartStateException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.item.IAspectVariableFacade;
@@ -32,6 +35,7 @@ import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTy
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.item.AspectVariableFacade;
+import org.cyclops.integrateddynamics.core.part.PartStateAspectVariablesHandler;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 import javax.annotation.Nullable;
@@ -136,33 +140,68 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
      * The returned list has one entry for each of the aspect's property types,
      * in the order of {@link IAspect#getPropertyTypes()}.
      * Properties that still have their default value are represented by an empty component.
+     * Properties that have a variable in their slot are always included,
+     * as their value can change at any time.
+     * If the variable of a property is erroring, its value is shown in red,
+     * as the shown value is then the statically configured fallback value.
+     *
+     * This can be called on both sides.
+     * Client-side, the values that are driven by variables are unknown,
+     * so the statically configured values are returned for those.
      *
      * @param aspect An aspect that has properties.
      * @return The modified property values, in the order of the aspect's property types.
      */
     @SuppressWarnings("unchecked")
-    protected List<MutableComponent> getModifiedAspectPropertyValues(IAspect aspect) {
+    public List<MutableComponent> getModifiedAspectPropertyValues(IAspect aspect) {
+        IPartState<P> partState = getPartState();
         IAspectProperties defaultProperties = aspect.getDefaultProperties();
-        IAspectProperties properties = getPartState().getAspectProperties(aspect);
+        IAspectProperties properties = partState.getAspectProperties(aspect);
         if (properties == null) {
             properties = defaultProperties;
         }
+        // Variables take precedence over the statically configured values
+        IAspectProperties variableDrivenProperties = partState.getAspectPropertiesVariableDriven(aspect, properties);
+        if (variableDrivenProperties != null) {
+            properties = variableDrivenProperties;
+        }
+        // The variables themselves are part of the part state, so they are known on both sides,
+        // even though only the server knows the values they produce.
+        NonNullList<ItemStack> variables = partState.getInventoryNamed(PartStateAspectVariablesHandler.getInventoryName(aspect));
 
         List<MutableComponent> values = Lists.newArrayList();
+        int propertyIndex = 0;
         for (IAspectPropertyTypeInstance property : (Collection<IAspectPropertyTypeInstance>) aspect.getPropertyTypes()) {
             IValue value = properties.getValue(property);
             IValue defaultValue = defaultProperties.getValue(property);
-            if (value == null || ValueHelpers.areValuesEqual(value, defaultValue)) {
+            boolean hasVariable = variables != null && propertyIndex < variables.size()
+                    && !variables.get(propertyIndex).isEmpty();
+            boolean variableDriven = hasVariable || partState.getAspectVariableValue(aspect, propertyIndex) != null;
+            boolean variableErrored = partState.getAspectVariableError(aspect, propertyIndex) != null;
+            if (value == null || (!variableDriven && !variableErrored
+                    && ValueHelpers.areValuesEqual(value, defaultValue))) {
                 values.add(Component.empty());
             } else {
                 IValueType valueType = value.getType();
                 MutableComponent compactValue = valueType.toCompactString(value);
                 values.add(compactValue == null
                         ? Component.empty()
-                        : compactValue.withStyle(valueType.getDisplayColorFormat()));
+                        : compactValue.withStyle(variableErrored
+                                ? ChatFormatting.RED : valueType.getDisplayColorFormat()));
             }
+            propertyIndex++;
         }
         return values;
+    }
+
+    /**
+     * @param aspect An aspect.
+     * @return The value id under which the property values of the given aspect are synced to the client,
+     *         or null if the given aspect has no properties.
+     */
+    @Nullable
+    public Integer getAspectPropertyValueId(IAspect aspect) {
+        return this.aspectPropertyValueIds.get(aspect);
     }
 
     /**
@@ -178,6 +217,38 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
             return null;
         }
         return ValueNotifierHelpers.getValueTextComponentList(this, valueId);
+    }
+
+    /**
+     * Get the property values of the given aspect that must be shown in the gui.
+     *
+     * The statically configured values are determined locally,
+     * which is possible because the part state they are stored in is available on both sides.
+     * Values that the server has synced are layered on top of those,
+     * as only the server knows the values that are driven by variables.
+     *
+     * @param aspect An aspect that has properties.
+     * @return The property values to show, in the order of {@link IAspect#getPropertyTypes()}.
+     */
+    public List<MutableComponent> getShownAspectPropertyValues(IAspect aspect) {
+        List<MutableComponent> syncedValues = getModifiedAspectPropertyValuesSynced(aspect);
+        List<MutableComponent> values;
+        try {
+            values = getModifiedAspectPropertyValues(aspect);
+        } catch (PartStateException e) {
+            // The part may have been removed in the meantime,
+            // in which case we can only rely on what the server has sent before.
+            return syncedValues;
+        }
+        if (syncedValues != null) {
+            for (int i = 0; i < Math.min(values.size(), syncedValues.size()); i++) {
+                MutableComponent syncedValue = syncedValues.get(i);
+                if (syncedValue != null && !syncedValue.getString().isEmpty()) {
+                    values.set(i, syncedValue);
+                }
+            }
+        }
+        return values;
     }
 
     public abstract int getAspectBoxHeight();

@@ -80,6 +80,20 @@ public interface IAspect<V extends IValue, T extends IValueType<V>> {
     public <P extends IPartType<P, S>, S extends IPartState<P>> IAspectProperties getProperties(P partType, PartTarget target, S state);
 
     /**
+     * Get the statically configured properties of this aspect in the given part,
+     * without applying any property values that are driven by variables.
+     * @param <P> The part type type.
+     * @param <S> The part state.
+     * @param partType The part type.
+     * @param target The position that is targeted by the given part.
+     * @param state The current state of the given part.
+     * @return The current statically configured properties.
+     */
+    public default <P extends IPartType<P, S>, S extends IPartState<P>> IAspectProperties getStaticProperties(P partType, PartTarget target, S state) {
+        return getProperties(partType, target, state);
+    }
+
+    /**
      * Set the new properties of this aspect in the given part.
      * @param <P> The part type type.
      * @param <S> The part state.

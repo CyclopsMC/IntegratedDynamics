@@ -184,7 +184,7 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
                         List<Component> lines = Lists.newLinkedList();
                         lines.add(Component.translatable("gui.integrateddynamics.part.properties")
                                 .withStyle(ChatFormatting.WHITE));
-                        List<MutableComponent> propertyValues = container.getModifiedAspectPropertyValuesSynced(aspect);
+                        List<MutableComponent> propertyValues = container.getShownAspectPropertyValues(aspect);
                         int propertyIndex = 0;
                         for(IAspectPropertyTypeInstance property : ((IAspect<?, ?>) aspect).getPropertyTypes()) {
                             MutableComponent line = Component.literal("-")

@@ -196,6 +196,16 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     public void onOffsetVariablesChanged(PartTarget target, S state);
 
     /**
+     * Called when an aspect setting variable was inserted or removed from a slot.
+     * @param target The target block.
+     * @param state The state.
+     */
+    // TODO: make non-default in nextmajor
+    public default void onAspectVariablesChanged(PartTarget target, S state) {
+        state.markAspectVariablesChanged();
+    }
+
+    /**
      * @param state The state
      * @return If this element should be updated. This method is only called once during network initialization.
      */
