@@ -22,7 +22,7 @@ All stable releases (including deobfuscated builds) can be found on [CurseForge]
 
 ### Branching Strategy
 
-For every major Minecraft version, a `master-{mc_version} branch exists.
+For every major Minecraft version, a `master-{mc_version}` branch exists.
 
 ### Building and setting up a development environment
 
