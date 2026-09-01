@@ -7,6 +7,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.player.Inventory;
@@ -35,6 +36,10 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
         extends ContainerScreenScrolling<C> {
 
     private static final Rectangle ITEM_POSITION = new Rectangle(8, 17, 18, 18);
+    /**
+     * The maximum number of characters that are shown for a modified aspect property value in tooltips.
+     */
+    private static final int MAX_PROPERTY_VALUE_LENGTH = 20;
 
     protected final DisplayErrorsComponent displayErrors = new DisplayErrorsComponent();
 
@@ -180,10 +185,21 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
                         List<Component> lines = Lists.newLinkedList();
                         lines.add(Component.translatable("gui.integrateddynamics.part.properties")
                                 .withStyle(ChatFormatting.WHITE));
+                        List<Component> propertyValues = container.getShownAspectPropertyValues(aspect);
+                        int propertyIndex = 0;
                         for(IAspectPropertyTypeInstance property : ((IAspect<?, ?>) aspect).getPropertyTypes()) {
-                            lines.add(Component.literal("-")
+                            MutableComponent line = Component.literal("-")
                                     .withStyle(ChatFormatting.YELLOW)
-                                    .append(Component.translatable(property.getTranslationKey())));
+                                    .append(Component.translatable(property.getTranslationKey()));
+                            Component value = propertyValues != null && propertyIndex < propertyValues.size()
+                                    ? propertyValues.get(propertyIndex) : null;
+                            if (value != null && !value.getString().isEmpty()) {
+                                line = line
+                                        .append(Component.literal(": ").withStyle(ChatFormatting.YELLOW))
+                                        .append(compactPropertyValue(value));
+                            }
+                            lines.add(line);
+                            propertyIndex++;
                         }
                         drawTooltip(lines, guiGraphics, mouseX, mouseY);
                     }
@@ -204,5 +220,18 @@ public abstract class ContainerScreenMultipartAspects<P extends IPartType<P, S>,
 
     public int getMaxLabelWidth() {
         return 63;
+    }
+
+    /**
+     * Create a compact single-line representation of the given aspect property value.
+     * @param value An aspect property value.
+     * @return A compact representation of the given value.
+     */
+    protected static MutableComponent compactPropertyValue(Component value) {
+        String string = value.getString().replaceAll("\\s+", " ");
+        if (string.length() > MAX_PROPERTY_VALUE_LENGTH) {
+            string = string.substring(0, MAX_PROPERTY_VALUE_LENGTH) + "...";
+        }
+        return Component.literal(string).withStyle(value.getStyle());
     }
 }

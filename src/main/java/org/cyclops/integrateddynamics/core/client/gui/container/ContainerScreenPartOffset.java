@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.nbt.CompoundTag;
@@ -37,6 +38,7 @@ public class ContainerScreenPartOffset<T extends ContainerPartOffset> extends Co
     private WidgetNumberField numberFieldX = null;
     private WidgetNumberField numberFieldY = null;
     private WidgetNumberField numberFieldZ = null;
+    private ButtonText buttonSave = null;
 
     public ContainerScreenPartOffset(T container, Inventory inventory, Component title) {
         super(container, inventory, title);
@@ -87,7 +89,7 @@ public class ContainerScreenPartOffset<T extends ContainerPartOffset> extends Co
         numberFieldZ.setCanLoseFocus(true);
 
         MutableComponent save = Component.translatable("gui.integrateddynamics.button.save");
-        addRenderableWidget(new ButtonText(this.leftPos + 178, this.topPos + 6, font.width(save.getVisualOrderText()) + 6, 16, save, save,
+        addRenderableWidget(buttonSave = new ButtonText(this.leftPos + 178, this.topPos + 6, font.width(save.getVisualOrderText()) + 6, 16, save, save,
                 createServerPressable(ContainerPartOffset.BUTTON_SAVE, b -> onSave()), true));
 
         this.refreshValues();
@@ -123,8 +125,17 @@ public class ContainerScreenPartOffset<T extends ContainerPartOffset> extends Co
             }
             return true;
         } else {
-            return super.keyPressed(evt);
+            // Don't close all GUIs, but go back to the part's GUI.
+            exitToPartGui(evt);
+            return true;
         }
+    }
+
+    /**
+     * Save the current offsets and go back to the GUI of the part.
+     */
+    protected void exitToPartGui(InputWithModifiers input) {
+        buttonSave.onPress(input);
     }
 
     @Override

@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Vec3i;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.ContainerHelper;
@@ -16,6 +17,7 @@ import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.cyclopscore.persist.nbt.NBTClassType;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.*;
@@ -51,6 +53,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     private boolean enabled = true;
     private final Map<String, NonNullList<ItemStack>> inventoriesNamed = Maps.newHashMap();
     private final PartStateOffsetHandler<P> offsetHandler = new PartStateOffsetHandler<>();
+    private final PartStateAspectVariablesHandler<P> aspectVariablesHandler = new PartStateAspectVariablesHandler<>();
 
     private IdentityHashMap<PartCapability<?>, Optional<Object>> volatileCapabilities = new IdentityHashMap<>();
 
@@ -84,7 +87,19 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
             ValueOutput child = errorsTag.addChild();
             String slot = String.valueOf(entry.getIntKey());
             child.putString("slot", slot);
-            NBTClassType.writeNbt(MutableComponent.class, slot, entry.getValue(), child);
+            NBTClassType.writeNbt(Component.class, slot, entry.getValue(), child);
+        }
+
+        // Write the aspect setting variable errors, so that they are also known client-side
+        ValueOutput.ValueOutputList aspectErrorsTag = valueOutput.childrenList("aspectVariablesSlotMessages");
+        for (Map.Entry<IAspect, Int2ObjectMap<MutableComponent>> entry : this.aspectVariablesHandler.getAspectVariablesSlotMessages().entrySet()) {
+            for (Int2ObjectMap.Entry<MutableComponent> slotEntry : entry.getValue().int2ObjectEntrySet()) {
+                ValueOutput child = aspectErrorsTag.addChild();
+                String slot = String.valueOf(slotEntry.getIntKey());
+                child.putString("aspect", entry.getKey().getUniqueName().toString());
+                child.putString("slot", slot);
+                NBTClassType.writeNbt(Component.class, slot, slotEntry.getValue(), child);
+            }
         }
     }
 
@@ -119,8 +134,19 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
         ValueInput.ValueInputList errorsTag = valueInput.childrenList("offsetVariablesSlotMessages").orElseThrow();
         for (ValueInput child : errorsTag) {
             String slot = child.getString("slot").orElseThrow();
-            MutableComponent unlocalizedString = NBTClassType.readNbt(MutableComponent.class, slot, child);
+            MutableComponent unlocalizedString = NBTClassType.readNbt(Component.class, slot, child).copy();
             this.offsetHandler.offsetVariablesSlotMessages.put(Integer.parseInt(slot), unlocalizedString);
+        }
+
+        this.aspectVariablesHandler.getAspectVariablesSlotMessages().clear();
+        for (ValueInput child : valueInput.childrenListOrEmpty("aspectVariablesSlotMessages")) {
+            Identifier aspectId = Identifier.tryParse(child.getString("aspect").orElseThrow());
+            IAspect aspect = aspectId == null ? null : Aspects.REGISTRY.getAspect(aspectId);
+            if (aspect != null) {
+                String slot = child.getString("slot").orElseThrow();
+                this.aspectVariablesHandler.getAspectVariablesSlotMessages(aspect)
+                        .put(Integer.parseInt(slot), NBTClassType.readNbt(Component.class, slot, child).copy());
+            }
         }
     }
 
@@ -265,6 +291,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     @Override
     public void setAspectProperties(IAspect aspect, IAspectProperties properties) {
         aspectProperties.put(aspect, properties);
+        markAspectPropertiesChanged(aspect);
         sendUpdate();
     }
 
@@ -289,6 +316,39 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     public void setInventoryNamed(String name, NonNullList<ItemStack> inventory) {
         this.inventoriesNamed.put(name, inventory);
         onDirty();
+    }
+
+    @Override
+    public void updateAspectVariables(P partType, INetwork network, IPartNetwork partNetwork, PartTarget target) {
+        this.aspectVariablesHandler.updateAspectVariables(partType, this, network, partNetwork, target);
+    }
+
+    @Override
+    public void markAspectVariablesChanged() {
+        this.aspectVariablesHandler.markAspectVariablesChanged();
+    }
+
+    @Override
+    public void markAspectPropertiesChanged(IAspect aspect) {
+        this.aspectVariablesHandler.invalidateDerivedProperties(aspect);
+    }
+
+    @Nullable
+    @Override
+    public MutableComponent getAspectVariableError(IAspect aspect, int slot) {
+        return this.aspectVariablesHandler.getAspectVariableError(aspect, slot);
+    }
+
+    @Nullable
+    @Override
+    public IValue getAspectVariableValue(IAspect aspect, int slot) {
+        return this.aspectVariablesHandler.getAspectVariableValue(aspect, slot);
+    }
+
+    @Nullable
+    @Override
+    public IAspectProperties getAspectPropertiesVariableDriven(IAspect aspect, IAspectProperties baseProperties) {
+        return this.aspectVariablesHandler.getDerivedProperties(aspect, baseProperties);
     }
 
     @Override
@@ -336,6 +396,7 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     @Override
     public void initializeOffsets(PartTarget target) {
         this.offsetHandler.initializeVariableEvaluators(this.offsetHandler.getOffsetVariablesInventory(this), target);
+        this.aspectVariablesHandler.markAspectVariablesChanged();
     }
 
     @Override

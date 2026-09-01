@@ -77,6 +77,19 @@ public abstract class AspectBase<V extends IValue, T extends IValueType<V>> impl
 
     @Override
     public <P extends IPartType<P, S>, S extends IPartState<P>> IAspectProperties getProperties(P partType, PartTarget target, S state) {
+        IAspectProperties properties = getStaticProperties(partType, target, state);
+
+        // Properties that are driven by variables take precedence over the statically configured properties.
+        IAspectProperties variableDrivenProperties = state.getAspectPropertiesVariableDriven(this, properties);
+        if (variableDrivenProperties != null) {
+            return variableDrivenProperties;
+        }
+
+        return properties;
+    }
+
+    @Override
+    public <P extends IPartType<P, S>, S extends IPartState<P>> IAspectProperties getStaticProperties(P partType, PartTarget target, S state) {
         IAspectProperties properties = state.getAspectProperties(this);
         if(properties == null) {
             properties = getDefaultProperties().clone();

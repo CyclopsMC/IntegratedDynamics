@@ -8,6 +8,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
@@ -221,7 +222,7 @@ public interface IPartState<P extends IPartType> {
     public default void loadInventoryNamed(String name, Container inventory) {
         NonNullList<ItemStack> tabItems = this.getInventoryNamed(name);
         if (tabItems != null) {
-            for (int i = 0; i < tabItems.size(); i++) {
+            for (int i = 0; i < Math.min(tabItems.size(), inventory.getContainerSize()); i++) {
                 inventory.setItem(i, tabItems.get(i));
             }
         }
@@ -294,6 +295,78 @@ public interface IPartState<P extends IPartType> {
      * @return If the part contains variable-driven offsets that require updating.
      */
     public boolean requiresOffsetUpdates();
+
+    /**
+     * Tick any internal aspect setting variables.
+     * @param partType The part type.
+     * @param network The network.
+     * @param partNetwork The part network.
+     * @param target The part target.
+     */
+    // TODO: make non-default in nextmajor
+    public default void updateAspectVariables(P partType, INetwork network, IPartNetwork partNetwork, PartTarget target) {
+
+    }
+
+    /**
+     * Indicate that the contents of one of the aspect setting variables inventories have changed.
+     */
+    // TODO: make non-default in nextmajor
+    public default void markAspectVariablesChanged() {
+
+    }
+
+    /**
+     * Enable a flag that tells the part container to send an NBT update to the client(s).
+     */
+    // TODO: make non-default in nextmajor
+    public default void sendUpdate() {
+
+    }
+
+    /**
+     * Indicate that the statically configured properties of the given aspect have changed.
+     * @param aspect An aspect.
+     */
+    // TODO: make non-default in nextmajor
+    public default void markAspectPropertiesChanged(IAspect aspect) {
+
+    }
+
+    /**
+     * @param aspect An aspect.
+     * @param slot The aspect property slot.
+     * @return The current error, or null if no error.
+     */
+    // TODO: make non-default in nextmajor
+    @Nullable
+    public default MutableComponent getAspectVariableError(IAspect aspect, int slot) {
+        return null;
+    }
+
+    /**
+     * @param aspect An aspect.
+     * @param slot The aspect property slot.
+     * @return The value that the variable in the given aspect property slot currently produces,
+     *         or null if that slot has no (valid) variable.
+     */
+    // TODO: make non-default in nextmajor
+    @Nullable
+    public default IValue getAspectVariableValue(IAspect aspect, int slot) {
+        return null;
+    }
+
+    /**
+     * Get the properties of the given aspect after applying all variable-driven property values.
+     * @param aspect An aspect.
+     * @param baseProperties The statically configured properties of the aspect.
+     * @return The derived properties, or null if this aspect has no variable-driven property values.
+     */
+    // TODO: make non-default in nextmajor
+    @Nullable
+    public default IAspectProperties getAspectPropertiesVariableDriven(IAspect aspect, IAspectProperties baseProperties) {
+        return null;
+    }
 
     /**
      * @return The max offset allowed in this part.

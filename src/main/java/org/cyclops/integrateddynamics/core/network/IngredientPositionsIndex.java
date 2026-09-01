@@ -1,7 +1,10 @@
 package org.cyclops.integrateddynamics.core.network;
 
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Sets;
 import it.unimi.dsi.fastutil.ints.AbstractInt2ObjectSortedMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectAVLTreeMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.cyclops.commoncapabilities.api.ingredient.IIngredientMatcher;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
@@ -10,12 +13,16 @@ import org.cyclops.cyclopscore.ingredient.collection.IIngredientCollapsedCollect
 import org.cyclops.cyclopscore.ingredient.collection.IIngredientMapMutable;
 import org.cyclops.cyclopscore.ingredient.collection.IngredientCollectionHelpers;
 import org.cyclops.cyclopscore.ingredient.collection.IngredientHashMap;
+import org.cyclops.cyclopscore.ingredient.collection.IngredientMapSingleClassified;
 import org.cyclops.integrateddynamics.api.ingredient.IIngredientPositionsIndex;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PrioritizedPartPos;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.Set;
+import java.util.function.Function;
 
 /**
  * An index that maps ingredients to positions that contain that instance.
@@ -31,11 +38,19 @@ public class IngredientPositionsIndex<T, M> implements IIngredientPositionsIndex
 
     private final IngredientComponent<T, M> component;
     private final AbstractInt2ObjectSortedMap<IIngredientMapMutable<T, M, ObjectOpenHashSet<PartPos>>> prioritizedPositionsMap;
+    /**
+     * For each priority, the number of instances that are present in each non-empty position.
+     * This is derived from prioritizedPositionsMap,
+     * and only exists so that non-empty positions can be iterated
+     * without having to visit all instances within them.
+     */
+    private final AbstractInt2ObjectSortedMap<Object2IntOpenHashMap<PartPos>> prioritizedPositions;
     private final AbstractInt2ObjectSortedMap<IIngredientCollapsedCollectionMutable<T, M>> ingredientInstances;
 
     public IngredientPositionsIndex(IngredientComponent<T, M> component) {
         this.component = component;
         this.prioritizedPositionsMap = new Int2ObjectAVLTreeMap<>();
+        this.prioritizedPositions = new Int2ObjectAVLTreeMap<>();
         this.ingredientInstances = new Int2ObjectAVLTreeMap<>();
     }
 
@@ -62,22 +77,64 @@ public class IngredientPositionsIndex<T, M> implements IIngredientPositionsIndex
         if (matcher.getExactMatchNoQuantityCondition().equals(matchFlags)) {
             matchFlags = matcher.getExactMatchCondition();
         }
-        M finalMatchFlags = matchFlags;
 
-        return this.prioritizedPositionsMap.values()
-                .stream()
-                .flatMap(ingredientCollection -> ingredientCollection.getAll(getPrototype(instance), finalMatchFlags).stream())
-                .flatMap(Collection::stream)
-                .distinct()
-                .iterator();
+        if (matcher.getExactMatchCondition().equals(matchFlags)) {
+            // Fast path: instances are stored by prototype, and the position maps hash their keys by exact equality,
+            // so a single hash-based lookup per priority level suffices.
+            // (IIngredientMap#getAll would instead construct an intermediate key set
+            //  that is pre-allocated for the size of the whole map.)
+            T prototype = getPrototype(instance);
+            return iteratePrioritized(positionsMap -> {
+                ObjectOpenHashSet<PartPos> positions = positionsMap.get(prototype);
+                return positions == null ? Collections.emptyIterator() : positions.iterator();
+            });
+        }
+
+        if (matcher.getAnyMatchCondition().equals(matchFlags)) {
+            // Fast path: all positions match, so iterate over the positions themselves,
+            // instead of over all instances that are present in them.
+            return distinct(Iterators.concat(Iterators.transform(
+                    this.prioritizedPositions.values().iterator(), positions -> positions.keySet().iterator())));
+        }
+
+        T prototype = getPrototype(instance);
+        M finalMatchFlags = matchFlags;
+        return iteratePrioritized(positionsMap -> Iterators.concat(Iterators.transform(
+                positionsMap.getAll(prototype, finalMatchFlags).iterator(), Collection::iterator)));
+    }
+
+    /**
+     * Lazily iterate over the positions of all priority levels, in priority order, without duplicates.
+     *
+     * Iteration is lazy because callers commonly stop iterating
+     * as soon as they have found a usable position.
+     *
+     * @param positionsGetter A callback for iterating over the matching positions within one priority level.
+     * @return An iterator over all matching positions.
+     */
+    protected Iterator<PartPos> iteratePrioritized(Function<IIngredientMapMutable<T, M, ObjectOpenHashSet<PartPos>>, Iterator<PartPos>> positionsGetter) {
+        return distinct(Iterators.concat(Iterators.transform(
+                this.prioritizedPositionsMap.values().iterator(), positionsGetter::apply)));
+    }
+
+    /**
+     * Filter out duplicate positions, as the same position can hold multiple instances.
+     *
+     * @param positions An iterator over positions.
+     * @return An iterator over distinct positions.
+     */
+    protected Iterator<PartPos> distinct(Iterator<PartPos> positions) {
+        Set<PartPos> seenPositions = Sets.newHashSet();
+        return Iterators.filter(positions, seenPositions::add);
     }
 
     @Override
     public void addPosition(T instance, PrioritizedPartPos pos) {
-        IIngredientMapMutable<T, M, ObjectOpenHashSet<PartPos>> positionsMap = this.prioritizedPositionsMap.get(getInternalPriority(pos));
+        int priority = getInternalPriority(pos);
+        IIngredientMapMutable<T, M, ObjectOpenHashSet<PartPos>> positionsMap = this.prioritizedPositionsMap.get(priority);
         if (positionsMap == null) {
-            positionsMap = new IngredientHashMap<>(getComponent());
-            this.prioritizedPositionsMap.put(getInternalPriority(pos), positionsMap);
+            positionsMap = createPositionsMap();
+            this.prioritizedPositionsMap.put(priority, positionsMap);
         }
 
         T prototype = getPrototype(instance);
@@ -87,21 +144,58 @@ public class IngredientPositionsIndex<T, M> implements IIngredientPositionsIndex
             positionsMap.put(prototype, set);
         }
 
-        set.add(pos.getPartPos());
+        if (set.add(pos.getPartPos())) {
+            Object2IntOpenHashMap<PartPos> positions = this.prioritizedPositions.get(priority);
+            if (positions == null) {
+                positions = new Object2IntOpenHashMap<>();
+                this.prioritizedPositions.put(priority, positions);
+            }
+            positions.addTo(pos.getPartPos(), 1);
+        }
+    }
+
+    /**
+     * Create a map for storing the positions of one priority level.
+     *
+     * Instances are classified by their first category type when the component has more than one,
+     * so that lookups by that category don't have to scan over all indexed instances.
+     *
+     * @return A new positions map.
+     */
+    // If this would ever be needed in other places as well, let's move this to IngredientCollectionHelpers
+    protected IIngredientMapMutable<T, M, ObjectOpenHashSet<PartPos>> createPositionsMap() {
+        IngredientComponent<T, M> ingredientComponent = getComponent();
+        if (ingredientComponent.getCategoryTypes().size() == 1) {
+            return new IngredientHashMap<>(ingredientComponent);
+        }
+        return new IngredientMapSingleClassified<>(
+                ingredientComponent,
+                () -> new IngredientHashMap<>(ingredientComponent),
+                ingredientComponent.getCategoryTypes().get(0));
     }
 
     @Override
     public void removePosition(T instance, PrioritizedPartPos pos) {
-        IIngredientMapMutable<T, M, ObjectOpenHashSet<PartPos>> positionsMap = this.prioritizedPositionsMap.get(getInternalPriority(pos));
+        int priority = getInternalPriority(pos);
+        IIngredientMapMutable<T, M, ObjectOpenHashSet<PartPos>> positionsMap = this.prioritizedPositionsMap.get(priority);
         if (positionsMap != null) {
             T prototype = getPrototype(instance);
             ObjectOpenHashSet<PartPos> set = positionsMap.get(prototype);
             if (set != null) {
-                set.remove(pos.getPartPos());
+                if (set.remove(pos.getPartPos())) {
+                    Object2IntOpenHashMap<PartPos> positions = this.prioritizedPositions.get(priority);
+                    // addTo returns the value before the addition, so at most one instance is left in this position
+                    if (positions != null && positions.addTo(pos.getPartPos(), -1) <= 1) {
+                        positions.removeInt(pos.getPartPos());
+                        if (positions.isEmpty()) {
+                            this.prioritizedPositions.remove(priority);
+                        }
+                    }
+                }
                 if (set.isEmpty()) {
                     positionsMap.remove(prototype);
                     if (positionsMap.isEmpty()) {
-                        this.prioritizedPositionsMap.remove(getInternalPriority(pos));
+                        this.prioritizedPositionsMap.remove(priority);
                     }
                 }
             }

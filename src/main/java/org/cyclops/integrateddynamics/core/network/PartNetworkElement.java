@@ -88,18 +88,21 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
 
     @Override
     public void setPriorityAndChannel(INetwork network, int priority, int channel) {
+        S partState = getPartState();
         //noinspection deprecation
-        part.setPriorityAndChannel(network, NetworkHelpers.getPartNetworkChecked(network), getTarget(), getPartState(), priority, channel);
+        part.setPriorityAndChannel(network, NetworkHelpers.getPartNetworkChecked(network), getTarget(partState), partState, priority, channel);
     }
 
     @Override
     public int getPriority() {
-        return hasPartState() ? part.getPriority(getPartState()) : 0;
+        S partState = getPartStateOptional();
+        return partState != null ? part.getPriority(partState) : 0;
     }
 
     @Override
     public int getChannel() {
-        return hasPartState() ? part.getChannel(getPartState()) : IPositionedAddonsNetwork.DEFAULT_CHANNEL;
+        S partState = getPartStateOptional();
+        return partState != null ? part.getChannel(partState) : IPositionedAddonsNetwork.DEFAULT_CHANNEL;
     }
 
     @Override
@@ -129,6 +132,34 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
         return false;
     }
 
+    /**
+     * Resolve the part state of this element using a single part container lookup,
+     * or null if this element is not loaded or has no part.
+     *
+     * Contrary to calling {@link #hasPartState()} and {@link #getPartState()} in sequence,
+     * this only requires a single (relatively expensive) part container lookup.
+     *
+     * @return The part state, or null.
+     */
+    @Nullable
+    protected S getPartStateOptional() {
+        return isLoaded() ? getPartStateOptionalLoaded() : null;
+    }
+
+    /**
+     * Resolve the part state of this element using a single part container lookup,
+     * assuming that this element is loaded, or null if it has no part.
+     * @return The part state, or null.
+     */
+    @Nullable
+    protected S getPartStateOptionalLoaded() {
+        IPartContainer partContainer = getPartContainerOptional().orElse(null);
+        if (partContainer == null || !partContainer.hasPart(this.center.getSide())) {
+            return null;
+        }
+        return (S) partContainer.getPartState(this.center.getSide());
+    }
+
     @Override
     public S getPartState() throws PartStateException {
         IPartContainer partContainer = getPartContainer();
@@ -155,7 +186,8 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
 
     @Override
     public void postUpdate(INetwork network, boolean updated) {
-        part.postUpdate(network, NetworkHelpers.getPartNetworkChecked(network), getTarget(), getPartState(), updated);
+        S partState = getPartState();
+        part.postUpdate(network, NetworkHelpers.getPartNetworkChecked(network), getTarget(partState), partState, updated);
     }
 
     @Override
@@ -170,7 +202,8 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
 
     @Override
     public void update(INetwork network) {
-        part.update(network, NetworkHelpers.getPartNetworkChecked(network), getTarget(), getPartState());
+        S partState = getPartState();
+        part.update(network, NetworkHelpers.getPartNetworkChecked(network), getTarget(partState), partState);
     }
 
     @Override
@@ -181,12 +214,14 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
 
     @Override
     public void afterNetworkAlive(INetwork network) {
-        part.afterNetworkAlive(network, NetworkHelpers.getPartNetworkChecked(network), getTarget(), getPartState());
+        S partState = getPartState();
+        part.afterNetworkAlive(network, NetworkHelpers.getPartNetworkChecked(network), getTarget(partState), partState);
     }
 
     @Override
     public void afterNetworkReAlive(INetwork network) {
-        part.afterNetworkReAlive(network, NetworkHelpers.getPartNetworkChecked(network), getTarget(), getPartState());
+        S partState = getPartState();
+        part.afterNetworkReAlive(network, NetworkHelpers.getPartNetworkChecked(network), getTarget(partState), partState);
         this.center.getPos().getLevel(true).invalidateCapabilities(this.center.getPos().getBlockPos());
     }
 
@@ -199,9 +234,10 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     @Override
     public boolean onNetworkAddition(INetwork network) {
         IPartNetwork partNetwork = NetworkHelpers.getPartNetworkChecked(network);
-        boolean res = partNetwork.addPart(getPartState().getId(), this.center);
+        S partState = getPartState();
+        boolean res = partNetwork.addPart(partState.getId(), this.center);
         if(res) {
-            part.onNetworkAddition(network, partNetwork, getTarget(), getPartState());
+            part.onNetworkAddition(network, partNetwork, getTarget(partState), partState);
             this.center.getPos().getLevel(true).invalidateCapabilities(this.center.getPos().getBlockPos());
         }
         return res;
@@ -229,7 +265,8 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
 
     @Override
     public void onNeighborBlockChange(@Nullable INetwork network, BlockGetter world, @Nullable Direction side) {
-        part.onBlockNeighborChange(network, NetworkHelpers.getPartNetworkChecked(network), getTarget(), getPartState(), world, side);
+        S partState = getPartState();
+        part.onBlockNeighborChange(network, NetworkHelpers.getPartNetworkChecked(network), getTarget(partState), partState, world, side);
     }
 
     @Override
@@ -252,30 +289,58 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
     public int compareTo(INetworkElement o) {
         if (o instanceof IPartNetworkElement) {
             IPartNetworkElement p = (IPartNetworkElement) o;
-            int compClass = this.getPart().getUniqueName().compareTo(p.getPart().getUniqueName());
-            if (compClass == 0) {
-                // If this or the other part is not loaded, we IGNORE the priority,
-                // because that depends on tile entity data, which requires loading the part/chunk.
-                int compPriority = !isLoaded() || !p.isLoaded() ? 0 : -Integer.compare(this.getPriority(), p.getPriority());
-                if (compPriority == 0) {
-                    int compPart = getPart().getTranslationKey().compareTo(p.getPart().getTranslationKey());
-                    if (compPart == 0) {
-                        int compPos = this.center.getPos().compareTo(p.getPosition());
-                        if (compPos == 0) {
-                            return this.center.getSide().compareTo(p.getSide());
-                        }
-                        return compPos;
-                    }
-                    return compPart;
-                } else {
-                    return compPriority;
+
+            // Part types are singletons, so identical part types are guaranteed to have
+            // an identical unique name and translation key.
+            // Comparing them by identity avoids those (much more expensive) string comparisons.
+            boolean samePartType = this.getPart() == p.getPart();
+            if (!samePartType) {
+                int compClass = this.getPart().getUniqueName().compareTo(p.getPart().getUniqueName());
+                if (compClass != 0) {
+                    return compClass;
                 }
-            } else {
-                return compClass;
             }
+
+            // If this or the other part is not loaded, we IGNORE the priority,
+            // because that depends on tile entity data, which requires loading the part/chunk.
+            int compPriority = !isLoaded() || !p.isLoaded() ? 0
+                    : -Integer.compare(this.getPriorityLoaded(), getPriorityOfLoaded(p));
+            if (compPriority != 0) {
+                return compPriority;
+            }
+
+            if (!samePartType) {
+                int compPart = getPart().getTranslationKey().compareTo(p.getPart().getTranslationKey());
+                if (compPart != 0) {
+                    return compPart;
+                }
+            }
+
+            int compPos = this.center.getPos().compareTo(p.getPosition());
+            if (compPos != 0) {
+                return compPos;
+            }
+            return this.center.getSide().compareTo(p.getSide());
         }
 
         return this.getClass().getName().compareTo(o.getClass().getName());
+    }
+
+    /**
+     * @return The priority of this element, assuming that it is loaded.
+     */
+    protected int getPriorityLoaded() {
+        S partState = getPartStateOptionalLoaded();
+        return partState != null ? part.getPriority(partState) : 0;
+    }
+
+    /**
+     * @param element A loaded part network element.
+     * @return The priority of the given element.
+     */
+    protected static int getPriorityOfLoaded(IPartNetworkElement element) {
+        return element instanceof PartNetworkElement
+                ? ((PartNetworkElement<?, ?>) element).getPriorityLoaded() : element.getPriority();
     }
 
     @Override
@@ -290,10 +355,8 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
 
     @Override
     public int getId() {
-        if (!hasPartState()) {
-            return -1;
-        }
-        return getPartState().getId();
+        S partState = getPartStateOptional();
+        return partState != null ? partState.getId() : -1;
     }
 
     @Override
