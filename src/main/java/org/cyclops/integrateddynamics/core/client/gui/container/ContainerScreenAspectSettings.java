@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.locale.Language;
@@ -14,7 +15,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonText;
+import org.cyclops.cyclopscore.client.gui.component.input.WidgetTextFieldExtended;
 import org.cyclops.cyclopscore.client.gui.container.ContainerScreenExtended;
+import org.cyclops.cyclopscore.client.gui.image.IImage;
+import org.cyclops.cyclopscore.client.gui.image.Images;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElement;
@@ -25,18 +29,24 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationC
 import org.cyclops.integrateddynamics.api.logicprogrammer.IValueTypeLogicProgrammerElement;
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTypeInstance;
 import org.cyclops.integrateddynamics.core.client.gui.subgui.SubGuiHolder;
+import org.cyclops.integrateddynamics.core.evaluate.variable.gui.GuiElementValueTypeStringRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.variable.gui.SubGuiValueTypeInfoBase;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerAspectSettings;
 import org.cyclops.integrateddynamics.core.logicprogrammer.client.RenderPattern;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Gui for aspect settings.
  * @author rubensworks
  */
 public class ContainerScreenAspectSettings extends ContainerScreenExtended<ContainerAspectSettings> {
+
+    private static final int VARIABLE_SIGNAL_X = 100;
+    private static final int VARIABLE_SIGNAL_Y = 112;
 
     private static final int ERROR_WIDTH = 13;
     private static final int ERROR_HEIGHT = 13;
@@ -57,8 +67,7 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
     public ContainerScreenAspectSettings(ContainerAspectSettings container, Inventory inventory, Component title) {
         super(container, inventory, title);
 
-        //noinspection deprecation
-        this.propertyTypes = Lists.newArrayList(container.getAspect().getDefaultProperties().getTypes());
+        this.propertyTypes = Lists.newArrayList(container.getPropertyTypes());
     }
 
     @Override
@@ -71,7 +80,9 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
     }
 
     protected void saveSetting() {
-        if(guiElement != null && lastError == null) {
+        // Don't save while the setting is driven by a variable,
+        // as the shown value is the variable's value, and not the statically configured value.
+        if(guiElement != null && lastError == null && !container.isPropertyVariableFilled(getActivePropertyIndex())) {
             container.setValue(ValueDeseralizationContext.ofClient(), getActiveProperty(), guiElement.getValue());
         }
     }
@@ -83,7 +94,7 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
 
     @Override
     protected int getBaseYSize() {
-        return 213;
+        return 237;
     }
 
     @Override
@@ -116,6 +127,29 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
     public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
         super.extractBackground(guiGraphics, mouseX, mouseY, partialTicks);
         subGuiHolder.renderBg(guiGraphics, this.leftPos, this.topPos, getMinecraft().getTextureManager(), font, partialTicks, mouseX, mouseY);
+
+        if (container.isPropertyVariableFilled(getActivePropertyIndex())) {
+            IImage image = container.getPropertyVariableError(getActivePropertyIndex()) == null ? Images.OK : Images.ERROR;
+            image.draw(guiGraphics, leftPos + VARIABLE_SIGNAL_X, topPos + VARIABLE_SIGNAL_Y);
+        }
+    }
+
+    @Override
+    protected void containerTick() {
+        super.containerTick();
+        refreshInputEnabled();
+    }
+
+    /**
+     * The value of a property can not be edited manually while it is driven by a variable.
+     */
+    protected void refreshInputEnabled() {
+        if (propertyConfigPattern instanceof GuiElementValueTypeStringRenderPattern<?, ?, ?> stringPattern) {
+            WidgetTextFieldExtended textField = stringPattern.getTextField();
+            if (textField != null) {
+                textField.setEditable(!container.isPropertyVariableFilled(getActivePropertyIndex()));
+            }
+        }
     }
 
     @Override
@@ -135,6 +169,19 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
                             .withStyle(ChatFormatting.GRAY)), guiGraphics, mouseX, mouseY + 20);
                 }
             }
+        }
+
+        if (container.isPropertyVariableFilled(getActivePropertyIndex())) {
+            IModHelpers.get().getGuiHelpers().renderTooltipOptional(this, guiGraphics, VARIABLE_SIGNAL_X, VARIABLE_SIGNAL_Y, 14, 13, mouseX, mouseY,
+                    () -> {
+                        Component error = container.getPropertyVariableError(getActivePropertyIndex());
+                        if (error != null) {
+                            return Optional.of(Collections.singletonList(error));
+                        }
+                        return Optional.of(Collections.singletonList(
+                                Component.translatable("gui.integrateddynamics.aspectsettings.variable.driven")
+                                        .withStyle(ChatFormatting.GRAY)));
+                    });
         }
     }
 
@@ -167,9 +214,17 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
                 return false;
             }
         } else {
-            saveSetting();
-            return super.keyPressed(evt);
+            // Don't close all GUIs, but go back to the part's aspect overview GUI.
+            exitToPartGui(evt);
+            return true;
         }
+    }
+
+    /**
+     * Save the current setting and go back to the aspect overview GUI of the part.
+     */
+    protected void exitToPartGui(InputWithModifiers input) {
+        buttonExit.onPress(input);
     }
 
     @Override
@@ -187,7 +242,13 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
     }
 
     protected void setActiveProperty(int index) {
-        onActivateElement(propertyTypes.get(activePropertyIndex = index));
+        this.activePropertyIndex = index;
+        // Inform the server which property is being configured, so that it knows which variable slot is exposed.
+        container.setActivePropertyIndex(index);
+        if (getMinecraft().gameMode != null) {
+            getMinecraft().gameMode.handleInventoryButtonClick(container.containerId, index);
+        }
+        onActivateElement(propertyTypes.get(activePropertyIndex));
     }
 
     protected void onActivateElement(IAspectPropertyTypeInstance property) {
@@ -238,7 +299,7 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
     public class SubGuiValueTypeInfo extends SubGuiValueTypeInfoBase<RenderPattern, ContainerScreenAspectSettings, ContainerAspectSettings> {
 
         public SubGuiValueTypeInfo(IGuiInputElement<RenderPattern, ContainerScreenAspectSettings, ContainerAspectSettings, IGuiInputElementValueTypeClient<RenderPattern, ContainerScreenAspectSettings, ContainerAspectSettings>> element) {
-            super(ContainerScreenAspectSettings.this, (ContainerAspectSettings) ContainerScreenAspectSettings.this.container, element, 8, 105, 160, 20);
+            super(ContainerScreenAspectSettings.this, (ContainerAspectSettings) ContainerScreenAspectSettings.this.container, element, 8, 129, 160, 20);
         }
 
         @Override

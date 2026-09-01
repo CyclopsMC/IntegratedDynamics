@@ -17,6 +17,11 @@ The performance benchmarking system consists of three main components:
    - Measures performance metrics for each preset
    - Writes results to `build/logs/benchmark_results.txt`
 
+   **Ingredient Index Game Tests** (`src/integrationtest/java/org/cyclops/integrateddynamics/gametest/GameTestsPerformanceIngredientIndex.java`)
+   - Measures the ingredient positions index operations that storage networks perform on every insertion and extraction
+   - These are not covered by the network presets above, as those don't contain any storage positions
+   - Writes results to the same `benchmark_results.txt` file
+
 3. **Network Generation Command** (`src/main/java/org/cyclops/integrateddynamics/command/CommandGenerateNetwork.java`)
    - Provides `/integrateddynamics generatenetwork` command for manual testing
    - Supports different network presets: `emptynetwork`, `idlenetwork`, `clear`
@@ -58,6 +63,21 @@ The benchmarking system measures two key metrics:
 
 These metrics are tracked separately in the benchmark results to distinguish between network-specific performance and overall server performance impact.
 
+Next to these, the ingredient index benchmarks measure a third metric:
+
+- **Average Operation Time (ms)**: The average time a single ingredient positions index operation takes.
+- **Index Size**: The number of distinct instances that is indexed
+
+The following index operations are benchmarked:
+
+| Benchmark | Description |
+|-----------|-------------|
+| `index_lookup_exact` | Look up the positions of an exact instance, as done when a specific instance is extracted |
+| `index_lookup_item` | Look up the positions of an instance while ignoring data components |
+| `index_lookup_nonempty_first` | Look up the first non-empty position, as done during quantity-based extractions |
+| `index_lookup_nonempty_all` | Iterate over all non-empty positions |
+| `index_modification` | Remove and re-add a position, as done when the contents of a storage position change |
+
 ## Game Test Execution
 
 The game tests are automatically executed as part of the GitHub workflow:
@@ -84,6 +104,7 @@ Results are written in the following format:
 ```
 preset=empty size=25 avgNetworkTickTime=6.25 avgServerTickTime=3.50
 preset=idle size=25 avgNetworkTickTime=7.50 avgServerTickTime=4.20
+preset=index_lookup_exact size=5000 avgOperationTime=0.000512
 ```
 
 Results are then converted to JSON format for the benchmark action. Each preset generates two metrics - one for network tick time and one for server tick time:
@@ -98,6 +119,11 @@ Results are then converted to JSON format for the benchmark action. Each preset 
     "name": "empty_size_25_server_tick_time",
     "unit": "ms",
     "value": 3.50
+  },
+  {
+    "name": "index_lookup_exact_size_5000_operation_time",
+    "unit": "ms",
+    "value": 0.000512
   }
 ]
 ```
@@ -150,4 +176,6 @@ To add new network presets or benchmarks:
 2. Add corresponding generation method in `CommandGenerateNetworkExecutor`
 3. Add a new `@GameTest` method in `GameTestsPerformance`
 4. The workflow will automatically execute and track the new benchmark
+
+To add new ingredient index benchmarks, add a new `@GameTest` method in `GameTestsPerformanceIngredientIndex`.
 

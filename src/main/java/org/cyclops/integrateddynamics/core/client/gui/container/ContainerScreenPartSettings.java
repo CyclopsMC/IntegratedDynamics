@@ -5,6 +5,7 @@ import com.google.common.collect.Sets;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.core.Direction;
@@ -43,6 +44,7 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
     private WidgetNumberField numberFieldChannel = null;
     private WidgetTextFieldDropdown<Direction> dropdownFieldSide = null;
     private List<SideDropdownEntry> dropdownEntries;
+    private ButtonText buttonSave = null;
 
     public ContainerScreenPartSettings(T container, Inventory inventory, Component title) {
         super(container, inventory, title);
@@ -135,7 +137,7 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
         }
 
         MutableComponent save = Component.translatable("gui.integrateddynamics.button.save");
-        addRenderableWidget(new ButtonText(this.leftPos + 178, this.topPos + 8, font.width(save.getVisualOrderText()) + 6, 16, save, save,
+        addRenderableWidget(buttonSave = new ButtonText(this.leftPos + 178, this.topPos + 8, font.width(save.getVisualOrderText()) + 6, 16, save, save,
                 createServerPressable(ContainerPartSettings.BUTTON_SAVE, b -> onSave()), true));
 
         this.refreshValues();
@@ -217,8 +219,17 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
             }
             return true;
         } else {
-            return super.keyPressed(evt);
+            // Don't close all GUIs, but go back to the part's GUI.
+            exitToPartGui(evt);
+            return true;
         }
+    }
+
+    /**
+     * Save the current settings and go back to the GUI of the part.
+     */
+    protected void exitToPartGui(InputWithModifiers input) {
+        buttonSave.onPress(input);
     }
 
     @Override

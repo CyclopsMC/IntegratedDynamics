@@ -5,6 +5,7 @@ import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.api.block.cable.ICable;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
@@ -28,10 +29,19 @@ public class PathElementTileMultipartTicking extends PathElementTile<BlockEntity
     public Set<ISidedPathElement> getReachableElements() {
         // Add the reachable path elements from the parts that provide one.
         Set<ISidedPathElement> pathElements = super.getReachableElements();
+        IPartContainer partContainer = getTile().getPartContainer();
+        if (!partContainer.hasParts()) {
+            // Most cables don't have any parts at all,
+            // in which case we can avoid constructing part positions and targets for all sides below.
+            return pathElements;
+        }
         INetwork network = getTile().getNetwork();
         IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network).orElse(null);
         for (Direction side : Direction.values()) {
-            getTile().getPartContainer().getCapability(Capabilities.PathElement.PART, network, partNetwork, PartTarget.fromCenter(PartPos.of(getTile().getLevel(), getTile().getBlockPos(), side)))
+            if (!partContainer.hasPart(side)) {
+                continue;
+            }
+            partContainer.getCapability(Capabilities.PathElement.PART, network, partNetwork, PartTarget.fromCenter(PartPos.of(getTile().getLevel(), getTile().getBlockPos(), side)))
                     .ifPresent(pathElement -> pathElements.addAll(pathElement.getReachableElements()));
         }
         return pathElements;

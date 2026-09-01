@@ -420,12 +420,46 @@ public class CableHelpers {
         updateConnectionsNeighbours(world, pos, sides);
         if (!world.isClientSide()) {
             // Reinit neighbouring networks.
+            // Multiple of the removed cable's sides will usually still be connected to each other
+            // via another path, in which case they all end up in the same network.
+            // Since initializing a network is expensive (it walks the whole cable cluster and
+            // re-derives all of its network elements), we only initialize a network for the sides
+            // that were not already covered by one of the networks we just created.
+            List<INetwork> initializedNetworks = Lists.newArrayListWithCapacity(sides.size());
             for(Direction side : sides) {
                 BlockPos sidePos = pos.relative(side);
-                NetworkHelpers.initNetwork(world, sidePos, side.getOpposite());
+                Direction sideOpposite = side.getOpposite();
+                if (!isInAnyNetwork(initializedNetworks, world, sidePos, sideOpposite)) {
+                    NetworkHelpers.initNetwork(world, sidePos, sideOpposite)
+                            .ifPresent(initializedNetworks::add);
+                }
             }
         }
         return true;
+    }
+
+    /**
+     * Check if the network carrier at the given position holds one of the given networks.
+     * @param networks The networks to check against, compared by identity.
+     * @param world The world.
+     * @param pos The position.
+     * @param side The side.
+     * @return If the position is part of one of the given networks.
+     */
+    private static boolean isInAnyNetwork(List<INetwork> networks, Level world, BlockPos pos, @Nullable Direction side) {
+        if (networks.isEmpty()) {
+            return false;
+        }
+        INetwork network = NetworkHelpers.getNetwork(world, pos, side).orElse(null);
+        if (network == null) {
+            return false;
+        }
+        for (INetwork initializedNetwork : networks) {
+            if (initializedNetwork == network) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean removingCable = false;
