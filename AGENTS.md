@@ -131,14 +131,15 @@ ln -s ../../scripts/pre-commit .git/hooks/pre-commit
 1. **Understand the change**: Read the issue/feature request thoroughly
 2. **Explore the codebase**: Use tools like `grep` to find relevant code
 3. **Make minimal changes**: Focus on the specific issue/feature
-4. **Add tests**: Write unit tests and/or game tests as appropriate
-5. **Build and test**:
+4. **Visual testing**: If possible, use clientdevbridge-cli to visually inspect the change. (only when touching player-facing functionality)
+5. **Add tests**: Write unit tests and/or game tests as appropriate
+6. **Build and test**:
    ```bash
    ./gradlew build
    ./gradlew runGameTestServer  # For MC 1.21+
    ```
-6. **Format code**: `./gradlew spotlessApply`
-7. **Commit**: Use clear, descriptive commit messages
+7. **Format code**: `./gradlew spotlessApply`
+8. **Commit**: Use clear, descriptive commit messages
 
 ## Release Management
 
@@ -201,3 +202,11 @@ for which you can find detail background information for each seperate Minecraft
 The blogs of https://neoforged.net/ and https://fabricmc.net/blog/ may also contain useful porting help.
 
 After making all necessary changes, make sure the code fully compiles and the (game) tests pass.
+
+## Visual testing
+
+[clientdevbridge-cli](https://github.com/CyclopsMC/clientdevbridge-cli) is a tool that allows coding agents to launch and drive a Minecraft dev client from the shell.
+Everything is a bash command, so this works identically in a local terminal, in Claude Code on the web, and in CI. There is no MCP server and nothing to configure.
+It is mainly useful to interact with the game through walking, interacting, interfacing with GUIs, ... as a real player, and optionally taking screenshots on what the player sees at each instant.
+**Use it when relevant!**
+Some agents may not be able to use it, but Claude Code certainly does (including within its cloud environment).
