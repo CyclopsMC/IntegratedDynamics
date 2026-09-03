@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.helper;
 
+import com.google.common.collect.Lists;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
@@ -9,6 +10,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.extensions.ILevelExtension;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
+import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.BlockEntityHelpers;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.GeneralConfig;
@@ -23,6 +25,7 @@ import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.IPositionedAddonsNetworkIngredients;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
+import org.cyclops.integrateddynamics.capability.path.PathElementPosition;
 import org.cyclops.integrateddynamics.capability.path.SidedPathElement;
 import org.cyclops.integrateddynamics.core.TickHandler;
 import org.cyclops.integrateddynamics.core.network.Network;
@@ -292,6 +295,32 @@ public class NetworkHelpers {
         for (INetworkElement networkElement : networkElementProvider.createNetworkElements(world, pos)) {
             networkElement.invalidate(network);
         }
+    }
+
+    /**
+     * Remove the path element at the given position from every network that still holds it.
+     *
+     * This is a fallback for when the network can not be reached anymore via the
+     * {@link INetworkCarrier} capability at the position, which happens when the block entity
+     * was removed before the block itself was.
+     * Contraption mods such as Create do this when they pick up a block,
+     * in which case the position would otherwise stay behind in its network forever.
+     *
+     * @param world The world.
+     * @param pos The position.
+     * @param blockState The block state.
+     * @return If the position was removed from at least one network.
+     */
+    public static boolean removeStalePathElement(Level world, BlockPos pos, BlockState blockState) {
+        IPathElement pathElement = new PathElementPosition(DimPos.of(world, pos));
+        SidedPathElement sidedPathElement = SidedPathElement.of(pathElement, null);
+        boolean removed = false;
+        for (INetwork network : Lists.newArrayList(NetworkWorldStorage.getInstance(IntegratedDynamics._instance).getNetworks())) {
+            if (network.containsSidedPathElement(sidedPathElement)) {
+                removed |= network.removePathElement(pathElement, null, blockState);
+            }
+        }
+        return removed;
     }
 
     /**
