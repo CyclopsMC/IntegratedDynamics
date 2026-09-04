@@ -314,6 +314,18 @@ public class NetworkHelpers {
     public static boolean removeStalePathElement(Level world, BlockPos pos, BlockState blockState) {
         IPathElement pathElement = new PathElementPosition(DimPos.of(world, pos));
         SidedPathElement sidedPathElement = SidedPathElement.of(pathElement, null);
+
+        // The network we are after is the one the neighbouring cables are still in, so try those first.
+        // Contraption mods move a structure block by block, which makes this by far the common case,
+        // and it keeps us from walking every stored network for each moved block.
+        for (Direction side : Direction.values()) {
+            INetwork network = getNetwork(world, pos.relative(side), side.getOpposite()).orElse(null);
+            if (network != null && network.containsSidedPathElement(sidedPathElement)) {
+                return network.removePathElement(pathElement, null, blockState);
+            }
+        }
+
+        // No neighbour could point us at it, so fall back to looking through all stored networks.
         boolean removed = false;
         for (INetwork network : Lists.newArrayList(NetworkWorldStorage.getInstance(IntegratedDynamics._instance).getNetworks())) {
             if (network.containsSidedPathElement(sidedPathElement)) {
