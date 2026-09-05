@@ -138,14 +138,6 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
         addRenderableWidget(buttonSave = new ButtonText(this.leftPos + 178, this.topPos + 8, font.width(save.getVisualOrderText()) + 6, 16, save, save,
                 createServerPressable(ContainerPartSettings.BUTTON_SAVE, b -> onSave()), true));
 
-        addRenderableWidget(new ButtonText(this.leftPos + 178, this.topPos + 30, 14, 14,
-                Component.translatable("gui.integrateddynamics.partsettings.config.copy"), Component.literal("C"),
-                // Persist any pending edits first, so that they end up in the wrench as well
-                createServerPressable(ContainerPartSettings.BUTTON_CONFIG_COPY, b -> onSave()), true));
-        addRenderableWidget(new ButtonText(this.leftPos + 194, this.topPos + 30, 14, 14,
-                Component.translatable("gui.integrateddynamics.partsettings.config.paste"), Component.literal("P"),
-                createServerPressable(ContainerPartSettings.BUTTON_CONFIG_PASTE, b -> {}), true));
-
         this.refreshValues();
     }
 

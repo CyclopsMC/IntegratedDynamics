@@ -8,6 +8,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
@@ -67,6 +68,14 @@ public interface IPartState<P extends IPartType> {
      * @return The tick interval to update this element.
      */
     public int getUpdateInterval();
+
+    /**
+     * @return The tick interval that this part has before a player configures it.
+     */
+    // TODO: make non-default in nextmajor
+    public default int getDefaultUpdateInterval() {
+        return GeneralConfig.defaultPartUpdateFreq;
+    }
 
     /**
      * Set the priority of this part in the network.

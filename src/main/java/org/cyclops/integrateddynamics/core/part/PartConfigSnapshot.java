@@ -23,11 +23,14 @@ import java.util.Set;
  * Only things that a player can configure are stored,
  * so no part id, max offset, enabled state, error messages or active aspect.
  *
+ * Only values that differ from the defaults of the copied part are stored,
+ * so that pasting only overwrites what was deliberately configured.
+ *
  * @param version The version of this snapshot format.
  * @param sourcePartType The unique name of the part type this snapshot was taken from.
- * @param partSettings The general part settings, if the {@link PartConfigSection#PART_SETTINGS} section is included.
- * @param aspectProperties The serialized aspect properties, by aspect unique name.
- * @param variableCards All non-empty variable cards.
+ * @param partSettings The non-default general part settings.
+ * @param aspectProperties The serialized non-default aspect properties, by aspect unique name.
+ * @param variableCards All variable cards.
  * @author rubensworks
  */
 public record PartConfigSnapshot(int version,
@@ -46,11 +49,11 @@ public record PartConfigSnapshot(int version,
 
     public static final Codec<PartSettings> CODEC_PART_SETTINGS = RecordCodecBuilder.create(builder -> builder
             .group(
-                    Codec.INT.fieldOf("updateInterval").forGetter(PartSettings::updateInterval),
-                    Codec.INT.fieldOf("priority").forGetter(PartSettings::priority),
-                    Codec.INT.fieldOf("channel").forGetter(PartSettings::channel),
+                    Codec.INT.optionalFieldOf("updateInterval").forGetter(PartSettings::updateInterval),
+                    Codec.INT.optionalFieldOf("priority").forGetter(PartSettings::priority),
+                    Codec.INT.optionalFieldOf("channel").forGetter(PartSettings::channel),
                     Direction.CODEC.optionalFieldOf("targetSide").forGetter(PartSettings::targetSide),
-                    Vec3i.CODEC.fieldOf("targetOffset").forGetter(PartSettings::targetOffset)
+                    Vec3i.CODEC.optionalFieldOf("targetOffset").forGetter(PartSettings::targetOffset)
             )
             .apply(builder, PartSettings::new));
 
@@ -75,6 +78,13 @@ public record PartConfigSnapshot(int version,
                             .optionalFieldOf("variableCards", List.of()).forGetter(PartConfigSnapshot::variableCards)
             )
             .apply(builder, PartConfigSnapshot::new));
+
+    /**
+     * @return The number of blank Variable Cards that pasting this snapshot needs at most.
+     */
+    public int getRequiredBlankVariables() {
+        return variableCards().size();
+    }
 
     /**
      * @param section A config section.
@@ -135,8 +145,16 @@ public record PartConfigSnapshot(int version,
      * @param targetSide The overridden side of the target block, if any.
      * @param targetOffset The target position offset.
      */
-    public record PartSettings(int updateInterval, int priority, int channel,
-                               Optional<Direction> targetSide, Vec3i targetOffset) {
+    public record PartSettings(Optional<Integer> updateInterval, Optional<Integer> priority, Optional<Integer> channel,
+                               Optional<Direction> targetSide, Optional<Vec3i> targetOffset) {
+
+        /**
+         * @return If no setting at all is stored.
+         */
+        public boolean isEmpty() {
+            return updateInterval().isEmpty() && priority().isEmpty() && channel().isEmpty()
+                    && targetSide().isEmpty() && targetOffset().isEmpty();
+        }
     }
 
     /**

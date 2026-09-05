@@ -2,23 +2,29 @@ package org.cyclops.integrateddynamics.proxy;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.TextureAtlasStitchedEvent;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import net.neoforged.neoforge.client.settings.KeyModifier;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import org.cyclops.cyclopscore.client.key.IKeyRegistry;
 import org.cyclops.cyclopscore.init.ModBase;
 import org.cyclops.cyclopscore.proxy.ClientProxyComponent;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
+import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.client.render.level.PartOffsetsOverlayRenderer;
 import org.cyclops.integrateddynamics.core.inventory.container.slot.SlotVariable;
 import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDataClient;
 import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDiagnosticsPartOverlayRenderer;
 import org.cyclops.integrateddynamics.core.network.diagnostics.http.DiagnosticsWebServer;
+import org.cyclops.integrateddynamics.item.ItemWrench;
 import org.lwjgl.glfw.GLFW;
 
 /**
@@ -43,7 +49,19 @@ public class ClientProxy extends ClientProxyComponent {
     public ClientProxy() {
         super(new CommonProxy());
         IntegratedDynamics._instance.getModEventBus().addListener(this::onPostTextureStitch);
+        IntegratedDynamics._instance.getModEventBus().addListener(this::onClientSetup);
         NeoForge.EVENT_BUS.addListener(this::onPlayerLoggedOut);
+    }
+
+    public void onClientSetup(FMLClientSetupEvent event) {
+        // Show the active wrench mode on the item, by picking a model variant for it
+        event.enqueueWork(() -> ItemProperties.register(RegistryEntries.ITEM_WRENCH.value(),
+                ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "wrench_mode"),
+                (itemStack, level, entity, seed) -> {
+                    Item item = itemStack.getItem();
+                    // Values are divided by ten to fit the clamped 0 to 1 range that item properties have
+                    return item instanceof ItemWrench itemWrench ? itemWrench.getMode(itemStack).ordinal() / 10F : 0F;
+                }));
     }
 
     @Override

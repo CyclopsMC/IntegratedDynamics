@@ -43,36 +43,50 @@ public class PartConfigApplyResult {
     }
 
     /**
-     * @return All messages describing this outcome, which can be shown to the player.
+     * @return A single line summarising what was applied.
      */
-    public List<MutableComponent> getMessages() {
-        List<MutableComponent> messages = Lists.newArrayList();
-        messages.add(Component.translatable("item.integrateddynamics.wrench.mode.config.pasted",
-                this.appliedProperties, this.cardsPasted));
-        if (this.offsetFailed) {
-            messages.add(Component.translatable("item.integrateddynamics.wrench.mode.offset.fail"));
+    public MutableComponent getMessage() {
+        // Only report what was actually applied, so that the counts never contradict what the player sees
+        List<Component> applied = Lists.newArrayList();
+        if (this.partSettingsApplied) {
+            applied.add(Component.translatable("item.integrateddynamics.wrench.mode.config.pasted.part_settings"));
         }
-        if (this.cardsSkipped > 0) {
-            messages.add(Component.translatable("item.integrateddynamics.wrench.mode.config.cards_skipped",
-                    this.cardsSkipped, this.missingBlanks));
+        if (this.appliedProperties > 0) {
+            applied.add(Component.translatable("item.integrateddynamics.wrench.mode.config.pasted.aspect_properties",
+                    this.appliedProperties));
         }
-        return messages;
+        if (this.cardsPasted > 0) {
+            applied.add(Component.translatable("item.integrateddynamics.wrench.mode.config.pasted.variable_cards",
+                    this.cardsPasted));
+        }
+        if (applied.isEmpty()) {
+            return Component.translatable("item.integrateddynamics.wrench.mode.config.pasted.nothing");
+        }
+        MutableComponent joined = Component.empty();
+        for (int i = 0; i < applied.size(); i++) {
+            if (i > 0) {
+                joined.append(", ");
+            }
+            joined.append(applied.get(i));
+        }
+        return Component.translatable("item.integrateddynamics.wrench.mode.config.pasted", joined);
     }
 
     /**
-     * @return All messages describing this outcome, joined into a single line.
+     * These are kept apart from {@link #getMessage()},
+     * as the two together are too long for the single line that the action bar has.
+     * @return What did not go as the player intended, if anything.
      */
-    public MutableComponent getMessage() {
-        MutableComponent message = Component.empty();
-        boolean first = true;
-        for (MutableComponent part : getMessages()) {
-            if (!first) {
-                message.append(" ");
-            }
-            first = false;
-            message.append(part);
+    public List<MutableComponent> getWarnings() {
+        List<MutableComponent> warnings = Lists.newArrayList();
+        if (this.offsetFailed) {
+            warnings.add(Component.translatable("item.integrateddynamics.wrench.mode.offset.fail"));
         }
-        return message;
+        if (this.cardsSkipped > 0) {
+            warnings.add(Component.translatable("item.integrateddynamics.wrench.mode.config.cards_skipped",
+                    this.cardsSkipped, this.missingBlanks));
+        }
+        return warnings;
     }
 
 }

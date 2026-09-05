@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -80,12 +81,10 @@ public final class PartConfigHelpers {
                                               IPartType partType, IPartState<?> state, Set<PartConfigSection> sections) {
         Optional<PartConfigSnapshot.PartSettings> partSettings = Optional.empty();
         if (sections.contains(PartConfigSection.PART_SETTINGS)) {
-            partSettings = Optional.of(new PartConfigSnapshot.PartSettings(
-                    partType.getUpdateInterval(state),
-                    partType.getPriority(state),
-                    partType.getChannel(state),
-                    Optional.ofNullable(partType.getTargetSideOverride(state)),
-                    partType.getTargetOffset(state)));
+            PartConfigSnapshot.PartSettings settings = snapshotPartSettings(partType, state);
+            if (!settings.isEmpty()) {
+                partSettings = Optional.of(settings);
+            }
         }
 
         Map<ResourceLocation, CompoundTag> aspectProperties = Maps.newLinkedHashMap();
@@ -94,7 +93,10 @@ public final class PartConfigHelpers {
                 if (aspect.hasProperties()) {
                     IAspectProperties properties = state.getAspectProperties(aspect);
                     if (properties != null) {
-                        aspectProperties.put(aspect.getUniqueName(), properties.toNBT(valueDeseralizationContext));
+                        IAspectProperties modified = filterNonDefaultProperties(properties, aspect);
+                        if (countPropertyTypes(modified) > 0) {
+                            aspectProperties.put(aspect.getUniqueName(), modified.toNBT(valueDeseralizationContext));
+                        }
                     }
                 }
             }
@@ -124,6 +126,41 @@ public final class PartConfigHelpers {
 
         return new PartConfigSnapshot(PartConfigSnapshot.VERSION, partType.getUniqueName(),
                 partSettings, aspectProperties, variableCards);
+    }
+
+    /**
+     * @param partType A part type.
+     * @param state A part state.
+     * @return The settings of the given part that differ from the defaults of a freshly placed part.
+     */
+    @SuppressWarnings("unchecked")
+    protected static PartConfigSnapshot.PartSettings snapshotPartSettings(IPartType partType, IPartState<?> state) {
+        int updateInterval = partType.getUpdateInterval(state);
+        int defaultUpdateInterval = Math.max(partType.getMinimumUpdateInterval(state), state.getDefaultUpdateInterval());
+        Vec3i targetOffset = partType.getTargetOffset(state);
+        return new PartConfigSnapshot.PartSettings(
+                updateInterval == defaultUpdateInterval ? Optional.empty() : Optional.of(updateInterval),
+                partType.getPriority(state) == 0 ? Optional.empty() : Optional.of(partType.getPriority(state)),
+                partType.getChannel(state) == 0 ? Optional.empty() : Optional.of(partType.getChannel(state)),
+                Optional.ofNullable(partType.getTargetSideOverride(state)),
+                targetOffset.equals(Vec3i.ZERO) ? Optional.empty() : Optional.of(targetOffset));
+    }
+
+    /**
+     * @param properties The properties of an aspect.
+     * @param aspect The aspect that they belong to.
+     * @return Only the properties whose value differs from the aspect's default.
+     */
+    @SuppressWarnings({"unchecked", "deprecation"})
+    protected static IAspectProperties filterNonDefaultProperties(IAspectProperties properties, IAspect<?, ?> aspect) {
+        IAspectProperties defaultProperties = aspect.getDefaultProperties();
+        IAspectProperties modified = new AspectProperties();
+        for (IAspectPropertyTypeInstance propertyType : properties.getTypes()) {
+            if (!properties.getValue(propertyType).equals(defaultProperties.getValue(propertyType))) {
+                modified.setValue(propertyType, properties.getValue(propertyType));
+            }
+        }
+        return modified;
     }
 
     /**
@@ -158,21 +195,31 @@ public final class PartConfigHelpers {
         return result;
     }
 
+    /**
+     * Only the settings that the snapshot actually holds are applied,
+     * so pasting never resets a setting that was left at its default on the copied part.
+     */
     @SuppressWarnings("unchecked")
     protected static void applyPartSettings(@Nullable INetwork network, PartTarget target, IPartType partType,
                                             IPartState<?> state, PartConfigSnapshot.PartSettings settings,
                                             PartConfigApplyResult result) {
-        partType.setUpdateInterval(state, Math.max(partType.getMinimumUpdateInterval(state), settings.updateInterval()));
-        partType.setTargetSideOverride(state, settings.targetSide().orElse(null));
-        if (!partType.setTargetOffset(state, target.getCenter(), settings.targetOffset())) {
-            result.setOffsetFailed(true);
-        }
-        if (network != null) {
-            network.setPriorityAndChannel(new PartNetworkElement(partType, target.getCenter()),
-                    settings.priority(), settings.channel());
-        } else {
-            state.setPriority(settings.priority());
-            state.setChannel(settings.channel());
+        settings.updateInterval().ifPresent(updateInterval -> partType.setUpdateInterval(state,
+                Math.max(partType.getMinimumUpdateInterval(state), updateInterval)));
+        settings.targetSide().ifPresent(targetSide -> partType.setTargetSideOverride(state, targetSide));
+        settings.targetOffset().ifPresent(targetOffset -> {
+            if (!partType.setTargetOffset(state, target.getCenter(), targetOffset)) {
+                result.setOffsetFailed(true);
+            }
+        });
+        if (settings.priority().isPresent() || settings.channel().isPresent()) {
+            int priority = settings.priority().orElseGet(() -> partType.getPriority(state));
+            int channel = settings.channel().orElseGet(() -> partType.getChannel(state));
+            if (network != null) {
+                network.setPriorityAndChannel(new PartNetworkElement(partType, target.getCenter()), priority, channel);
+            } else {
+                state.setPriority(priority);
+                state.setChannel(channel);
+            }
         }
         result.setPartSettingsApplied(true);
         state.markDirty();

@@ -1,41 +1,31 @@
 package org.cyclops.integrateddynamics.core.inventory.container;
 
-import com.google.common.collect.Sets;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
 import org.cyclops.cyclopscore.inventory.container.InventoryContainer;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.PartStateException;
-import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.network.INetwork;
-import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
-import org.cyclops.integrateddynamics.core.helper.PartConfigHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.network.PartNetworkElement;
-import org.cyclops.integrateddynamics.core.part.PartConfigApplyResult;
-import org.cyclops.integrateddynamics.core.part.PartConfigSection;
-import org.cyclops.integrateddynamics.core.part.PartConfigSnapshot;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * Container for part settings.
@@ -45,14 +35,7 @@ public class ContainerPartSettings extends InventoryContainer {
 
     public static final String BUTTON_SAVE = "button_save";
     public static final String BUTTON_SETTINGS = "button_settings";
-    public static final String BUTTON_CONFIG_COPY = "button_config_copy";
-    public static final String BUTTON_CONFIG_PASTE = "button_config_paste";
     private static final int PAGE_SIZE = 3;
-
-    /**
-     * The Wrench copies and pastes only the general part settings from this gui.
-     */
-    private static final Set<PartConfigSection> SECTIONS = Sets.immutableEnumSet(PartConfigSection.PART_SETTINGS);
 
     private final PartTarget target;
     private final Optional<IPartContainer> partContainer;
@@ -96,56 +79,6 @@ public class ContainerPartSettings extends InventoryContainer {
                 PartHelpers.openContainerPart((ServerPlayer) player, target.getCenter(), getPartType());
             }
         });
-        putButtonAction(ContainerPartSettings.BUTTON_CONFIG_COPY, (s, containerExtended) -> {
-            if(!world.isClientSide()) {
-                copyConfig();
-            }
-        });
-        putButtonAction(ContainerPartSettings.BUTTON_CONFIG_PASTE, (s, containerExtended) -> {
-            if(!world.isClientSide()) {
-                pasteConfig();
-            }
-        });
-    }
-
-    /**
-     * Copy the settings of this part into the Wrench of the player.
-     */
-    protected void copyConfig() {
-        ItemStack wrench = PartConfigHelpers.findWrench(player).orElse(ItemStack.EMPTY);
-        if (wrench.isEmpty()) {
-            player.displayClientMessage(PartConfigHelpers.getNoWrenchMessage(), true);
-            return;
-        }
-        PartConfigSnapshot snapshot = getPartType()
-                .snapshotConfig(ValueDeseralizationContext.of(world), getPartState(), SECTIONS);
-        PartConfigHelpers.setSnapshot(world.registryAccess(), wrench, snapshot);
-        player.displayClientMessage(Component.translatable("gui.integrateddynamics.config.copied"), true);
-    }
-
-    /**
-     * Paste the settings inside the Wrench of the player onto this part.
-     */
-    protected void pasteConfig() {
-        ItemStack wrench = PartConfigHelpers.findWrench(player).orElse(ItemStack.EMPTY);
-        if (wrench.isEmpty()) {
-            player.displayClientMessage(PartConfigHelpers.getNoWrenchMessage(), true);
-            return;
-        }
-        PartConfigSnapshot snapshot = PartConfigHelpers.getSnapshot(world.registryAccess(), wrench).orElse(null);
-        if (snapshot == null || !snapshot.hasSection(PartConfigSection.PART_SETTINGS)) {
-            player.displayClientMessage(Component.translatable("item.integrateddynamics.wrench.mode.config.empty"), true);
-            return;
-        }
-
-        INetwork network = NetworkHelpers.getNetwork(getTarget().getCenter()).orElse(null);
-        IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network).orElse(null);
-        PartConfigApplyResult result = getPartType().applyConfig(ValueDeseralizationContext.of(world), network,
-                partNetwork, getTarget(), getPartState(), snapshot, SECTIONS, player);
-        player.displayClientMessage(result.getMessage(), true);
-
-        // Show the pasted values in the gui
-        initializeValues();
     }
 
     public IPartType getPartType() {

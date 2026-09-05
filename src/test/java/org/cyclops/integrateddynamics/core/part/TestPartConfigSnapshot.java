@@ -41,8 +41,8 @@ public class TestPartConfigSnapshot {
     @Test
     public void testRoundTripAllSections() {
         PartConfigSnapshot snapshot = new PartConfigSnapshot(PartConfigSnapshot.VERSION, PART_TYPE,
-                Optional.of(new PartConfigSnapshot.PartSettings(20, 3, 7,
-                        Optional.of(Direction.NORTH), new Vec3i(1, -2, 3))),
+                Optional.of(new PartConfigSnapshot.PartSettings(Optional.of(20), Optional.of(3), Optional.of(7),
+                        Optional.of(Direction.NORTH), Optional.of(new Vec3i(1, -2, 3)))),
                 Map.of(ASPECT, aspectPropertiesTag()),
                 List.of());
 
@@ -60,7 +60,8 @@ public class TestPartConfigSnapshot {
     @Test
     public void testRoundTripWithoutAspectProperties() {
         PartConfigSnapshot snapshot = new PartConfigSnapshot(PartConfigSnapshot.VERSION, PART_TYPE,
-                Optional.of(new PartConfigSnapshot.PartSettings(1, 0, 0, Optional.empty(), Vec3i.ZERO)),
+                Optional.of(new PartConfigSnapshot.PartSettings(Optional.of(1), Optional.empty(), Optional.empty(),
+                        Optional.empty(), Optional.empty())),
                 Map.of(), List.of());
 
         assertThat(roundTrip(snapshot), is(snapshot));
@@ -76,9 +77,26 @@ public class TestPartConfigSnapshot {
     }
 
     @Test
+    public void testPartSettingsEmptyWhenEverythingIsDefault() {
+        assertThat(new PartConfigSnapshot.PartSettings(Optional.empty(), Optional.empty(), Optional.empty(),
+                Optional.empty(), Optional.empty()).isEmpty(), is(true));
+        assertThat(new PartConfigSnapshot.PartSettings(Optional.of(1), Optional.empty(), Optional.empty(),
+                Optional.empty(), Optional.empty()).isEmpty(), is(false));
+    }
+
+    @Test
+    public void testRequiredBlankVariables() {
+        PartConfigSnapshot snapshot = new PartConfigSnapshot(PartConfigSnapshot.VERSION, PART_TYPE,
+                Optional.empty(), Map.of(), List.of());
+
+        assertThat(snapshot.getRequiredBlankVariables(), is(0));
+    }
+
+    @Test
     public void testSections() {
         PartConfigSnapshot snapshot = new PartConfigSnapshot(PartConfigSnapshot.VERSION, PART_TYPE,
-                Optional.of(new PartConfigSnapshot.PartSettings(1, 0, 0, Optional.empty(), Vec3i.ZERO)),
+                Optional.of(new PartConfigSnapshot.PartSettings(Optional.of(1), Optional.empty(), Optional.empty(),
+                        Optional.empty(), Optional.empty())),
                 Map.of(ASPECT, aspectPropertiesTag()), List.of());
 
         assertThat(snapshot.hasSection(PartConfigSection.PART_SETTINGS), is(true));

@@ -110,7 +110,7 @@ public class VoxelShapeComponentsFactoryHandlerParts implements VoxelShapeCompon
         public InteractionResult onBlockActivated(BlockState state, Level world, BlockPos blockPos, Player player, InteractionHand hand, BlockRayTraceResultComponent hit) {
             ItemStack heldItem = player.getItemInHand(hand);
             if(heldItem.getItem() instanceof ItemWrench itemWrench
-                    && itemWrench.getMode(heldItem) == ItemWrench.Mode.CONFIG
+                    && itemWrench.getMode(heldItem).isConfig()
                     && player.isSecondaryUseActive()) {
                 // Copy the configuration of this part into the wrench, instead of removing the part
                 itemWrench.copyPartConfig(heldItem, player, PartPos.of(world, blockPos, direction));

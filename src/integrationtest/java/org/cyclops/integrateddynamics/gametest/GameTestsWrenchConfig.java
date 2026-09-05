@@ -1,54 +1,41 @@
 package org.cyclops.integrateddynamics.gametest;
 
-import com.google.common.collect.Maps;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
-import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.network.INetwork;
-import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
-import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartConfigHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
-import org.cyclops.integrateddynamics.core.inventory.container.ContainerAspectSettings;
 import org.cyclops.integrateddynamics.core.part.PartConfigApplyResult;
 import org.cyclops.integrateddynamics.core.part.PartConfigSection;
 import org.cyclops.integrateddynamics.core.part.PartConfigSnapshot;
 import org.cyclops.integrateddynamics.core.part.PartStateActiveVariableBase;
-import org.cyclops.integrateddynamics.core.part.PartTypeBase;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.item.ItemWrench;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 import org.cyclops.integrateddynamics.part.aspect.write.AspectWriteBuilders;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
-import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 
 import javax.annotation.Nullable;
-import java.util.Map;
-import java.util.Optional;
 
 import static org.cyclops.integrateddynamics.gametest.GameTestHelpersIntegratedDynamics.createVariableForValue;
 import static org.cyclops.integrateddynamics.gametest.GameTestHelpersIntegratedDynamics.getEffectiveAspectProperty;
@@ -330,67 +317,68 @@ public class GameTestsWrenchConfig {
         });
     }
 
-    /**
-     * The aspect settings container, with all value syncing recorded in-memory,
-     * as there is no client to sync to in game tests.
-     */
-    public static class RecordingContainerAspectSettings extends ContainerAspectSettings {
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testWrenchConfigSettingsModeOnlyCopiesPartSettings(GameTestHelper helper) {
+        PartPos source = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
+        PartPos target = placePart(helper, POS_TARGET, PartTypes.REDSTONE_WRITER);
+        configurePart(helper, source, Vec3i.ZERO);
 
-        private final Map<Integer, CompoundTag> recordedValues = Maps.newHashMap();
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        ItemStack wrench = createWrench(ItemWrench.Mode.CONFIG_SETTINGS);
+        clickPart(helper, player, wrench, source, true);
+        clickPart(helper, player, wrench, target, false);
 
-        public RecordingContainerAspectSettings(int id, Inventory playerInventory, Container inventory,
-                                                Optional<PartTarget> target, Optional<IPartContainer> partContainer,
-                                                Optional<IPartType> partType, IAspect<?, ?> aspect) {
-            super(id, playerInventory, inventory, target, partContainer, partType, aspect);
-        }
-
-        @Override
-        public void setValue(int id, CompoundTag value) {
-            this.recordedValues.put(id, value);
-        }
-
-        @Override
-        public CompoundTag getValue(int id) {
-            return this.recordedValues.get(id);
-        }
-    }
-
-    /**
-     * Construct the aspect settings container for the given part and aspect,
-     * in the same way as it is constructed when the given player opens the aspect settings gui.
-     */
-    protected static ContainerAspectSettings openAspectSettings(Player player, PartPos partPos, IAspect<?, ?> aspect) {
-        Triple<IPartContainer, PartTypeBase, PartTarget> data = PartHelpers.getContainerPartConstructionData(partPos);
-        return new RecordingContainerAspectSettings(1, player.getInventory(), new SimpleContainer(0),
-                Optional.of(data.getRight()), Optional.of(data.getLeft()), Optional.of(data.getMiddle()), aspect);
+        helper.succeedWhen(() -> {
+            IPartType partType = partType(target);
+            IPartState state = partState(target);
+            helper.assertValueEqual(partType.getUpdateInterval(state), 40, "Update interval was not pasted");
+            helper.assertValueEqual(partType.getPriority(state), 3, "Priority was not pasted");
+            helper.assertValueEqual(
+                    getEffectiveAspectProperty(target, Aspects.Write.Redstone.BOOLEAN,
+                            AspectWriteBuilders.Redstone.PROP_STRONG_POWER),
+                    ValueTypeBoolean.ValueBoolean.of(false), "An aspect setting was pasted");
+        });
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
-    public void testAspectSettingsConfigCopyPasteAcrossAspects(GameTestHelper helper) {
-        PartPos partPos = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
-        // The pulse aspect has a strong power setting that the plain aspect also has,
-        // and a pulse length setting that it does not have.
-        setAspectProperty(partPos, Aspects.Write.Redstone.BOOLEAN_PULSE,
-                AspectWriteBuilders.Redstone.PROP_STRONG_POWER, ValueTypeBoolean.ValueBoolean.of(true));
-        setAspectProperty(partPos, Aspects.Write.Redstone.BOOLEAN_PULSE,
-                AspectWriteBuilders.Redstone.PROP_PULSE_LENGTH, ValueTypeInteger.ValueInteger.of(5));
+    public void testWrenchConfigAspectsModeOnlyCopiesAspectSettings(GameTestHelper helper) {
+        PartPos source = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
+        PartPos target = placePart(helper, POS_TARGET, PartTypes.REDSTONE_WRITER);
+        configurePart(helper, source, Vec3i.ZERO);
+        int updateInterval = ((IPartType) partType(target)).getUpdateInterval(partState(target));
 
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
-        player.setItemInHand(InteractionHand.MAIN_HAND, createWrench(ItemWrench.Mode.CONFIG));
-        openAspectSettings(player, partPos, Aspects.Write.Redstone.BOOLEAN_PULSE)
-                .onButtonClick(ContainerAspectSettings.BUTTON_CONFIG_COPY);
-        openAspectSettings(player, partPos, Aspects.Write.Redstone.BOOLEAN)
-                .onButtonClick(ContainerAspectSettings.BUTTON_CONFIG_PASTE);
+        ItemStack wrench = createWrench(ItemWrench.Mode.CONFIG_ASPECTS);
+        clickPart(helper, player, wrench, source, true);
+        clickPart(helper, player, wrench, target, false);
 
         helper.succeedWhen(() -> {
             helper.assertValueEqual(
-                    getEffectiveAspectProperty(partPos, Aspects.Write.Redstone.BOOLEAN,
+                    getEffectiveAspectProperty(target, Aspects.Write.Redstone.BOOLEAN,
                             AspectWriteBuilders.Redstone.PROP_STRONG_POWER),
-                    ValueTypeBoolean.ValueBoolean.of(true), "The shared setting was not pasted");
-            helper.assertValueEqual(
-                    getEffectiveAspectProperty(partPos, Aspects.Write.Redstone.BOOLEAN_PULSE,
-                            AspectWriteBuilders.Redstone.PROP_PULSE_LENGTH),
-                    ValueTypeInteger.ValueInteger.of(5), "The copied aspect was changed");
+                    ValueTypeBoolean.ValueBoolean.of(true), "The aspect setting was not pasted");
+            helper.assertValueEqual(((IPartType) partType(target)).getUpdateInterval(partState(target)),
+                    updateInterval, "A part setting was pasted");
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testWrenchConfigSubsetModeAcrossPartTypes(GameTestHelper helper) {
+        PartPos source = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
+        PartPos target = placePart(helper, POS_TARGET, PartTypes.REDSTONE_READER);
+        configurePart(helper, source, Vec3i.ZERO);
+
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        ItemStack wrench = createWrench(ItemWrench.Mode.CONFIG_SETTINGS);
+        clickPart(helper, player, wrench, source, true);
+        clickPart(helper, player, wrench, target, false);
+
+        helper.succeedWhen(() -> {
+            // Unlike a whole configuration, a single section can be pasted onto another part type
+            helper.assertValueEqual(((IPartType) partType(target)).getUpdateInterval(partState(target)), 40,
+                    "Update interval was not pasted");
+            helper.assertValueEqual(((IPartType) partType(target)).getPriority(partState(target)), 3,
+                    "Priority was not pasted");
         });
     }
 
@@ -408,8 +396,46 @@ public class GameTestsWrenchConfig {
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
+    public void testWrenchConfigCopyOnlyStoresNonDefaultValues(GameTestHelper helper) {
+        // A freshly placed part has nothing configured, so there is nothing to copy
+        PartPos source = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
+
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        ItemStack wrench = createWrench(ItemWrench.Mode.CONFIG);
+        clickPart(helper, player, wrench, source, true);
+
+        helper.succeedWhen(() -> {
+            helper.assertTrue(PartConfigHelpers.getSnapshot(helper.getLevel().registryAccess(), wrench).isEmpty(),
+                    "A default part was copied into the wrench");
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testWrenchConfigPasteKeepsUntouchedSettings(GameTestHelper helper) {
+        PartPos source = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
+        PartPos target = placePart(helper, POS_TARGET, PartTypes.REDSTONE_WRITER);
+        // Only the update interval is non-default on the source part
+        ((IPartType) partType(source)).setUpdateInterval(partState(source), 40);
+        // While the target part has a priority that the source part does not have
+        partState(target).setPriority(7);
+
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        ItemStack wrench = createWrench(ItemWrench.Mode.CONFIG);
+        clickPart(helper, player, wrench, source, true);
+        clickPart(helper, player, wrench, target, false);
+
+        helper.succeedWhen(() -> {
+            helper.assertValueEqual(((IPartType) partType(target)).getUpdateInterval(partState(target)), 40,
+                    "Update interval was not pasted");
+            helper.assertValueEqual(((IPartType) partType(target)).getPriority(partState(target)), 7,
+                    "The priority of the target part was reset by a setting that was never configured");
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
     public void testWrenchConfigSurvivesModeCycling(GameTestHelper helper) {
         PartPos partPos = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
+        configurePart(helper, partPos, Vec3i.ZERO);
 
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         ItemStack wrench = createWrench(ItemWrench.Mode.CONFIG);

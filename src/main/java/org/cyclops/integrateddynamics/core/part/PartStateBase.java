@@ -401,7 +401,8 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
         volatileCapabilities.remove(capability);
     }
 
-    protected int getDefaultUpdateInterval() {
+    @Override
+    public int getDefaultUpdateInterval() {
         return GeneralConfig.defaultPartUpdateFreq;
     }
 
