@@ -117,6 +117,14 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
                 refreshButtonEnabled();
             }
         }, true));
+        addRenderableWidget(new ButtonText(leftPos + 141, topPos + 109, 12, 12,
+                Component.translatable("gui.integrateddynamics.aspectsettings.config.copy"), Component.literal("C"),
+                createServerPressable(ContainerAspectSettings.BUTTON_CONFIG_COPY, (button) -> {
+                    saveSetting();
+                }), true));
+        addRenderableWidget(new ButtonText(leftPos + 155, topPos + 109, 12, 12,
+                Component.translatable("gui.integrateddynamics.aspectsettings.config.paste"), Component.literal("P"),
+                createServerPressable(ContainerAspectSettings.BUTTON_CONFIG_PASTE, (button) -> {}), true));
         refreshButtonEnabled();
 
         setActiveProperty(activePropertyIndex);

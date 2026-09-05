@@ -35,6 +35,11 @@ import java.util.Map;
  */
 public class PartStateOffsetHandler<P extends IPartType> {
 
+    /**
+     * The name of the named inventory in which the offset variables are stored.
+     */
+    public static final String INVENTORY_NAME = "offsetVariablesInventory";
+
     public final List<InventoryVariableEvaluator<ValueTypeInteger.ValueInteger>> offsetVariableEvaluators = Lists.newArrayList();
     public final Int2ObjectMap<MutableComponent> offsetVariablesSlotMessages = new Int2ObjectArrayMap<>();
     public boolean offsetVariablesDirty = true;
@@ -80,7 +85,7 @@ public class PartStateOffsetHandler<P extends IPartType> {
 
     public SimpleInventory getOffsetVariablesInventory(IPartState<P> partState) {
         SimpleInventory offsetVariablesInventory = new SimpleInventory(3, 1);
-        partState.loadInventoryNamed("offsetVariablesInventory", offsetVariablesInventory);
+        partState.loadInventoryNamed(INVENTORY_NAME, offsetVariablesInventory);
         return offsetVariablesInventory;
     }
 

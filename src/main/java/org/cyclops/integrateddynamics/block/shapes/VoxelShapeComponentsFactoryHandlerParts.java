@@ -20,6 +20,7 @@ import net.neoforged.neoforge.common.extensions.ILevelExtension;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.core.block.BlockRayTraceResultComponent;
 import org.cyclops.integrateddynamics.core.block.VoxelShapeComponents;
 import org.cyclops.integrateddynamics.core.block.VoxelShapeComponentsFactory;
@@ -27,6 +28,7 @@ import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
 import org.cyclops.integrateddynamics.item.ItemBlockCable;
+import org.cyclops.integrateddynamics.item.ItemWrench;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -107,7 +109,13 @@ public class VoxelShapeComponentsFactoryHandlerParts implements VoxelShapeCompon
         @Override
         public InteractionResult onBlockActivated(BlockState state, Level world, BlockPos blockPos, Player player, InteractionHand hand, BlockRayTraceResultComponent hit) {
             ItemStack heldItem = player.getItemInHand(hand);
-            if(WrenchHelpers.isWrench(player, heldItem, world, blockPos, hit.getDirection()) && player.isSecondaryUseActive()) {
+            if(heldItem.getItem() instanceof ItemWrench itemWrench
+                    && itemWrench.getMode(heldItem) == ItemWrench.Mode.CONFIG
+                    && player.isSecondaryUseActive()) {
+                // Copy the configuration of this part into the wrench, instead of removing the part
+                itemWrench.copyPartConfig(heldItem, player, PartPos.of(world, blockPos, direction));
+                return InteractionResult.SUCCESS;
+            } else if(WrenchHelpers.isWrench(player, heldItem, world, blockPos, hit.getDirection()) && player.isSecondaryUseActive()) {
                 // Remove part from cable
                 if (!world.isClientSide()) {
                     destroy(world, blockPos, player, true);

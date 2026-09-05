@@ -6,6 +6,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -26,14 +27,26 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
+import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartPos;
+import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
+import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
+import org.cyclops.integrateddynamics.core.helper.PartConfigHelpers;
+import org.cyclops.integrateddynamics.core.helper.PartHelpers;
+import org.cyclops.integrateddynamics.core.part.PartConfigApplyResult;
+import org.cyclops.integrateddynamics.core.part.PartConfigSection;
+import org.cyclops.integrateddynamics.core.part.PartConfigSnapshot;
+import org.cyclops.integrateddynamics.core.part.PartTypes;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * The default wrench for this mod.
@@ -86,6 +99,10 @@ public class ItemWrench extends Item {
                     if (!CableHelpers.getCable(context.getLevel(), context.getClickedPos(), context.getClickedFace()).isPresent()) {
                         return InteractionResult.FAIL;
                     }
+                }
+                case CONFIG -> {
+                    // Let the click through to the part, so that its configuration can be copied
+                    return InteractionResult.PASS;
                 }
             }
         }
@@ -153,6 +170,17 @@ public class ItemWrench extends Item {
         if (itemStack.has(RegistryEntries.DATACOMPONENT_WRENCH_TARGET_DIRECTION)) {
             list.add(Component.translatable("item.integrateddynamics.wrench.mode.offset_side.side", itemStack.get(RegistryEntries.DATACOMPONENT_WRENCH_TARGET_DIRECTION).getSerializedName()).withStyle(ChatFormatting.GRAY));
         }
+        CompoundTag configTag = itemStack.get(RegistryEntries.DATACOMPONENT_WRENCH_PART_CONFIG);
+        if (configTag != null && context.registries() != null) {
+            PartConfigSnapshot.fromNBT(context.registries(), configTag).ifPresent(snapshot -> {
+                list.add(Component.translatable("item.integrateddynamics.wrench.mode.config.source",
+                        Component.translatable(getSourcePartTypeName(snapshot))).withStyle(ChatFormatting.GRAY));
+                list.add(Component.translatable("item.integrateddynamics.wrench.mode.config.sections",
+                        snapshot.getSections().stream()
+                                .map(section -> Component.translatable(section.getTranslationKey()).getString())
+                                .collect(Collectors.joining(", "))).withStyle(ChatFormatting.GRAY));
+            });
+        }
         list.add(Component.translatable(mode.getLabel() + ".info").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
     }
 
@@ -170,6 +198,10 @@ public class ItemWrench extends Item {
                 } else {
                     player.displayClientMessage(Component.translatable("item.integrateddynamics.wrench.mode.offset.incomplete"), true);
                 }
+                return InteractionResult.SUCCESS;
+            }
+            case CONFIG -> {
+                pastePartConfig(partType, partState, itemStack, player, center);
                 return InteractionResult.SUCCESS;
             }
             case OFFSET_SIDE -> {
@@ -191,6 +223,69 @@ public class ItemWrench extends Item {
         return InteractionResult.PASS;
     }
 
+    /**
+     * Copy the configuration of the part at the given position into the given Wrench.
+     * @param itemStack The Wrench.
+     * @param player The player.
+     * @param center The position of the part.
+     */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public void copyPartConfig(ItemStack itemStack, Player player, PartPos center) {
+        if (player.level().isClientSide()) {
+            return;
+        }
+        PartHelpers.PartStateHolder<?, ?> partStateHolder = PartHelpers.getPart(center);
+        if (partStateHolder == null) {
+            return;
+        }
+        IPartType partType = partStateHolder.getPart();
+        Level level = center.getPos().getLevel(true);
+        PartConfigSnapshot snapshot = ((IPartType) partType).snapshotConfig(ValueDeseralizationContext.of(level),
+                partStateHolder.getState(), PartConfigSection.ALL);
+        PartConfigHelpers.setSnapshot(level.registryAccess(), itemStack, snapshot);
+        player.displayClientMessage(Component.translatable("item.integrateddynamics.wrench.mode.config.copied",
+                Component.translatable(partType.getTranslationKey())), true);
+    }
+
+    /**
+     * Paste the configuration inside the given Wrench onto the given part.
+     * @param partType The part type.
+     * @param partState The part state.
+     * @param itemStack The Wrench.
+     * @param player The player.
+     * @param center The position of the part.
+     */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    protected void pastePartConfig(IPartType<?, ?> partType, IPartState<?> partState, ItemStack itemStack,
+                                   Player player, PartPos center) {
+        if (player.level().isClientSide()) {
+            return;
+        }
+        Level level = center.getPos().getLevel(true);
+        PartConfigSnapshot snapshot = PartConfigHelpers.getSnapshot(level.registryAccess(), itemStack).orElse(null);
+        if (snapshot == null) {
+            player.displayClientMessage(Component.translatable("item.integrateddynamics.wrench.mode.config.empty"), true);
+            return;
+        }
+        if (!snapshot.sourcePartType().equals(partType.getUniqueName())) {
+            player.displayClientMessage(Component.translatable("item.integrateddynamics.wrench.mode.config.mismatch",
+                    Component.translatable(getSourcePartTypeName(snapshot))), true);
+            return;
+        }
+
+        INetwork network = NetworkHelpers.getNetwork(center).orElse(null);
+        IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(network).orElse(null);
+        PartTarget target = ((IPartType) partType).getTarget(center, partState);
+        PartConfigApplyResult result = ((IPartType) partType).applyConfig(ValueDeseralizationContext.of(level),
+                network, partNetwork, target, partState, snapshot, PartConfigSection.ALL, player);
+        player.displayClientMessage(result.getMessage(), true);
+    }
+
+    protected static String getSourcePartTypeName(PartConfigSnapshot snapshot) {
+        IPartType<?, ?> partType = PartTypes.REGISTRY.getPartType(snapshot.sourcePartType());
+        return partType == null ? snapshot.sourcePartType().toString() : partType.getTranslationKey();
+    }
+
     protected Vec3i determineOffset(BlockHitResult hit, ItemStack itemStack) {
         BlockPos source = hit.getBlockPos().relative(hit.getDirection());
         BlockPos targetAbs = itemStack.get(RegistryEntries.DATACOMPONENT_WRENCH_TARGET_BLOCKPOS);
@@ -200,7 +295,8 @@ public class ItemWrench extends Item {
     public static enum Mode implements StringRepresentable {
         DEFAULT("integrateddynamics:default", "item.integrateddynamics.wrench.mode.default"),
         OFFSET("integrateddynamics:offset", "item.integrateddynamics.wrench.mode.offset"),
-        OFFSET_SIDE("integrateddynamics:offset_side", "item.integrateddynamics.wrench.mode.offset_side");
+        OFFSET_SIDE("integrateddynamics:offset_side", "item.integrateddynamics.wrench.mode.offset_side"),
+        CONFIG("integrateddynamics:config", "item.integrateddynamics.wrench.mode.config");
 
         public static final StringRepresentable.EnumCodec<Mode> CODEC = net.minecraft.util.StringRepresentable.fromEnum(Mode::values);
         public static final StreamCodec<ByteBuf, Mode> STREAM_CODEC = ByteBufCodecs.idMapper(INT_MODES::get, Mode::ordinal);

@@ -205,6 +205,7 @@ public class Configs {
         configHandler.addConfigurable(new DataComponentWrenchTargetBlockPosConfig());
         configHandler.addConfigurable(new DataComponentWrenchTargetDirectionConfig());
         configHandler.addConfigurable(new DataComponentWrenchModeConfig());
+        configHandler.addConfigurable(new DataComponentWrenchPartConfigConfig());
     }
 
 }
