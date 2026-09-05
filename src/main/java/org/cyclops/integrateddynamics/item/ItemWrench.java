@@ -190,7 +190,10 @@ public class ItemWrench extends Item {
                 }
             });
         }
-        list.add(Component.translatable(mode.getLabel() + ".info").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+        // Hidden behind the same shift that reveals the item info, to keep the resting tooltip short
+        if (MinecraftHelpers.isShifted()) {
+            list.add(Component.translatable(mode.getLabel() + ".info").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+        }
     }
 
     public <P extends IPartType<P, S>, S extends IPartState<P>> InteractionResult performPartAction(BlockHitResult hit, IPartType<P, S> partType, IPartState<P> partState, ItemStack itemStack, Player player, InteractionHand hand, PartPos center) {
