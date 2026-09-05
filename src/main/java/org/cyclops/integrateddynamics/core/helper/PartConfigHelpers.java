@@ -88,7 +88,7 @@ public final class PartConfigHelpers {
         }
 
         Map<ResourceLocation, CompoundTag> aspectProperties = Maps.newLinkedHashMap();
-        if (sections.contains(PartConfigSection.ASPECT_PROPERTIES)) {
+        if (sections.contains(PartConfigSection.ASPECT)) {
             for (IAspect aspect : getAspects(partType)) {
                 if (aspect.hasProperties()) {
                     IAspectProperties properties = state.getAspectProperties(aspect);
@@ -102,24 +102,27 @@ public final class PartConfigHelpers {
             }
         }
 
+        // Each variable inventory belongs to one of the sections, so only copy the ones that are included
         List<PartConfigSnapshot.VariableCard> variableCards = Lists.newArrayList();
-        if (sections.contains(PartConfigSection.VARIABLE_CARDS)) {
-            for (Map.Entry<String, NonNullList<ItemStack>> entry : state.getInventoriesNamed().entrySet()) {
-                NonNullList<ItemStack> inventory = entry.getValue();
-                for (int slot = 0; slot < inventory.size(); slot++) {
-                    if (!inventory.get(slot).isEmpty()) {
-                        variableCards.add(new PartConfigSnapshot.VariableCard(entry.getKey(), slot,
-                                inventory.get(slot).copy()));
-                    }
+        for (Map.Entry<String, NonNullList<ItemStack>> entry : state.getInventoriesNamed().entrySet()) {
+            if (!sections.contains(PartConfigSection.forInventoryName(entry.getKey()))) {
+                continue;
+            }
+            NonNullList<ItemStack> inventory = entry.getValue();
+            for (int slot = 0; slot < inventory.size(); slot++) {
+                if (!inventory.get(slot).isEmpty()) {
+                    variableCards.add(new PartConfigSnapshot.VariableCard(entry.getKey(), slot,
+                            inventory.get(slot).copy()));
                 }
             }
-            if (state instanceof PartStateActiveVariableBase<?> activeState) {
-                SimpleInventory inventory = activeState.getInventory();
-                for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
-                    if (!inventory.getItem(slot).isEmpty()) {
-                        variableCards.add(new PartConfigSnapshot.VariableCard(
-                                PartConfigSnapshot.INVENTORY_NAME_ACTIVE, slot, inventory.getItem(slot).copy()));
-                    }
+        }
+        if (state instanceof PartStateActiveVariableBase<?> activeState
+                && sections.contains(PartConfigSection.forInventoryName(PartConfigSnapshot.INVENTORY_NAME_ACTIVE))) {
+            SimpleInventory inventory = activeState.getInventory();
+            for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
+                if (!inventory.getItem(slot).isEmpty()) {
+                    variableCards.add(new PartConfigSnapshot.VariableCard(
+                            PartConfigSnapshot.INVENTORY_NAME_ACTIVE, slot, inventory.getItem(slot).copy()));
                 }
             }
         }
@@ -184,13 +187,11 @@ public final class PartConfigHelpers {
         if (sections.contains(PartConfigSection.PART_SETTINGS) && snapshot.partSettings().isPresent()) {
             applyPartSettings(network, target, partType, state, snapshot.partSettings().get(), result);
         }
-        if (sections.contains(PartConfigSection.ASPECT_PROPERTIES)) {
+        if (sections.contains(PartConfigSection.ASPECT)) {
             applyAspectProperties(valueDeseralizationContext, target, partType, state, snapshot, result);
         }
-        if (sections.contains(PartConfigSection.VARIABLE_CARDS)) {
-            applyVariableCards(valueDeseralizationContext, target, partType, state,
-                    snapshot.variableCards(), player, result);
-        }
+        applyVariableCards(valueDeseralizationContext, target, partType, state,
+                snapshot.getVariableCards(sections), player, result);
 
         return result;
     }

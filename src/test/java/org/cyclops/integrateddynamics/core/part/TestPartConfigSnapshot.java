@@ -89,7 +89,19 @@ public class TestPartConfigSnapshot {
         PartConfigSnapshot snapshot = new PartConfigSnapshot(PartConfigSnapshot.VERSION, PART_TYPE,
                 Optional.empty(), Map.of(), List.of());
 
-        assertThat(snapshot.getRequiredBlankVariables(), is(0));
+        assertThat(snapshot.getRequiredBlankVariables(PartConfigSection.ALL), is(0));
+    }
+
+    @Test
+    public void testVariableInventoriesBelongToSections() {
+        // The active variable and the aspect setting variables are aspect state
+        assertThat(PartConfigSection.forInventoryName(PartConfigSnapshot.INVENTORY_NAME_ACTIVE),
+                is(PartConfigSection.ASPECT));
+        assertThat(PartConfigSection.forInventoryName("aspectVariables_integrateddynamics:write_boolean_redstone"),
+                is(PartConfigSection.ASPECT));
+        // While the offset variables are part settings
+        assertThat(PartConfigSection.forInventoryName("offsetVariablesInventory"),
+                is(PartConfigSection.PART_SETTINGS));
     }
 
     @Test
@@ -100,10 +112,8 @@ public class TestPartConfigSnapshot {
                 Map.of(ASPECT, aspectPropertiesTag()), List.of());
 
         assertThat(snapshot.hasSection(PartConfigSection.PART_SETTINGS), is(true));
-        assertThat(snapshot.hasSection(PartConfigSection.ASPECT_PROPERTIES), is(true));
-        assertThat(snapshot.hasSection(PartConfigSection.VARIABLE_CARDS), is(false));
-        assertThat(snapshot.getSections(),
-                is(java.util.Set.of(PartConfigSection.PART_SETTINGS, PartConfigSection.ASPECT_PROPERTIES)));
+        assertThat(snapshot.hasSection(PartConfigSection.ASPECT), is(true));
+        assertThat(snapshot.getSections(), is(PartConfigSection.ALL));
     }
 
 }

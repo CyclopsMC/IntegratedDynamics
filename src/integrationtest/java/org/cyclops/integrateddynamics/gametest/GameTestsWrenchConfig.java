@@ -28,11 +28,13 @@ import org.cyclops.integrateddynamics.core.part.PartConfigApplyResult;
 import org.cyclops.integrateddynamics.core.part.PartConfigSection;
 import org.cyclops.integrateddynamics.core.part.PartConfigSnapshot;
 import org.cyclops.integrateddynamics.core.part.PartStateActiveVariableBase;
+import org.cyclops.integrateddynamics.core.part.PartStateOffsetHandler;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.item.ItemWrench;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 import org.cyclops.integrateddynamics.part.aspect.write.AspectWriteBuilders;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 
 import javax.annotation.Nullable;
@@ -149,6 +151,19 @@ public class GameTestsWrenchConfig {
 
     protected static int countBlankVariables(Player player) {
         return PartConfigHelpers.countBlankVariables(player);
+    }
+
+    protected static void setOffsetVariable(PartPos partPos, int slot, ItemStack variable) {
+        SimpleInventory inventory = new SimpleInventory(3, 1);
+        partState(partPos).loadInventoryNamed(PartStateOffsetHandler.INVENTORY_NAME, inventory);
+        inventory.setItem(slot, variable);
+        partState(partPos).saveInventoryNamed(PartStateOffsetHandler.INVENTORY_NAME, inventory);
+    }
+
+    protected static ItemStack getOffsetVariable(PartPos partPos, int slot) {
+        SimpleInventory inventory = new SimpleInventory(3, 1);
+        partState(partPos).loadInventoryNamed(PartStateOffsetHandler.INVENTORY_NAME, inventory);
+        return inventory.getItem(slot);
     }
 
     protected static void giveBlankVariables(Player player, int count) {
@@ -341,14 +356,14 @@ public class GameTestsWrenchConfig {
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
-    public void testWrenchConfigAspectsModeOnlyCopiesAspectSettings(GameTestHelper helper) {
+    public void testWrenchConfigAspectModeOnlyCopiesAspects(GameTestHelper helper) {
         PartPos source = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
         PartPos target = placePart(helper, POS_TARGET, PartTypes.REDSTONE_WRITER);
         configurePart(helper, source, Vec3i.ZERO);
         int updateInterval = ((IPartType) partType(target)).getUpdateInterval(partState(target));
 
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
-        ItemStack wrench = createWrench(ItemWrench.Mode.CONFIG_ASPECTS);
+        ItemStack wrench = createWrench(ItemWrench.Mode.CONFIG_ASPECT);
         clickPart(helper, player, wrench, source, true);
         clickPart(helper, player, wrench, target, false);
 
@@ -359,6 +374,67 @@ public class GameTestsWrenchConfig {
                     ValueTypeBoolean.ValueBoolean.of(true), "The aspect setting was not pasted");
             helper.assertValueEqual(((IPartType) partType(target)).getUpdateInterval(partState(target)),
                     updateInterval, "A part setting was pasted");
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testWrenchConfigAspectModeCopiesTheActiveVariable(GameTestHelper helper) {
+        PartPos source = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
+        PartPos target = placePart(helper, POS_TARGET, PartTypes.REDSTONE_WRITER);
+        placeVariableInWriter(helper, source, Aspects.Write.Redstone.BOOLEAN,
+                createVariableForValue(helper.getLevel(), ValueTypes.BOOLEAN, ValueTypeBoolean.ValueBoolean.of(true)));
+
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        ItemStack wrench = createWrench(ItemWrench.Mode.CONFIG_ASPECT);
+        player.setItemInHand(InteractionHand.MAIN_HAND, wrench);
+        giveBlankVariables(player, 1);
+        clickPart(helper, player, wrench, source, true);
+        clickPart(helper, player, wrench, target, false);
+
+        helper.succeedWhen(() -> {
+            helper.assertTrue(getActiveVariable(target) != null, "The active variable was not pasted");
+            helper.assertValueEqual(countBlankVariables(player), 0, "The blank variable card was not consumed");
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testWrenchConfigSettingsModeCopiesOffsetVariables(GameTestHelper helper) {
+        PartPos source = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
+        PartPos target = placePart(helper, POS_TARGET, PartTypes.REDSTONE_WRITER);
+        // The offset variables are part of the settings, not of the aspects
+        setOffsetVariable(source, 0,
+                createVariableForValue(helper.getLevel(), ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(1)));
+
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        ItemStack wrench = createWrench(ItemWrench.Mode.CONFIG_SETTINGS);
+        player.setItemInHand(InteractionHand.MAIN_HAND, wrench);
+        giveBlankVariables(player, 1);
+        clickPart(helper, player, wrench, source, true);
+        clickPart(helper, player, wrench, target, false);
+
+        helper.succeedWhen(() -> {
+            helper.assertTrue(!getOffsetVariable(target, 0).isEmpty(), "The offset variable was not pasted");
+            helper.assertValueEqual(countBlankVariables(player), 0, "The blank variable card was not consumed");
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testWrenchConfigAspectModeSkipsOffsetVariables(GameTestHelper helper) {
+        PartPos source = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
+        PartPos target = placePart(helper, POS_TARGET, PartTypes.REDSTONE_WRITER);
+        setOffsetVariable(source, 0,
+                createVariableForValue(helper.getLevel(), ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(1)));
+
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        ItemStack wrench = createWrench(ItemWrench.Mode.CONFIG_ASPECT);
+        player.setItemInHand(InteractionHand.MAIN_HAND, wrench);
+        giveBlankVariables(player, 1);
+        clickPart(helper, player, wrench, source, true);
+        clickPart(helper, player, wrench, target, false);
+
+        helper.succeedWhen(() -> {
+            helper.assertTrue(getOffsetVariable(target, 0).isEmpty(), "The offset variable was pasted");
+            helper.assertValueEqual(countBlankVariables(player), 1, "A blank variable card was consumed");
         });
     }
 

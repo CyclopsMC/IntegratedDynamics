@@ -30,7 +30,7 @@ import java.util.Set;
  * @param sourcePartType The unique name of the part type this snapshot was taken from.
  * @param partSettings The non-default general part settings.
  * @param aspectProperties The serialized non-default aspect properties, by aspect unique name.
- * @param variableCards All variable cards.
+ * @param variableCards All variables, of every section.
  * @author rubensworks
  */
 public record PartConfigSnapshot(int version,
@@ -80,10 +80,21 @@ public record PartConfigSnapshot(int version,
             .apply(builder, PartConfigSnapshot::new));
 
     /**
-     * @return The number of blank Variable Cards that pasting this snapshot needs at most.
+     * @param sections The sections that will be pasted.
+     * @return The variables that this snapshot holds for the given sections.
      */
-    public int getRequiredBlankVariables() {
-        return variableCards().size();
+    public List<VariableCard> getVariableCards(Set<PartConfigSection> sections) {
+        return variableCards().stream()
+                .filter(card -> sections.contains(PartConfigSection.forInventoryName(card.inventoryName())))
+                .toList();
+    }
+
+    /**
+     * @param sections The sections that will be pasted.
+     * @return The number of blank Variable Cards that pasting those sections needs at most.
+     */
+    public int getRequiredBlankVariables(Set<PartConfigSection> sections) {
+        return getVariableCards(sections).size();
     }
 
     /**
@@ -91,10 +102,12 @@ public record PartConfigSnapshot(int version,
      * @return If this snapshot holds anything for the given section.
      */
     public boolean hasSection(PartConfigSection section) {
+        if (!getVariableCards(Set.of(section)).isEmpty()) {
+            return true;
+        }
         return switch (section) {
             case PART_SETTINGS -> partSettings().isPresent();
-            case ASPECT_PROPERTIES -> !aspectProperties().isEmpty();
-            case VARIABLE_CARDS -> !variableCards().isEmpty();
+            case ASPECT -> !aspectProperties().isEmpty();
         };
     }
 

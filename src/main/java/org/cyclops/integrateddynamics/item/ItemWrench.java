@@ -102,7 +102,7 @@ public class ItemWrench extends Item {
                         return InteractionResult.FAIL;
                     }
                 }
-                case CONFIG, CONFIG_SETTINGS, CONFIG_ASPECTS, CONFIG_VARIABLES -> {
+                case CONFIG, CONFIG_SETTINGS, CONFIG_ASPECT -> {
                     // Let the click through to the part, so that its configuration can be copied
                     return InteractionResult.PASS;
                 }
@@ -183,9 +183,10 @@ public class ItemWrench extends Item {
                         sections.stream()
                                 .map(section -> Component.translatable(section.getTranslationKey()).getString())
                                 .collect(Collectors.joining(", "))).withStyle(ChatFormatting.GRAY));
-                if (sections.contains(PartConfigSection.VARIABLE_CARDS) && !snapshot.variableCards().isEmpty()) {
+                int requiredBlanks = snapshot.getRequiredBlankVariables(sections);
+                if (requiredBlanks > 0) {
                     list.add(Component.translatable("item.integrateddynamics.wrench.mode.config.requires",
-                            snapshot.variableCards().size()).withStyle(ChatFormatting.GOLD));
+                            requiredBlanks).withStyle(ChatFormatting.GOLD));
                 }
             });
         }
@@ -208,7 +209,7 @@ public class ItemWrench extends Item {
                 }
                 return InteractionResult.SUCCESS;
             }
-            case CONFIG, CONFIG_SETTINGS, CONFIG_ASPECTS, CONFIG_VARIABLES -> {
+            case CONFIG, CONFIG_SETTINGS, CONFIG_ASPECT -> {
                 pastePartConfig(partType, partState, itemStack, player, center);
                 return InteractionResult.SUCCESS;
             }
@@ -319,10 +320,8 @@ public class ItemWrench extends Item {
                 PartConfigSection.ALL),
         CONFIG_SETTINGS("integrateddynamics:config_settings", "item.integrateddynamics.wrench.mode.config_settings",
                 Sets.immutableEnumSet(PartConfigSection.PART_SETTINGS)),
-        CONFIG_ASPECTS("integrateddynamics:config_aspects", "item.integrateddynamics.wrench.mode.config_aspects",
-                Sets.immutableEnumSet(PartConfigSection.ASPECT_PROPERTIES)),
-        CONFIG_VARIABLES("integrateddynamics:config_variables", "item.integrateddynamics.wrench.mode.config_variables",
-                Sets.immutableEnumSet(PartConfigSection.VARIABLE_CARDS));
+        CONFIG_ASPECT("integrateddynamics:config_aspect", "item.integrateddynamics.wrench.mode.config_aspect",
+                Sets.immutableEnumSet(PartConfigSection.ASPECT));
 
         public static final StringRepresentable.EnumCodec<Mode> CODEC = net.minecraft.util.StringRepresentable.fromEnum(Mode::values);
         public static final StreamCodec<ByteBuf, Mode> STREAM_CODEC = ByteBufCodecs.idMapper(INT_MODES::get, Mode::ordinal);

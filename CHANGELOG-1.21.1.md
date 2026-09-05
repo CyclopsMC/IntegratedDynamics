@@ -7,7 +7,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 * Allow part configurations to be copied and pasted with the Wrench, Closes #859
-  * The Wrench gets modes to copy a whole part configuration, or just its settings, aspect settings or variable cards
+  * The Wrench gets a Copy All, Copy Settings and Copy Aspect mode
   * The active Wrench mode is shown on the Wrench item
 * Allow aspect settings to be determined by variables (#1707), Closes CyclopsMC/IntegratedTunnels#278
 * Show modified aspect property values in tooltip (#1706), Closes #1704
