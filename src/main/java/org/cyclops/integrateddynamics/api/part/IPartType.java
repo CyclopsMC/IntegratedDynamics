@@ -29,10 +29,15 @@ import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetworkEventListener;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetworkElement;
+import org.cyclops.integrateddynamics.core.helper.PartConfigHelpers;
+import org.cyclops.integrateddynamics.core.part.PartConfigApplyResult;
+import org.cyclops.integrateddynamics.core.part.PartConfigSection;
+import org.cyclops.integrateddynamics.core.part.PartConfigSnapshot;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * A type of part that can be inserted into a {@link IPartContainer}.
@@ -203,6 +208,42 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     // TODO: make non-default in nextmajor
     public default void onAspectVariablesChanged(PartTarget target, S state) {
         state.markAspectVariablesChanged();
+    }
+
+    /**
+     * Take a snapshot of the configuration of this part, so that it can be pasted onto another part.
+     * @param valueDeseralizationContext A value deserialization context.
+     * @param state The state.
+     * @param sections The configuration sections to include.
+     * @return The snapshot.
+     */
+    // TODO: make non-default in nextmajor
+    public default PartConfigSnapshot snapshotConfig(ValueDeseralizationContext valueDeseralizationContext, S state,
+                                                     Set<PartConfigSection> sections) {
+        return PartConfigHelpers.snapshot(valueDeseralizationContext, this, state, sections);
+    }
+
+    /**
+     * Paste a configuration snapshot onto this part.
+     *
+     * This is only called server-side.
+     *
+     * @param valueDeseralizationContext A value deserialization context.
+     * @param network The network of this part, or null if it is not in a network.
+     * @param partNetwork The part network of this part, or null if it is not in a network.
+     * @param target The target block.
+     * @param state The state.
+     * @param snapshot The snapshot to paste.
+     * @param sections The configuration sections to paste.
+     * @param player The player that is pasting, whose inventory is used for the variable cards.
+     * @return The outcome.
+     */
+    // TODO: make non-default in nextmajor
+    public default PartConfigApplyResult applyConfig(ValueDeseralizationContext valueDeseralizationContext,
+                                                     @Nullable INetwork network, @Nullable IPartNetwork partNetwork,
+                                                     PartTarget target, S state, PartConfigSnapshot snapshot,
+                                                     Set<PartConfigSection> sections, Player player) {
+        return PartConfigHelpers.apply(valueDeseralizationContext, network, target, this, state, snapshot, sections, player);
     }
 
     /**
