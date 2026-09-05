@@ -10,17 +10,24 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.cyclops.cyclopscore.client.particle.ParticleBlurData;
+import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.gametest.GameTest;
+import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.api.path.ISidedPathElement;
+import org.cyclops.integrateddynamics.capability.path.PathElementPosition;
+import org.cyclops.integrateddynamics.capability.path.SidedPathElement;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
+import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
 
 import java.util.Optional;
 
@@ -374,6 +381,39 @@ public class GameTestsNetwork {
             );
 
             helper.assertItemEntityNotPresent(RegistryEntries.ITEM_CABLE.get());
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testNetworkTwoRemovedWithoutBlockEntity(GameTestHelper helper) {
+        // Place two networks directly next to each other
+        helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
+        helper.setBlock(POS.offset(1, 0, 0), RegistryEntries.BLOCK_CABLE.value());
+        helper.setBlock(POS.offset(2, 0, 0), RegistryEntries.BLOCK_CABLE.value());
+        helper.setBlock(POS.offset(3, 0, 0), RegistryEntries.BLOCK_CABLE.value());
+
+        // And remove one cable the way contraption mods such as Create do:
+        // the block entity is removed before the block is set to air.
+        BlockPos removedPos = helper.absolutePos(POS.offset(1, 0, 0));
+        helper.getLevel().removeBlockEntity(removedPos);
+        helper.getLevel().setBlock(removedPos, Blocks.AIR.defaultBlockState(),
+                Block.UPDATE_MOVE_BY_PISTON | Block.UPDATE_SUPPRESS_DROPS | Block.UPDATE_KNOWN_SHAPE
+                        | Block.UPDATE_CLIENTS | Block.UPDATE_IMMEDIATE);
+
+        helper.succeedWhen(() -> {
+            INetwork network1 = NetworkHelpers.getNetworkChecked(helper.getLevel(), helper.absolutePos(POS), null);
+            INetwork network3 = NetworkHelpers.getNetworkChecked(helper.getLevel(), helper.absolutePos(POS.offset(2, 0, 0)), null);
+            INetwork network4 = NetworkHelpers.getNetworkChecked(helper.getLevel(), helper.absolutePos(POS.offset(3, 0, 0)), null);
+            helper.assertTrue(network1 != network3, "Networks of disconnected cables are equal");
+            helper.assertTrue(network3 == network4, "Networks of connected cables are not equal");
+
+            // The removed position must not be left behind in any network
+            ISidedPathElement removedPathElement = SidedPathElement
+                    .of(new PathElementPosition(DimPos.of(helper.getLevel(), removedPos)), null);
+            for (INetwork network : NetworkWorldStorage.Access.getInstance(IntegratedDynamics._instance).get().getNetworks()) {
+                helper.assertFalse(network.containsSidedPathElement(removedPathElement),
+                        "Removed cable is still present in a network");
+            }
         });
     }
 

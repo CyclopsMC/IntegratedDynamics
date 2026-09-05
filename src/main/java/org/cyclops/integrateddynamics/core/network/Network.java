@@ -441,20 +441,21 @@ public class Network implements INetwork {
             if (level != null) {
                 networkElementProvider = level.getCapability(Capabilities.NetworkElementProvider.BLOCK, position.getBlockPos(), blockState, blockEntity, side);
             }
-            if (networkElementProvider != null) {
-                Collection<INetworkElement> networkElements = networkElementProvider.
-                        createNetworkElements(position.getLevel(true), position.getBlockPos());
-                for (INetworkElement networkElement : networkElements) {
-                    if(!removeNetworkElementPre(networkElement)) {
-                        return false;
-                    }
+            // The provider is unavailable if the block entity at the position is already gone.
+            // In that case, fall back to the elements this network derived for the position earlier.
+            Collection<INetworkElement> networkElements = networkElementProvider != null
+                    ? networkElementProvider.createNetworkElements(level, position.getBlockPos())
+                    : getElementsAtPosition(position);
+            for (INetworkElement networkElement : networkElements) {
+                if(!removeNetworkElementPre(networkElement)) {
+                    return false;
                 }
-                for (INetworkElement networkElement : networkElements) {
-                    removeNetworkElementPost(networkElement, blockState, blockEntity);
-                }
-                onNetworkChanged();
-                return true;
             }
+            for (INetworkElement networkElement : networkElements) {
+                removeNetworkElementPost(networkElement, blockState, blockEntity);
+            }
+            onNetworkChanged();
+            return true;
         } else {
             Thread.dumpStack();
             IntegratedDynamics.clog(org.apache.logging.log4j.Level.WARN, "Tried to remove a path element from a network it was not present in.");
@@ -462,6 +463,21 @@ public class Network implements INetwork {
             System.out.println("Tried removing element: " + pathElement);
         }
         return false;
+    }
+
+    /**
+     * @param position A position.
+     * @return The elements of this network that live at the given position.
+     */
+    protected Collection<INetworkElement> getElementsAtPosition(DimPos position) {
+        List<INetworkElement> elementsAtPosition = Lists.newArrayList();
+        for (INetworkElement element : this.elements) {
+            if (element instanceof IPositionedNetworkElement positionedElement
+                    && position.equals(positionedElement.getPosition())) {
+                elementsAtPosition.add(element);
+            }
+        }
+        return elementsAtPosition;
     }
 
     @Override

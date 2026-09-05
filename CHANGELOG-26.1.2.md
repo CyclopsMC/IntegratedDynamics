@@ -1,8 +1,37 @@
 # Changelog for Minecraft 26.1.2
 All notable changes to this project will be documented in this file.
 
+<a name="26.1.2-1.34.1"></a>
+## [26.1.2-1.34.1](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.34.0...26.1.2-1.34.1) - 2026-09-05 13:42:45
+
+
+### Added
+* Allow aspect settings to be determined by variables (#1707)
+* Return to part gui when pressing escape in part sub-guis (#1713), Closes CyclopsMC/IntegratedTunnels#278
+* Show modified aspect property values in tooltip (#1706), Closes #1704
+* Add translations through Crowdin
+
+### Changed
+* Make tooltip text color on erroring aspect variables red
+* Improve overall performance
+  * Skip part path elements for cable sides without a part
+  * Resolve the priorities compared in compareTo with a single container lookup
+  * Compare part network elements of the same part type by identity
+  * Resolve the part priority, channel and id with a single container lookup
+  * Resolve the part state only once per part network element operation
+  * Only re-initialize distinct networks when a cable is removed
+  * Classify the ingredient index positions map, Closes #1412
+  * Track the non-empty positions of the ingredient index
+  * Iterate ingredient index positions lazily
+  * Resolve exact ingredient position lookups with a direct lookup
+
+### Fixed
+* Fix cables staying behind in their network when moved by contraption mods (#1717), Closes #1716
+* Fix writer part aspects not activating during network initialization (#1710)
+* Fix materialization of piped operators (#1705), Closes #1703
+
 <a name="26.1.2-1.34.0"></a>
-## [26.1.2-1.34.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.33.9...26.1.2-1.34.0) - 2026-08-24 19:38:51
+## [26.1.2-1.34.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.33.9...26.1.2-1.34.0) - 2026-08-24 19:38:51 +0200
 
 
 ### Added

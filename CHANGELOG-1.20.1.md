@@ -1,8 +1,18 @@
 # Changelog for Minecraft 1.20.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.20.1-1.31.1"></a>
+## [1.20.1-1.31.1](/compare/1.20.1-1.31.0...1.20.1-1.31.1) - 2026-09-05 13:18:11
+
+
+### Changed
+* Show modified aspect property values in tooltip (#1706), Closes #1704
+
+### Fixed
+* Fix materialization of piped operators (#1705), Closes #1703
+
 <a name="1.20.1-1.31.0"></a>
-## [1.20.1-1.31.0](/compare/1.20.1-1.30.8...1.20.1-1.31.0) - 2026-08-24 19:27:16
+## [1.20.1-1.31.0](/compare/1.20.1-1.30.8...1.20.1-1.31.0) - 2026-08-24 19:27:16 +0200
 
 
 ### Added
