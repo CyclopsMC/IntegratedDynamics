@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.helper;
 
+import com.google.common.collect.Lists;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
@@ -7,10 +8,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.redstone.Orientation;
 import net.neoforged.neoforge.common.extensions.ILevelExtension;
 import org.cyclops.commoncapabilities.api.ingredient.IngredientComponent;
+import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.GeneralConfig;
@@ -19,6 +22,7 @@ import org.cyclops.integrateddynamics.api.block.cable.ICableFakeable;
 import org.cyclops.integrateddynamics.api.network.*;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.path.IPathElement;
+import org.cyclops.integrateddynamics.capability.path.PathElementPosition;
 import org.cyclops.integrateddynamics.capability.path.SidedPathElement;
 import org.cyclops.integrateddynamics.core.TickHandler;
 import org.cyclops.integrateddynamics.core.network.Network;
@@ -289,6 +293,45 @@ public class NetworkHelpers {
         for (INetworkElement networkElement : networkElementProvider.createNetworkElements(world, pos)) {
             networkElement.invalidate(network);
         }
+    }
+
+    /**
+     * Remove the path element at the given position from every network that still holds it.
+     *
+     * This is a fallback for when the network can not be reached anymore via the
+     * {@link INetworkCarrier} capability at the position, which happens when the block entity
+     * was removed before the block itself was.
+     * Contraption mods such as Create do this when they pick up a block,
+     * in which case the position would otherwise stay behind in its network forever.
+     *
+     * @param world The world.
+     * @param pos The position.
+     * @param blockState The block state.
+     * @param blockEntity The block entity, which may be null if it was already removed.
+     * @return If the position was removed from at least one network.
+     */
+    public static boolean removeStalePathElement(Level world, BlockPos pos, BlockState blockState, @Nullable BlockEntity blockEntity) {
+        IPathElement pathElement = new PathElementPosition(DimPos.of(world, pos));
+        SidedPathElement sidedPathElement = SidedPathElement.of(pathElement, null);
+
+        // The network we are after is the one the neighbouring cables are still in, so try those first.
+        // Contraption mods move a structure block by block, which makes this by far the common case,
+        // and it keeps us from walking every stored network for each moved block.
+        for (Direction side : Direction.values()) {
+            INetwork network = getNetwork(world, pos.relative(side), side.getOpposite()).orElse(null);
+            if (network != null && network.containsSidedPathElement(sidedPathElement)) {
+                return network.removePathElement(pathElement, null, blockState, blockEntity);
+            }
+        }
+
+        // No neighbour could point us at it, so fall back to looking through all stored networks.
+        boolean removed = false;
+        for (INetwork network : Lists.newArrayList(NetworkWorldStorage.Access.getInstance(IntegratedDynamics._instance).get().getNetworks())) {
+            if (network.containsSidedPathElement(sidedPathElement)) {
+                removed |= network.removePathElement(pathElement, null, blockState, blockEntity);
+            }
+        }
+        return removed;
     }
 
     /**

@@ -395,6 +395,12 @@ public class CableHelpers {
                         .orElseThrow(() -> new IllegalStateException("Could not find a valid path element capability"));
                 return onCableRemovingNetwork(blockState, blockEntity, networkCarrier, pathElement);
             }
+
+            // The network can not be reached via the carrier if the block entity was removed
+            // before the block itself was, which is what contraption mods such as Create do
+            // when they pick up a block. Look the position up in the stored networks instead,
+            // as it would otherwise stay behind in its network forever.
+            return NetworkHelpers.removeStalePathElement(world, pos, blockState, blockEntity);
         }
         return true;
     }

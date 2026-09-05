@@ -390,8 +390,15 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
 
     @Override
     public void setRemoved() {
-        // Only required for cases where cables are moved by commands or cleared after game tests.
+        // Only required for cases where cables are moved by commands or cleared after game tests,
+        // or where the block entity is removed before the block itself,
+        // which is what contraption mods such as Create do when they pick up a block.
         if (getNetworkCarrier().getNetwork() != null) {
+            // Since onCableRemoving was not called for this position, the cables that are still
+            // connected to it were never remembered. Do so here, so that onCableRemoved can
+            // reinitialize their networks once the block is gone.
+            CableHelpers.overrideCableRemovingConnections(getLevel(), getBlockPos(),
+                    CableHelpers.getExternallyConnectedCables(getLevel(), getBlockPos()));
             CableHelpers.onCableRemovingNetwork(getBlockState(), this, getNetworkCarrier(), new PathElementTileMultipartTicking(this, this.getCable()));
         }
 
