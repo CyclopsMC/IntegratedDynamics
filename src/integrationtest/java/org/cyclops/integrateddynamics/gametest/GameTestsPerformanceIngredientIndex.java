@@ -10,6 +10,9 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ItemContainerContents;
+import net.minecraft.world.item.component.ItemLore;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import org.apache.logging.log4j.Level;
@@ -26,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Function;
 import java.util.function.IntUnaryOperator;
 
@@ -114,6 +118,118 @@ public class GameTestsPerformanceIngredientIndex {
         });
     }
 
+    // The benchmarks below repeat the two hottest operations over collision-heavy shapes.
+    // They are the cases that a component-blind ItemStack hash makes quadratic.
+
+    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = 6000, batch = "performance_index")
+    public void testPerformanceIndexLookupExactSingleItem(GameTestHelper helper) {
+        benchmark(helper, "index_lookup_exact", OPERATIONS, Shape.SINGLE_ITEM, fixture ->
+                i -> fixture.countPositions(fixture.instance(i), IngredientComponent.ITEMSTACK.getMatcher()
+                        .getExactMatchNoQuantityCondition()));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = 6000, batch = "performance_index")
+    public void testPerformanceIndexModificationSingleItem(GameTestHelper helper) {
+        benchmark(helper, "index_modification", OPERATIONS, Shape.SINGLE_ITEM, fixture -> i -> {
+            ItemStack instance = fixture.instance(i);
+            PrioritizedPartPos pos = fixture.positionOf(i);
+            fixture.getIndex().removePosition(instance, pos);
+            fixture.getIndex().addPosition(instance, pos);
+            return 1;
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = 6000, batch = "performance_index")
+    public void testPerformanceIndexLookupExactFewItems(GameTestHelper helper) {
+        benchmark(helper, "index_lookup_exact", OPERATIONS, Shape.FEW_ITEMS, fixture ->
+                i -> fixture.countPositions(fixture.instance(i), IngredientComponent.ITEMSTACK.getMatcher()
+                        .getExactMatchNoQuantityCondition()));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = 6000, batch = "performance_index")
+    public void testPerformanceIndexModificationFewItems(GameTestHelper helper) {
+        benchmark(helper, "index_modification", OPERATIONS, Shape.FEW_ITEMS, fixture -> i -> {
+            ItemStack instance = fixture.instance(i);
+            PrioritizedPartPos pos = fixture.positionOf(i);
+            fixture.getIndex().removePosition(instance, pos);
+            fixture.getIndex().addPosition(instance, pos);
+            return 1;
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = 6000, batch = "performance_index")
+    public void testPerformanceIndexLookupExactHeavyComponents(GameTestHelper helper) {
+        // Guards the opposite risk: a hash that includes components costs more per call
+        benchmark(helper, "index_lookup_exact", OPERATIONS, Shape.HEAVY_COMPONENTS, fixture ->
+                i -> fixture.countPositions(fixture.instance(i), IngredientComponent.ITEMSTACK.getMatcher()
+                        .getExactMatchNoQuantityCondition()));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = 6000, batch = "performance_index")
+    public void testPerformanceIndexModificationHeavyComponents(GameTestHelper helper) {
+        benchmark(helper, "index_modification", OPERATIONS, Shape.HEAVY_COMPONENTS, fixture -> i -> {
+            ItemStack instance = fixture.instance(i);
+            PrioritizedPartPos pos = fixture.positionOf(i);
+            fixture.getIndex().removePosition(instance, pos);
+            fixture.getIndex().addPosition(instance, pos);
+            return 1;
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = 6000, batch = "performance_index")
+    public void testPerformanceIndexLookupExactPlain(GameTestHelper helper) {
+        benchmark(helper, "index_lookup_exact", OPERATIONS, Shape.PLAIN, fixture ->
+                i -> fixture.countPositions(fixture.instance(i), IngredientComponent.ITEMSTACK.getMatcher()
+                        .getExactMatchNoQuantityCondition()));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = 6000, batch = "performance_index")
+    public void testPerformanceIndexLookupItemPlain(GameTestHelper helper) {
+        benchmark(helper, "index_lookup_item", OPERATIONS, Shape.PLAIN, fixture ->
+                i -> fixture.countPositions(fixture.instance(i), ItemMatch.ITEM));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = 6000, batch = "performance_index")
+    public void testPerformanceIndexModificationPlain(GameTestHelper helper) {
+        benchmark(helper, "index_modification", OPERATIONS, Shape.PLAIN, fixture -> i -> {
+            ItemStack instance = fixture.instance(i);
+            PrioritizedPartPos pos = fixture.positionOf(i);
+            fixture.getIndex().removePosition(instance, pos);
+            fixture.getIndex().addPosition(instance, pos);
+            return 1;
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = 6000, batch = "performance_index")
+    public void testPerformanceIndexLookupExactMixed(GameTestHelper helper) {
+        benchmark(helper, "index_lookup_exact", OPERATIONS, Shape.MIXED, fixture ->
+                i -> fixture.countPositions(fixture.instance(i), IngredientComponent.ITEMSTACK.getMatcher()
+                        .getExactMatchNoQuantityCondition()));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = 6000, batch = "performance_index")
+    public void testPerformanceIndexLookupItemMixed(GameTestHelper helper) {
+        benchmark(helper, "index_lookup_item", OPERATIONS, Shape.MIXED, fixture ->
+                i -> fixture.countPositions(fixture.instance(i), ItemMatch.ITEM));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = 6000, batch = "performance_index")
+    public void testPerformanceIndexModificationMixed(GameTestHelper helper) {
+        benchmark(helper, "index_modification", OPERATIONS, Shape.MIXED, fixture -> i -> {
+            ItemStack instance = fixture.instance(i);
+            PrioritizedPartPos pos = fixture.positionOf(i);
+            fixture.getIndex().removePosition(instance, pos);
+            fixture.getIndex().addPosition(instance, pos);
+            return 1;
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = 6000, batch = "performance_index")
+    public void testPerformanceIndexLookupItemSingleItem(GameTestHelper helper) {
+        benchmark(helper, "index_lookup_item", OPERATIONS, Shape.SINGLE_ITEM, fixture ->
+                i -> fixture.countPositions(fixture.instance(i), ItemMatch.ITEM));
+    }
+
     protected static int count(Iterator<?> iterator) {
         int count = 0;
         while (iterator.hasNext()) {
@@ -134,6 +250,12 @@ public class GameTestsPerformanceIngredientIndex {
      */
     protected static void benchmark(GameTestHelper helper, String name, int operations,
                                     Function<Fixture, IntUnaryOperator> operationFactory) {
+        benchmark(helper, name, operations, Shape.SPREAD, operationFactory);
+    }
+
+    protected static void benchmark(GameTestHelper helper, String name, int operations, Shape shape,
+                                    Function<Fixture, IntUnaryOperator> operationFactory) {
+        name = name + shape.benchmarkSuffix();
         if (!GameTestsPerformance.isBenchmarkingEnabled()) {
             IntegratedDynamics.clog(Level.INFO, "Performance benchmarking disabled (PERFORMANCE_BENCHMARK_ENABLED not set)");
             helper.succeed();
@@ -144,7 +266,7 @@ public class GameTestsPerformanceIngredientIndex {
 
         double[] operationTimes = new double[ROUNDS];
         for (int round = 0; round < ROUNDS; round++) {
-            IntUnaryOperator operation = operationFactory.apply(new Fixture(helper));
+            IntUnaryOperator operation = operationFactory.apply(new Fixture(helper, shape));
 
             // Accumulate all operation results, so that they can not be optimized away
             long checksum = 0;
@@ -177,6 +299,60 @@ public class GameTestsPerformanceIngredientIndex {
     }
 
     /**
+     * How the indexed instances are spread over item types.
+     *
+     * An ItemStack hash that ignores data components puts every stack of the same item in one
+     * bucket, so the shape decides how long the collision chains are. SPREAD is the mildest case
+     * and SINGLE_ITEM the worst.
+     */
+    public enum Shape {
+        /**
+         * Spread over every registered item, with component variants to reach the target size.
+         */
+        SPREAD,
+        /**
+         * Every instance on one item, distinct only by data components.
+         * This is what a storage full of enchanted books or damaged tools looks like.
+         */
+        SINGLE_ITEM,
+        /**
+         * Spread over a few item types only, distinct by data components within each.
+         */
+        FEW_ITEMS,
+        /**
+         * Spread as SPREAD, but each stack carries a large component payload,
+         * so that the cost of hashing the components themselves is visible.
+         */
+        HEAVY_COMPONENTS,
+        /**
+         * Every instance is a plain stack carrying no data components at all, made distinct by its
+         * item and its count. This is what a large modpack's storage mostly looks like: many unique
+         * items, few component variants.
+         */
+        PLAIN,
+        /**
+         * {@link #MIXED_COMPONENT_FRACTION} of the instances carry a component, the rest are plain.
+         * A more realistic modpack storage than either PLAIN or SPREAD: bulk material dominates,
+         * with a tail of enchanted, damaged or named items.
+         */
+        MIXED;
+
+        public String benchmarkSuffix() {
+            return this == SPREAD ? "" : "_" + name().toLowerCase(Locale.ROOT);
+        }
+    }
+
+    /**
+     * The number of distinct item types used by {@link Shape#FEW_ITEMS}.
+     */
+    public static final int FEW_ITEMS_COUNT = 50;
+
+    /**
+     * One in this many instances carries a component under {@link Shape#MIXED}.
+     */
+    public static final int MIXED_COMPONENT_FRACTION = 10;
+
+    /**
      * An index that is filled with a large number of instances, spread over a large number of positions.
      */
     protected static class Fixture {
@@ -186,6 +362,10 @@ public class GameTestsPerformanceIngredientIndex {
         private final List<PrioritizedPartPos> positions;
 
         public Fixture(GameTestHelper helper) {
+            this(helper, Shape.SPREAD);
+        }
+
+        public Fixture(GameTestHelper helper, Shape shape) {
             this.index = new IngredientPositionsIndex<>(IngredientComponent.ITEMSTACK);
             this.instances = new ArrayList<>(INSTANCES);
             this.positions = new ArrayList<>(POSITIONS);
@@ -196,16 +376,62 @@ public class GameTestsPerformanceIngredientIndex {
                 this.positions.add(PrioritizedPartPos.of(partPos, i % 4));
             }
 
-            // Create instances based on all registered items,
-            // with additional data component variants to reach the target size.
-            List<Item> items = BuiltInRegistries.ITEM.stream().toList();
+            // Air has to be excluded: a stack of it is empty, and an empty stack carries no
+            // components, so a fixture built on it would index nothing.
+            List<Item> items = BuiltInRegistries.ITEM.stream()
+                    .filter(item -> item != Items.AIR)
+                    .toList();
             for (int i = 0; i < INSTANCES; i++) {
-                ItemStack instance = new ItemStack(items.get(i % items.size()));
-                if (i >= items.size()) {
-                    instance.set(DataComponents.CUSTOM_NAME, Component.literal("Variant " + (i / items.size())));
-                }
+                ItemStack instance = createInstance(shape, items, i);
                 this.instances.add(instance);
                 this.index.addPosition(instance, positionOf(i));
+            }
+        }
+
+        private static ItemStack createInstance(Shape shape, List<Item> items, int i) {
+            switch (shape) {
+                case SINGLE_ITEM -> {
+                    ItemStack instance = new ItemStack(items.get(0));
+                    instance.set(DataComponents.CUSTOM_NAME, Component.literal("Variant " + i));
+                    return instance;
+                }
+                case FEW_ITEMS -> {
+                    ItemStack instance = new ItemStack(items.get(i % FEW_ITEMS_COUNT));
+                    instance.set(DataComponents.CUSTOM_NAME, Component.literal("Variant " + (i / FEW_ITEMS_COUNT)));
+                    return instance;
+                }
+                case HEAVY_COMPONENTS -> {
+                    ItemStack instance = new ItemStack(items.get(i % items.size()));
+                    instance.set(DataComponents.CUSTOM_NAME, Component.literal("Variant " + (i / items.size())));
+                    instance.set(DataComponents.LORE, new ItemLore(List.of(
+                            Component.literal("Payload line one for entry " + i),
+                            Component.literal("Payload line two for entry " + i),
+                            Component.literal("Payload line three for entry " + i))));
+                    List<ItemStack> contained = new ArrayList<>(4);
+                    for (int c = 0; c < 4; c++) {
+                        contained.add(new ItemStack(items.get((i + c) % items.size()), 1 + c));
+                    }
+                    instance.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(contained));
+                    return instance;
+                }
+                case PLAIN -> {
+                    // Distinct by item and count only, so that no stack carries a component patch
+                    return new ItemStack(items.get(i % items.size()), 1 + i / items.size());
+                }
+                case MIXED -> {
+                    ItemStack instance = new ItemStack(items.get(i % items.size()), 1 + i / items.size());
+                    if (i % MIXED_COMPONENT_FRACTION == 0) {
+                        instance.set(DataComponents.CUSTOM_NAME, Component.literal("Variant " + i));
+                    }
+                    return instance;
+                }
+                default -> {
+                    ItemStack instance = new ItemStack(items.get(i % items.size()));
+                    if (i >= items.size()) {
+                        instance.set(DataComponents.CUSTOM_NAME, Component.literal("Variant " + (i / items.size())));
+                    }
+                    return instance;
+                }
             }
         }
 
