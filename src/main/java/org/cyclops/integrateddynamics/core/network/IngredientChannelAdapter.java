@@ -135,12 +135,16 @@ public abstract class IngredientChannelAdapter<T, M> implements INetworkIngredie
 
     @Override
     public T insert(@Nonnull T ingredient, TransactionContext transaction) {
-        // First run the ingredient instance through the pre-consumers.
-        for (IIngredientChannelInsertPreConsumer<T> insertPreConsumer : network.getInsertPreConsumers()) {
-            ingredient = insertPreConsumer.insert(this.channel, ingredient, transaction);
-        }
+        return insert(ingredient, ingredient, transaction);
+    }
 
+    @Override
+    public T insert(@Nonnull T ingredient, @Nonnull T unclaimed, TransactionContext transaction) {
         IIngredientMatcher<T, M> matcher = getComponent().getMatcher();
+
+        // First run the ingredient instance through the pre-consumers.
+        ingredient = IIngredientChannelInsertPreConsumer.applyAll(network.getInsertPreConsumers(), matcher,
+                this.channel, ingredient, unclaimed, transaction);
 
         // Quickly return if the to-be-inserted ingredient was already empty
         if (matcher.isEmpty(ingredient)) {
