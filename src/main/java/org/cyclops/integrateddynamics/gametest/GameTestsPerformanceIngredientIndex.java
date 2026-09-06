@@ -172,6 +172,36 @@ public class GameTestsPerformanceIngredientIndex {
         });
     }
 
+    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = 6000, environment = Reference.MOD_ID + ":performance_index")
+    public void testPerformanceIndexLookupExactPlain(GameTestHelper helper) {
+        benchmark(helper, "index_lookup_exact", OPERATIONS, Shape.PLAIN, fixture ->
+                i -> fixture.countPositions(fixture.instance(i), IngredientComponent.ITEMSTACK.getMatcher()
+                        .getExactMatchNoQuantityCondition()));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = 6000, environment = Reference.MOD_ID + ":performance_index")
+    public void testPerformanceIndexLookupItemPlain(GameTestHelper helper) {
+        benchmark(helper, "index_lookup_item", OPERATIONS, Shape.PLAIN, fixture ->
+                i -> fixture.countPositions(fixture.instance(i), ItemMatch.ITEM));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = 6000, environment = Reference.MOD_ID + ":performance_index")
+    public void testPerformanceIndexModificationPlain(GameTestHelper helper) {
+        benchmark(helper, "index_modification", OPERATIONS, Shape.PLAIN, fixture -> i -> {
+            ItemStack instance = fixture.instance(i);
+            PrioritizedPartPos pos = fixture.positionOf(i);
+            fixture.getIndex().removePosition(instance, pos);
+            fixture.getIndex().addPosition(instance, pos);
+            return 1;
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = 6000, environment = Reference.MOD_ID + ":performance_index")
+    public void testPerformanceIndexLookupItemSingleItem(GameTestHelper helper) {
+        benchmark(helper, "index_lookup_item", OPERATIONS, Shape.SINGLE_ITEM, fixture ->
+                i -> fixture.countPositions(fixture.instance(i), ItemMatch.ITEM));
+    }
+
     protected static int count(Iterator<?> iterator) {
         int count = 0;
         while (iterator.hasNext()) {
@@ -265,7 +295,13 @@ public class GameTestsPerformanceIngredientIndex {
          * Spread as SPREAD, but each stack carries a large component payload,
          * so that the cost of hashing the components themselves is visible.
          */
-        HEAVY_COMPONENTS;
+        HEAVY_COMPONENTS,
+        /**
+         * Every instance is a plain stack carrying no data components at all, made distinct by its
+         * item and its count. This is what a large modpack's storage mostly looks like: many unique
+         * items, few component variants.
+         */
+        PLAIN;
 
         public String benchmarkSuffix() {
             return this == SPREAD ? "" : "_" + name().toLowerCase(Locale.ROOT);
@@ -338,6 +374,10 @@ public class GameTestsPerformanceIngredientIndex {
                     }
                     instance.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(contained));
                     return instance;
+                }
+                case PLAIN -> {
+                    // Distinct by item and count only, so that no stack carries a component patch
+                    return new ItemStack(items.get(i % items.size()), 1 + i / items.size());
                 }
                 default -> {
                     ItemStack instance = new ItemStack(items.get(i % items.size()));
