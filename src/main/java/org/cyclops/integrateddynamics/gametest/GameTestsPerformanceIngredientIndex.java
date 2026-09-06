@@ -197,6 +197,30 @@ public class GameTestsPerformanceIngredientIndex {
     }
 
     @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = 6000, environment = Reference.MOD_ID + ":performance_index")
+    public void testPerformanceIndexLookupExactMixed(GameTestHelper helper) {
+        benchmark(helper, "index_lookup_exact", OPERATIONS, Shape.MIXED, fixture ->
+                i -> fixture.countPositions(fixture.instance(i), IngredientComponent.ITEMSTACK.getMatcher()
+                        .getExactMatchNoQuantityCondition()));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = 6000, environment = Reference.MOD_ID + ":performance_index")
+    public void testPerformanceIndexLookupItemMixed(GameTestHelper helper) {
+        benchmark(helper, "index_lookup_item", OPERATIONS, Shape.MIXED, fixture ->
+                i -> fixture.countPositions(fixture.instance(i), ItemMatch.ITEM));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = 6000, environment = Reference.MOD_ID + ":performance_index")
+    public void testPerformanceIndexModificationMixed(GameTestHelper helper) {
+        benchmark(helper, "index_modification", OPERATIONS, Shape.MIXED, fixture -> i -> {
+            ItemStack instance = fixture.instance(i);
+            PrioritizedPartPos pos = fixture.positionOf(i);
+            fixture.getIndex().removePosition(instance, pos);
+            fixture.getIndex().addPosition(instance, pos);
+            return 1;
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = 6000, environment = Reference.MOD_ID + ":performance_index")
     public void testPerformanceIndexLookupItemSingleItem(GameTestHelper helper) {
         benchmark(helper, "index_lookup_item", OPERATIONS, Shape.SINGLE_ITEM, fixture ->
                 i -> fixture.countPositions(fixture.instance(i), ItemMatch.ITEM));
@@ -301,7 +325,13 @@ public class GameTestsPerformanceIngredientIndex {
          * item and its count. This is what a large modpack's storage mostly looks like: many unique
          * items, few component variants.
          */
-        PLAIN;
+        PLAIN,
+        /**
+         * {@link #MIXED_COMPONENT_FRACTION} of the instances carry a component, the rest are plain.
+         * A more realistic modpack storage than either PLAIN or SPREAD: bulk material dominates,
+         * with a tail of enchanted, damaged or named items.
+         */
+        MIXED;
 
         public String benchmarkSuffix() {
             return this == SPREAD ? "" : "_" + name().toLowerCase(Locale.ROOT);
@@ -312,6 +342,11 @@ public class GameTestsPerformanceIngredientIndex {
      * The number of distinct item types used by {@link Shape#FEW_ITEMS}.
      */
     public static final int FEW_ITEMS_COUNT = 50;
+
+    /**
+     * One in this many instances carries a component under {@link Shape#MIXED}.
+     */
+    public static final int MIXED_COMPONENT_FRACTION = 10;
 
     /**
      * An index that is filled with a large number of instances, spread over a large number of positions.
@@ -378,6 +413,13 @@ public class GameTestsPerformanceIngredientIndex {
                 case PLAIN -> {
                     // Distinct by item and count only, so that no stack carries a component patch
                     return new ItemStack(items.get(i % items.size()), 1 + i / items.size());
+                }
+                case MIXED -> {
+                    ItemStack instance = new ItemStack(items.get(i % items.size()), 1 + i / items.size());
+                    if (i % MIXED_COMPONENT_FRACTION == 0) {
+                        instance.set(DataComponents.CUSTOM_NAME, Component.literal("Variant " + i));
+                    }
+                    return instance;
                 }
                 default -> {
                     ItemStack instance = new ItemStack(items.get(i % items.size()));
