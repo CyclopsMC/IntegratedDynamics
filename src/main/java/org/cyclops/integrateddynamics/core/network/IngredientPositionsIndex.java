@@ -138,11 +138,10 @@ public class IngredientPositionsIndex<T, M> implements IIngredientPositionsIndex
         }
 
         T prototype = getPrototype(instance);
-        ObjectOpenHashSet<PartPos> set = positionsMap.get(prototype);
-        if (set == null) {
-            set = new ObjectOpenHashSet<>();
-            positionsMap.put(prototype, set);
-        }
+        // Computed in one call so the prototype is hashed once rather than once to look it up and
+        // once to store it. Hashing a prototype dominates this method for component-bearing types.
+        ObjectOpenHashSet<PartPos> set = positionsMap.compute(prototype,
+                (key, existing) -> existing == null ? new ObjectOpenHashSet<>() : existing);
 
         if (set.add(pos.getPartPos())) {
             Object2IntOpenHashMap<PartPos> positions = this.prioritizedPositions.get(priority);
@@ -180,8 +179,12 @@ public class IngredientPositionsIndex<T, M> implements IIngredientPositionsIndex
         IIngredientMapMutable<T, M, ObjectOpenHashSet<PartPos>> positionsMap = this.prioritizedPositionsMap.get(priority);
         if (positionsMap != null) {
             T prototype = getPrototype(instance);
-            ObjectOpenHashSet<PartPos> set = positionsMap.get(prototype);
-            if (set != null) {
+            // As in addPosition, one call so the prototype is hashed once rather than once to look
+            // it up and once to drop it. Returning null from the remapping drops the entry.
+            positionsMap.compute(prototype, (key, set) -> {
+                if (set == null) {
+                    return null;
+                }
                 if (set.remove(pos.getPartPos())) {
                     Object2IntOpenHashMap<PartPos> positions = this.prioritizedPositions.get(priority);
                     // addTo returns the value before the addition, so at most one instance is left in this position
@@ -192,12 +195,10 @@ public class IngredientPositionsIndex<T, M> implements IIngredientPositionsIndex
                         }
                     }
                 }
-                if (set.isEmpty()) {
-                    positionsMap.remove(prototype);
-                    if (positionsMap.isEmpty()) {
-                        this.prioritizedPositionsMap.remove(priority);
-                    }
-                }
+                return set.isEmpty() ? null : set;
+            });
+            if (positionsMap.isEmpty()) {
+                this.prioritizedPositionsMap.remove(priority);
             }
         }
     }
