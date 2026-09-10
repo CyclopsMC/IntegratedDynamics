@@ -8,6 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import org.cyclops.cyclopscore.inventory.ItemLocation;
 import org.cyclops.cyclopscore.inventory.container.ScrollingInventoryContainer;
 import org.cyclops.integrateddynamics.RegistryEntries;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.core.helper.PartConfigHelpers;
 import org.cyclops.integrateddynamics.core.part.PartConfigEntry;
 import org.cyclops.integrateddynamics.core.part.PartConfigSnapshot;
@@ -50,7 +51,7 @@ public class ContainerWrenchConfig extends ScrollingInventoryContainer<PartConfi
 
     protected static List<PartConfigEntry> getEntries(Player player, ItemLocation itemLocation) {
         return PartConfigHelpers.getSnapshot(player.level().registryAccess(), itemLocation.getItemStack(player))
-                .map(PartConfigSnapshot::getEntries)
+                .map(snapshot -> snapshot.getEntries(ValueDeseralizationContext.of(player.level())))
                 .orElseGet(List::of);
     }
 

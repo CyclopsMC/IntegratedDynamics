@@ -326,12 +326,14 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      *
      * This is called on the part type that the snapshot was taken from, on both sides.
      *
+     * @param valueDeseralizationContext A value deserialization context.
      * @param snapshot The snapshot that is being pasted.
      * @param section The configuration section to list the entries of.
      * @return The entries that the given section holds.
      */
     // TODO: make non-default in nextmajor
-    public default List<PartConfigEntry> getConfigExtraEntries(PartConfigSnapshot snapshot, PartConfigSection section) {
+    public default List<PartConfigEntry> getConfigExtraEntries(ValueDeseralizationContext valueDeseralizationContext,
+                                                               PartConfigSnapshot snapshot, PartConfigSection section) {
         return List.of();
     }
 

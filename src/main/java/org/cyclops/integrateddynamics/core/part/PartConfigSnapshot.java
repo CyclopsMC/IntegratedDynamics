@@ -10,12 +10,18 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 import java.util.EnumSet;
@@ -189,18 +195,24 @@ public record PartConfigSnapshot(int version,
      *
      * @return Everything inside this snapshot, in the order that it is shown in.
      */
-    public List<PartConfigEntry> getEntries() {
+    public List<PartConfigEntry> getEntries(ValueDeseralizationContext valueDeseralizationContext) {
         List<PartConfigEntry> entries = Lists.newArrayList();
         IPartType<?, ?> partType = PartTypes.REGISTRY.getPartType(sourcePartType());
         Component groupSettings = Component.translatable(PartConfigSection.PART_SETTINGS.getTranslationKey());
 
         partSettings().ifPresent(settings -> {
-            addPartSetting(entries, groupSettings, SETTING_UPDATE_INTERVAL, settings.updateInterval().isPresent());
-            addPartSetting(entries, groupSettings, SETTING_PRIORITY, settings.priority().isPresent());
-            addPartSetting(entries, groupSettings, SETTING_CHANNEL, settings.channel().isPresent());
-            addPartSetting(entries, groupSettings, SETTING_TARGET_SIDE, settings.targetSide().isPresent());
-            addPartSetting(entries, groupSettings, SETTING_TARGET_OFFSET, settings.targetOffset().isPresent());
-            addPartSetting(entries, groupSettings, SETTING_MAX_OFFSET, settings.maxOffset().isPresent());
+            addPartSetting(entries, groupSettings, SETTING_UPDATE_INTERVAL,
+                    settings.updateInterval().map(value -> Component.literal(String.valueOf(value))));
+            addPartSetting(entries, groupSettings, SETTING_PRIORITY,
+                    settings.priority().map(value -> Component.literal(String.valueOf(value))));
+            addPartSetting(entries, groupSettings, SETTING_CHANNEL,
+                    settings.channel().map(value -> Component.literal(String.valueOf(value))));
+            addPartSetting(entries, groupSettings, SETTING_TARGET_SIDE,
+                    settings.targetSide().map(value -> Component.literal(value.getSerializedName())));
+            addPartSetting(entries, groupSettings, SETTING_TARGET_OFFSET,
+                    settings.targetOffset().map(value -> Component.literal(value.toShortString())));
+            addPartSetting(entries, groupSettings, SETTING_MAX_OFFSET,
+                    settings.maxOffset().map(value -> Component.literal(String.valueOf(value))));
         });
 
         for (Map.Entry<ResourceLocation, CompoundTag> aspectEntry : aspectProperties().entrySet()) {
@@ -208,13 +220,14 @@ public record PartConfigSnapshot(int version,
             Component group = aspect == null
                     ? Component.literal(aspectEntry.getKey().toString())
                     : Component.translatable(aspect.getTranslationKey());
-            // The properties are listed straight from the stored tag, so that no value has to be read back for this
             ListTag properties = aspectEntry.getValue().getList("map", Tag.TAG_COMPOUND);
             for (int i = 0; i < properties.size(); i++) {
-                String property = properties.getCompound(i).getString("label");
+                CompoundTag property = properties.getCompound(i);
+                String label = property.getString("label");
                 entries.add(new PartConfigEntry(
-                        PartConfigEntry.idAspectProperty(aspectEntry.getKey(), property),
-                        group, Component.translatable(property), PartConfigSection.ASPECT));
+                        PartConfigEntry.idAspectProperty(aspectEntry.getKey(), label),
+                        group, Component.translatable(label),
+                        readPropertyValue(valueDeseralizationContext, property), PartConfigSection.ASPECT));
             }
         }
 
@@ -223,24 +236,42 @@ public record PartConfigSnapshot(int version,
             entries.add(new PartConfigEntry(
                     PartConfigEntry.idVariableCard(card.inventoryName(), card.slot()),
                     Component.translatable("item.integrateddynamics.wrench.mode.config.entry.variable_cards"),
-                    card.itemStack().getHoverName(), section));
+                    card.itemStack().getHoverName(), Component.empty(), section));
         }
 
         if (partType != null) {
             for (PartConfigSection section : extraData().keySet()) {
-                entries.addAll(partType.getConfigExtraEntries(this, section));
+                entries.addAll(partType.getConfigExtraEntries(valueDeseralizationContext, this, section));
             }
         }
 
         return entries;
     }
 
-    protected void addPartSetting(List<PartConfigEntry> entries, Component group, String setting, boolean present) {
-        if (present) {
-            entries.add(new PartConfigEntry(PartConfigEntry.idPartSetting(setting), group,
-                    Component.translatable("item.integrateddynamics.wrench.mode.config.entry." + setting),
-                    PartConfigSection.PART_SETTINGS));
+    protected void addPartSetting(List<PartConfigEntry> entries, Component group, String setting,
+                                  Optional<Component> value) {
+        value.ifPresent(shown -> entries.add(new PartConfigEntry(PartConfigEntry.idPartSetting(setting), group,
+                Component.translatable("item.integrateddynamics.wrench.mode.config.entry." + setting),
+                shown, PartConfigSection.PART_SETTINGS)));
+    }
+
+    /**
+     * @param valueDeseralizationContext A value deserialization context.
+     * @param property One stored aspect property.
+     * @return The value of that property, in the same compact shape that the part gui shows it in.
+     */
+    protected static Component readPropertyValue(ValueDeseralizationContext valueDeseralizationContext,
+                                                 CompoundTag property) {
+        IValueType valueType = ValueTypes.REGISTRY.getValueType(ResourceLocation.parse(property.getString("key")));
+        if (valueType == null) {
+            return Component.empty();
         }
+        IValue value = ValueHelpers.deserializeRaw(valueDeseralizationContext, valueType, property.get("value"));
+        if (value == null) {
+            return Component.empty();
+        }
+        MutableComponent shown = valueType.toCompactString(value);
+        return shown == null ? Component.empty() : shown.withStyle(valueType.getDisplayColorFormat());
     }
 
     /**

@@ -10,10 +10,12 @@ import net.minecraft.resources.ResourceLocation;
  *           as it is what a disabled entry is remembered by.
  * @param group What this entry belongs to, such as the aspect that a property belongs to.
  * @param label The name of this entry.
+ * @param value What is stored for it, which is empty when the name says it all.
  * @param section The configuration section that this entry belongs to.
  * @author rubensworks
  */
-public record PartConfigEntry(String id, Component group, Component label, PartConfigSection section) {
+public record PartConfigEntry(String id, Component group, Component label, Component value,
+                              PartConfigSection section) {
 
     public static final String PREFIX_PART_SETTINGS = "settings";
     public static final String PREFIX_ASPECT = "aspect";

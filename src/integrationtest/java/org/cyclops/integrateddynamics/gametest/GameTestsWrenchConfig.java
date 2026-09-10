@@ -567,7 +567,8 @@ public class GameTestsWrenchConfig {
         placeVariableInWriter(helper, source, Aspects.Write.Redstone.BOOLEAN,
                 createVariableForValue(helper.getLevel(), ValueTypes.BOOLEAN, ValueTypeBoolean.ValueBoolean.of(true)));
 
-        List<String> ids = snapshotConfig(helper, source).getEntries().stream()
+        List<String> ids = snapshotConfig(helper, source)
+                .getEntries(ValueDeseralizationContext.of(helper.getLevel())).stream()
                 .map(PartConfigEntry::id)
                 .toList();
 
@@ -656,7 +657,7 @@ public class GameTestsWrenchConfig {
         configurePart(helper, source, Vec3i.ZERO);
 
         PartConfigSnapshot snapshot = snapshotConfig(helper, source);
-        for (PartConfigEntry entry : snapshot.getEntries()) {
+        for (PartConfigEntry entry : snapshot.getEntries(ValueDeseralizationContext.of(helper.getLevel()))) {
             snapshot = snapshot.withEntryEnabled(entry.id(), false);
         }
         int updateInterval = ((IPartType) partType(target)).getUpdateInterval(partState(target));
