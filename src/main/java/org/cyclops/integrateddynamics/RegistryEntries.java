@@ -115,6 +115,7 @@ public class RegistryEntries {
     public static final DeferredHolder<MenuType<?>, MenuType<ContainerCoalGenerator>> CONTAINER_COAL_GENERATOR = DeferredHolder.create(Registries.MENU, ResourceLocation.parse("integrateddynamics:coal_generator"));
     public static final DeferredHolder<MenuType<?>, MenuType<ContainerDelay>> CONTAINER_DELAY = DeferredHolder.create(Registries.MENU, ResourceLocation.parse("integrateddynamics:delay"));
     public static final DeferredHolder<MenuType<?>, MenuType<ContainerLabeller>> CONTAINER_LABELLER = DeferredHolder.create(Registries.MENU, ResourceLocation.parse("integrateddynamics:labeller"));
+    public static final DeferredHolder<MenuType<?>, MenuType<ContainerWrenchConfig>> CONTAINER_WRENCH_CONFIG = DeferredHolder.create(Registries.MENU, ResourceLocation.parse("integrateddynamics:wrench_config"));
     public static final DeferredHolder<MenuType<?>, MenuType<ContainerLogicProgrammer>> CONTAINER_LOGIC_PROGRAMMER = DeferredHolder.create(Registries.MENU, ResourceLocation.parse("integrateddynamics:logic_programmer"));
     public static final DeferredHolder<MenuType<?>, MenuType<ContainerLogicProgrammerPortable>> CONTAINER_LOGIC_PROGRAMMER_PORTABLE = DeferredHolder.create(Registries.MENU, ResourceLocation.parse("integrateddynamics:logic_programmer_portable"));
     public static final DeferredHolder<MenuType<?>, MenuType<ContainerMaterializer>> CONTAINER_MATERIALIZER = DeferredHolder.create(Registries.MENU, ResourceLocation.parse("integrateddynamics:materializer"));

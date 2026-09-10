@@ -31,6 +31,7 @@ import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetworkElement;
 import org.cyclops.integrateddynamics.core.helper.PartConfigHelpers;
 import org.cyclops.integrateddynamics.core.part.PartConfigApplyResult;
+import org.cyclops.integrateddynamics.core.part.PartConfigEntry;
 import org.cyclops.integrateddynamics.core.part.PartConfigSection;
 import org.cyclops.integrateddynamics.core.part.PartConfigSnapshot;
 
@@ -311,6 +312,26 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      */
     // TODO: make non-default in nextmajor
     public default List<Component> getConfigExtraRequirements(PartConfigSnapshot snapshot, PartConfigSection section) {
+        return List.of();
+    }
+
+    /**
+     * The separate things that
+     * {@link #snapshotConfigExtra(ValueDeseralizationContext, IPartState, PartConfigSection)} stored,
+     * so that the player can switch them off one by one in the gui of the Wrench.
+     *
+     * Build the identifiers with {@link PartConfigEntry#idExtra(PartConfigSection, String)},
+     * and check {@link PartConfigSnapshot#isEnabled(String)} for each of them when pasting.
+     * A part type that lists no entries has everything it stored switched on and off as a whole instead.
+     *
+     * This is called on the part type that the snapshot was taken from, on both sides.
+     *
+     * @param snapshot The snapshot that is being pasted.
+     * @param section The configuration section to list the entries of.
+     * @return The entries that the given section holds.
+     */
+    // TODO: make non-default in nextmajor
+    public default List<PartConfigEntry> getConfigExtraEntries(PartConfigSnapshot snapshot, PartConfigSection section) {
         return List.of();
     }
 

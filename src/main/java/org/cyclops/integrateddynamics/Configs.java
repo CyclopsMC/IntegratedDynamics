@@ -137,6 +137,7 @@ public class Configs {
         configHandler.addConfigurable(new ContainerCoalGeneratorConfig());
         configHandler.addConfigurable(new ContainerDelayConfig());
         configHandler.addConfigurable(new ContainerLabellerConfig());
+        configHandler.addConfigurable(new ContainerWrenchConfigConfig());
         configHandler.addConfigurable(new ContainerLogicProgrammerConfig());
         configHandler.addConfigurable(new ContainerLogicProgrammerPortableConfig());
         configHandler.addConfigurable(new ContainerMaterializerConfig());

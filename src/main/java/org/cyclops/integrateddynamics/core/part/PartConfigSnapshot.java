@@ -1,15 +1,22 @@
 package org.cyclops.integrateddynamics.core.part;
 
+import com.google.common.collect.Lists;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.api.part.IPartType;
+import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
+import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -32,6 +39,7 @@ import java.util.Set;
  * @param aspectProperties The serialized non-default aspect properties, by aspect unique name.
  * @param variableCards All variables, of every section.
  * @param extraData The state that the part type itself stored, by section.
+ * @param disabledEntries The entries that the player switched off, which are kept but not pasted.
  * @author rubensworks
  */
 public record PartConfigSnapshot(int version,
@@ -39,9 +47,26 @@ public record PartConfigSnapshot(int version,
                                  Optional<PartSettings> partSettings,
                                  Map<ResourceLocation, CompoundTag> aspectProperties,
                                  List<VariableCard> variableCards,
-                                 Map<PartConfigSection, CompoundTag> extraData) {
+                                 Map<PartConfigSection, CompoundTag> extraData,
+                                 List<String> disabledEntries) {
+
+    /**
+     * A snapshot in which nothing is switched off yet.
+     */
+    public PartConfigSnapshot(int version, ResourceLocation sourcePartType, Optional<PartSettings> partSettings,
+                              Map<ResourceLocation, CompoundTag> aspectProperties, List<VariableCard> variableCards,
+                              Map<PartConfigSection, CompoundTag> extraData) {
+        this(version, sourcePartType, partSettings, aspectProperties, variableCards, extraData, List.of());
+    }
 
     public static final int VERSION = 1;
+
+    public static final String SETTING_UPDATE_INTERVAL = "update_interval";
+    public static final String SETTING_PRIORITY = "priority";
+    public static final String SETTING_CHANNEL = "channel";
+    public static final String SETTING_TARGET_SIDE = "target_side";
+    public static final String SETTING_TARGET_OFFSET = "target_offset";
+    public static final String SETTING_MAX_OFFSET = "max_offset";
 
     /**
      * The inventory name under which the active variable inventory of a part is stored.
@@ -80,7 +105,9 @@ public record PartConfigSnapshot(int version,
                     CODEC_VARIABLE_CARD.listOf()
                             .optionalFieldOf("variableCards", List.of()).forGetter(PartConfigSnapshot::variableCards),
                     Codec.unboundedMap(PartConfigSection.CODEC, CompoundTag.CODEC)
-                            .optionalFieldOf("extraData", Map.of()).forGetter(PartConfigSnapshot::extraData)
+                            .optionalFieldOf("extraData", Map.of()).forGetter(PartConfigSnapshot::extraData),
+                    Codec.STRING.listOf()
+                            .optionalFieldOf("disabledEntries", List.of()).forGetter(PartConfigSnapshot::disabledEntries)
             )
             .apply(builder, PartConfigSnapshot::new));
 
@@ -91,6 +118,7 @@ public record PartConfigSnapshot(int version,
     public List<VariableCard> getVariableCards(Set<PartConfigSection> sections) {
         return variableCards().stream()
                 .filter(card -> sections.contains(PartConfigSection.forInventoryName(card.inventoryName())))
+                .filter(card -> isEnabled(PartConfigEntry.idVariableCard(card.inventoryName(), card.slot())))
                 .toList();
     }
 
@@ -116,7 +144,8 @@ public record PartConfigSnapshot(int version,
         if (!sections.contains(PartConfigSection.PART_SETTINGS)) {
             return 0;
         }
-        return partSettings().flatMap(PartSettings::maxOffset).orElse(0);
+        return isEnabled(PartConfigEntry.idPartSetting(SETTING_MAX_OFFSET))
+                ? partSettings().flatMap(PartSettings::maxOffset).orElse(0) : 0;
     }
 
     /**
@@ -128,17 +157,131 @@ public record PartConfigSnapshot(int version,
     }
 
     /**
+     * @param id The identifier of an entry.
+     * @return If that entry is pasted, as opposed to being switched off by the player.
+     */
+    public boolean isEnabled(String id) {
+        return !disabledEntries().contains(id);
+    }
+
+    /**
+     * @param id The identifier of an entry.
+     * @param enabled If that entry should be pasted.
+     * @return A copy of this snapshot in which that entry is switched on or off.
+     */
+    public PartConfigSnapshot withEntryEnabled(String id, boolean enabled) {
+        if (isEnabled(id) == enabled) {
+            return this;
+        }
+        List<String> disabled = Lists.newArrayList(disabledEntries());
+        if (enabled) {
+            disabled.remove(id);
+        } else {
+            disabled.add(id);
+        }
+        return new PartConfigSnapshot(version(), sourcePartType(), partSettings(), aspectProperties(),
+                variableCards(), extraData(), disabled);
+    }
+
+    /**
+     * The entries are what the player switches on and off,
+     * so this lists everything that this snapshot holds, whether it is switched on or not.
+     *
+     * @return Everything inside this snapshot, in the order that it is shown in.
+     */
+    public List<PartConfigEntry> getEntries() {
+        List<PartConfigEntry> entries = Lists.newArrayList();
+        IPartType<?, ?> partType = PartTypes.REGISTRY.getPartType(sourcePartType());
+        Component groupSettings = Component.translatable(PartConfigSection.PART_SETTINGS.getTranslationKey());
+
+        partSettings().ifPresent(settings -> {
+            addPartSetting(entries, groupSettings, SETTING_UPDATE_INTERVAL, settings.updateInterval().isPresent());
+            addPartSetting(entries, groupSettings, SETTING_PRIORITY, settings.priority().isPresent());
+            addPartSetting(entries, groupSettings, SETTING_CHANNEL, settings.channel().isPresent());
+            addPartSetting(entries, groupSettings, SETTING_TARGET_SIDE, settings.targetSide().isPresent());
+            addPartSetting(entries, groupSettings, SETTING_TARGET_OFFSET, settings.targetOffset().isPresent());
+            addPartSetting(entries, groupSettings, SETTING_MAX_OFFSET, settings.maxOffset().isPresent());
+        });
+
+        for (Map.Entry<ResourceLocation, CompoundTag> aspectEntry : aspectProperties().entrySet()) {
+            IAspect<?, ?> aspect = Aspects.REGISTRY.getAspect(aspectEntry.getKey());
+            Component group = aspect == null
+                    ? Component.literal(aspectEntry.getKey().toString())
+                    : Component.translatable(aspect.getTranslationKey());
+            // The properties are listed straight from the stored tag, so that no value has to be read back for this
+            ListTag properties = aspectEntry.getValue().getList("map", Tag.TAG_COMPOUND);
+            for (int i = 0; i < properties.size(); i++) {
+                String property = properties.getCompound(i).getString("label");
+                entries.add(new PartConfigEntry(
+                        PartConfigEntry.idAspectProperty(aspectEntry.getKey(), property),
+                        group, Component.translatable(property), PartConfigSection.ASPECT));
+            }
+        }
+
+        for (VariableCard card : variableCards()) {
+            PartConfigSection section = PartConfigSection.forInventoryName(card.inventoryName());
+            entries.add(new PartConfigEntry(
+                    PartConfigEntry.idVariableCard(card.inventoryName(), card.slot()),
+                    Component.translatable("item.integrateddynamics.wrench.mode.config.entry.variable_cards"),
+                    card.itemStack().getHoverName(), section));
+        }
+
+        if (partType != null) {
+            for (PartConfigSection section : extraData().keySet()) {
+                entries.addAll(partType.getConfigExtraEntries(this, section));
+            }
+        }
+
+        return entries;
+    }
+
+    protected void addPartSetting(List<PartConfigEntry> entries, Component group, String setting, boolean present) {
+        if (present) {
+            entries.add(new PartConfigEntry(PartConfigEntry.idPartSetting(setting), group,
+                    Component.translatable("item.integrateddynamics.wrench.mode.config.entry." + setting),
+                    PartConfigSection.PART_SETTINGS));
+        }
+    }
+
+    /**
      * @param section A config section.
      * @return If this snapshot holds anything for the given section.
      */
     public boolean hasSection(PartConfigSection section) {
-        if (!getVariableCards(Set.of(section)).isEmpty() || !getExtraData(section).isEmpty()) {
+        // Only what is switched on is going to be pasted, so only that counts as being held for a section
+        if (!getVariableCards(Set.of(section)).isEmpty()) {
+            return true;
+        }
+        // What a part type stored itself is left to that part type, which decides per entry when it pastes
+        if (!getExtraData(section).isEmpty()) {
             return true;
         }
         return switch (section) {
-            case PART_SETTINGS -> partSettings().isPresent();
-            case ASPECT -> !aspectProperties().isEmpty();
+            case PART_SETTINGS -> partSettings().map(this::hasEnabledPartSetting).orElse(false);
+            case ASPECT -> hasEnabledAspectProperty();
         };
+    }
+
+    protected boolean hasEnabledPartSetting(PartSettings settings) {
+        return (settings.updateInterval().isPresent() && isEnabled(PartConfigEntry.idPartSetting(SETTING_UPDATE_INTERVAL)))
+                || (settings.priority().isPresent() && isEnabled(PartConfigEntry.idPartSetting(SETTING_PRIORITY)))
+                || (settings.channel().isPresent() && isEnabled(PartConfigEntry.idPartSetting(SETTING_CHANNEL)))
+                || (settings.targetSide().isPresent() && isEnabled(PartConfigEntry.idPartSetting(SETTING_TARGET_SIDE)))
+                || (settings.targetOffset().isPresent() && isEnabled(PartConfigEntry.idPartSetting(SETTING_TARGET_OFFSET)))
+                || (settings.maxOffset().isPresent() && isEnabled(PartConfigEntry.idPartSetting(SETTING_MAX_OFFSET)));
+    }
+
+    protected boolean hasEnabledAspectProperty() {
+        for (Map.Entry<ResourceLocation, CompoundTag> aspectEntry : aspectProperties().entrySet()) {
+            ListTag properties = aspectEntry.getValue().getList("map", Tag.TAG_COMPOUND);
+            for (int i = 0; i < properties.size(); i++) {
+                if (isEnabled(PartConfigEntry.idAspectProperty(aspectEntry.getKey(),
+                        properties.getCompound(i).getString("label")))) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
