@@ -587,6 +587,40 @@ public class GameTestsWrenchConfig {
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
+    public void testWrenchConfigEntriesCarryValuesAndIcons(GameTestHelper helper) {
+        PartPos source = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
+        configurePart(helper, source, Vec3i.ZERO);
+        placeVariableInWriter(helper, source, Aspects.Write.Redstone.BOOLEAN,
+                createVariableForValue(helper.getLevel(), ValueTypes.BOOLEAN, ValueTypeBoolean.ValueBoolean.of(true)));
+
+        List<PartConfigEntry> entries = snapshotConfig(helper, source)
+                .getEntries(ValueDeseralizationContext.of(helper.getLevel()));
+        PartConfigEntry setting = findEntry(entries,
+                PartConfigEntry.idPartSetting(PartConfigSnapshot.SETTING_UPDATE_INTERVAL));
+        PartConfigEntry property = findEntry(entries, PartConfigEntry.idAspectProperty(
+                Aspects.Write.Redstone.BOOLEAN.getUniqueName(),
+                AspectWriteBuilders.Redstone.PROP_STRONG_POWER.getTranslationKey()));
+        PartConfigEntry card = findEntry(entries,
+                PartConfigEntry.idVariableCard(PartConfigSnapshot.INVENTORY_NAME_ACTIVE, 0));
+
+        helper.succeedWhen(() -> {
+            helper.assertTrue(setting != null && !setting.value().getString().isEmpty(),
+                    "A part setting does not show its value");
+            helper.assertTrue(property != null && !property.value().getString().isEmpty(),
+                    "An aspect property does not show its value");
+            helper.assertTrue(property != null && !property.group().getString().isEmpty(),
+                    "An aspect property does not name its aspect");
+            helper.assertTrue(card != null && !card.icon().isEmpty(),
+                    "A variable card does not show its item");
+        });
+    }
+
+    @Nullable
+    protected static PartConfigEntry findEntry(List<PartConfigEntry> entries, String id) {
+        return entries.stream().filter(entry -> entry.id().equals(id)).findFirst().orElse(null);
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
     public void testWrenchConfigDisabledSettingIsNotPasted(GameTestHelper helper) {
         PartPos source = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
         PartPos target = placePart(helper, POS_TARGET, PartTypes.REDSTONE_WRITER);

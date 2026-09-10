@@ -198,28 +198,29 @@ public record PartConfigSnapshot(int version,
     public List<PartConfigEntry> getEntries(ValueDeseralizationContext valueDeseralizationContext) {
         List<PartConfigEntry> entries = Lists.newArrayList();
         IPartType<?, ?> partType = PartTypes.REGISTRY.getPartType(sourcePartType());
-        Component groupSettings = Component.translatable(PartConfigSection.PART_SETTINGS.getTranslationKey());
 
         partSettings().ifPresent(settings -> {
-            addPartSetting(entries, groupSettings, SETTING_UPDATE_INTERVAL,
+            addPartSetting(entries, SETTING_UPDATE_INTERVAL,
                     settings.updateInterval().map(value -> Component.literal(String.valueOf(value))));
-            addPartSetting(entries, groupSettings, SETTING_PRIORITY,
+            addPartSetting(entries, SETTING_PRIORITY,
                     settings.priority().map(value -> Component.literal(String.valueOf(value))));
-            addPartSetting(entries, groupSettings, SETTING_CHANNEL,
+            addPartSetting(entries, SETTING_CHANNEL,
                     settings.channel().map(value -> Component.literal(String.valueOf(value))));
-            addPartSetting(entries, groupSettings, SETTING_TARGET_SIDE,
+            addPartSetting(entries, SETTING_TARGET_SIDE,
                     settings.targetSide().map(value -> Component.literal(value.getSerializedName())));
-            addPartSetting(entries, groupSettings, SETTING_TARGET_OFFSET,
+            addPartSetting(entries, SETTING_TARGET_OFFSET,
                     settings.targetOffset().map(value -> Component.literal(value.toShortString())));
-            addPartSetting(entries, groupSettings, SETTING_MAX_OFFSET,
+            addPartSetting(entries, SETTING_MAX_OFFSET,
                     settings.maxOffset().map(value -> Component.literal(String.valueOf(value))));
         });
 
         for (Map.Entry<ResourceLocation, CompoundTag> aspectEntry : aspectProperties().entrySet()) {
             IAspect<?, ?> aspect = Aspects.REGISTRY.getAspect(aspectEntry.getKey());
+            // Aspects that only differ in value type share a name, so the name carries the colour of that value type
             Component group = aspect == null
                     ? Component.literal(aspectEntry.getKey().toString())
-                    : Component.translatable(aspect.getTranslationKey());
+                    : Component.translatable(aspect.getTranslationKey())
+                    .withStyle(aspect.getValueType().getDisplayColorFormat());
             ListTag properties = aspectEntry.getValue().getList("map", Tag.TAG_COMPOUND);
             for (int i = 0; i < properties.size(); i++) {
                 CompoundTag property = properties.getCompound(i);
@@ -233,10 +234,11 @@ public record PartConfigSnapshot(int version,
 
         for (VariableCard card : variableCards()) {
             PartConfigSection section = PartConfigSection.forInventoryName(card.inventoryName());
+            // The item next to it already says that this is a card, so it needs no group
             entries.add(new PartConfigEntry(
                     PartConfigEntry.idVariableCard(card.inventoryName(), card.slot()),
-                    Component.translatable("item.integrateddynamics.wrench.mode.config.entry.variable_cards"),
-                    card.itemStack().getHoverName(), Component.empty(), section));
+                    Component.empty(), card.itemStack().getHoverName(), Component.empty(),
+                    card.itemStack(), section));
         }
 
         if (partType != null) {
@@ -248,9 +250,10 @@ public record PartConfigSnapshot(int version,
         return entries;
     }
 
-    protected void addPartSetting(List<PartConfigEntry> entries, Component group, String setting,
-                                  Optional<Component> value) {
-        value.ifPresent(shown -> entries.add(new PartConfigEntry(PartConfigEntry.idPartSetting(setting), group,
+    protected void addPartSetting(List<PartConfigEntry> entries, String setting, Optional<Component> value) {
+        // These have no group, as the name of a setting already says everything about it
+        value.ifPresent(shown -> entries.add(new PartConfigEntry(PartConfigEntry.idPartSetting(setting),
+                Component.empty(),
                 Component.translatable("item.integrateddynamics.wrench.mode.config.entry." + setting),
                 shown, PartConfigSection.PART_SETTINGS)));
     }

@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.inventory.container;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -37,8 +38,7 @@ public class ContainerWrenchConfig extends ScrollingInventoryContainer<PartConfi
         super(RegistryEntries.CONTAINER_WRENCH_CONFIG.get(), id, inventory, new SimpleContainer(0),
                 getEntries(inventory.player, itemLocation),
                 // The search string is lowercased before it becomes a pattern, so this has to be too
-                (entry, pattern) -> pattern.matcher((entry.group().getString() + " " + entry.label().getString())
-                        .toLowerCase(Locale.ENGLISH)).matches());
+                (entry, pattern) -> pattern.matcher(getSearchableText(entry)).matches());
         this.itemLocation = itemLocation;
         this.addPlayerInventory(inventory, 9, 140);
 
@@ -47,6 +47,16 @@ public class ContainerWrenchConfig extends ScrollingInventoryContainer<PartConfi
             putButtonAction(entry.id(), (buttonId, container) -> toggleEntry(entry.id()));
         }
         putButtonAction(BUTTON_TOGGLE_ALL, (buttonId, container) -> toggleAll());
+    }
+
+    /**
+     * @param entry An entry that the Wrench holds.
+     * @return Everything about that entry that a player can search for, including its section,
+     *         as the gui itself has no room to show that.
+     */
+    protected static String getSearchableText(PartConfigEntry entry) {
+        return (Component.translatable(entry.section().getTranslationKey()).getString() + " "
+                + entry.group().getString() + " " + entry.label().getString()).toLowerCase(Locale.ENGLISH);
     }
 
     protected static List<PartConfigEntry> getEntries(Player player, ItemLocation itemLocation) {

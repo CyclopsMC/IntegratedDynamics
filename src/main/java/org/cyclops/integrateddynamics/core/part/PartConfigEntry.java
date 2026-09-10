@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.part;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * One thing inside a {@link PartConfigSnapshot} that the player can switch off before pasting.
@@ -11,11 +12,19 @@ import net.minecraft.resources.ResourceLocation;
  * @param group What this entry belongs to, such as the aspect that a property belongs to.
  * @param label The name of this entry.
  * @param value What is stored for it, which is empty when the name says it all.
+ * @param icon The item to show next to the name, which is empty when there is nothing to show.
  * @param section The configuration section that this entry belongs to.
  * @author rubensworks
  */
-public record PartConfigEntry(String id, Component group, Component label, Component value,
+public record PartConfigEntry(String id, Component group, Component label, Component value, ItemStack icon,
                               PartConfigSection section) {
+
+    /**
+     * An entry that is shown without an item next to it.
+     */
+    public PartConfigEntry(String id, Component group, Component label, Component value, PartConfigSection section) {
+        this(id, group, label, value, ItemStack.EMPTY, section);
+    }
 
     public static final String PREFIX_PART_SETTINGS = "settings";
     public static final String PREFIX_ASPECT = "aspect";
