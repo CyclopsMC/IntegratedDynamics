@@ -178,6 +178,10 @@ public class ItemWrench extends Item {
             PartConfigSnapshot.fromNBT(context.registries(), configTag).ifPresent(snapshot -> {
                 // Only the sections that the current mode pastes are relevant
                 Set<PartConfigSection> sections = Sets.intersection(snapshot.getSections(), mode.getConfigSections());
+                if (sections.isEmpty()) {
+                    // This mode has nothing to paste from this configuration, so it has nothing to say about it
+                    return;
+                }
                 list.add(Component.translatable("item.integrateddynamics.wrench.mode.config.source",
                         Component.translatable(getSourcePartTypeName(snapshot))).withStyle(ChatFormatting.GRAY));
                 list.add(Component.translatable("item.integrateddynamics.wrench.mode.config.sections",
