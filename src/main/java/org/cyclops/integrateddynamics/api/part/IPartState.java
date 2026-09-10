@@ -70,10 +70,13 @@ public interface IPartState<P extends IPartType> {
     public int getUpdateInterval();
 
     /**
+     * This is separate from the protected default update interval that part states can override,
+     * as making that one public would break every part state outside of this mod that overrides it.
+     *
      * @return The tick interval that this part has before a player configures it.
      */
     // TODO: make non-default in nextmajor
-    public default int getDefaultUpdateInterval() {
+    public default int getDefaultUpdateIntervalPublic() {
         return GeneralConfig.defaultPartUpdateFreq;
     }
 

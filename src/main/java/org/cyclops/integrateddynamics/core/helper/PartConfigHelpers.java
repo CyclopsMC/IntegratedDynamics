@@ -148,7 +148,7 @@ public final class PartConfigHelpers {
     @SuppressWarnings("unchecked")
     protected static PartConfigSnapshot.PartSettings snapshotPartSettings(IPartType partType, IPartState<?> state) {
         int updateInterval = partType.getUpdateInterval(state);
-        int defaultUpdateInterval = Math.max(partType.getMinimumUpdateInterval(state), state.getDefaultUpdateInterval());
+        int defaultUpdateInterval = Math.max(partType.getMinimumUpdateInterval(state), state.getDefaultUpdateIntervalPublic());
         Vec3i targetOffset = partType.getTargetOffset(state);
         return new PartConfigSnapshot.PartSettings(
                 updateInterval == defaultUpdateInterval ? Optional.empty() : Optional.of(updateInterval),
