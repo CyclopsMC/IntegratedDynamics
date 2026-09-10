@@ -2,5 +2,12 @@
   "parent": "cyclopscore:item/flat",
   "textures": {
     "layer0": "integrateddynamics:item/wrench"
-  }
+  },
+  "overrides": [
+    {"predicate": {"integrateddynamics:wrench_mode": 0.05}, "model": "integrateddynamics:item/wrench_offset"},
+    {"predicate": {"integrateddynamics:wrench_mode": 0.15}, "model": "integrateddynamics:item/wrench_offset_side"},
+    {"predicate": {"integrateddynamics:wrench_mode": 0.25}, "model": "integrateddynamics:item/wrench_config"},
+    {"predicate": {"integrateddynamics:wrench_mode": 0.35}, "model": "integrateddynamics:item/wrench_config_settings"},
+    {"predicate": {"integrateddynamics:wrench_mode": 0.45}, "model": "integrateddynamics:item/wrench_config_aspect"}
+  ]
 }

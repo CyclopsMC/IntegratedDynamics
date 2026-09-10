@@ -23,6 +23,7 @@ import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetworkElement;
 import org.cyclops.integrateddynamics.api.network.event.INetworkEvent;
 import org.cyclops.integrateddynamics.core.part.PartStateAspectVariablesHandler;
+import org.cyclops.integrateddynamics.core.part.PartStateOffsetHandler;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -137,7 +138,7 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
     }
 
     protected boolean hasOffsetVariables(S state) {
-        NonNullList<ItemStack> inventory = state.getInventoryNamed("offsetVariablesInventory");
+        NonNullList<ItemStack> inventory = state.getInventoryNamed(PartStateOffsetHandler.INVENTORY_NAME);
         return inventory != null && inventory.stream().anyMatch(item -> !item.isEmpty());
     }
 

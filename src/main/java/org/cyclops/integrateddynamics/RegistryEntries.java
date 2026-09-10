@@ -170,6 +170,7 @@ public class RegistryEntries {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<BlockPos>> DATACOMPONENT_WRENCH_TARGET_BLOCKPOS = DeferredHolder.create(Registries.DATA_COMPONENT_TYPE, ResourceLocation.parse("integrateddynamics:wrench_target_blockpos"));
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Direction>> DATACOMPONENT_WRENCH_TARGET_DIRECTION = DeferredHolder.create(Registries.DATA_COMPONENT_TYPE, ResourceLocation.parse("integrateddynamics:wrench_target_direction"));
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<ItemWrench.Mode>> DATACOMPONENT_WRENCH_MODE = DeferredHolder.create(Registries.DATA_COMPONENT_TYPE, ResourceLocation.parse("integrateddynamics:wrench_mode"));
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<CompoundTag>> DATACOMPONENT_WRENCH_PART_CONFIG = DeferredHolder.create(Registries.DATA_COMPONENT_TYPE, ResourceLocation.parse("integrateddynamics:wrench_part_config"));
 
 
 }

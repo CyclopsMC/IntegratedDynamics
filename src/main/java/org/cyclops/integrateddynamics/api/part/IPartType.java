@@ -29,10 +29,15 @@ import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetworkEventListener;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetworkElement;
+import org.cyclops.integrateddynamics.core.helper.PartConfigHelpers;
+import org.cyclops.integrateddynamics.core.part.PartConfigApplyResult;
+import org.cyclops.integrateddynamics.core.part.PartConfigSection;
+import org.cyclops.integrateddynamics.core.part.PartConfigSnapshot;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * A type of part that can be inserted into a {@link IPartContainer}.
@@ -203,6 +208,110 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
     // TODO: make non-default in nextmajor
     public default void onAspectVariablesChanged(PartTarget target, S state) {
         state.markAspectVariablesChanged();
+    }
+
+    /**
+     * Take a snapshot of the configuration of this part, so that it can be pasted onto another part.
+     * @param valueDeseralizationContext A value deserialization context.
+     * @param state The state.
+     * @param sections The configuration sections to include.
+     * @return The snapshot.
+     */
+    // TODO: make non-default in nextmajor
+    public default PartConfigSnapshot snapshotConfig(ValueDeseralizationContext valueDeseralizationContext, S state,
+                                                     Set<PartConfigSection> sections) {
+        return PartConfigHelpers.snapshot(valueDeseralizationContext, this, state, sections);
+    }
+
+    /**
+     * Paste a configuration snapshot onto this part.
+     *
+     * This is only called server-side.
+     *
+     * @param valueDeseralizationContext A value deserialization context.
+     * @param network The network of this part, or null if it is not in a network.
+     * @param partNetwork The part network of this part, or null if it is not in a network.
+     * @param target The target block.
+     * @param state The state.
+     * @param snapshot The snapshot to paste.
+     * @param sections The configuration sections to paste.
+     * @param player The player that is pasting, whose inventory is used for the variable cards.
+     * @return The outcome.
+     */
+    // TODO: make non-default in nextmajor
+    public default PartConfigApplyResult applyConfig(ValueDeseralizationContext valueDeseralizationContext,
+                                                     @Nullable INetwork network, @Nullable IPartNetwork partNetwork,
+                                                     PartTarget target, S state, PartConfigSnapshot snapshot,
+                                                     Set<PartConfigSection> sections, Player player) {
+        return PartConfigHelpers.apply(valueDeseralizationContext, network, target, this, state, snapshot, sections, player);
+    }
+
+    /**
+     * Take a snapshot of the state that {@link PartConfigSnapshot} does not know about itself.
+     *
+     * This is the extension point for part types that hold their own state,
+     * such as the part types that addons add.
+     * Implementations should only store what the player configured,
+     * so that pasting does not overwrite anything that was left at its default,
+     * and should keep the format stable, as a snapshot can outlive a world reload.
+     *
+     * This is only called server-side.
+     *
+     * @param valueDeseralizationContext A value deserialization context.
+     * @param state The state.
+     * @param section The configuration section that is being copied.
+     * @return What to store for that section, or an empty tag to store nothing.
+     */
+    // TODO: make non-default in nextmajor
+    public default CompoundTag snapshotConfigExtra(ValueDeseralizationContext valueDeseralizationContext, S state,
+                                                   PartConfigSection section) {
+        return new CompoundTag();
+    }
+
+    /**
+     * Paste back what {@link #snapshotConfigExtra(ValueDeseralizationContext, IPartState, PartConfigSection)} stored.
+     *
+     * This is only called for the sections that are being pasted,
+     * and only when the snapshot holds something for them.
+     * Since the subset modes of the Wrench can paste onto another part type,
+     * implementations should check {@link PartConfigSnapshot#sourcePartType()}
+     * before reading anything that only makes sense for their own part types.
+     *
+     * Anything that had to be consumed from the player can be reported through the given result,
+     * so that the player is told about it.
+     *
+     * This is only called server-side.
+     *
+     * @param valueDeseralizationContext A value deserialization context.
+     * @param target The target block.
+     * @param state The state.
+     * @param section The configuration section that is being pasted.
+     * @param snapshot The snapshot that is being pasted,
+     *                 holding the stored state in {@link PartConfigSnapshot#getExtraData(PartConfigSection)}.
+     * @param player The player that is pasting.
+     * @param result The outcome to report into.
+     */
+    // TODO: make non-default in nextmajor
+    public default void applyConfigExtra(ValueDeseralizationContext valueDeseralizationContext, PartTarget target,
+                                         S state, PartConfigSection section, PartConfigSnapshot snapshot,
+                                         Player player, PartConfigApplyResult result) {
+
+    }
+
+    /**
+     * What a player needs in their inventory before
+     * {@link #applyConfigExtra(ValueDeseralizationContext, PartTarget, IPartState, PartConfigSection, PartConfigSnapshot, Player, PartConfigApplyResult)}
+     * can paste everything, to be shown in the tooltip of the Wrench.
+     *
+     * This is called on the part type that the snapshot was taken from, on both sides.
+     *
+     * @param snapshot The snapshot that is being pasted.
+     * @param section The configuration section that would be pasted.
+     * @return One line per requirement, or nothing if pasting needs nothing from the player.
+     */
+    // TODO: make non-default in nextmajor
+    public default List<Component> getConfigExtraRequirements(PartConfigSnapshot snapshot, PartConfigSection section) {
+        return List.of();
     }
 
     /**
