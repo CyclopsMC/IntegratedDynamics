@@ -173,7 +173,8 @@ public class ItemWrench extends Item {
             list.add(Component.translatable("item.integrateddynamics.wrench.mode.offset_side.side", itemStack.get(RegistryEntries.DATACOMPONENT_WRENCH_TARGET_DIRECTION).getSerializedName()).withStyle(ChatFormatting.GRAY));
         }
         CompoundTag configTag = itemStack.get(RegistryEntries.DATACOMPONENT_WRENCH_PART_CONFIG);
-        if (configTag != null && context.registries() != null) {
+        // A configuration stays in the Wrench when switching modes, but only says something in the modes that paste it
+        if (mode.isConfig() && configTag != null && context.registries() != null) {
             PartConfigSnapshot.fromNBT(context.registries(), configTag).ifPresent(snapshot -> {
                 // Only the sections that the current mode pastes are relevant
                 Set<PartConfigSection> sections = Sets.intersection(snapshot.getSections(), mode.getConfigSections());
