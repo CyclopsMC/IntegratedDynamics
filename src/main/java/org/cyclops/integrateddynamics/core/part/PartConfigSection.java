@@ -1,6 +1,8 @@
 package org.cyclops.integrateddynamics.core.part;
 
 import com.google.common.collect.Sets;
+import com.mojang.serialization.Codec;
+import net.minecraft.util.StringRepresentable;
 
 import java.util.EnumSet;
 import java.util.Locale;
@@ -10,7 +12,7 @@ import java.util.Set;
  * The separate sections of a part configuration that can be copied and pasted.
  * @author rubensworks
  */
-public enum PartConfigSection {
+public enum PartConfigSection implements StringRepresentable {
 
     /**
      * Update interval, priority, channel, target side, target offset, and the offset variables.
@@ -25,6 +27,13 @@ public enum PartConfigSection {
      * All sections, which together form the whole configuration of a part.
      */
     public static final Set<PartConfigSection> ALL = Sets.immutableEnumSet(EnumSet.allOf(PartConfigSection.class));
+
+    public static final Codec<PartConfigSection> CODEC = StringRepresentable.fromEnum(PartConfigSection::values);
+
+    @Override
+    public String getSerializedName() {
+        return name().toLowerCase(Locale.ENGLISH);
+    }
 
     /**
      * @param inventoryName The name of a variable inventory inside a part.

@@ -3,6 +3,8 @@ package org.cyclops.integrateddynamics.gametest;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.InteractionHand;
@@ -40,7 +42,10 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Proxy;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.cyclops.integrateddynamics.gametest.GameTestHelpersIntegratedDynamics.createVariableForValue;
 import static org.cyclops.integrateddynamics.gametest.GameTestHelpersIntegratedDynamics.getEffectiveAspectProperty;
@@ -59,6 +64,8 @@ public class GameTestsWrenchConfig {
     public static final String TEMPLATE_EMPTY = "empty10";
     public static final BlockPos POS_SOURCE = BlockPos.ZERO.offset(2, 0, 2);
     public static final BlockPos POS_TARGET = BlockPos.ZERO.offset(2, 0, 4);
+    public static final String EXTRA_KEY = "testExtraValue";
+    public static final String EXTRA_APPLIED = "test extra";
 
     protected static PartPos placePart(GameTestHelper helper, BlockPos pos, IPartType<?, ?> partType) {
         helper.setBlock(pos, RegistryEntries.BLOCK_CABLE.value());
@@ -422,6 +429,40 @@ public class GameTestsWrenchConfig {
         });
     }
 
+    /**
+     * A part type that behaves like the given one, but that stores and reads back an extra value,
+     * the way an addon would override these methods on its own part types.
+     *
+     * @param delegate The part type to behave like.
+     * @param key The key to store the extra value under.
+     * @param value The extra value to store when copying.
+     * @param applied Where the extra value that is read back when pasting is put.
+     * @return The part type.
+     */
+    protected static IPartType<?, ?> withExtraConfig(IPartType<?, ?> delegate, String key, int value,
+                                                     AtomicInteger applied) {
+        return (IPartType<?, ?>) Proxy.newProxyInstance(GameTestsWrenchConfig.class.getClassLoader(),
+                new Class[]{IPartType.class}, (proxy, method, args) -> switch (method.getName()) {
+                    case "snapshotConfigExtra" -> {
+                        CompoundTag tag = new CompoundTag();
+                        // Only one of the sections, to show that they are stored apart
+                        if (args[2] == PartConfigSection.PART_SETTINGS) {
+                            tag.putInt(key, value);
+                        }
+                        yield tag;
+                    }
+                    case "applyConfigExtra" -> {
+                        PartConfigSnapshot snapshot = (PartConfigSnapshot) args[4];
+                        applied.set(snapshot.getExtraData((PartConfigSection) args[3]).getInt(key));
+                        ((PartConfigApplyResult) args[6]).addApplied(Component.literal(EXTRA_APPLIED));
+                        yield null;
+                    }
+                    // Called on the proxy, so that the hooks above are the ones that the helpers reach
+                    case "snapshotConfig", "applyConfig" -> InvocationHandler.invokeDefault(proxy, method, args);
+                    default -> method.invoke(delegate, args);
+                });
+    }
+
     @GameTest(template = TEMPLATE_EMPTY)
     public void testWrenchConfigPasteMaxOffsetConsumesEnhancements(GameTestHelper helper) {
         PartPos source = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
@@ -514,6 +555,60 @@ public class GameTestsWrenchConfig {
             helper.assertValueEqual(result.getAppliedMaxOffset(), 0, "The maximum offset was raised");
             helper.assertValueEqual(partState(target).getMaxOffset(), 0, "The target part received a maximum offset");
             helper.assertValueEqual(countOffsetEnhancements(player), 4, "An offset enhancement was consumed");
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testWrenchConfigPartTypeExtraData(GameTestHelper helper) {
+        PartPos source = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
+        PartPos target = placePart(helper, POS_TARGET, PartTypes.REDSTONE_WRITER);
+
+        AtomicInteger applied = new AtomicInteger(-1);
+        PartConfigSnapshot snapshot = ((IPartType) withExtraConfig(partType(source), EXTRA_KEY, 42, applied))
+                .snapshotConfig(ValueDeseralizationContext.of(helper.getLevel()), partState(source),
+                        PartConfigSection.ALL);
+
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        IPartType targetPartType = (IPartType) withExtraConfig(partType(target), EXTRA_KEY, 0, applied);
+        IPartState targetState = partState(target);
+        PartConfigApplyResult result = targetPartType.applyConfig(
+                ValueDeseralizationContext.of(helper.getLevel()), null, null,
+                targetPartType.getTarget(target, targetState), targetState, snapshot,
+                PartConfigSection.ALL, player);
+
+        helper.succeedWhen(() -> {
+            helper.assertValueEqual(snapshot.getExtraData(PartConfigSection.PART_SETTINGS).getInt(EXTRA_KEY), 42,
+                    "The part type could not store its own state");
+            helper.assertTrue(snapshot.getExtraData(PartConfigSection.ASPECT).isEmpty(),
+                    "The stored state leaked into another section");
+            helper.assertValueEqual(applied.get(), 42, "The part type did not read its own state back");
+            helper.assertTrue(result.getMessage().getString().contains(EXTRA_APPLIED),
+                    "The part type could not report what it pasted");
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testWrenchConfigPartTypeExtraDataSkipsOtherSections(GameTestHelper helper) {
+        PartPos source = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
+        PartPos target = placePart(helper, POS_TARGET, PartTypes.REDSTONE_WRITER);
+
+        AtomicInteger applied = new AtomicInteger(-1);
+        // The extra state belongs to the part settings, so the aspect mode must not copy or paste it
+        PartConfigSnapshot snapshot = ((IPartType) withExtraConfig(partType(source), EXTRA_KEY, 42, applied))
+                .snapshotConfig(ValueDeseralizationContext.of(helper.getLevel()), partState(source),
+                        ItemWrench.Mode.CONFIG_ASPECT.getConfigSections());
+
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        IPartType targetPartType = (IPartType) withExtraConfig(partType(target), EXTRA_KEY, 0, applied);
+        IPartState targetState = partState(target);
+        targetPartType.applyConfig(ValueDeseralizationContext.of(helper.getLevel()), null, null,
+                targetPartType.getTarget(target, targetState), targetState, snapshot,
+                ItemWrench.Mode.CONFIG_ASPECT.getConfigSections(), player);
+
+        helper.succeedWhen(() -> {
+            helper.assertTrue(snapshot.getExtraData(PartConfigSection.PART_SETTINGS).isEmpty(),
+                    "The part settings state was stored by the aspect mode");
+            helper.assertValueEqual(applied.get(), -1, "The part type was asked to paste an unstored section");
         });
     }
 

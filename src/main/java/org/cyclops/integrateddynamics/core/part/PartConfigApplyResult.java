@@ -21,6 +21,8 @@ public class PartConfigApplyResult {
     private int missingBlanks = 0;
     private int appliedMaxOffset = 0;
     private int missingMaxOffset = 0;
+    private final List<Component> extraApplied = Lists.newArrayList();
+    private final List<Component> extraWarnings = Lists.newArrayList();
 
     public boolean isPartSettingsApplied() {
         return this.partSettingsApplied;
@@ -101,6 +103,22 @@ public class PartConfigApplyResult {
     }
 
     /**
+     * Report something that a part type pasted itself, to be mentioned alongside the rest.
+     * @param applied What was pasted, phrased to fit in a comma separated list.
+     */
+    public void addApplied(Component applied) {
+        this.extraApplied.add(applied);
+    }
+
+    /**
+     * Report something that a part type could not paste.
+     * @param warning What did not go as the player intended.
+     */
+    public void addWarning(Component warning) {
+        this.extraWarnings.add(warning);
+    }
+
+    /**
      * @return A single line summarising what was applied.
      */
     public MutableComponent getMessage() {
@@ -121,6 +139,7 @@ public class PartConfigApplyResult {
             applied.add(Component.translatable("item.integrateddynamics.wrench.mode.config.pasted.max_offset",
                     this.appliedMaxOffset));
         }
+        applied.addAll(this.extraApplied);
         if (applied.isEmpty()) {
             return Component.translatable("item.integrateddynamics.wrench.mode.config.pasted.nothing");
         }
@@ -152,6 +171,7 @@ public class PartConfigApplyResult {
             warnings.add(Component.translatable("item.integrateddynamics.wrench.mode.config.cards_skipped",
                     this.cardsSkipped, this.missingBlanks));
         }
+        this.extraWarnings.forEach(warning -> warnings.add(warning.copy()));
         return warnings;
     }
 

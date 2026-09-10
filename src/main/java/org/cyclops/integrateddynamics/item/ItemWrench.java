@@ -194,6 +194,14 @@ public class ItemWrench extends Item {
                     list.add(Component.translatable("item.integrateddynamics.wrench.mode.config.requires_enhancements",
                             requiredMaxOffset).withStyle(ChatFormatting.GOLD));
                 }
+                // Whatever the part type stored itself can need something from the player as well
+                IPartType<?, ?> sourcePartType = PartTypes.REGISTRY.getPartType(snapshot.sourcePartType());
+                if (sourcePartType != null) {
+                    for (PartConfigSection section : sections) {
+                        sourcePartType.getConfigExtraRequirements(snapshot, section)
+                                .forEach(requirement -> list.add(requirement.copy().withStyle(ChatFormatting.GOLD)));
+                    }
+                }
             });
         }
         // Hidden behind the same shift that reveals the item info, to keep the resting tooltip short

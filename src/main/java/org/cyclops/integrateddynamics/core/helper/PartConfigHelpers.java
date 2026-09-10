@@ -127,8 +127,17 @@ public final class PartConfigHelpers {
             }
         }
 
+        // Give the part type itself the chance to store what this snapshot does not know about
+        Map<PartConfigSection, CompoundTag> extraData = Maps.newLinkedHashMap();
+        for (PartConfigSection section : sections) {
+            CompoundTag tag = partType.snapshotConfigExtra(valueDeseralizationContext, state, section);
+            if (!tag.isEmpty()) {
+                extraData.put(section, tag);
+            }
+        }
+
         return new PartConfigSnapshot(PartConfigSnapshot.VERSION, partType.getUniqueName(),
-                partSettings, aspectProperties, variableCards);
+                partSettings, aspectProperties, variableCards, extraData);
     }
 
     /**
@@ -193,6 +202,13 @@ public final class PartConfigHelpers {
         }
         applyVariableCards(valueDeseralizationContext, target, partType, state,
                 snapshot.getVariableCards(sections), player, result);
+
+        // Give the part type itself the chance to paste back what this snapshot does not know about
+        for (PartConfigSection section : sections) {
+            if (!snapshot.getExtraData(section).isEmpty()) {
+                partType.applyConfigExtra(valueDeseralizationContext, target, state, section, snapshot, player, result);
+            }
+        }
 
         return result;
     }

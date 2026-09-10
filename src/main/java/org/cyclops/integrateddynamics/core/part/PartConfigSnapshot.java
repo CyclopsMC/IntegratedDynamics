@@ -31,13 +31,15 @@ import java.util.Set;
  * @param partSettings The non-default general part settings.
  * @param aspectProperties The serialized non-default aspect properties, by aspect unique name.
  * @param variableCards All variables, of every section.
+ * @param extraData The state that the part type itself stored, by section.
  * @author rubensworks
  */
 public record PartConfigSnapshot(int version,
                                  ResourceLocation sourcePartType,
                                  Optional<PartSettings> partSettings,
                                  Map<ResourceLocation, CompoundTag> aspectProperties,
-                                 List<VariableCard> variableCards) {
+                                 List<VariableCard> variableCards,
+                                 Map<PartConfigSection, CompoundTag> extraData) {
 
     public static final int VERSION = 1;
 
@@ -76,7 +78,9 @@ public record PartConfigSnapshot(int version,
                     Codec.unboundedMap(ResourceLocation.CODEC, CompoundTag.CODEC)
                             .optionalFieldOf("aspectProperties", Map.of()).forGetter(PartConfigSnapshot::aspectProperties),
                     CODEC_VARIABLE_CARD.listOf()
-                            .optionalFieldOf("variableCards", List.of()).forGetter(PartConfigSnapshot::variableCards)
+                            .optionalFieldOf("variableCards", List.of()).forGetter(PartConfigSnapshot::variableCards),
+                    Codec.unboundedMap(PartConfigSection.CODEC, CompoundTag.CODEC)
+                            .optionalFieldOf("extraData", Map.of()).forGetter(PartConfigSnapshot::extraData)
             )
             .apply(builder, PartConfigSnapshot::new));
 
@@ -88,6 +92,17 @@ public record PartConfigSnapshot(int version,
         return variableCards().stream()
                 .filter(card -> sections.contains(PartConfigSection.forInventoryName(card.inventoryName())))
                 .toList();
+    }
+
+    /**
+     * Part types can store anything that this snapshot does not know about itself,
+     * such as the state that an addon adds to its own part types.
+     *
+     * @param section A config section.
+     * @return What the part type stored for the given section, which is empty if it stored nothing.
+     */
+    public CompoundTag getExtraData(PartConfigSection section) {
+        return extraData().getOrDefault(section, new CompoundTag());
     }
 
     /**
@@ -117,7 +132,7 @@ public record PartConfigSnapshot(int version,
      * @return If this snapshot holds anything for the given section.
      */
     public boolean hasSection(PartConfigSection section) {
-        if (!getVariableCards(Set.of(section)).isEmpty()) {
+        if (!getVariableCards(Set.of(section)).isEmpty() || !getExtraData(section).isEmpty()) {
             return true;
         }
         return switch (section) {
