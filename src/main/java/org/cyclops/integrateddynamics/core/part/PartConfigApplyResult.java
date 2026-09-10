@@ -1,8 +1,6 @@
 package org.cyclops.integrateddynamics.core.part;
 
 import com.google.common.collect.Lists;
-import lombok.Getter;
-import lombok.Setter;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
@@ -12,34 +10,94 @@ import java.util.List;
  * The outcome of pasting a {@link PartConfigSnapshot} onto a part.
  * @author rubensworks
  */
-@Getter
 public class PartConfigApplyResult {
 
-    @Setter
     private boolean partSettingsApplied = false;
-    @Setter
     private boolean offsetFailed = false;
     private int appliedProperties = 0;
     private int skippedProperties = 0;
     private int cardsPasted = 0;
     private int cardsSkipped = 0;
-    @Setter
     private int missingBlanks = 0;
+    private int appliedMaxOffset = 0;
+    private int missingMaxOffset = 0;
+
+    public boolean isPartSettingsApplied() {
+        return this.partSettingsApplied;
+    }
+
+    public void setPartSettingsApplied(boolean partSettingsApplied) {
+        this.partSettingsApplied = partSettingsApplied;
+    }
+
+    public boolean isOffsetFailed() {
+        return this.offsetFailed;
+    }
+
+    public void setOffsetFailed(boolean offsetFailed) {
+        this.offsetFailed = offsetFailed;
+    }
+
+    public int getAppliedProperties() {
+        return this.appliedProperties;
+    }
 
     public void addAppliedProperties(int amount) {
         this.appliedProperties += amount;
+    }
+
+    public int getSkippedProperties() {
+        return this.skippedProperties;
     }
 
     public void addSkippedProperties(int amount) {
         this.skippedProperties += amount;
     }
 
+    public int getCardsPasted() {
+        return this.cardsPasted;
+    }
+
     public void addCardsPasted(int amount) {
         this.cardsPasted += amount;
     }
 
+    public int getCardsSkipped() {
+        return this.cardsSkipped;
+    }
+
     public void addCardsSkipped(int amount) {
         this.cardsSkipped += amount;
+    }
+
+    public int getMissingBlanks() {
+        return this.missingBlanks;
+    }
+
+    public void setMissingBlanks(int missingBlanks) {
+        this.missingBlanks = missingBlanks;
+    }
+
+    /**
+     * @return By how much the maximum offset of the part was increased.
+     */
+    public int getAppliedMaxOffset() {
+        return this.appliedMaxOffset;
+    }
+
+    public void setAppliedMaxOffset(int appliedMaxOffset) {
+        this.appliedMaxOffset = appliedMaxOffset;
+    }
+
+    /**
+     * @return The offset enhancement value that the player was short of.
+     */
+    public int getMissingMaxOffset() {
+        return this.missingMaxOffset;
+    }
+
+    public void setMissingMaxOffset(int missingMaxOffset) {
+        this.missingMaxOffset = missingMaxOffset;
     }
 
     /**
@@ -58,6 +116,10 @@ public class PartConfigApplyResult {
         if (this.cardsPasted > 0) {
             applied.add(Component.translatable("item.integrateddynamics.wrench.mode.config.pasted.variable_cards",
                     this.cardsPasted));
+        }
+        if (this.appliedMaxOffset > 0) {
+            applied.add(Component.translatable("item.integrateddynamics.wrench.mode.config.pasted.max_offset",
+                    this.appliedMaxOffset));
         }
         if (applied.isEmpty()) {
             return Component.translatable("item.integrateddynamics.wrench.mode.config.pasted.nothing");
@@ -81,6 +143,10 @@ public class PartConfigApplyResult {
         List<MutableComponent> warnings = Lists.newArrayList();
         if (this.offsetFailed) {
             warnings.add(Component.translatable("item.integrateddynamics.wrench.mode.offset.fail"));
+        }
+        if (this.missingMaxOffset > 0) {
+            warnings.add(Component.translatable("item.integrateddynamics.wrench.mode.config.enhancements_missing",
+                    this.missingMaxOffset));
         }
         if (this.cardsSkipped > 0) {
             warnings.add(Component.translatable("item.integrateddynamics.wrench.mode.config.cards_skipped",

@@ -10,6 +10,7 @@ import org.junit.Test;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -42,7 +43,7 @@ public class TestPartConfigSnapshot {
     public void testRoundTripAllSections() {
         PartConfigSnapshot snapshot = new PartConfigSnapshot(PartConfigSnapshot.VERSION, PART_TYPE,
                 Optional.of(new PartConfigSnapshot.PartSettings(Optional.of(20), Optional.of(3), Optional.of(7),
-                        Optional.of(Direction.NORTH), Optional.of(new Vec3i(1, -2, 3)))),
+                        Optional.of(Direction.NORTH), Optional.of(new Vec3i(1, -2, 3)), Optional.of(8))),
                 Map.of(ASPECT, aspectPropertiesTag()),
                 List.of());
 
@@ -61,7 +62,7 @@ public class TestPartConfigSnapshot {
     public void testRoundTripWithoutAspectProperties() {
         PartConfigSnapshot snapshot = new PartConfigSnapshot(PartConfigSnapshot.VERSION, PART_TYPE,
                 Optional.of(new PartConfigSnapshot.PartSettings(Optional.of(1), Optional.empty(), Optional.empty(),
-                        Optional.empty(), Optional.empty())),
+                        Optional.empty(), Optional.empty(), Optional.empty())),
                 Map.of(), List.of());
 
         assertThat(roundTrip(snapshot), is(snapshot));
@@ -79,9 +80,11 @@ public class TestPartConfigSnapshot {
     @Test
     public void testPartSettingsEmptyWhenEverythingIsDefault() {
         assertThat(new PartConfigSnapshot.PartSettings(Optional.empty(), Optional.empty(), Optional.empty(),
-                Optional.empty(), Optional.empty()).isEmpty(), is(true));
+                Optional.empty(), Optional.empty(), Optional.empty()).isEmpty(), is(true));
         assertThat(new PartConfigSnapshot.PartSettings(Optional.of(1), Optional.empty(), Optional.empty(),
-                Optional.empty(), Optional.empty()).isEmpty(), is(false));
+                Optional.empty(), Optional.empty(), Optional.empty()).isEmpty(), is(false));
+        assertThat(new PartConfigSnapshot.PartSettings(Optional.empty(), Optional.empty(), Optional.empty(),
+                Optional.empty(), Optional.empty(), Optional.of(4)).isEmpty(), is(false));
     }
 
     @Test
@@ -90,6 +93,26 @@ public class TestPartConfigSnapshot {
                 Optional.empty(), Map.of(), List.of());
 
         assertThat(snapshot.getRequiredBlankVariables(PartConfigSection.ALL), is(0));
+    }
+
+    @Test
+    public void testRequiredMaxOffset() {
+        PartConfigSnapshot snapshot = new PartConfigSnapshot(PartConfigSnapshot.VERSION, PART_TYPE,
+                Optional.of(new PartConfigSnapshot.PartSettings(Optional.empty(), Optional.empty(), Optional.empty(),
+                        Optional.empty(), Optional.empty(), Optional.of(8))),
+                Map.of(), List.of());
+
+        assertThat(snapshot.getRequiredMaxOffset(PartConfigSection.ALL), is(8));
+        // The maximum offset is part of the part settings, so the aspect sections alone do not need enhancements
+        assertThat(snapshot.getRequiredMaxOffset(Set.of(PartConfigSection.ASPECT)), is(0));
+    }
+
+    @Test
+    public void testRequiredMaxOffsetWithoutEnhancements() {
+        PartConfigSnapshot snapshot = new PartConfigSnapshot(PartConfigSnapshot.VERSION, PART_TYPE,
+                Optional.empty(), Map.of(), List.of());
+
+        assertThat(snapshot.getRequiredMaxOffset(PartConfigSection.ALL), is(0));
     }
 
     @Test
@@ -108,7 +131,7 @@ public class TestPartConfigSnapshot {
     public void testSections() {
         PartConfigSnapshot snapshot = new PartConfigSnapshot(PartConfigSnapshot.VERSION, PART_TYPE,
                 Optional.of(new PartConfigSnapshot.PartSettings(Optional.of(1), Optional.empty(), Optional.empty(),
-                        Optional.empty(), Optional.empty())),
+                        Optional.empty(), Optional.empty(), Optional.empty())),
                 Map.of(ASPECT, aspectPropertiesTag()), List.of());
 
         assertThat(snapshot.hasSection(PartConfigSection.PART_SETTINGS), is(true));

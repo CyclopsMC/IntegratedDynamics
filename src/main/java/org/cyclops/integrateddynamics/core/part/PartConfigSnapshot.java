@@ -21,7 +21,7 @@ import java.util.Set;
  * An immutable snapshot of the configuration of a part, which can be pasted onto another part.
  *
  * Only things that a player can configure are stored,
- * so no part id, max offset, enabled state, error messages or active aspect.
+ * so no part id, enabled state, error messages or active aspect.
  *
  * Only values that differ from the defaults of the copied part are stored,
  * so that pasting only overwrites what was deliberately configured.
@@ -53,7 +53,8 @@ public record PartConfigSnapshot(int version,
                     Codec.INT.optionalFieldOf("priority").forGetter(PartSettings::priority),
                     Codec.INT.optionalFieldOf("channel").forGetter(PartSettings::channel),
                     Direction.CODEC.optionalFieldOf("targetSide").forGetter(PartSettings::targetSide),
-                    Vec3i.CODEC.optionalFieldOf("targetOffset").forGetter(PartSettings::targetOffset)
+                    Vec3i.CODEC.optionalFieldOf("targetOffset").forGetter(PartSettings::targetOffset),
+                    Codec.INT.optionalFieldOf("maxOffset").forGetter(PartSettings::maxOffset)
             )
             .apply(builder, PartSettings::new));
 
@@ -87,6 +88,20 @@ public record PartConfigSnapshot(int version,
         return variableCards().stream()
                 .filter(card -> sections.contains(PartConfigSection.forInventoryName(card.inventoryName())))
                 .toList();
+    }
+
+    /**
+     * The offset enhancements that a part holds can not be taken out again without breaking the part,
+     * so pasting them has to consume enhancements from the player, just like the variable cards do.
+     *
+     * @param sections The sections that will be pasted.
+     * @return The offset enhancement value that pasting those sections needs at most.
+     */
+    public int getRequiredMaxOffset(Set<PartConfigSection> sections) {
+        if (!sections.contains(PartConfigSection.PART_SETTINGS)) {
+            return 0;
+        }
+        return partSettings().flatMap(PartSettings::maxOffset).orElse(0);
     }
 
     /**
@@ -157,16 +172,18 @@ public record PartConfigSnapshot(int version,
      * @param channel The channel of the part in its network.
      * @param targetSide The overridden side of the target block, if any.
      * @param targetOffset The target position offset.
+     * @param maxOffset The maximum offset that offset enhancements raised the part to.
      */
     public record PartSettings(Optional<Integer> updateInterval, Optional<Integer> priority, Optional<Integer> channel,
-                               Optional<Direction> targetSide, Optional<Vec3i> targetOffset) {
+                               Optional<Direction> targetSide, Optional<Vec3i> targetOffset,
+                               Optional<Integer> maxOffset) {
 
         /**
          * @return If no setting at all is stored.
          */
         public boolean isEmpty() {
             return updateInterval().isEmpty() && priority().isEmpty() && channel().isEmpty()
-                    && targetSide().isEmpty() && targetOffset().isEmpty();
+                    && targetSide().isEmpty() && targetOffset().isEmpty() && maxOffset().isEmpty();
         }
     }
 

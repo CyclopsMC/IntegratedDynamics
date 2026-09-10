@@ -188,6 +188,11 @@ public class ItemWrench extends Item {
                     list.add(Component.translatable("item.integrateddynamics.wrench.mode.config.requires",
                             requiredBlanks).withStyle(ChatFormatting.GOLD));
                 }
+                int requiredMaxOffset = snapshot.getRequiredMaxOffset(sections);
+                if (requiredMaxOffset > 0) {
+                    list.add(Component.translatable("item.integrateddynamics.wrench.mode.config.requires_enhancements",
+                            requiredMaxOffset).withStyle(ChatFormatting.GOLD));
+                }
             });
         }
         // Hidden behind the same shift that reveals the item info, to keep the resting tooltip short

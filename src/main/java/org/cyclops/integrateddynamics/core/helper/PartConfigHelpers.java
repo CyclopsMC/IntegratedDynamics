@@ -6,12 +6,12 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Containers;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
@@ -36,12 +36,12 @@ import org.cyclops.integrateddynamics.core.part.PartStateOffsetHandler;
 import org.cyclops.integrateddynamics.core.part.PartTypeAspects;
 import org.cyclops.integrateddynamics.core.part.aspect.property.AspectProperties;
 import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
-import org.cyclops.integrateddynamics.item.ItemWrench;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -146,7 +146,8 @@ public final class PartConfigHelpers {
                 partType.getPriority(state) == 0 ? Optional.empty() : Optional.of(partType.getPriority(state)),
                 partType.getChannel(state) == 0 ? Optional.empty() : Optional.of(partType.getChannel(state)),
                 Optional.ofNullable(partType.getTargetSideOverride(state)),
-                targetOffset.equals(Vec3i.ZERO) ? Optional.empty() : Optional.of(targetOffset));
+                targetOffset.equals(Vec3i.ZERO) ? Optional.empty() : Optional.of(targetOffset),
+                state.getMaxOffset() == 0 ? Optional.empty() : Optional.of(state.getMaxOffset()));
     }
 
     /**
@@ -185,7 +186,7 @@ public final class PartConfigHelpers {
         PartConfigApplyResult result = new PartConfigApplyResult();
 
         if (sections.contains(PartConfigSection.PART_SETTINGS) && snapshot.partSettings().isPresent()) {
-            applyPartSettings(network, target, partType, state, snapshot.partSettings().get(), result);
+            applyPartSettings(network, target, partType, state, snapshot.partSettings().get(), player, result);
         }
         if (sections.contains(PartConfigSection.ASPECT)) {
             applyAspectProperties(valueDeseralizationContext, target, partType, state, snapshot, result);
@@ -203,10 +204,12 @@ public final class PartConfigHelpers {
     @SuppressWarnings("unchecked")
     protected static void applyPartSettings(@Nullable INetwork network, PartTarget target, IPartType partType,
                                             IPartState<?> state, PartConfigSnapshot.PartSettings settings,
-                                            PartConfigApplyResult result) {
+                                            Player player, PartConfigApplyResult result) {
         settings.updateInterval().ifPresent(updateInterval -> partType.setUpdateInterval(state,
                 Math.max(partType.getMinimumUpdateInterval(state), updateInterval)));
         settings.targetSide().ifPresent(targetSide -> partType.setTargetSideOverride(state, targetSide));
+        // Before the target offset, as that one is bounded by the maximum offset
+        settings.maxOffset().ifPresent(maxOffset -> applyMaxOffset(partType, state, maxOffset, player, result));
         settings.targetOffset().ifPresent(targetOffset -> {
             if (!partType.setTargetOffset(state, target.getCenter(), targetOffset)) {
                 result.setOffsetFailed(true);
@@ -225,6 +228,43 @@ public final class PartConfigHelpers {
         result.setPartSettingsApplied(true);
         state.markDirty();
         state.sendUpdate();
+    }
+
+    /**
+     * Raise the maximum offset of the given part to the given value,
+     * by consuming offset enhancements from the player.
+     *
+     * Enhancements can not be split, so the player can end up spending a bit more value than needed.
+     *
+     * @param partType The part type.
+     * @param state The part state.
+     * @param maxOffset The maximum offset to raise the part to.
+     * @param player The player that is pasting.
+     * @param result The outcome to report into.
+     */
+    protected static void applyMaxOffset(IPartType partType, IPartState<?> state, int maxOffset,
+                                         Player player, PartConfigApplyResult result) {
+        if (!partType.supportsOffsets()) {
+            return;
+        }
+        int required = Math.min(maxOffset, GeneralConfig.maxPartOffset) - state.getMaxOffset();
+        if (required <= 0) {
+            return;
+        }
+
+        int consumed = required;
+        if (!player.isCreative()) {
+            int available = countOffsetEnhancements(player);
+            if (available < required) {
+                result.setMissingMaxOffset(required - available);
+                return;
+            }
+            consumed = consumeOffsetEnhancements(player, required);
+        }
+
+        int before = state.getMaxOffset();
+        state.setMaxOffset(Math.min(before + consumed, GeneralConfig.maxPartOffset));
+        result.setAppliedMaxOffset(state.getMaxOffset() - before);
     }
 
     @SuppressWarnings("unchecked")
@@ -513,23 +553,60 @@ public final class PartConfigHelpers {
     }
 
     /**
-     * Find the Wrench that the given player is holding or carrying.
      * @param player A player.
-     * @return The Wrench, or empty if the player has none.
+     * @return The total offset enhancement value in the inventory of the given player.
      */
-    public static Optional<ItemStack> findWrench(Player player) {
-        for (ItemStack itemStack : List.of(player.getMainHandItem(), player.getOffhandItem())) {
-            if (itemStack.getItem() instanceof ItemWrench) {
-                return Optional.of(itemStack);
-            }
-        }
+    public static int countOffsetEnhancements(Player player) {
+        int count = 0;
         for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
-            ItemStack itemStack = player.getInventory().getItem(slot);
-            if (itemStack.getItem() instanceof ItemWrench) {
-                return Optional.of(itemStack);
+            count += getOffsetEnhancementValue(player.getInventory().getItem(slot))
+                    * player.getInventory().getItem(slot).getCount();
+        }
+        return count;
+    }
+
+    /**
+     * Remove offset enhancements from the inventory of the given player,
+     * starting at the smallest ones so that as little value as possible is wasted.
+     *
+     * @param player A player.
+     * @param value The offset enhancement value to remove.
+     * @return The removed value, which can be higher than requested when enhancements did not add up exactly.
+     */
+    public static int consumeOffsetEnhancements(Player player, int value) {
+        List<Integer> slots = Lists.newArrayList();
+        for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
+            if (getOffsetEnhancementValue(player.getInventory().getItem(slot)) > 0) {
+                slots.add(slot);
             }
         }
-        return Optional.empty();
+        slots.sort(Comparator.comparingInt(slot -> getOffsetEnhancementValue(player.getInventory().getItem(slot))));
+
+        int consumed = 0;
+        for (int slot : slots) {
+            ItemStack itemStack = player.getInventory().getItem(slot);
+            int enhancementValue = getOffsetEnhancementValue(itemStack);
+            while (consumed < value && !itemStack.isEmpty()) {
+                itemStack.shrink(1);
+                consumed += enhancementValue;
+            }
+            if (itemStack.isEmpty()) {
+                player.getInventory().setItem(slot, ItemStack.EMPTY);
+            }
+            if (consumed >= value) {
+                break;
+            }
+        }
+        return consumed;
+    }
+
+    /**
+     * @param itemStack An item stack.
+     * @return The offset that the given stack enhances a part by, or zero if it is not an offset enhancement.
+     */
+    public static int getOffsetEnhancementValue(ItemStack itemStack) {
+        return itemStack.is(RegistryEntries.ITEM_ENHANCEMENT_OFFSET.get())
+                ? RegistryEntries.ITEM_ENHANCEMENT_OFFSET.get().getEnhancementValue(itemStack) : 0;
     }
 
     /**
@@ -550,13 +627,6 @@ public final class PartConfigHelpers {
      */
     public static void setSnapshot(HolderLookup.Provider provider, ItemStack wrench, PartConfigSnapshot snapshot) {
         wrench.set(RegistryEntries.DATACOMPONENT_WRENCH_PART_CONFIG.get(), snapshot.toNBT(provider));
-    }
-
-    /**
-     * @return A message telling the player that they need a Wrench to copy or paste a configuration.
-     */
-    public static Component getNoWrenchMessage() {
-        return Component.translatable("gui.integrateddynamics.config.nowrench");
     }
 
 }

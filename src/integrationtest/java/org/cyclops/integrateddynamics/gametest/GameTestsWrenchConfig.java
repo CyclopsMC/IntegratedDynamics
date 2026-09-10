@@ -40,6 +40,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 
 import javax.annotation.Nullable;
+import java.util.Set;
 
 import static org.cyclops.integrateddynamics.gametest.GameTestHelpersIntegratedDynamics.createVariableForValue;
 import static org.cyclops.integrateddynamics.gametest.GameTestHelpersIntegratedDynamics.getEffectiveAspectProperty;
@@ -117,16 +118,22 @@ public class GameTestsWrenchConfig {
                 AspectWriteBuilders.Redstone.PROP_STRONG_POWER, ValueTypeBoolean.ValueBoolean.of(true));
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
     protected static PartConfigApplyResult applyConfig(GameTestHelper helper, PartPos partPos,
                                                        PartConfigSnapshot snapshot, Player player) {
+        return applyConfigSections(helper, partPos, snapshot, player, PartConfigSection.ALL);
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    protected static PartConfigApplyResult applyConfigSections(GameTestHelper helper, PartPos partPos,
+                                                               PartConfigSnapshot snapshot, Player player,
+                                                               Set<PartConfigSection> sections) {
         IPartType partType = partType(partPos);
         IPartState state = partState(partPos);
         INetwork network = NetworkHelpers.getNetwork(partPos).orElse(null);
         PartTarget target = partType.getTarget(partPos, state);
         return partType.applyConfig(ValueDeseralizationContext.of(helper.getLevel()), network,
                 NetworkHelpers.getPartNetwork(network).orElse(null), target, state, snapshot,
-                PartConfigSection.ALL, player);
+                sections, player);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -175,6 +182,16 @@ public class GameTestsWrenchConfig {
 
     protected static void giveBlankVariables(Player player, int count) {
         player.getInventory().add(new ItemStack(RegistryEntries.ITEM_VARIABLE.value(), count));
+    }
+
+    protected static void giveOffsetEnhancements(Player player, int count, int value) {
+        ItemStack itemStack = new ItemStack(RegistryEntries.ITEM_ENHANCEMENT_OFFSET.value(), count);
+        RegistryEntries.ITEM_ENHANCEMENT_OFFSET.value().setEnhancementValue(itemStack, value);
+        player.getInventory().add(itemStack);
+    }
+
+    protected static int countOffsetEnhancements(Player player) {
+        return PartConfigHelpers.countOffsetEnhancements(player);
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
@@ -402,6 +419,101 @@ public class GameTestsWrenchConfig {
                     "Update interval was not pasted");
             helper.assertValueEqual(((IPartType) partType(target)).getTargetSideOverride(partState(target)),
                     Direction.SOUTH, "Target side was not pasted");
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testWrenchConfigPasteMaxOffsetConsumesEnhancements(GameTestHelper helper) {
+        PartPos source = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
+        PartPos target = placePart(helper, POS_TARGET, PartTypes.REDSTONE_WRITER);
+        // This gives the source part a maximum offset of 4, and an offset within it
+        configurePart(helper, source, new Vec3i(3, 0, 0));
+
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        giveOffsetEnhancements(player, 1, 4);
+        PartConfigApplyResult result = applyConfig(helper, target, snapshotConfig(helper, source), player);
+
+        helper.succeedWhen(() -> {
+            helper.assertValueEqual(result.getAppliedMaxOffset(), 4, "The maximum offset was not raised");
+            helper.assertValueEqual(result.getMissingMaxOffset(), 0, "Offset enhancements were reported as missing");
+            helper.assertValueEqual(partState(target).getMaxOffset(), 4,
+                    "The target part did not receive the maximum offset");
+            helper.assertValueEqual(countOffsetEnhancements(player), 0, "The offset enhancement was not consumed");
+            helper.assertTrue(!result.isOffsetFailed(), "The offset could not be applied");
+            helper.assertValueEqual(((IPartType) partType(target)).getTargetOffset(partState(target)),
+                    new Vec3i(3, 0, 0), "The offset was not pasted");
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testWrenchConfigPasteMaxOffsetWithoutEnhancements(GameTestHelper helper) {
+        PartPos source = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
+        PartPos target = placePart(helper, POS_TARGET, PartTypes.REDSTONE_WRITER);
+        configurePart(helper, source, new Vec3i(3, 0, 0));
+
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        giveOffsetEnhancements(player, 1, 1);
+        PartConfigApplyResult result = applyConfig(helper, target, snapshotConfig(helper, source), player);
+
+        helper.succeedWhen(() -> {
+            helper.assertValueEqual(result.getMissingMaxOffset(), 3, "The missing offset value was not reported");
+            helper.assertValueEqual(result.getAppliedMaxOffset(), 0, "The maximum offset was raised anyway");
+            helper.assertValueEqual(partState(target).getMaxOffset(), 0, "The target part received a maximum offset");
+            helper.assertValueEqual(countOffsetEnhancements(player), 1, "The offset enhancement was consumed anyway");
+            helper.assertTrue(result.isOffsetFailed(), "The offset failure was not reported");
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testWrenchConfigPasteMaxOffsetCreativeWithoutEnhancements(GameTestHelper helper) {
+        PartPos source = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
+        PartPos target = placePart(helper, POS_TARGET, PartTypes.REDSTONE_WRITER);
+        configurePart(helper, source, new Vec3i(3, 0, 0));
+
+        Player player = helper.makeMockPlayer(GameType.CREATIVE);
+        PartConfigApplyResult result = applyConfig(helper, target, snapshotConfig(helper, source), player);
+
+        helper.succeedWhen(() -> {
+            helper.assertValueEqual(result.getAppliedMaxOffset(), 4, "The maximum offset was not raised");
+            helper.assertValueEqual(partState(target).getMaxOffset(), 4,
+                    "The target part did not receive the maximum offset");
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testWrenchConfigPasteMaxOffsetKeepsHigherOne(GameTestHelper helper) {
+        PartPos source = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
+        PartPos target = placePart(helper, POS_TARGET, PartTypes.REDSTONE_WRITER);
+        configurePart(helper, source, new Vec3i(3, 0, 0));
+        GameTestsOffsets.increaseMaxOffset(helper, target, 8);
+
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        giveOffsetEnhancements(player, 1, 4);
+        PartConfigApplyResult result = applyConfig(helper, target, snapshotConfig(helper, source), player);
+
+        helper.succeedWhen(() -> {
+            helper.assertValueEqual(result.getAppliedMaxOffset(), 0, "The maximum offset was raised");
+            helper.assertValueEqual(partState(target).getMaxOffset(), 8, "The maximum offset was lowered");
+            helper.assertValueEqual(countOffsetEnhancements(player), 4, "An offset enhancement was consumed");
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testWrenchConfigAspectModeSkipsMaxOffset(GameTestHelper helper) {
+        PartPos source = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
+        PartPos target = placePart(helper, POS_TARGET, PartTypes.REDSTONE_WRITER);
+        configurePart(helper, source, new Vec3i(3, 0, 0));
+
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        giveOffsetEnhancements(player, 1, 4);
+        PartConfigSnapshot snapshot = snapshotConfig(helper, source);
+        PartConfigApplyResult result = applyConfigSections(helper, target, snapshot, player,
+                ItemWrench.Mode.CONFIG_ASPECT.getConfigSections());
+
+        helper.succeedWhen(() -> {
+            helper.assertValueEqual(result.getAppliedMaxOffset(), 0, "The maximum offset was raised");
+            helper.assertValueEqual(partState(target).getMaxOffset(), 0, "The target part received a maximum offset");
+            helper.assertValueEqual(countOffsetEnhancements(player), 4, "An offset enhancement was consumed");
         });
     }
 
