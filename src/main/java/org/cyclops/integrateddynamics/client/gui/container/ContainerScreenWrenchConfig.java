@@ -7,7 +7,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import org.cyclops.cyclopscore.client.gui.container.ContainerScreenScrolling;
+import org.cyclops.cyclopscore.client.gui.component.button.ButtonImage;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonText;
+import org.cyclops.cyclopscore.client.gui.image.IImage;
+import org.cyclops.integrateddynamics.client.gui.image.Images;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.Reference;
@@ -27,8 +30,6 @@ public class ContainerScreenWrenchConfig extends ContainerScreenScrolling<Contai
     private static final int BOX_HEIGHT = 18;
     private static final int LABEL_X = 27;
     private static final int BUTTON_X = 13;
-    private static final int SEARCH_WIDTH = 60;
-    private static final int TOGGLE_ALL_X = 146;
     private static final int LABEL_WIDTH = 138;
 
     private final Map<String, ButtonText> entryButtons = Maps.newHashMap();
@@ -58,10 +59,12 @@ public class ContainerScreenWrenchConfig extends ContainerScreenScrolling<Contai
             addRenderableWidget(button);
         }
 
-        addRenderableWidget(new ButtonText(this.leftPos + TOGGLE_ALL_X, this.topPos + 5, 28, 12,
+        // Next to the gui, where this mod puts the buttons of a part as well
+        addRenderableWidget(new ButtonImage(this.leftPos - 20, this.topPos, 18, 18,
                 Component.translatable("gui.integrateddynamics.wrench_config.toggle_all"),
-                Component.translatable("gui.integrateddynamics.wrench_config.toggle_all.label"),
-                createServerPressable(ContainerWrenchConfig.BUTTON_TOGGLE_ALL, b -> {}), true));
+                createServerPressable(ContainerWrenchConfig.BUTTON_TOGGLE_ALL, b -> {}),
+                new IImage[]{Images.BUTTON_BACKGROUND_INACTIVE, Images.BUTTON_MIDDLE_CHECK_ALL},
+                false, 0, 0));
     }
 
     @Override
@@ -94,12 +97,6 @@ public class ContainerScreenWrenchConfig extends ContainerScreenScrolling<Contai
         }
     }
 
-    @Override
-    protected int getSearchWidth() {
-        // Shortened, so that the button to switch everything on or off fits next to it
-        return SEARCH_WIDTH;
-    }
-
     // Everything that has to end up on top of the buttons is drawn here, as the buttons are drawn after the background
     @Override
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
@@ -126,9 +123,8 @@ public class ContainerScreenWrenchConfig extends ContainerScreenScrolling<Contai
 
             // An empty box for what is switched off, so that a full page of entries stays scannable
             if (container.isEntryEnabled(entry.id())) {
-                RenderHelpers.drawScaledCenteredString(guiGraphics.pose(), guiGraphics.bufferSource(), font,
-                        "x", offsetX + BUTTON_X, y + 9, 10,
-                        Helpers.RGBToInt(40, 40, 40), false, Font.DisplayMode.NORMAL);
+                // Lightened, as the box that it is drawn in is dark
+                Images.CHECKMARK.drawWithColor(guiGraphics, offsetX + BUTTON_X + 2, y + 6, 5F, 5F, 5F, 1F);
             }
         }
     }

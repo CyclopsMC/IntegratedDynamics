@@ -19,5 +19,8 @@ public class Images {
 
     public static final Image BUTTON_MIDDLE_OFFSET = new Image(ICONS, 0, 18, 18, 18);
     public static final Image BUTTON_MIDDLE_SETTINGS = new Image(ICONS, 18, 18, 18, 18);
+    public static final Image BUTTON_MIDDLE_CHECK_ALL = new Image(ICONS, 0, 36, 18, 18);
+
+    public static final Image CHECKMARK = new Image(ICONS, 18, 36, 7, 7);
 
 }
