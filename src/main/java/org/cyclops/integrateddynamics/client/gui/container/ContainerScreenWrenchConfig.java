@@ -11,7 +11,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonCheckbox;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonImage;
@@ -153,8 +152,6 @@ public class ContainerScreenWrenchConfig extends ContainerScreenScrolling<Contai
         guiGraphics.drawString(font, this.title, offsetX + 8, offsetY + 6,
                 Helpers.RGBToInt(64, 64, 64), false);
 
-        PartConfigEntry hovered = null;
-        ItemStack hoveredCard = null;
         ContainerWrenchConfig container = getMenu();
         for (int i = 0; i < container.getPageSize(); i++) {
             if (!container.isElementVisible(i)) {
@@ -187,22 +184,33 @@ public class ContainerScreenWrenchConfig extends ContainerScreenScrolling<Contai
                         getColor(entry.value(), Helpers.RGBToInt(255, 255, 255)), false, Font.DisplayMode.NORMAL);
             }
 
+        }
+    }
+
+    // Tooltips are drawn here rather than with the rows,
+    // as inside the gui they would be kept away from the wrong edge of the screen
+    @Override
+    protected void renderTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        super.renderTooltip(guiGraphics, mouseX, mouseY);
+
+        ContainerWrenchConfig container = getMenu();
+        for (int i = 0; i < container.getPageSize(); i++) {
+            if (!container.isElementVisible(i)) {
+                continue;
+            }
+            PartConfigEntry entry = container.getVisibleElement(i);
+            int y = offsetY + BOX_Y + BOX_HEIGHT * i;
             if (!entry.icon().isEmpty()
                     && isHovering(offsetX + SLOT_X, y, SLOT_SIZE, SLOT_SIZE, mouseX, mouseY)) {
-                hoveredCard = entry.icon();
-            } else if (isHovering(offsetX + BOX_X, y, BOX_WIDTH, BOX_HEIGHT - 1, mouseX, mouseY)) {
-                hovered = entry;
+                // The card itself is shown, so it tells the player what it holds just like it does anywhere else
+                guiGraphics.renderTooltip(font, getTooltipFromItem(this.minecraft, entry.icon()),
+                        entry.icon().getTooltipImage(), mouseX, mouseY);
+                return;
             }
-        }
-
-        // After the rows, as the rows that come below the hovered one would otherwise draw over the tooltip
-        if (hoveredCard != null) {
-            // The card itself is shown, so it tells the player what it holds just like it does anywhere else
-            guiGraphics.renderTooltip(font, getTooltipFromItem(this.minecraft, hoveredCard),
-                    hoveredCard.getTooltipImage(), mouseX - this.leftPos, mouseY - this.topPos);
-        } else if (hovered != null) {
-            drawTooltip(getEntryTooltip(hovered), guiGraphics.pose(),
-                    mouseX - this.leftPos, mouseY - this.topPos);
+            if (isHovering(offsetX + BOX_X, y, BOX_WIDTH, BOX_HEIGHT - 1, mouseX, mouseY)) {
+                guiGraphics.renderComponentTooltip(font, getEntryTooltip(entry), mouseX, mouseY);
+                return;
+            }
         }
     }
 
@@ -212,7 +220,9 @@ public class ContainerScreenWrenchConfig extends ContainerScreenScrolling<Contai
      */
     protected List<Component> getEntryTooltip(PartConfigEntry entry) {
         List<Component> lines = Lists.newArrayList();
-        lines.add(entry.label().copy().withStyle(ChatFormatting.WHITE));
+        // A name that carries the colour of a value type keeps it, as that is what tells two aspects apart
+        lines.add(entry.label().getStyle().getColor() == null
+                ? entry.label().copy().withStyle(ChatFormatting.WHITE) : entry.label().copy());
         if (!entry.group().getString().isEmpty()) {
             lines.add(entry.group().copy());
         }
