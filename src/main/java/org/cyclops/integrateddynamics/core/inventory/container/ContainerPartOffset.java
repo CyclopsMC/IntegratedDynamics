@@ -23,6 +23,7 @@ import org.cyclops.integrateddynamics.api.part.IPartState;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
+import org.cyclops.integrateddynamics.core.part.PartStateOffsetHandler;
 import org.cyclops.integrateddynamics.core.inventory.container.slot.SlotVariable;
 
 import javax.annotation.Nullable;
@@ -94,7 +95,7 @@ public class ContainerPartOffset extends InventoryContainer {
         offsetVariablesInventory = new SimpleInventory(3, 1);
         offsetVariablesInventory.addDirtyMarkListener(() -> dirtyInv = true);
         if (!player.level().isClientSide()) {
-            getPartState().loadInventoryNamed("offsetVariablesInventory", offsetVariablesInventory);
+            getPartState().loadInventoryNamed(PartStateOffsetHandler.INVENTORY_NAME, offsetVariablesInventory);
         }
         addSlot(new SlotVariable(offsetVariablesInventory, 0, 45, 51));
         addSlot(new SlotVariable(offsetVariablesInventory, 1, 99, 51));
@@ -191,7 +192,7 @@ public class ContainerPartOffset extends InventoryContainer {
 
             if (this.dirtyInv) {
                 this.dirtyInv = false;
-                partState.saveInventoryNamed("offsetVariablesInventory", offsetVariablesInventory);
+                partState.saveInventoryNamed(PartStateOffsetHandler.INVENTORY_NAME, offsetVariablesInventory);
                 getPartType().onOffsetVariablesChanged(getTarget(), partState);
             }
 

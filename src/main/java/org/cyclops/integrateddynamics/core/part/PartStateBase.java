@@ -394,6 +394,11 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
     }
 
     @Override
+    public int getDefaultUpdateIntervalPublic() {
+        return getDefaultUpdateInterval();
+    }
+
+    @Override
     public void initializeOffsets(PartTarget target) {
         this.offsetHandler.initializeVariableEvaluators(this.offsetHandler.getOffsetVariablesInventory(this), target);
         this.aspectVariablesHandler.markAspectVariablesChanged();

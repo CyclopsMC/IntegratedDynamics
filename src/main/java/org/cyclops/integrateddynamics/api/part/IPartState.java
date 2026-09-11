@@ -9,6 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
@@ -66,6 +67,17 @@ public interface IPartState<P extends IPartType> {
      * @return The tick interval to update this element.
      */
     public int getUpdateInterval();
+
+    /**
+     * This is separate from the protected default update interval that part states can override,
+     * as making that one public would break every part state outside of this mod that overrides it.
+     *
+     * @return The tick interval that this part has before a player configures it.
+     */
+    // TODO: make non-default in nextmajor
+    public default int getDefaultUpdateIntervalPublic() {
+        return GeneralConfig.defaultPartUpdateFreq;
+    }
 
     /**
      * Set the priority of this part in the network.
