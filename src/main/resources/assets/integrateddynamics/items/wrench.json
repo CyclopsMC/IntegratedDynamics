@@ -1,6 +1,48 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "integrateddynamics:item/wrench"
+    "type": "minecraft:select",
+    "property": "minecraft:component",
+    "component": "integrateddynamics:wrench_mode",
+    "cases": [
+      {
+        "when": "integrateddynamics:offset",
+        "model": {
+          "type": "minecraft:model",
+          "model": "integrateddynamics:item/wrench_offset"
+        }
+      },
+      {
+        "when": "integrateddynamics:offset_side",
+        "model": {
+          "type": "minecraft:model",
+          "model": "integrateddynamics:item/wrench_offset_side"
+        }
+      },
+      {
+        "when": "integrateddynamics:config",
+        "model": {
+          "type": "minecraft:model",
+          "model": "integrateddynamics:item/wrench_config"
+        }
+      },
+      {
+        "when": "integrateddynamics:config_settings",
+        "model": {
+          "type": "minecraft:model",
+          "model": "integrateddynamics:item/wrench_config_settings"
+        }
+      },
+      {
+        "when": "integrateddynamics:config_aspect",
+        "model": {
+          "type": "minecraft:model",
+          "model": "integrateddynamics:item/wrench_config_aspect"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "integrateddynamics:item/wrench"
+    }
   }
 }

@@ -27,7 +27,7 @@ public class ItemEnhancementOffsetConfig extends ItemConfigCommon<IModBase> {
     public Collection<Supplier<ItemStack>> getDefaultCreativeTabEntries() {
         return Collections.singleton(() -> {
             ItemStack itemStack = new ItemStack(getInstance());
-            ((ItemEnhancement) getInstance()).setEnhancementValue(itemStack, 4);
+            ((ItemEnhancement) getInstance()).setEnhancementValue(itemStack, ItemEnhancement.DEFAULT_OFFSET_VALUE);
             return itemStack;
         });
     }

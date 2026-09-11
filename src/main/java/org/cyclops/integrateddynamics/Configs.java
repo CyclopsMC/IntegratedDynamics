@@ -133,6 +133,7 @@ public class Configs {
         configHandler.addConfigurable(new ContainerCoalGeneratorConfig());
         configHandler.addConfigurable(new ContainerDelayConfig());
         configHandler.addConfigurable(new ContainerLabellerConfig());
+        configHandler.addConfigurable(new ContainerWrenchConfigConfig());
         configHandler.addConfigurable(new ContainerLogicProgrammerConfig());
         configHandler.addConfigurable(new ContainerLogicProgrammerPortableConfig());
         configHandler.addConfigurable(new ContainerMaterializerConfig());
@@ -211,6 +212,7 @@ public class Configs {
         configHandler.addConfigurable(new DataComponentWrenchTargetBlockPosConfig());
         configHandler.addConfigurable(new DataComponentWrenchTargetDirectionConfig());
         configHandler.addConfigurable(new DataComponentWrenchModeConfig());
+        configHandler.addConfigurable(new DataComponentWrenchPartConfigConfig());
 
         // Game test instances
         configHandler.addConfigurable(new IntegrationMethodGameTestInstanceConfig(IntegratedDynamics._instance));

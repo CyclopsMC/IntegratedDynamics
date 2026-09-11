@@ -1,8 +1,16 @@
 # Changelog for Minecraft 1.20.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.20.1-1.31.2"></a>
+## [1.20.1-1.31.2](/compare/1.20.1-1.31.1...1.20.1-1.31.2) - 2026-09-11 21:08:35
+
+
+### Added
+* Let insert pre-consumers see what part of an insertion is still unclaimed (#1723)
+  Required for CyclopsMC/IntegratedCrafting#229
+
 <a name="1.20.1-1.31.1"></a>
-## [1.20.1-1.31.1](/compare/1.20.1-1.31.0...1.20.1-1.31.1) - 2026-09-05 13:18:11
+## [1.20.1-1.31.1](/compare/1.20.1-1.31.0...1.20.1-1.31.1) - 2026-09-05 13:18:11 +0200
 
 
 ### Changed

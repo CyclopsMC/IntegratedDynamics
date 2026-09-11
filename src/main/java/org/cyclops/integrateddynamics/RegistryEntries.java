@@ -115,6 +115,7 @@ public class RegistryEntries {
     public static final DeferredHolder<MenuType<?>, MenuType<ContainerCoalGenerator>> CONTAINER_COAL_GENERATOR = DeferredHolder.create(Registries.MENU, Identifier.parse("integrateddynamics:coal_generator"));
     public static final DeferredHolder<MenuType<?>, MenuType<ContainerDelay>> CONTAINER_DELAY = DeferredHolder.create(Registries.MENU, Identifier.parse("integrateddynamics:delay"));
     public static final DeferredHolder<MenuType<?>, MenuType<ContainerLabeller>> CONTAINER_LABELLER = DeferredHolder.create(Registries.MENU, Identifier.parse("integrateddynamics:labeller"));
+    public static final DeferredHolder<MenuType<?>, MenuType<ContainerWrenchConfig>> CONTAINER_WRENCH_CONFIG = DeferredHolder.create(Registries.MENU, Identifier.parse("integrateddynamics:wrench_config"));
     public static final DeferredHolder<MenuType<?>, MenuType<ContainerLogicProgrammer>> CONTAINER_LOGIC_PROGRAMMER = DeferredHolder.create(Registries.MENU, Identifier.parse("integrateddynamics:logic_programmer"));
     public static final DeferredHolder<MenuType<?>, MenuType<ContainerLogicProgrammerPortable>> CONTAINER_LOGIC_PROGRAMMER_PORTABLE = DeferredHolder.create(Registries.MENU, Identifier.parse("integrateddynamics:logic_programmer_portable"));
     public static final DeferredHolder<MenuType<?>, MenuType<ContainerMaterializer>> CONTAINER_MATERIALIZER = DeferredHolder.create(Registries.MENU, Identifier.parse("integrateddynamics:materializer"));
@@ -175,6 +176,7 @@ public class RegistryEntries {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<BlockPos>> DATACOMPONENT_WRENCH_TARGET_BLOCKPOS = DeferredHolder.create(Registries.DATA_COMPONENT_TYPE, Identifier.parse("integrateddynamics:wrench_target_blockpos"));
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Direction>> DATACOMPONENT_WRENCH_TARGET_DIRECTION = DeferredHolder.create(Registries.DATA_COMPONENT_TYPE, Identifier.parse("integrateddynamics:wrench_target_direction"));
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<ItemWrench.Mode>> DATACOMPONENT_WRENCH_MODE = DeferredHolder.create(Registries.DATA_COMPONENT_TYPE, Identifier.parse("integrateddynamics:wrench_mode"));
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<CompoundTag>> DATACOMPONENT_WRENCH_PART_CONFIG = DeferredHolder.create(Registries.DATA_COMPONENT_TYPE, Identifier.parse("integrateddynamics:wrench_part_config"));
 
 
 }
