@@ -1,0 +1,14 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.29.4 or higher.
+
+Additions:
+* Allow part configurations to be copied and pasted with the Wrench (#1721)
+  This adds 3 new copy modes: all, settings, and aspect.
+  Closes #859
+* Let insert pre-consumers see what part of an insertion is still unclaimed (#1723)
+  Required for CyclopsMC/IntegratedCrafting#229
+
+
+Changes:
+* Hash a prototype once per index position update (#1728)
+  This improves performance of the IngredientPositionsIndex.
