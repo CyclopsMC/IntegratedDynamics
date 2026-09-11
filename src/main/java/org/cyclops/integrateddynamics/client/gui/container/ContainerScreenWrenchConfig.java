@@ -59,13 +59,13 @@ public class ContainerScreenWrenchConfig extends ContainerScreenScrolling<Contai
     private static final int ICON_X = 25;
     private static final int ICON_SIZE = 16;
     private static final int LABEL_X = 43;
-    private static final int VALUE_X = 120;
+    private static final int VALUE_X = 128;
     /**
-     * The same for every row, so that the names stay under each other
-     * whatever a row happens to show on its right.
+     * Where the name of a row ends, which is the same for every row,
+     * so that the names stay under each other whatever a row happens to show on its right.
      */
-    private static final int LABEL_WIDTH = VALUE_X - 3 - LABEL_X;
-    private static final int VALUE_WIDTH = 46;
+    private static final int LABEL_END = VALUE_X - 3;
+    private static final int VALUE_WIDTH = 38;
     private static final int VALUE_HEIGHT = 10;
     private static final int SLOT_SIZE = 18;
     private static final int SLOT_X = VALUE_X + VALUE_WIDTH - SLOT_SIZE;
@@ -195,6 +195,9 @@ public class ContainerScreenWrenchConfig extends ContainerScreenScrolling<Contai
             PartConfigEntry entry = container.getVisibleElement(i);
             int y = offsetY + BOX_Y + BOX_HEIGHT * i;
             String value = entry.value().getString();
+            // Only what belongs to an aspect is indented, to leave room for what says which aspect that is
+            int labelX = belongsToAspect(entry) ? LABEL_X : ICON_X + 2;
+            int labelWidth = LABEL_END - labelX;
 
             // The mark that a part gui puts on the button that opens the settings of an aspect,
             // without the button around it, as there is nothing to open here
@@ -207,15 +210,15 @@ public class ContainerScreenWrenchConfig extends ContainerScreenScrolling<Contai
             String group = entry.group().getString();
             if (group.isEmpty()) {
                 RenderHelpers.drawScaledCenteredString(guiGraphics.pose(), guiGraphics.bufferSource(), font,
-                        entry.label().getString(), offsetX + LABEL_X, y + 9, LABEL_WIDTH,
+                        entry.label().getString(), offsetX + labelX, y + 9, labelWidth,
                         getColor(entry.label(), Helpers.RGBToInt(40, 40, 40)), false, Font.DisplayMode.NORMAL);
             } else {
                 // The group goes above the entry itself, so that the aspect a property belongs to is always visible
                 RenderHelpers.drawScaledCenteredString(guiGraphics.pose(), guiGraphics.bufferSource(), font,
-                        group, offsetX + LABEL_X, y + 4, LABEL_WIDTH, 0.5F, LABEL_WIDTH,
+                        group, offsetX + labelX, y + 4, labelWidth, 0.5F, labelWidth,
                         getColor(entry.group(), Helpers.RGBToInt(120, 120, 120)), false, Font.DisplayMode.NORMAL);
                 RenderHelpers.drawScaledCenteredString(guiGraphics.pose(), guiGraphics.bufferSource(), font,
-                        entry.label().getString(), offsetX + LABEL_X, y + 11, LABEL_WIDTH,
+                        entry.label().getString(), offsetX + labelX, y + 11, labelWidth,
                         getColor(entry.label(), Helpers.RGBToInt(40, 40, 40)), false, Font.DisplayMode.NORMAL);
             }
 
@@ -330,6 +333,14 @@ public class ContainerScreenWrenchConfig extends ContainerScreenScrolling<Contai
      */
     protected boolean isPartOfAspect(PartConfigEntry entry) {
         return entry.aspect().isEmpty() && entry.color().isPresent();
+    }
+
+    /**
+     * @param entry An entry that is shown.
+     * @return If that entry is an aspect or part of one, which is what is shown left of its name.
+     */
+    protected boolean belongsToAspect(PartConfigEntry entry) {
+        return entry.aspect().isPresent() || isPartOfAspect(entry);
     }
 
     protected int getColor(Component component, int fallback) {
