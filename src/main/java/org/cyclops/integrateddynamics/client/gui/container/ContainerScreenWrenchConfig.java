@@ -196,6 +196,14 @@ public class ContainerScreenWrenchConfig extends ContainerScreenScrolling<Contai
             int y = offsetY + BOX_Y + BOX_HEIGHT * i;
             String value = entry.value().getString();
 
+            // The mark that a part gui puts on the button that opens the settings of an aspect,
+            // without the button around it, as there is nothing to open here
+            if (isPartOfAspect(entry)) {
+                RenderHelpers.drawScaledCenteredString(guiGraphics.pose(), guiGraphics.bufferSource(), font,
+                        "+", offsetX + ICON_X, y + 9, ICON_SIZE,
+                        Helpers.RGBToInt(90, 90, 90), false, Font.DisplayMode.NORMAL);
+            }
+
             String group = entry.group().getString();
             if (group.isEmpty()) {
                 RenderHelpers.drawScaledCenteredString(guiGraphics.pose(), guiGraphics.bufferSource(), font,
@@ -314,6 +322,14 @@ public class ContainerScreenWrenchConfig extends ContainerScreenScrolling<Contai
                     .writeVariableFacadeItem(new ItemStack(RegistryEntries.ITEM_VARIABLE.get()),
                             new AspectVariableFacade(false, 0, aspect), Aspects.REGISTRY);
         });
+    }
+
+    /**
+     * @param entry An entry that is shown.
+     * @return If that entry is part of an aspect rather than being one itself.
+     */
+    protected boolean isPartOfAspect(PartConfigEntry entry) {
+        return entry.aspect().isEmpty() && entry.color().isPresent();
     }
 
     protected int getColor(Component component, int fallback) {
