@@ -41,9 +41,14 @@ public class ContainerScreenWrenchConfig extends ContainerScreenScrolling<Contai
     private static final int BUTTON_X = 12;
     private static final int TITLE_X = 8;
     /**
-     * How much room there is left of the search field.
+     * Where the search box sits in the gui texture.
      */
-    private static final int TITLE_WIDTH = 72;
+    private static final int SEARCH_BOX_X = 79;
+    /**
+     * Up to the search box, keeping as much room next to it as the title has on its other side.
+     * The width of a string counts the gap after its last letter, which is not part of what is seen.
+     */
+    private static final int TITLE_WIDTH = SEARCH_BOX_X - TITLE_X * 2 + 1;
     private static final int LABEL_X = 27;
     private static final int VALUE_X = 103;
     /**
