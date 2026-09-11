@@ -90,10 +90,11 @@ public final class PartConfigHelpers {
             }
         }
 
+        Predicate<IAspect> copiedAspects = getCopiedAspects(state);
         Map<ResourceLocation, CompoundTag> aspectProperties = Maps.newLinkedHashMap();
         if (sections.contains(PartConfigSection.ASPECT)) {
             for (IAspect aspect : getAspects(partType)) {
-                if (aspect.hasProperties()) {
+                if (copiedAspects.test(aspect) && aspect.hasProperties()) {
                     IAspectProperties properties = state.getAspectProperties(aspect);
                     if (properties != null) {
                         IAspectProperties modified = filterNonDefaultProperties(properties, aspect);
@@ -109,6 +110,10 @@ public final class PartConfigHelpers {
         List<PartConfigSnapshot.VariableCard> variableCards = Lists.newArrayList();
         for (Map.Entry<String, NonNullList<ItemStack>> entry : state.getInventoriesNamed().entrySet()) {
             if (!sections.contains(PartConfigSection.forInventoryName(entry.getKey()))) {
+                continue;
+            }
+            IAspect inventoryAspect = PartStateAspectVariablesHandler.getAspectByInventoryName(entry.getKey());
+            if (inventoryAspect != null && !copiedAspects.test(inventoryAspect)) {
                 continue;
             }
             NonNullList<ItemStack> inventory = entry.getValue();
@@ -141,6 +146,22 @@ public final class PartConfigHelpers {
 
         return new PartConfigSnapshot(PartConfigSnapshot.VERSION, partType.getUniqueName(),
                 partSettings, aspectProperties, variableCards, extraData, List.of());
+    }
+
+    /**
+     * A writer only ever does what its active aspect says, so the aspects that it is not writing
+     * hold configuration that does nothing, and pasting it onto another part would only confuse.
+     * Parts without an active aspect, such as readers, use all of their aspects at once.
+     *
+     * @param state A part state.
+     * @return Which aspects of that part are worth copying.
+     */
+    protected static Predicate<IAspect> getCopiedAspects(IPartState<?> state) {
+        if (state instanceof IPartStateWriter<?> writerState) {
+            IAspect activeAspect = writerState.getActiveAspect();
+            return aspect -> aspect == activeAspect;
+        }
+        return aspect -> true;
     }
 
     /**

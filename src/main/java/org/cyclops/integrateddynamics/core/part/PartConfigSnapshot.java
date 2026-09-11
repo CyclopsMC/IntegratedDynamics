@@ -20,10 +20,13 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
+import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTypeInstance;
+import org.cyclops.integrateddynamics.api.part.write.IPartTypeWriter;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
+import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
@@ -234,11 +237,12 @@ public record PartConfigSnapshot(int version,
 
         for (VariableCard card : variableCards()) {
             PartConfigSection section = PartConfigSection.forInventoryName(card.inventoryName());
-            // The item next to it already says that this is a card, so it needs no group
+            IAspect<?, ?> cardAspect = getVariableCardAspect(partType, card);
+            // The card itself is shown next to it, so the name says what the card drives instead
             entries.add(new PartConfigEntry(
                     PartConfigEntry.idVariableCard(card.inventoryName(), card.slot()),
-                    Component.empty(), card.itemStack().getHoverName(), Component.empty(),
-                    card.itemStack(), section));
+                    getVariableCardGroup(card, cardAspect), getVariableCardLabel(card, cardAspect),
+                    Component.empty(), card.itemStack(), section));
         }
 
         if (partType != null) {
@@ -248,6 +252,63 @@ public record PartConfigSnapshot(int version,
         }
 
         return entries;
+    }
+
+    /**
+     * @param partType The part type this snapshot was taken from, or null if it is no longer known.
+     * @param card A variable card inside this snapshot.
+     * @return The aspect that the card drives, or null if it drives something else than an aspect.
+     */
+    @Nullable
+    protected static IAspect<?, ?> getVariableCardAspect(@Nullable IPartType<?, ?> partType, VariableCard card) {
+        if (INVENTORY_NAME_ACTIVE.equals(card.inventoryName())) {
+            // The slot that a writer's variable sits in is what picks the aspect that it writes
+            if (partType instanceof IPartTypeWriter<?, ?> partTypeWriter
+                    && card.slot() < partTypeWriter.getWriteAspects().size()) {
+                return partTypeWriter.getWriteAspects().get(card.slot());
+            }
+            return null;
+        }
+        return PartStateAspectVariablesHandler.getAspectByInventoryName(card.inventoryName());
+    }
+
+    /**
+     * @param card A variable card inside this snapshot.
+     * @param cardAspect The aspect that it drives, if any.
+     * @return What the card belongs to, which is empty when the name of the card already says it.
+     */
+    protected static Component getVariableCardGroup(VariableCard card, @Nullable IAspect<?, ?> cardAspect) {
+        // A setting variable belongs to one property of an aspect, so the aspect goes above it
+        if (cardAspect != null && !INVENTORY_NAME_ACTIVE.equals(card.inventoryName())) {
+            return Component.translatable(cardAspect.getTranslationKey())
+                    .withStyle(cardAspect.getValueType().getDisplayColorFormat());
+        }
+        return Component.empty();
+    }
+
+    /**
+     * @param card A variable card inside this snapshot.
+     * @param cardAspect The aspect that it drives, if any.
+     * @return What the card drives, rather than the name of the card itself.
+     */
+    protected static Component getVariableCardLabel(VariableCard card, @Nullable IAspect<?, ?> cardAspect) {
+        if (cardAspect != null) {
+            if (INVENTORY_NAME_ACTIVE.equals(card.inventoryName())) {
+                // This card is what makes its aspect the active one, so that aspect is what it is
+                return Component.translatable(cardAspect.getTranslationKey())
+                        .withStyle(cardAspect.getValueType().getDisplayColorFormat());
+            }
+            List<IAspectPropertyTypeInstance> properties =
+                    PartStateAspectVariablesHandler.getPropertyTypes(cardAspect);
+            if (card.slot() < properties.size()) {
+                return Component.translatable(properties.get(card.slot()).getTranslationKey());
+            }
+        }
+        if (PartStateOffsetHandler.INVENTORY_NAME.equals(card.inventoryName()) && card.slot() < 3) {
+            return Component.translatable("gui.integrateddynamics.partoffset."
+                    + (char) ('x' + card.slot()));
+        }
+        return card.itemStack().getHoverName();
     }
 
     protected void addPartSetting(List<PartConfigEntry> entries, String setting, Optional<Component> value) {

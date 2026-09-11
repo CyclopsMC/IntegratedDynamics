@@ -11,6 +11,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonCheckbox;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonImage;
@@ -40,12 +41,22 @@ public class ContainerScreenWrenchConfig extends ContainerScreenScrolling<Contai
     private static final int BOX_X = 9;
     private static final int BOX_Y = 18;
     private static final int BUTTON_X = 12;
-    private static final int ICON_X = 26;
     private static final int LABEL_X = 27;
-    private static final int LABEL_X_ICON = 45;
     private static final int VALUE_X = 103;
+    /**
+     * The same for every row, so that the names stay under each other
+     * whatever a row happens to show on its right.
+     */
+    private static final int LABEL_WIDTH = VALUE_X - 3 - LABEL_X;
     private static final int VALUE_WIDTH = 63;
     private static final int VALUE_HEIGHT = 10;
+    private static final int SLOT_SIZE = 18;
+    private static final int SLOT_X = VALUE_X + VALUE_WIDTH - SLOT_SIZE;
+    /**
+     * Where an empty slot sits inside the gui texture, which is where the player inventory starts.
+     */
+    private static final int SLOT_TEXTURE_X = 8;
+    private static final int SLOT_TEXTURE_Y = 139;
 
     /**
      * The colour that the row of an entry is tinted in, so that the sections stay apart at a glance.
@@ -118,9 +129,12 @@ public class ContainerScreenWrenchConfig extends ContainerScreenScrolling<Contai
             guiGraphics.blit(texture, x + BOX_X, y, 0, getBaseYSize(), BOX_WIDTH, BOX_HEIGHT - 1);
             RenderSystem.setShaderColor(1, 1, 1, 1);
 
+            // In a slot of its own, so that a card looks the same here as it does inside a part
             if (!entry.icon().isEmpty()) {
+                guiGraphics.blit(texture, x + SLOT_X, y, SLOT_TEXTURE_X, SLOT_TEXTURE_Y, SLOT_SIZE, SLOT_SIZE);
                 Lighting.setupForFlatItems();
-                guiGraphics.renderItem(entry.icon(), x + ICON_X, y + 1);
+                guiGraphics.renderItem(entry.icon(), x + SLOT_X + 1, y + 1);
+                guiGraphics.renderItemDecorations(font, entry.icon(), x + SLOT_X + 1, y + 1);
             }
 
             ButtonCheckbox button = this.entryButtons.get(entry.id());
@@ -140,6 +154,7 @@ public class ContainerScreenWrenchConfig extends ContainerScreenScrolling<Contai
                 Helpers.RGBToInt(64, 64, 64), false);
 
         PartConfigEntry hovered = null;
+        ItemStack hoveredCard = null;
         ContainerWrenchConfig container = getMenu();
         for (int i = 0; i < container.getPageSize(); i++) {
             if (!container.isElementVisible(i)) {
@@ -147,24 +162,21 @@ public class ContainerScreenWrenchConfig extends ContainerScreenScrolling<Contai
             }
             PartConfigEntry entry = container.getVisibleElement(i);
             int y = offsetY + BOX_Y + BOX_HEIGHT * i;
-            int labelX = entry.icon().isEmpty() ? LABEL_X : LABEL_X_ICON;
             String value = entry.value().getString();
-            // Without a value there is no box to leave room for, so the name may take the whole row
-            int labelWidth = (value.isEmpty() ? BOX_X + BOX_WIDTH - 3 : VALUE_X - 3) - labelX;
 
             String group = entry.group().getString();
             if (group.isEmpty()) {
                 RenderHelpers.drawScaledCenteredString(guiGraphics.pose(), guiGraphics.bufferSource(), font,
-                        entry.label().getString(), offsetX + labelX, y + 9,
-                        labelWidth, Helpers.RGBToInt(40, 40, 40), false, Font.DisplayMode.NORMAL);
+                        entry.label().getString(), offsetX + LABEL_X, y + 9, LABEL_WIDTH,
+                        getColor(entry.label(), Helpers.RGBToInt(40, 40, 40)), false, Font.DisplayMode.NORMAL);
             } else {
                 // The group goes above the entry itself, so that the aspect a property belongs to is always visible
                 RenderHelpers.drawScaledCenteredString(guiGraphics.pose(), guiGraphics.bufferSource(), font,
-                        group, offsetX + labelX, y + 4, labelWidth, 0.5F, labelWidth,
+                        group, offsetX + LABEL_X, y + 4, LABEL_WIDTH, 0.5F, LABEL_WIDTH,
                         getColor(entry.group(), Helpers.RGBToInt(120, 120, 120)), false, Font.DisplayMode.NORMAL);
                 RenderHelpers.drawScaledCenteredString(guiGraphics.pose(), guiGraphics.bufferSource(), font,
-                        entry.label().getString(), offsetX + labelX, y + 11,
-                        labelWidth, Helpers.RGBToInt(40, 40, 40), false, Font.DisplayMode.NORMAL);
+                        entry.label().getString(), offsetX + LABEL_X, y + 11, LABEL_WIDTH,
+                        getColor(entry.label(), Helpers.RGBToInt(40, 40, 40)), false, Font.DisplayMode.NORMAL);
             }
 
             if (!value.isEmpty()) {
@@ -175,13 +187,20 @@ public class ContainerScreenWrenchConfig extends ContainerScreenScrolling<Contai
                         getColor(entry.value(), Helpers.RGBToInt(255, 255, 255)), false, Font.DisplayMode.NORMAL);
             }
 
-            if (isHovering(offsetX + BOX_X, y, BOX_WIDTH, BOX_HEIGHT - 1, mouseX, mouseY)) {
+            if (!entry.icon().isEmpty()
+                    && isHovering(offsetX + SLOT_X, y, SLOT_SIZE, SLOT_SIZE, mouseX, mouseY)) {
+                hoveredCard = entry.icon();
+            } else if (isHovering(offsetX + BOX_X, y, BOX_WIDTH, BOX_HEIGHT - 1, mouseX, mouseY)) {
                 hovered = entry;
             }
         }
 
         // After the rows, as the rows that come below the hovered one would otherwise draw over the tooltip
-        if (hovered != null) {
+        if (hoveredCard != null) {
+            // The card itself is shown, so it tells the player what it holds just like it does anywhere else
+            guiGraphics.renderTooltip(font, getTooltipFromItem(this.minecraft, hoveredCard),
+                    hoveredCard.getTooltipImage(), mouseX - this.leftPos, mouseY - this.topPos);
+        } else if (hovered != null) {
             drawTooltip(getEntryTooltip(hovered), guiGraphics.pose(),
                     mouseX - this.leftPos, mouseY - this.topPos);
         }
