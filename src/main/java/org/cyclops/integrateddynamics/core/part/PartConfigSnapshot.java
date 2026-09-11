@@ -1,6 +1,8 @@
 package org.cyclops.integrateddynamics.core.part;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Direction;
@@ -14,7 +16,10 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.util.Mth;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.RegistryEntries;
+import org.cyclops.integrateddynamics.item.ItemEnhancement;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
@@ -31,6 +36,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.Set;
 
 /**
@@ -213,36 +219,33 @@ public record PartConfigSnapshot(int version,
                     settings.targetSide().map(value -> Component.literal(value.getSerializedName())));
             addPartSetting(entries, SETTING_TARGET_OFFSET,
                     settings.targetOffset().map(value -> Component.literal(value.toShortString())));
+            // Pasting a maximum offset costs the player enhancements, so it shows what it is going to cost
             addPartSetting(entries, SETTING_MAX_OFFSET,
-                    settings.maxOffset().map(value -> Component.literal(String.valueOf(value))));
+                    settings.maxOffset().map(value -> Component.literal(String.valueOf(value))),
+                    settings.maxOffset().map(PartConfigSnapshot::getOffsetEnhancements).orElse(ItemStack.EMPTY));
         });
 
-        for (Map.Entry<ResourceLocation, CompoundTag> aspectEntry : aspectProperties().entrySet()) {
-            IAspect<?, ?> aspect = Aspects.REGISTRY.getAspect(aspectEntry.getKey());
-            // Aspects that only differ in value type share a name, so the name carries the colour of that value type
-            Component group = aspect == null
-                    ? Component.literal(aspectEntry.getKey().toString())
-                    : Component.translatable(aspect.getTranslationKey())
-                    .withStyle(aspect.getValueType().getDisplayColorFormat());
-            ListTag properties = aspectEntry.getValue().getList("map", Tag.TAG_COMPOUND);
-            for (int i = 0; i < properties.size(); i++) {
-                CompoundTag property = properties.getCompound(i);
-                String label = property.getString("label");
-                entries.add(new PartConfigEntry(
-                        PartConfigEntry.idAspectProperty(aspectEntry.getKey(), label),
-                        group, Component.translatable(label),
-                        readPropertyValue(valueDeseralizationContext, property), PartConfigSection.ASPECT));
+        // Everything that belongs to an aspect goes under that aspect, so the cards are sorted by what they drive
+        Map<ResourceLocation, List<VariableCard>> cardsByAspect = Maps.newLinkedHashMap();
+        List<VariableCard> looseCards = Lists.newArrayList();
+        for (VariableCard card : variableCards()) {
+            IAspect<?, ?> cardAspect = getVariableCardAspect(partType, card);
+            if (cardAspect == null) {
+                looseCards.add(card);
+            } else {
+                cardsByAspect.computeIfAbsent(cardAspect.getUniqueName(), key -> Lists.newArrayList()).add(card);
             }
         }
 
-        for (VariableCard card : variableCards()) {
-            PartConfigSection section = PartConfigSection.forInventoryName(card.inventoryName());
-            IAspect<?, ?> cardAspect = getVariableCardAspect(partType, card);
-            // The card itself is shown next to it, so the name says what the card drives instead
-            entries.add(new PartConfigEntry(
-                    PartConfigEntry.idVariableCard(card.inventoryName(), card.slot()),
-                    getVariableCardGroup(card, cardAspect), getVariableCardLabel(card, cardAspect),
-                    Component.empty(), card.itemStack(), section));
+        Set<ResourceLocation> aspectNames = Sets.newLinkedHashSet(aspectProperties().keySet());
+        aspectNames.addAll(cardsByAspect.keySet());
+        for (ResourceLocation aspectName : aspectNames) {
+            addAspectEntries(valueDeseralizationContext, entries, partType, aspectName,
+                    cardsByAspect.getOrDefault(aspectName, List.of()));
+        }
+
+        for (VariableCard card : looseCards) {
+            entries.add(variableCardEntry(card, null));
         }
 
         if (partType != null) {
@@ -252,6 +255,100 @@ public record PartConfigSnapshot(int version,
         }
 
         return entries;
+    }
+
+    /**
+     * Add everything that this snapshot holds for one aspect,
+     * starting with the card that makes it the aspect that the part uses,
+     * followed by its properties, each one directly above the variable that drives it.
+     *
+     * @param valueDeseralizationContext A value deserialization context.
+     * @param entries The entries so far.
+     * @param partType The part type this snapshot was taken from, or null if it is no longer known.
+     * @param aspectName The unique name of the aspect.
+     * @param cards The cards of that aspect.
+     */
+    protected void addAspectEntries(ValueDeseralizationContext valueDeseralizationContext,
+                                    List<PartConfigEntry> entries, @Nullable IPartType<?, ?> partType,
+                                    ResourceLocation aspectName, List<VariableCard> cards) {
+        IAspect<?, ?> aspect = Aspects.REGISTRY.getAspect(aspectName);
+        // Aspects that only differ in value type share a name, so the name carries the colour of that value type
+        Component group = aspect == null
+                ? Component.literal(aspectName.toString())
+                : Component.translatable(aspect.getTranslationKey())
+                .withStyle(aspect.getValueType().getDisplayColorFormat());
+
+        List<VariableCard> settingCards = Lists.newArrayList();
+        for (VariableCard card : cards) {
+            if (INVENTORY_NAME_ACTIVE.equals(card.inventoryName())) {
+                entries.add(variableCardEntry(card, aspect));
+            } else {
+                settingCards.add(card);
+            }
+        }
+
+        ListTag properties = aspectProperties()
+                .getOrDefault(aspectName, new CompoundTag())
+                .getList("map", Tag.TAG_COMPOUND);
+        for (int i = 0; i < properties.size(); i++) {
+            CompoundTag property = properties.getCompound(i);
+            String label = property.getString("label");
+            entries.add(new PartConfigEntry(
+                    PartConfigEntry.idAspectProperty(aspectName, label),
+                    group, Component.translatable(label),
+                    readPropertyValue(valueDeseralizationContext, property), ItemStack.EMPTY,
+                    getAspectColor(aspect), PartConfigSection.ASPECT));
+
+            // The variable that overrides this property, if there is one
+            settingCards.removeIf(card -> {
+                if (!label.equals(getVariableCardPropertyKey(aspect, card))) {
+                    return false;
+                }
+                entries.add(variableCardEntry(card, aspect));
+                return true;
+            });
+        }
+
+        // The variables of properties that are still at their default, so that they have no property of their own
+        for (VariableCard card : settingCards) {
+            entries.add(variableCardEntry(card, aspect));
+        }
+    }
+
+    /**
+     * @param card A variable card inside this snapshot.
+     * @param cardAspect The aspect that it drives, if any.
+     * @return The entry for that card.
+     */
+    protected static PartConfigEntry variableCardEntry(VariableCard card, @Nullable IAspect<?, ?> cardAspect) {
+        // The card itself is shown next to it, so the name says what the card drives instead
+        return new PartConfigEntry(
+                PartConfigEntry.idVariableCard(card.inventoryName(), card.slot()),
+                getVariableCardGroup(card, cardAspect), getVariableCardLabel(card, cardAspect),
+                Component.empty(), card.itemStack(), getAspectColor(cardAspect),
+                PartConfigSection.forInventoryName(card.inventoryName()));
+    }
+
+    /**
+     * @param aspect The aspect of a setting variable, if it is known.
+     * @param card A variable card inside this snapshot.
+     * @return The name of the property that the card drives, or null if it drives no property.
+     */
+    @Nullable
+    protected static String getVariableCardPropertyKey(@Nullable IAspect<?, ?> aspect, VariableCard card) {
+        if (aspect == null || INVENTORY_NAME_ACTIVE.equals(card.inventoryName())) {
+            return null;
+        }
+        List<IAspectPropertyTypeInstance> properties = PartStateAspectVariablesHandler.getPropertyTypes(aspect);
+        return card.slot() < properties.size() ? properties.get(card.slot()).getTranslationKey() : null;
+    }
+
+    /**
+     * @param aspect An aspect, or null if the entry belongs to none.
+     * @return The colour that a part gui shows that aspect in, so that both guis colour the same thing the same way.
+     */
+    protected static OptionalInt getAspectColor(@Nullable IAspect<?, ?> aspect) {
+        return aspect == null ? OptionalInt.empty() : OptionalInt.of(aspect.getValueType().getDisplayColor());
     }
 
     /**
@@ -312,11 +409,28 @@ public record PartConfigSnapshot(int version,
     }
 
     protected void addPartSetting(List<PartConfigEntry> entries, String setting, Optional<Component> value) {
+        addPartSetting(entries, setting, value, ItemStack.EMPTY);
+    }
+
+    protected void addPartSetting(List<PartConfigEntry> entries, String setting, Optional<Component> value,
+                                  ItemStack icon) {
         // These have no group, as the name of a setting already says everything about it
         value.ifPresent(shown -> entries.add(new PartConfigEntry(PartConfigEntry.idPartSetting(setting),
                 Component.empty(),
                 Component.translatable("item.integrateddynamics.wrench.mode.config.entry." + setting),
-                shown, PartConfigSection.PART_SETTINGS)));
+                shown, icon, OptionalInt.empty(), PartConfigSection.PART_SETTINGS)));
+    }
+
+    /**
+     * @param maxOffset A maximum offset.
+     * @return The offset enhancements that raising a part to that offset takes.
+     */
+    public static ItemStack getOffsetEnhancements(int maxOffset) {
+        ItemEnhancement item = RegistryEntries.ITEM_ENHANCEMENT_OFFSET.get();
+        ItemStack itemStack = new ItemStack(item,
+                Math.max(1, Mth.ceil((double) maxOffset / ItemEnhancement.DEFAULT_OFFSET_VALUE)));
+        item.setEnhancementValue(itemStack, ItemEnhancement.DEFAULT_OFFSET_VALUE);
+        return itemStack;
     }
 
     /**

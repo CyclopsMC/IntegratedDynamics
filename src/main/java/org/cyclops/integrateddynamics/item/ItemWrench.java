@@ -88,7 +88,8 @@ public class ItemWrench extends Item {
                 ItemLocation itemLocation = InventoryLocationPlayer.getInstance()
                         .handToLocation(player, hand, player.getInventory().selected);
                 org.cyclops.integrateddynamics.IntegratedDynamics._instance.getModHelpers().getMinecraftHelpers().openMenu((ServerPlayer) player,
-                        new NamedContainerProviderItem(itemLocation, itemStack.getHoverName(),
+                        new NamedContainerProviderItem(itemLocation,
+                                Component.translatable("gui.integrateddynamics.wrench_config"),
                                 ContainerWrenchConfig::new),
                         packetBuffer -> ItemLocation.writeToPacketBuffer(packetBuffer, itemLocation));
             }

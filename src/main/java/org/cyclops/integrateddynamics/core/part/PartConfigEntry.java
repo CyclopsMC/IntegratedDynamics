@@ -4,6 +4,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.OptionalInt;
+
 /**
  * One thing inside a {@link PartConfigSnapshot} that the player can switch off before pasting.
  *
@@ -13,17 +15,19 @@ import net.minecraft.world.item.ItemStack;
  * @param label The name of this entry.
  * @param value What is stored for it, which is empty when the name says it all.
  * @param icon The item to show next to the name, which is empty when there is nothing to show.
+ * @param color The colour that this entry is shown in, which is the display colour of the value type it belongs to,
+ *              and empty for entries that belong to no value type.
  * @param section The configuration section that this entry belongs to.
  * @author rubensworks
  */
 public record PartConfigEntry(String id, Component group, Component label, Component value, ItemStack icon,
-                              PartConfigSection section) {
+                              OptionalInt color, PartConfigSection section) {
 
     /**
-     * An entry that is shown without an item next to it.
+     * An entry that is shown without an item next to it, and in no colour of its own.
      */
     public PartConfigEntry(String id, Component group, Component label, Component value, PartConfigSection section) {
-        this(id, group, label, value, ItemStack.EMPTY, section);
+        this(id, group, label, value, ItemStack.EMPTY, OptionalInt.empty(), section);
     }
 
     public static final String PREFIX_PART_SETTINGS = "settings";

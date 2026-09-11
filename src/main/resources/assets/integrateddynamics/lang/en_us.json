@@ -189,7 +189,7 @@
     "item.integrateddynamics.wrench.mode.config.entry.target_side": "Target Side",
     "item.integrateddynamics.wrench.mode.config.entry.target_offset": "Target Offset",
     "item.integrateddynamics.wrench.mode.config.entry.max_offset": "Offset Enhancements",
-    "gui.integrateddynamics.wrench_config": "Wrench Configuration",
+    "gui.integrateddynamics.wrench_config": "Copied Settings",
     "gui.integrateddynamics.wrench_config.entry": "Paste this",
     "gui.integrateddynamics.wrench_config.entry.value": "Value: %s",
     "gui.integrateddynamics.wrench_config.toggle_all": "Switch everything on or off",

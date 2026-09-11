@@ -35,6 +35,7 @@ import org.cyclops.integrateddynamics.core.part.PartStateActiveVariableBase;
 import org.cyclops.integrateddynamics.core.part.PartStateAspectVariablesHandler;
 import org.cyclops.integrateddynamics.core.part.PartStateOffsetHandler;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
+import org.cyclops.integrateddynamics.item.ItemEnhancement;
 import org.cyclops.integrateddynamics.item.ItemWrench;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 import org.cyclops.integrateddynamics.part.aspect.write.AspectWriteBuilders;
@@ -674,6 +675,56 @@ public class GameTestsWrenchConfig {
                             .translatable(AspectWriteBuilders.Redstone.PROP_STRONG_POWER.getTranslationKey())
                             .getString()),
                     "A setting variable does not name its property");
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testWrenchConfigEntriesAreGroupedUnderTheirAspect(GameTestHelper helper) {
+        PartPos source = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
+        setAspectProperty(source, Aspects.Write.Redstone.BOOLEAN,
+                AspectWriteBuilders.Redstone.PROP_STRONG_POWER, ValueTypeBoolean.ValueBoolean.of(true));
+        setAspectPropertyVariable(source, Aspects.Write.Redstone.BOOLEAN,
+                AspectWriteBuilders.Redstone.PROP_STRONG_POWER,
+                createVariableForValue(helper.getLevel(), ValueTypes.BOOLEAN, ValueTypeBoolean.ValueBoolean.of(true)));
+        placeVariableInWriter(helper, source, Aspects.Write.Redstone.BOOLEAN,
+                createVariableForValue(helper.getLevel(), ValueTypes.BOOLEAN, ValueTypeBoolean.ValueBoolean.of(true)));
+        int settingSlot = PartStateAspectVariablesHandler.getPropertyTypes(Aspects.Write.Redstone.BOOLEAN)
+                .indexOf(AspectWriteBuilders.Redstone.PROP_STRONG_POWER);
+
+        List<String> ids = snapshotConfig(helper, source)
+                .getEntries(ValueDeseralizationContext.of(helper.getLevel())).stream()
+                .map(PartConfigEntry::id)
+                .toList();
+        int active = ids.indexOf(PartConfigEntry.idVariableCard(PartConfigSnapshot.INVENTORY_NAME_ACTIVE, 0));
+        int property = ids.indexOf(PartConfigEntry.idAspectProperty(
+                Aspects.Write.Redstone.BOOLEAN.getUniqueName(),
+                AspectWriteBuilders.Redstone.PROP_STRONG_POWER.getTranslationKey()));
+        int setting = ids.indexOf(PartConfigEntry.idVariableCard(
+                PartStateAspectVariablesHandler.getInventoryName(Aspects.Write.Redstone.BOOLEAN), settingSlot));
+
+        helper.succeedWhen(() -> {
+            helper.assertTrue(active >= 0, "The variable that enables the aspect is not listed");
+            helper.assertValueEqual(property, active + 1,
+                    "A property is not listed right under the aspect that it belongs to");
+            helper.assertValueEqual(setting, property + 1,
+                    "A setting variable is not listed right under the property that it drives");
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testWrenchConfigMaxOffsetShowsItsEnhancements(GameTestHelper helper) {
+        PartPos source = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
+        GameTestsOffsets.increaseMaxOffset(helper, source, 8);
+
+        PartConfigEntry entry = findEntry(snapshotConfig(helper, source)
+                        .getEntries(ValueDeseralizationContext.of(helper.getLevel())),
+                PartConfigEntry.idPartSetting(PartConfigSnapshot.SETTING_MAX_OFFSET));
+
+        helper.succeedWhen(() -> {
+            helper.assertTrue(entry != null && entry.icon().is(RegistryEntries.ITEM_ENHANCEMENT_OFFSET.get()),
+                    "The maximum offset does not show what it costs in enhancements");
+            helper.assertValueEqual(entry.icon().getCount(),
+                    8 / ItemEnhancement.DEFAULT_OFFSET_VALUE, "The wrong number of enhancements is shown");
         });
     }
 

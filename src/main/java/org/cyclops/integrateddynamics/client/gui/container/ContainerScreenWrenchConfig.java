@@ -21,7 +21,6 @@ import org.cyclops.cyclopscore.helper.RenderHelpers;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.client.gui.image.Images;
 import org.cyclops.integrateddynamics.core.part.PartConfigEntry;
-import org.cyclops.integrateddynamics.core.part.PartConfigSection;
 import org.cyclops.integrateddynamics.inventory.container.ContainerWrenchConfig;
 
 import java.awt.Rectangle;
@@ -40,6 +39,11 @@ public class ContainerScreenWrenchConfig extends ContainerScreenScrolling<Contai
     private static final int BOX_X = 9;
     private static final int BOX_Y = 18;
     private static final int BUTTON_X = 12;
+    private static final int TITLE_X = 8;
+    /**
+     * How much room there is left of the search field.
+     */
+    private static final int TITLE_WIDTH = 72;
     private static final int LABEL_X = 27;
     private static final int VALUE_X = 103;
     /**
@@ -52,17 +56,19 @@ public class ContainerScreenWrenchConfig extends ContainerScreenScrolling<Contai
     private static final int SLOT_SIZE = 18;
     private static final int SLOT_X = VALUE_X + VALUE_WIDTH - SLOT_SIZE;
     /**
+     * A slot is a pixel taller than the row that holds it, so it hangs over the line above rather than the one below.
+     */
+    private static final int SLOT_Y = -1;
+    /**
      * Where an empty slot sits inside the gui texture, which is where the player inventory starts.
      */
     private static final int SLOT_TEXTURE_X = 8;
     private static final int SLOT_TEXTURE_Y = 139;
 
     /**
-     * The colour that the row of an entry is tinted in, so that the sections stay apart at a glance.
+     * What the row of an entry that belongs to no value type is tinted in, which is nothing at all.
      */
-    private static final Map<PartConfigSection, Integer> SECTION_COLORS = Map.of(
-            PartConfigSection.PART_SETTINGS, Helpers.RGBToInt(120, 160, 215),
-            PartConfigSection.ASPECT, Helpers.RGBToInt(215, 170, 100));
+    private static final int COLOR_NEUTRAL = Helpers.RGBToInt(255, 255, 255);
 
     private final Map<String, ButtonCheckbox> entryButtons = Maps.newHashMap();
 
@@ -121,8 +127,8 @@ public class ContainerScreenWrenchConfig extends ContainerScreenScrolling<Contai
             int x = this.leftPos + offsetX;
             int y = this.topPos + offsetY + BOX_Y + BOX_HEIGHT * i;
 
-            Triple<Float, Float, Float> rgb = Helpers.intToRGB(
-                    SECTION_COLORS.getOrDefault(entry.section(), Helpers.RGBToInt(255, 255, 255)));
+            // The same colour that a part gui gives the value type of an aspect
+            Triple<Float, Float, Float> rgb = Helpers.intToRGB(entry.color().orElse(COLOR_NEUTRAL));
             RenderSystem.setShaderColor(colorSmoothener(rgb.getLeft()), colorSmoothener(rgb.getMiddle()),
                     colorSmoothener(rgb.getRight()), 1);
             guiGraphics.blit(texture, x + BOX_X, y, 0, getBaseYSize(), BOX_WIDTH, BOX_HEIGHT - 1);
@@ -130,10 +136,11 @@ public class ContainerScreenWrenchConfig extends ContainerScreenScrolling<Contai
 
             // In a slot of its own, so that a card looks the same here as it does inside a part
             if (!entry.icon().isEmpty()) {
-                guiGraphics.blit(texture, x + SLOT_X, y, SLOT_TEXTURE_X, SLOT_TEXTURE_Y, SLOT_SIZE, SLOT_SIZE);
+                guiGraphics.blit(texture, x + SLOT_X, y + SLOT_Y, SLOT_TEXTURE_X, SLOT_TEXTURE_Y,
+                        SLOT_SIZE, SLOT_SIZE);
                 Lighting.setupForFlatItems();
-                guiGraphics.renderItem(entry.icon(), x + SLOT_X + 1, y + 1);
-                guiGraphics.renderItemDecorations(font, entry.icon(), x + SLOT_X + 1, y + 1);
+                guiGraphics.renderItem(entry.icon(), x + SLOT_X + 1, y + SLOT_Y + 1);
+                guiGraphics.renderItemDecorations(font, entry.icon(), x + SLOT_X + 1, y + SLOT_Y + 1);
             }
 
             ButtonCheckbox button = this.entryButtons.get(entry.id());
@@ -148,9 +155,11 @@ public class ContainerScreenWrenchConfig extends ContainerScreenScrolling<Contai
     // Everything that has to end up on top of the buttons is drawn here, as the buttons are drawn after the background
     @Override
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        // The gui has no room for the usual labels, the name of the Wrench goes in the bar at the top instead
-        guiGraphics.drawString(font, this.title, offsetX + 8, offsetY + 6,
-                Helpers.RGBToInt(64, 64, 64), false);
+        // The gui has no room for the usual labels, what it holds goes in the bar at the top instead,
+        // shrunk when needed so that it never runs into the search field next to it
+        RenderHelpers.drawScaledString(guiGraphics, font, this.title.getString(), offsetX + TITLE_X, offsetY + 6,
+                Math.min(1F, (float) TITLE_WIDTH / font.width(this.title)),
+                Helpers.RGBToInt(64, 64, 64), false, Font.DisplayMode.NORMAL);
 
         ContainerWrenchConfig container = getMenu();
         for (int i = 0; i < container.getPageSize(); i++) {
@@ -177,10 +186,12 @@ public class ContainerScreenWrenchConfig extends ContainerScreenScrolling<Contai
             }
 
             if (!value.isEmpty()) {
-                drawValueBox(guiGraphics, offsetX + VALUE_X, y + 4);
+                // A row that also holds a slot leaves room for it
+                int valueWidth = entry.icon().isEmpty() ? VALUE_WIDTH : SLOT_X - 2 - VALUE_X;
+                drawValueBox(guiGraphics, offsetX + VALUE_X, y + 4, valueWidth);
                 // In the colour of its value type, the same way that the part gui shows a property value
                 RenderHelpers.drawScaledCenteredString(guiGraphics.pose(), guiGraphics.bufferSource(), font,
-                        value, offsetX + VALUE_X + 2, y + 9, VALUE_WIDTH - 4, 1F, VALUE_WIDTH - 4,
+                        value, offsetX + VALUE_X + 2, y + 9, valueWidth - 4, 1F, valueWidth - 4,
                         getColor(entry.value(), Helpers.RGBToInt(255, 255, 255)), false, Font.DisplayMode.NORMAL);
             }
 
@@ -201,7 +212,7 @@ public class ContainerScreenWrenchConfig extends ContainerScreenScrolling<Contai
             PartConfigEntry entry = container.getVisibleElement(i);
             int y = offsetY + BOX_Y + BOX_HEIGHT * i;
             if (!entry.icon().isEmpty()
-                    && isHovering(offsetX + SLOT_X, y, SLOT_SIZE, SLOT_SIZE, mouseX, mouseY)) {
+                    && isHovering(offsetX + SLOT_X, y + SLOT_Y, SLOT_SIZE, SLOT_SIZE, mouseX, mouseY)) {
                 // The card itself is shown, so it tells the player what it holds just like it does anywhere else
                 guiGraphics.renderTooltip(font, getTooltipFromItem(this.minecraft, entry.icon()),
                         entry.icon().getTooltipImage(), mouseX, mouseY);
@@ -238,11 +249,11 @@ public class ContainerScreenWrenchConfig extends ContainerScreenScrolling<Contai
     /**
      * An inset box in the style of the rest of this gui, to set a value apart from the name next to it.
      */
-    protected void drawValueBox(GuiGraphics guiGraphics, int x, int y) {
-        guiGraphics.fill(x, y, x + VALUE_WIDTH, y + VALUE_HEIGHT, 0xFF000000 | Helpers.RGBToInt(55, 55, 55));
-        guiGraphics.fill(x + 1, y + 1, x + VALUE_WIDTH + 1, y + VALUE_HEIGHT + 1,
+    protected void drawValueBox(GuiGraphics guiGraphics, int x, int y, int width) {
+        guiGraphics.fill(x, y, x + width, y + VALUE_HEIGHT, 0xFF000000 | Helpers.RGBToInt(55, 55, 55));
+        guiGraphics.fill(x + 1, y + 1, x + width + 1, y + VALUE_HEIGHT + 1,
                 0xFF000000 | Helpers.RGBToInt(255, 255, 255));
-        guiGraphics.fill(x + 1, y + 1, x + VALUE_WIDTH, y + VALUE_HEIGHT,
+        guiGraphics.fill(x + 1, y + 1, x + width, y + VALUE_HEIGHT,
                 0xFF000000 | Helpers.RGBToInt(139, 139, 139));
     }
 
