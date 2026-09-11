@@ -297,7 +297,7 @@ public record PartConfigSnapshot(int version,
                     PartConfigEntry.idAspectProperty(aspectName, label),
                     group, Component.translatable(label),
                     readPropertyValue(valueDeseralizationContext, property), ItemStack.EMPTY,
-                    getAspectColor(aspect), PartConfigSection.ASPECT));
+                    Optional.empty(), getAspectColor(aspect), PartConfigSection.ASPECT));
 
             // The variable that overrides this property, if there is one
             settingCards.removeIf(card -> {
@@ -322,10 +322,14 @@ public record PartConfigSnapshot(int version,
      */
     protected static PartConfigEntry variableCardEntry(VariableCard card, @Nullable IAspect<?, ?> cardAspect) {
         // The card itself is shown next to it, so the name says what the card drives instead
+        // The variable that makes an aspect the active one is that aspect, so it is shown as one
+        Optional<ResourceLocation> aspectName = cardAspect != null
+                && INVENTORY_NAME_ACTIVE.equals(card.inventoryName())
+                ? Optional.of(cardAspect.getUniqueName()) : Optional.empty();
         return new PartConfigEntry(
                 PartConfigEntry.idVariableCard(card.inventoryName(), card.slot()),
                 getVariableCardGroup(card, cardAspect), getVariableCardLabel(card, cardAspect),
-                Component.empty(), card.itemStack(), getAspectColor(cardAspect),
+                Component.empty(), card.itemStack(), aspectName, getAspectColor(cardAspect),
                 PartConfigSection.forInventoryName(card.inventoryName()));
     }
 
@@ -418,7 +422,7 @@ public record PartConfigSnapshot(int version,
         value.ifPresent(shown -> entries.add(new PartConfigEntry(PartConfigEntry.idPartSetting(setting),
                 Component.empty(),
                 Component.translatable("item.integrateddynamics.wrench.mode.config.entry." + setting),
-                shown, icon, OptionalInt.empty(), PartConfigSection.PART_SETTINGS)));
+                shown, icon, Optional.empty(), OptionalInt.empty(), PartConfigSection.PART_SETTINGS)));
     }
 
     /**

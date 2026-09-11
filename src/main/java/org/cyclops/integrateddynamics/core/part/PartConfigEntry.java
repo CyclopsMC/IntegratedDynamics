@@ -4,6 +4,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.Optional;
 import java.util.OptionalInt;
 
 /**
@@ -14,20 +15,22 @@ import java.util.OptionalInt;
  * @param group What this entry belongs to, such as the aspect that a property belongs to.
  * @param label The name of this entry.
  * @param value What is stored for it, which is empty when the name says it all.
- * @param icon The item to show next to the name, which is empty when there is nothing to show.
+ * @param icon The item to show in the slot of this entry, which is empty when it has no slot.
+ * @param aspect The unique name of the aspect that this entry stands for, which is shown as an item next to its name,
+ *               and empty for an entry that is not an aspect itself.
  * @param color The colour that this entry is shown in, which is the display colour of the value type it belongs to,
  *              and empty for entries that belong to no value type.
  * @param section The configuration section that this entry belongs to.
  * @author rubensworks
  */
 public record PartConfigEntry(String id, Component group, Component label, Component value, ItemStack icon,
-                              OptionalInt color, PartConfigSection section) {
+                              Optional<ResourceLocation> aspect, OptionalInt color, PartConfigSection section) {
 
     /**
      * An entry that is shown without an item next to it, and in no colour of its own.
      */
     public PartConfigEntry(String id, Component group, Component label, Component value, PartConfigSection section) {
-        this(id, group, label, value, ItemStack.EMPTY, OptionalInt.empty(), section);
+        this(id, group, label, value, ItemStack.EMPTY, Optional.empty(), OptionalInt.empty(), section);
     }
 
     public static final String PREFIX_PART_SETTINGS = "settings";

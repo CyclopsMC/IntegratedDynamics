@@ -11,6 +11,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonCheckbox;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonImage;
@@ -18,7 +19,13 @@ import org.cyclops.cyclopscore.client.gui.container.ContainerScreenScrolling;
 import org.cyclops.cyclopscore.client.gui.image.IImage;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.RenderHelpers;
+import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
+import org.cyclops.integrateddynamics.RegistryEntries;
+import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
+import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
+import org.cyclops.integrateddynamics.core.item.AspectVariableFacade;
+import org.cyclops.integrateddynamics.part.aspect.Aspects;
 import org.cyclops.integrateddynamics.client.gui.image.Images;
 import org.cyclops.integrateddynamics.core.part.PartConfigEntry;
 import org.cyclops.integrateddynamics.inventory.container.ContainerWrenchConfig;
@@ -49,14 +56,16 @@ public class ContainerScreenWrenchConfig extends ContainerScreenScrolling<Contai
      * The width of a string counts the gap after its last letter, which is not part of what is seen.
      */
     private static final int TITLE_WIDTH = SEARCH_BOX_X - TITLE_X * 2 + 1;
-    private static final int LABEL_X = 27;
-    private static final int VALUE_X = 103;
+    private static final int ICON_X = 25;
+    private static final int ICON_SIZE = 16;
+    private static final int LABEL_X = 43;
+    private static final int VALUE_X = 120;
     /**
      * The same for every row, so that the names stay under each other
      * whatever a row happens to show on its right.
      */
     private static final int LABEL_WIDTH = VALUE_X - 3 - LABEL_X;
-    private static final int VALUE_WIDTH = 63;
+    private static final int VALUE_WIDTH = 46;
     private static final int VALUE_HEIGHT = 10;
     private static final int SLOT_SIZE = 18;
     private static final int SLOT_X = VALUE_X + VALUE_WIDTH - SLOT_SIZE;
@@ -76,6 +85,10 @@ public class ContainerScreenWrenchConfig extends ContainerScreenScrolling<Contai
     private static final int COLOR_NEUTRAL = Helpers.RGBToInt(255, 255, 255);
 
     private final Map<String, ButtonCheckbox> entryButtons = Maps.newHashMap();
+    /**
+     * The item of every aspect that is shown, as it stays the same for as long as this gui is open.
+     */
+    private final Map<String, ItemStack> aspectIcons = Maps.newHashMap();
 
     public ContainerScreenWrenchConfig(ContainerWrenchConfig container, Inventory inventory, Component title) {
         super(container, inventory, title);
@@ -90,6 +103,7 @@ public class ContainerScreenWrenchConfig extends ContainerScreenScrolling<Contai
     public void init() {
         clearWidgets();
         this.entryButtons.clear();
+        this.aspectIcons.clear();
         super.init();
 
         for (PartConfigEntry entry : getMenu().getEntries()) {
@@ -138,6 +152,13 @@ public class ContainerScreenWrenchConfig extends ContainerScreenScrolling<Contai
                     colorSmoothener(rgb.getRight()), 1);
             guiGraphics.blit(texture, x + BOX_X, y, 0, getBaseYSize(), BOX_WIDTH, BOX_HEIGHT - 1);
             RenderSystem.setShaderColor(1, 1, 1, 1);
+
+            // The same item that a part gui shows for an aspect
+            ItemStack aspectIcon = getAspectIcon(entry);
+            if (!aspectIcon.isEmpty()) {
+                Lighting.setupForFlatItems();
+                guiGraphics.renderItem(aspectIcon, x + ICON_X, y);
+            }
 
             // In a slot of its own, so that a card looks the same here as it does inside a part
             if (!entry.icon().isEmpty()) {
@@ -216,6 +237,17 @@ public class ContainerScreenWrenchConfig extends ContainerScreenScrolling<Contai
             }
             PartConfigEntry entry = container.getVisibleElement(i);
             int y = offsetY + BOX_Y + BOX_HEIGHT * i;
+            if (entry.aspect().isPresent()
+                    && isHovering(offsetX + ICON_X, y, ICON_SIZE, ICON_SIZE, mouseX, mouseY)) {
+                // What a part gui tells about an aspect when its item is hovered
+                List<Component> lines = Lists.newArrayList();
+                IAspect<?, ?> aspect = Aspects.REGISTRY.getAspect(entry.aspect().get());
+                if (aspect != null) {
+                    aspect.loadTooltip(lines, true);
+                    guiGraphics.renderComponentTooltip(font, lines, mouseX, mouseY);
+                }
+                return;
+            }
             if (!entry.icon().isEmpty()
                     && isHovering(offsetX + SLOT_X, y + SLOT_Y, SLOT_SIZE, SLOT_SIZE, mouseX, mouseY)) {
                 // The card itself is shown, so it tells the player what it holds just like it does anywhere else
@@ -260,6 +292,28 @@ public class ContainerScreenWrenchConfig extends ContainerScreenScrolling<Contai
                 0xFF000000 | Helpers.RGBToInt(255, 255, 255));
         guiGraphics.fill(x + 1, y + 1, x + width, y + VALUE_HEIGHT,
                 0xFF000000 | Helpers.RGBToInt(139, 139, 139));
+    }
+
+    /**
+     * @param entry An entry that is shown.
+     * @return The item that a part gui shows for the aspect of that entry, if it stands for one.
+     */
+    protected ItemStack getAspectIcon(PartConfigEntry entry) {
+        if (entry.aspect().isEmpty()) {
+            return ItemStack.EMPTY;
+        }
+        return this.aspectIcons.computeIfAbsent(entry.id(), id -> {
+            IAspect<?, ?> aspect = Aspects.REGISTRY.getAspect(entry.aspect().get());
+            if (aspect == null) {
+                return ItemStack.EMPTY;
+            }
+            // A variable card that reads from the aspect, which is what makes its item show that aspect.
+            // The part that this was copied from is not known anymore, so it gets the first part id.
+            return IntegratedDynamics._instance.getRegistryManager()
+                    .getRegistry(IVariableFacadeHandlerRegistry.class)
+                    .writeVariableFacadeItem(new ItemStack(RegistryEntries.ITEM_VARIABLE.get()),
+                            new AspectVariableFacade(false, 0, aspect), Aspects.REGISTRY);
+        });
     }
 
     protected int getColor(Component component, int fallback) {
