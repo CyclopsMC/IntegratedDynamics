@@ -1,8 +1,23 @@
 # Changelog for Minecraft 26.1.2
 All notable changes to this project will be documented in this file.
 
+<a name="26.1.2-1.35.0"></a>
+## [26.1.2-1.35.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.34.1...26.1.2-1.35.0) - 2026-09-11 21:37:13
+
+
+### Added
+* Allow part configurations to be copied and pasted with the Wrench (#1721)
+  This adds 3 new copy modes: all, settings, and aspect.
+  Closes #859
+* Let insert pre-consumers see what part of an insertion is still unclaimed (#1724)
+  Required for CyclopsMC/IntegratedCrafting#230
+
+### Changed
+* Hash a prototype once per index position update (#1725)
+  This improves performance of the IngredientPositionsIndex.
+
 <a name="26.1.2-1.34.1"></a>
-## [26.1.2-1.34.1](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.34.0...26.1.2-1.34.1) - 2026-09-05 13:42:45
+## [26.1.2-1.34.1](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.34.0...26.1.2-1.34.1) - 2026-09-05 13:42:45 +0200
 
 
 ### Added
