@@ -7,7 +7,11 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -33,6 +37,7 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerWrenchConfig;
 import java.awt.Rectangle;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Gui for looking at the configuration inside a Wrench,
@@ -116,11 +121,14 @@ public class ContainerScreenWrenchConfig extends ContainerScreenScrolling<Contai
         }
 
         // Next to the gui, where this mod puts the buttons of a part as well
-        addRenderableWidget(new ButtonImage(this.leftPos - 20, this.topPos, 18, 18,
+        ButtonImage toggleAll = new ButtonImage(this.leftPos - 20, this.topPos, 18, 18,
                 Component.translatable("gui.integrateddynamics.wrench_config.toggle_all"),
                 createServerPressable(ContainerWrenchConfig.BUTTON_TOGGLE_ALL, b -> {}),
                 new IImage[]{Images.BUTTON_BACKGROUND_INACTIVE, Images.BUTTON_MIDDLE_CHECK_ALL},
-                false, 0, 0));
+                false, 0, 0);
+        toggleAll.setTooltip(Tooltip.create(Component.translatable(
+                "gui.integrateddynamics.wrench_config.toggle_all")));
+        addRenderableWidget(toggleAll);
     }
 
     @Override
@@ -207,25 +215,15 @@ public class ContainerScreenWrenchConfig extends ContainerScreenScrolling<Contai
                         Helpers.RGBToInt(90, 90, 90), false, Font.DisplayMode.NORMAL);
             }
 
-            String group = entry.group().getString();
-            if (group.isEmpty()) {
-                RenderHelpers.drawScaledCenteredString(guiGraphics.pose(), guiGraphics.bufferSource(), font,
-                        entry.label().getString(), offsetX + labelX, y + 9, labelWidth,
-                        getColor(entry.label(), Helpers.RGBToInt(40, 40, 40)), false, Font.DisplayMode.NORMAL);
-            } else {
-                // The group goes above the entry itself, so that the aspect a property belongs to is always visible
-                RenderHelpers.drawScaledCenteredString(guiGraphics.pose(), guiGraphics.bufferSource(), font,
-                        group, offsetX + labelX, y + 4, labelWidth, 0.5F, labelWidth,
-                        getColor(entry.group(), Helpers.RGBToInt(120, 120, 120)), false, Font.DisplayMode.NORMAL);
-                RenderHelpers.drawScaledCenteredString(guiGraphics.pose(), guiGraphics.bufferSource(), font,
-                        entry.label().getString(), offsetX + labelX, y + 11, labelWidth,
-                        getColor(entry.label(), Helpers.RGBToInt(40, 40, 40)), false, Font.DisplayMode.NORMAL);
-            }
+            // What an entry belongs to is told by the tooltip, as a row only has room for its name
+            RenderHelpers.drawScaledCenteredString(guiGraphics.pose(), guiGraphics.bufferSource(), font,
+                    entry.label().getString(), offsetX + labelX, y + 9, labelWidth,
+                    Helpers.RGBToInt(40, 40, 40), false, Font.DisplayMode.NORMAL);
 
             if (!value.isEmpty()) {
                 // A row that also holds a slot leaves room for it
                 int valueWidth = entry.icon().isEmpty() ? VALUE_WIDTH : SLOT_X - 2 - VALUE_X;
-                drawValueBox(guiGraphics, offsetX + VALUE_X, y + 4, valueWidth);
+                drawValueBox(guiGraphics, offsetX + VALUE_X, y + 3, valueWidth);
                 // In the colour of its value type, the same way that the part gui shows a property value
                 RenderHelpers.drawScaledCenteredString(guiGraphics.pose(), guiGraphics.bufferSource(), font,
                         value, offsetX + VALUE_X + 2, y + 9, valueWidth - 4, 1F, valueWidth - 4,
@@ -266,7 +264,9 @@ public class ContainerScreenWrenchConfig extends ContainerScreenScrolling<Contai
                         entry.icon().getTooltipImage(), mouseX, mouseY);
                 return;
             }
-            if (isHovering(offsetX + BOX_X, y, BOX_WIDTH, BOX_HEIGHT - 1, mouseX, mouseY)) {
+            // An aspect is told about by its item, so its name needs no tooltip of its own
+            if (entry.aspect().isEmpty()
+                    && isHovering(offsetX + BOX_X, y, BOX_WIDTH, BOX_HEIGHT - 1, mouseX, mouseY)) {
                 guiGraphics.renderComponentTooltip(font, getEntryTooltip(entry), mouseX, mouseY);
                 return;
             }
@@ -279,19 +279,35 @@ public class ContainerScreenWrenchConfig extends ContainerScreenScrolling<Contai
      */
     protected List<Component> getEntryTooltip(PartConfigEntry entry) {
         List<Component> lines = Lists.newArrayList();
-        // A name that carries the colour of a value type keeps it, as that is what tells two aspects apart
-        lines.add(entry.label().getStyle().getColor() == null
-                ? entry.label().copy().withStyle(ChatFormatting.WHITE) : entry.label().copy());
-        if (!entry.group().getString().isEmpty()) {
-            lines.add(entry.group().copy());
+        lines.add(entry.label().copy().withStyle(ChatFormatting.WHITE));
+        if (isPartOfAspect(entry) && !entry.group().getString().isEmpty()) {
+            // The aspect of a property says more about it than the section that it is in
+            lines.add(Component.translatable("gui.integrateddynamics.wrench_config.entry.aspect",
+                    entry.group().copy()).withStyle(ChatFormatting.GRAY));
+        } else {
+            lines.add(Component.translatable(entry.section().getGuiTranslationKey())
+                    .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
         }
         if (!entry.value().getString().isEmpty()) {
             lines.add(Component.translatable("gui.integrateddynamics.wrench_config.entry.value",
                     entry.value().copy()).withStyle(ChatFormatting.GRAY));
         }
-        lines.add(Component.translatable(entry.section().getTranslationKey())
-                .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+        getEntryDescription(entry).ifPresent(description ->
+                lines.add(description.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)));
         return lines;
+    }
+
+    /**
+     * @param entry An entry that is shown.
+     * @return What the rest of this mod says about the thing that the entry holds, if it says anything.
+     */
+    protected Optional<MutableComponent> getEntryDescription(PartConfigEntry entry) {
+        if (!(entry.label().getContents() instanceof TranslatableContents contents)) {
+            return Optional.empty();
+        }
+        // The same key that a part gui shows the description of an aspect property under
+        String key = contents.getKey() + ".info";
+        return I18n.exists(key) ? Optional.of(Component.translatable(key)) : Optional.empty();
     }
 
     /**

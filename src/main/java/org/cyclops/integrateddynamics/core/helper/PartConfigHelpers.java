@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.helper;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
@@ -27,6 +28,7 @@ import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectProperties
 import org.cyclops.integrateddynamics.api.part.aspect.property.IAspectPropertyTypeInstance;
 import org.cyclops.integrateddynamics.api.part.write.IPartStateWriter;
 import org.cyclops.integrateddynamics.api.part.write.IPartTypeWriter;
+import org.cyclops.integrateddynamics.core.item.VariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.network.PartNetworkElement;
 import org.cyclops.integrateddynamics.core.part.PartConfigApplyResult;
 import org.cyclops.integrateddynamics.core.part.PartConfigEntry;
@@ -437,6 +439,7 @@ public final class PartConfigHelpers {
             cardsByInventory.computeIfAbsent(card.inventoryName(), name -> Lists.newArrayList()).add(card);
         }
         Map<String, SimpleInventory> inventories = Maps.newLinkedHashMap();
+        Map<String, Set<Integer>> keptSlots = Maps.newLinkedHashMap();
         int required = 0;
         for (Map.Entry<String, List<PartConfigSnapshot.VariableCard>> entry : cardsByInventory.entrySet()) {
             SimpleInventory inventory = resolveInventory(partType, state, entry.getKey());
@@ -446,19 +449,22 @@ public final class PartConfigHelpers {
             }
             inventories.put(entry.getKey(), inventory);
             for (PartConfigSnapshot.VariableCard card : entry.getValue()) {
-                if (card.slot() < inventory.getContainerSize()) {
-                    required++;
-                } else {
+                if (card.slot() >= inventory.getContainerSize()) {
                     result.addCardsSkipped(1);
+                } else if (isSameVariable(inventory.getItem(card.slot()), card.itemStack())) {
+                    // The part already holds this very variable, so pasting it would only cost the player a card
+                    keptSlots.computeIfAbsent(entry.getKey(), name -> Sets.newHashSet()).add(card.slot());
+                } else {
+                    required++;
                 }
             }
         }
-        if (required == 0) {
+        if (required == 0 && keptSlots.isEmpty()) {
             return;
         }
 
         // Consume the required blank variable cards
-        if (!player.isCreative()) {
+        if (required > 0 && !player.isCreative()) {
             int available = countBlankVariables(player);
             if (available < required) {
                 result.setMissingBlanks(required - available);
@@ -470,25 +476,55 @@ public final class PartConfigHelpers {
 
         for (Map.Entry<String, SimpleInventory> entry : inventories.entrySet()) {
             SimpleInventory inventory = entry.getValue();
+            Set<Integer> kept = keptSlots.getOrDefault(entry.getKey(), Set.of());
+            boolean changed = false;
 
             // Give the cards that are currently present back to the player
             for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
                 ItemStack current = inventory.getItem(slot);
-                if (!current.isEmpty()) {
+                if (!current.isEmpty() && !kept.contains(slot)) {
                     giveOrDrop(player, current);
                     inventory.setItem(slot, ItemStack.EMPTY);
+                    changed = true;
                 }
             }
 
             for (PartConfigSnapshot.VariableCard card : cardsByInventory.get(entry.getKey())) {
-                if (card.slot() < inventory.getContainerSize()) {
+                if (card.slot() < inventory.getContainerSize() && !kept.contains(card.slot())) {
                     inventory.setItem(card.slot(), copyVariable(valueDeseralizationContext, card.itemStack()));
                     result.addCardsPasted(1);
+                    changed = true;
                 }
             }
 
-            saveInventory(partType, state, target, entry.getKey(), inventory, player);
+            if (changed) {
+                saveInventory(partType, state, target, entry.getKey(), inventory, player);
+            }
         }
+    }
+
+    /**
+     * Two variable cards that only differ in the identifier of their variable produce the same value,
+     * so replacing one by the other would change nothing about the part that holds it.
+     *
+     * @param itemStack A variable card, which can be empty.
+     * @param other Another variable card.
+     * @return If both cards hold the same variable.
+     */
+    public static boolean isSameVariable(ItemStack itemStack, ItemStack other) {
+        if (!itemStack.is(RegistryEntries.ITEM_VARIABLE.get()) || !other.is(RegistryEntries.ITEM_VARIABLE.get())) {
+            return false;
+        }
+        CompoundTag tag = itemStack.get(RegistryEntries.DATACOMPONENT_VARIABLE_FACADE.get());
+        CompoundTag otherTag = other.get(RegistryEntries.DATACOMPONENT_VARIABLE_FACADE.get());
+        if (tag == null || otherTag == null) {
+            return false;
+        }
+        tag = tag.copy();
+        tag.remove(VariableFacadeHandlerRegistry.KEY_ID);
+        otherTag = otherTag.copy();
+        otherTag.remove(VariableFacadeHandlerRegistry.KEY_ID);
+        return tag.equals(otherTag);
     }
 
     /**

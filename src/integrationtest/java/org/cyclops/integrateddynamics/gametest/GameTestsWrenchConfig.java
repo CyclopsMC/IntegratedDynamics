@@ -294,6 +294,33 @@ public class GameTestsWrenchConfig {
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
+    public void testWrenchConfigKeepsVariablesThatAreAlreadyThere(GameTestHelper helper) {
+        PartPos source = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
+        PartPos target = placePart(helper, POS_TARGET, PartTypes.REDSTONE_WRITER);
+        // The same variable, only with another id, as every card has one of its own
+        ItemStack sourceVariable = createVariableForValue(helper.getLevel(), ValueTypes.BOOLEAN,
+                ValueTypeBoolean.ValueBoolean.of(true));
+        ItemStack targetVariable = createVariableForValue(helper.getLevel(), ValueTypes.BOOLEAN,
+                ValueTypeBoolean.ValueBoolean.of(true));
+        placeVariableInWriter(helper, source, Aspects.Write.Redstone.BOOLEAN, sourceVariable);
+        placeVariableInWriter(helper, target, Aspects.Write.Redstone.BOOLEAN, targetVariable);
+        int targetId = getVariableId(helper, targetVariable);
+
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        giveBlankVariables(player, 1);
+        PartConfigApplyResult result = applyConfig(helper, target, snapshotConfig(helper, source), player);
+
+        helper.succeedWhen(() -> {
+            ItemStack pasted = getActiveVariable(target);
+            helper.assertTrue(pasted != null && getVariableId(helper, pasted) == targetId,
+                    "The variable card that was already there was replaced by the same one");
+            helper.assertValueEqual(countBlankVariables(player), 1,
+                    "A blank variable card was consumed for a variable that was already there");
+            helper.assertValueEqual(result.getCardsPasted(), 0, "A variable card was reported as pasted");
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
     public void testWrenchConfigPasteAspectVariableGetsNewIdAndEjectsExisting(GameTestHelper helper) {
         PartPos source = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
         PartPos target = placePart(helper, POS_TARGET, PartTypes.REDSTONE_WRITER);
