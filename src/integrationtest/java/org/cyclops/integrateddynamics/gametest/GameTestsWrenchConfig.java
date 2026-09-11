@@ -28,12 +28,14 @@ import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartConfigHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.part.PartConfigApplyResult;
+import org.cyclops.integrateddynamics.core.part.PartConfigEntry;
 import org.cyclops.integrateddynamics.core.part.PartConfigSection;
 import org.cyclops.integrateddynamics.core.part.PartConfigSnapshot;
 import org.cyclops.integrateddynamics.core.part.PartStateActiveVariableBase;
 import org.cyclops.integrateddynamics.core.part.PartStateAspectVariablesHandler;
 import org.cyclops.integrateddynamics.core.part.PartStateOffsetHandler;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
+import org.cyclops.integrateddynamics.item.ItemEnhancement;
 import org.cyclops.integrateddynamics.item.ItemWrench;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 import org.cyclops.integrateddynamics.part.aspect.write.AspectWriteBuilders;
@@ -44,6 +46,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import javax.annotation.Nullable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -291,6 +294,33 @@ public class GameTestsWrenchConfig {
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
+    public void testWrenchConfigKeepsVariablesThatAreAlreadyThere(GameTestHelper helper) {
+        PartPos source = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
+        PartPos target = placePart(helper, POS_TARGET, PartTypes.REDSTONE_WRITER);
+        // The same variable, only with another id, as every card has one of its own
+        ItemStack sourceVariable = createVariableForValue(helper.getLevel(), ValueTypes.BOOLEAN,
+                ValueTypeBoolean.ValueBoolean.of(true));
+        ItemStack targetVariable = createVariableForValue(helper.getLevel(), ValueTypes.BOOLEAN,
+                ValueTypeBoolean.ValueBoolean.of(true));
+        placeVariableInWriter(helper, source, Aspects.Write.Redstone.BOOLEAN, sourceVariable);
+        placeVariableInWriter(helper, target, Aspects.Write.Redstone.BOOLEAN, targetVariable);
+        int targetId = getVariableId(helper, targetVariable);
+
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        giveBlankVariables(player, 1);
+        PartConfigApplyResult result = applyConfig(helper, target, snapshotConfig(helper, source), player);
+
+        helper.succeedWhen(() -> {
+            ItemStack pasted = getActiveVariable(target);
+            helper.assertTrue(pasted != null && getVariableId(helper, pasted) == targetId,
+                    "The variable card that was already there was replaced by the same one");
+            helper.assertValueEqual(countBlankVariables(player), 1,
+                    "A blank variable card was consumed for a variable that was already there");
+            helper.assertValueEqual(result.getCardsPasted(), 0, "A variable card was reported as pasted");
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
     public void testWrenchConfigPasteAspectVariableGetsNewIdAndEjectsExisting(GameTestHelper helper) {
         PartPos source = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
         PartPos target = placePart(helper, POS_TARGET, PartTypes.REDSTONE_WRITER);
@@ -302,6 +332,9 @@ public class GameTestsWrenchConfig {
                 AspectWriteBuilders.Redstone.PROP_PULSE_LENGTH, sourceVariable);
         setAspectPropertyVariable(target, Aspects.Write.Redstone.BOOLEAN_PULSE,
                 AspectWriteBuilders.Redstone.PROP_PULSE_LENGTH, targetVariable);
+        // Only the settings of the aspect that a writer is writing are copied
+        placeVariableInWriter(helper, source, Aspects.Write.Redstone.BOOLEAN_PULSE,
+                createVariableForValue(helper.getLevel(), ValueTypes.BOOLEAN, ValueTypeBoolean.ValueBoolean.of(true)));
         int slot = PartStateAspectVariablesHandler.getPropertyTypes(Aspects.Write.Redstone.BOOLEAN_PULSE)
                 .indexOf(AspectWriteBuilders.Redstone.PROP_PULSE_LENGTH);
         int sourceId = getVariableId(helper, sourceVariable);
@@ -319,7 +352,8 @@ public class GameTestsWrenchConfig {
             helper.assertTrue(!pasted.isEmpty(), "The aspect setting variable was not pasted");
             helper.assertTrue(getVariableId(helper, pasted) != sourceId,
                     "The pasted aspect setting variable has the same id as the copied one");
-            helper.assertValueEqual(countBlankVariables(player), 2, "Wrong number of blank variable cards consumed");
+            // One for the setting variable, and one for the variable that makes its aspect the active one
+            helper.assertValueEqual(countBlankVariables(player), 1, "Wrong number of blank variable cards consumed");
             helper.assertTrue(hasVariableWithId(helper, player, ejectedId),
                     "The aspect setting variable that was in the target part was not given back to the player");
         });
@@ -559,6 +593,264 @@ public class GameTestsWrenchConfig {
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
+    public void testWrenchConfigEntriesListEverything(GameTestHelper helper) {
+        PartPos source = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
+        configurePart(helper, source, Vec3i.ZERO);
+        placeVariableInWriter(helper, source, Aspects.Write.Redstone.BOOLEAN,
+                createVariableForValue(helper.getLevel(), ValueTypes.BOOLEAN, ValueTypeBoolean.ValueBoolean.of(true)));
+
+        List<String> ids = snapshotConfig(helper, source)
+                .getEntries(ValueDeseralizationContext.of(helper.getLevel())).stream()
+                .map(PartConfigEntry::id)
+                .toList();
+
+        helper.succeedWhen(() -> {
+            helper.assertTrue(ids.contains(PartConfigEntry.idPartSetting(PartConfigSnapshot.SETTING_UPDATE_INTERVAL)),
+                    "The update interval is not listed");
+            helper.assertTrue(ids.contains(PartConfigEntry.idPartSetting(PartConfigSnapshot.SETTING_PRIORITY)),
+                    "The priority is not listed");
+            helper.assertTrue(ids.contains(PartConfigEntry.idAspectProperty(
+                            Aspects.Write.Redstone.BOOLEAN.getUniqueName(),
+                            AspectWriteBuilders.Redstone.PROP_STRONG_POWER.getTranslationKey())),
+                    "The aspect property is not listed");
+            helper.assertTrue(ids.contains(PartConfigEntry.idVariableCard(PartConfigSnapshot.INVENTORY_NAME_ACTIVE, 0)),
+                    "The variable card is not listed");
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testWrenchConfigEntriesCarryValuesAndIcons(GameTestHelper helper) {
+        PartPos source = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
+        configurePart(helper, source, Vec3i.ZERO);
+        placeVariableInWriter(helper, source, Aspects.Write.Redstone.BOOLEAN,
+                createVariableForValue(helper.getLevel(), ValueTypes.BOOLEAN, ValueTypeBoolean.ValueBoolean.of(true)));
+
+        List<PartConfigEntry> entries = snapshotConfig(helper, source)
+                .getEntries(ValueDeseralizationContext.of(helper.getLevel()));
+        PartConfigEntry setting = findEntry(entries,
+                PartConfigEntry.idPartSetting(PartConfigSnapshot.SETTING_UPDATE_INTERVAL));
+        PartConfigEntry property = findEntry(entries, PartConfigEntry.idAspectProperty(
+                Aspects.Write.Redstone.BOOLEAN.getUniqueName(),
+                AspectWriteBuilders.Redstone.PROP_STRONG_POWER.getTranslationKey()));
+        PartConfigEntry card = findEntry(entries,
+                PartConfigEntry.idVariableCard(PartConfigSnapshot.INVENTORY_NAME_ACTIVE, 0));
+
+        helper.succeedWhen(() -> {
+            helper.assertTrue(setting != null && !setting.value().getString().isEmpty(),
+                    "A part setting does not show its value");
+            helper.assertTrue(property != null && !property.value().getString().isEmpty(),
+                    "An aspect property does not show its value");
+            helper.assertTrue(property != null && !property.group().getString().isEmpty(),
+                    "An aspect property does not name its aspect");
+            helper.assertTrue(card != null && !card.icon().isEmpty(),
+                    "A variable card does not show its item");
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testWrenchConfigCopiesOnlyTheActiveAspect(GameTestHelper helper) {
+        PartPos source = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
+        setAspectProperty(source, Aspects.Write.Redstone.BOOLEAN,
+                AspectWriteBuilders.Redstone.PROP_STRONG_POWER, ValueTypeBoolean.ValueBoolean.of(true));
+        setAspectProperty(source, Aspects.Write.Redstone.INTEGER,
+                AspectWriteBuilders.Redstone.PROP_STRONG_POWER, ValueTypeBoolean.ValueBoolean.of(true));
+        setAspectPropertyVariable(source, Aspects.Write.Redstone.INTEGER,
+                AspectWriteBuilders.Redstone.PROP_STRONG_POWER,
+                createVariableForValue(helper.getLevel(), ValueTypes.BOOLEAN, ValueTypeBoolean.ValueBoolean.of(true)));
+        placeVariableInWriter(helper, source, Aspects.Write.Redstone.BOOLEAN,
+                createVariableForValue(helper.getLevel(), ValueTypes.BOOLEAN, ValueTypeBoolean.ValueBoolean.of(true)));
+
+        PartConfigSnapshot snapshot = snapshotConfig(helper, source);
+
+        helper.succeedWhen(() -> {
+            helper.assertTrue(snapshot.aspectProperties()
+                            .containsKey(Aspects.Write.Redstone.BOOLEAN.getUniqueName()),
+                    "The properties of the active aspect were not copied");
+            helper.assertTrue(!snapshot.aspectProperties()
+                            .containsKey(Aspects.Write.Redstone.INTEGER.getUniqueName()),
+                    "The properties of an aspect that is not active were copied");
+            helper.assertTrue(snapshot.variableCards().stream()
+                            .noneMatch(card -> card.inventoryName().equals(PartStateAspectVariablesHandler
+                                    .getInventoryName(Aspects.Write.Redstone.INTEGER))),
+                    "A setting variable of an aspect that is not active was copied");
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testWrenchConfigVariableCardEntriesNameTheirAspect(GameTestHelper helper) {
+        PartPos source = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
+        setAspectPropertyVariable(source, Aspects.Write.Redstone.BOOLEAN,
+                AspectWriteBuilders.Redstone.PROP_STRONG_POWER,
+                createVariableForValue(helper.getLevel(), ValueTypes.BOOLEAN, ValueTypeBoolean.ValueBoolean.of(true)));
+        placeVariableInWriter(helper, source, Aspects.Write.Redstone.BOOLEAN,
+                createVariableForValue(helper.getLevel(), ValueTypes.BOOLEAN, ValueTypeBoolean.ValueBoolean.of(true)));
+
+        List<PartConfigEntry> entries = snapshotConfig(helper, source)
+                .getEntries(ValueDeseralizationContext.of(helper.getLevel()));
+        PartConfigEntry active = findEntry(entries,
+                PartConfigEntry.idVariableCard(PartConfigSnapshot.INVENTORY_NAME_ACTIVE, 0));
+        PartConfigEntry setting = findEntry(entries, PartConfigEntry.idVariableCard(
+                PartStateAspectVariablesHandler.getInventoryName(Aspects.Write.Redstone.BOOLEAN), 0));
+        String aspectName = Component.translatable(Aspects.Write.Redstone.BOOLEAN.getTranslationKey()).getString();
+
+        helper.succeedWhen(() -> {
+            helper.assertTrue(active != null && active.label().getString().equals(aspectName),
+                    "The active variable is not named after the aspect that it enables");
+            helper.assertTrue(setting != null && setting.group().getString().equals(aspectName),
+                    "A setting variable does not name its aspect");
+            helper.assertTrue(setting != null && setting.label().getString().equals(Component
+                            .translatable(AspectWriteBuilders.Redstone.PROP_STRONG_POWER.getTranslationKey())
+                            .getString()),
+                    "A setting variable does not name its property");
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testWrenchConfigEntriesAreGroupedUnderTheirAspect(GameTestHelper helper) {
+        PartPos source = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
+        setAspectProperty(source, Aspects.Write.Redstone.BOOLEAN,
+                AspectWriteBuilders.Redstone.PROP_STRONG_POWER, ValueTypeBoolean.ValueBoolean.of(true));
+        setAspectPropertyVariable(source, Aspects.Write.Redstone.BOOLEAN,
+                AspectWriteBuilders.Redstone.PROP_STRONG_POWER,
+                createVariableForValue(helper.getLevel(), ValueTypes.BOOLEAN, ValueTypeBoolean.ValueBoolean.of(true)));
+        placeVariableInWriter(helper, source, Aspects.Write.Redstone.BOOLEAN,
+                createVariableForValue(helper.getLevel(), ValueTypes.BOOLEAN, ValueTypeBoolean.ValueBoolean.of(true)));
+        int settingSlot = PartStateAspectVariablesHandler.getPropertyTypes(Aspects.Write.Redstone.BOOLEAN)
+                .indexOf(AspectWriteBuilders.Redstone.PROP_STRONG_POWER);
+
+        List<String> ids = snapshotConfig(helper, source)
+                .getEntries(ValueDeseralizationContext.of(helper.getLevel())).stream()
+                .map(PartConfigEntry::id)
+                .toList();
+        int active = ids.indexOf(PartConfigEntry.idVariableCard(PartConfigSnapshot.INVENTORY_NAME_ACTIVE, 0));
+        int property = ids.indexOf(PartConfigEntry.idAspectProperty(
+                Aspects.Write.Redstone.BOOLEAN.getUniqueName(),
+                AspectWriteBuilders.Redstone.PROP_STRONG_POWER.getTranslationKey()));
+        int setting = ids.indexOf(PartConfigEntry.idVariableCard(
+                PartStateAspectVariablesHandler.getInventoryName(Aspects.Write.Redstone.BOOLEAN), settingSlot));
+
+        helper.succeedWhen(() -> {
+            helper.assertTrue(active >= 0, "The variable that enables the aspect is not listed");
+            helper.assertValueEqual(property, active + 1,
+                    "A property is not listed right under the aspect that it belongs to");
+            helper.assertValueEqual(setting, property + 1,
+                    "A setting variable is not listed right under the property that it drives");
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testWrenchConfigMaxOffsetShowsItsEnhancements(GameTestHelper helper) {
+        PartPos source = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
+        GameTestsOffsets.increaseMaxOffset(helper, source, 8);
+
+        PartConfigEntry entry = findEntry(snapshotConfig(helper, source)
+                        .getEntries(ValueDeseralizationContext.of(helper.getLevel())),
+                PartConfigEntry.idPartSetting(PartConfigSnapshot.SETTING_MAX_OFFSET));
+
+        helper.succeedWhen(() -> {
+            helper.assertTrue(entry != null && entry.icon().is(RegistryEntries.ITEM_ENHANCEMENT_OFFSET.get()),
+                    "The maximum offset does not show what it costs in enhancements");
+            helper.assertValueEqual(entry.icon().getCount(),
+                    8 / ItemEnhancement.DEFAULT_OFFSET_VALUE, "The wrong number of enhancements is shown");
+        });
+    }
+
+    @Nullable
+    protected static PartConfigEntry findEntry(List<PartConfigEntry> entries, String id) {
+        return entries.stream().filter(entry -> entry.id().equals(id)).findFirst().orElse(null);
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testWrenchConfigDisabledSettingIsNotPasted(GameTestHelper helper) {
+        PartPos source = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
+        PartPos target = placePart(helper, POS_TARGET, PartTypes.REDSTONE_WRITER);
+        configurePart(helper, source, Vec3i.ZERO);
+        int updateInterval = ((IPartType) partType(target)).getUpdateInterval(partState(target));
+
+        PartConfigSnapshot snapshot = snapshotConfig(helper, source).withEntryEnabled(
+                PartConfigEntry.idPartSetting(PartConfigSnapshot.SETTING_UPDATE_INTERVAL), false);
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        applyConfig(helper, target, snapshot, player);
+
+        helper.succeedWhen(() -> {
+            helper.assertValueEqual(((IPartType) partType(target)).getUpdateInterval(partState(target)), updateInterval,
+                    "The update interval was pasted even though it was switched off");
+            // Everything that stayed switched on still is pasted
+            helper.assertValueEqual(((IPartType) partType(target)).getPriority(partState(target)), 3,
+                    "The priority was not pasted");
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testWrenchConfigDisabledAspectPropertyIsNotPasted(GameTestHelper helper) {
+        PartPos source = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
+        PartPos target = placePart(helper, POS_TARGET, PartTypes.REDSTONE_WRITER);
+        configurePart(helper, source, Vec3i.ZERO);
+        // Only the settings of the aspect that a writer is writing are copied
+        placeVariableInWriter(helper, source, Aspects.Write.Redstone.BOOLEAN,
+                createVariableForValue(helper.getLevel(), ValueTypes.BOOLEAN, ValueTypeBoolean.ValueBoolean.of(true)));
+
+        PartConfigSnapshot snapshot = snapshotConfig(helper, source).withEntryEnabled(
+                PartConfigEntry.idAspectProperty(Aspects.Write.Redstone.BOOLEAN.getUniqueName(),
+                        AspectWriteBuilders.Redstone.PROP_STRONG_POWER.getTranslationKey()), false);
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        PartConfigApplyResult result = applyConfig(helper, target, snapshot, player);
+
+        helper.succeedWhen(() -> {
+            helper.assertValueEqual(
+                    getEffectiveAspectProperty(target, Aspects.Write.Redstone.BOOLEAN,
+                            AspectWriteBuilders.Redstone.PROP_STRONG_POWER),
+                    ValueTypeBoolean.ValueBoolean.of(false),
+                    "The aspect property was pasted even though it was switched off");
+            helper.assertValueEqual(result.getAppliedProperties(), 0, "An aspect property was reported as pasted");
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testWrenchConfigDisabledVariableCardIsNotPasted(GameTestHelper helper) {
+        PartPos source = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
+        PartPos target = placePart(helper, POS_TARGET, PartTypes.REDSTONE_WRITER);
+        placeVariableInWriter(helper, source, Aspects.Write.Redstone.BOOLEAN,
+                createVariableForValue(helper.getLevel(), ValueTypes.BOOLEAN, ValueTypeBoolean.ValueBoolean.of(true)));
+
+        PartConfigSnapshot snapshot = snapshotConfig(helper, source).withEntryEnabled(
+                PartConfigEntry.idVariableCard(PartConfigSnapshot.INVENTORY_NAME_ACTIVE, 0), false);
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        giveBlankVariables(player, 1);
+        PartConfigApplyResult result = applyConfig(helper, target, snapshot, player);
+
+        helper.succeedWhen(() -> {
+            helper.assertTrue(getActiveVariable(target) == null,
+                    "The variable card was pasted even though it was switched off");
+            helper.assertValueEqual(result.getCardsPasted(), 0, "A variable card was reported as pasted");
+            helper.assertValueEqual(countBlankVariables(player), 1, "A blank variable card was consumed");
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testWrenchConfigWithEverythingSwitchedOffPastesNothing(GameTestHelper helper) {
+        PartPos source = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
+        PartPos target = placePart(helper, POS_TARGET, PartTypes.REDSTONE_WRITER);
+        configurePart(helper, source, Vec3i.ZERO);
+
+        PartConfigSnapshot snapshot = snapshotConfig(helper, source);
+        for (PartConfigEntry entry : snapshot.getEntries(ValueDeseralizationContext.of(helper.getLevel()))) {
+            snapshot = snapshot.withEntryEnabled(entry.id(), false);
+        }
+        int updateInterval = ((IPartType) partType(target)).getUpdateInterval(partState(target));
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        PartConfigApplyResult result = applyConfig(helper, target, snapshot, player);
+        PartConfigSnapshot empty = snapshot;
+
+        helper.succeedWhen(() -> {
+            helper.assertTrue(empty.isEmpty(), "A configuration with everything switched off is not empty");
+            helper.assertTrue(!result.isPartSettingsApplied(), "The part settings were pasted anyway");
+            helper.assertValueEqual(((IPartType) partType(target)).getUpdateInterval(partState(target)), updateInterval,
+                    "The update interval was pasted anyway");
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
     public void testWrenchConfigPartTypeExtraData(GameTestHelper helper) {
         PartPos source = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
         PartPos target = placePart(helper, POS_TARGET, PartTypes.REDSTONE_WRITER);
@@ -617,6 +909,9 @@ public class GameTestsWrenchConfig {
         PartPos source = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
         PartPos target = placePart(helper, POS_TARGET, PartTypes.REDSTONE_WRITER);
         configurePart(helper, source, Vec3i.ZERO);
+        // Only the settings of the aspect that a writer is writing are copied
+        placeVariableInWriter(helper, source, Aspects.Write.Redstone.BOOLEAN,
+                createVariableForValue(helper.getLevel(), ValueTypes.BOOLEAN, ValueTypeBoolean.ValueBoolean.of(true)));
 
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         ItemStack wrench = createWrench(ItemWrench.Mode.CONFIG_SETTINGS);
@@ -640,6 +935,9 @@ public class GameTestsWrenchConfig {
         PartPos source = placePart(helper, POS_SOURCE, PartTypes.REDSTONE_WRITER);
         PartPos target = placePart(helper, POS_TARGET, PartTypes.REDSTONE_WRITER);
         configurePart(helper, source, Vec3i.ZERO);
+        // Only the settings of the aspect that a writer is writing are copied
+        placeVariableInWriter(helper, source, Aspects.Write.Redstone.BOOLEAN,
+                createVariableForValue(helper.getLevel(), ValueTypes.BOOLEAN, ValueTypeBoolean.ValueBoolean.of(true)));
         int updateInterval = ((IPartType) partType(target)).getUpdateInterval(partState(target));
 
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);

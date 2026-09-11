@@ -45,6 +45,11 @@ import java.util.Objects;
  */
 public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegistry {
 
+    /**
+     * The key that the identifier of a variable is stored under inside a variable card.
+     */
+    public static final String KEY_ID = "_id";
+
     private static VariableFacadeHandlerRegistry INSTANCE = new VariableFacadeHandlerRegistry();
     public static DummyVariableFacade DUMMY_FACADE = new DummyVariableFacade(L10NValues.VARIABLE_ERROR_INVALIDITEM);
 
@@ -80,11 +85,11 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
             return DUMMY_FACADE;
         }
         if(!tagCompound.contains("_type", Tag.TAG_STRING)
-                || !(tagCompound.contains("_id", Tag.TAG_INT) || tagCompound.contains("_id", Tag.TAG_BYTE))) {
+                || !(tagCompound.contains(KEY_ID, Tag.TAG_INT) || tagCompound.contains(KEY_ID, Tag.TAG_BYTE))) {
             return DUMMY_FACADE;
         }
         String type = tagCompound.getString("_type");
-        int id = tagCompound.getInt("_id");
+        int id = tagCompound.getInt(KEY_ID);
         IVariableFacadeHandler handler = getHandler(ResourceLocation.parse(type));
         if(handler != null) {
             return handler.getVariableFacade(valueDeseralizationContext, id, tagCompound);
@@ -106,7 +111,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
     @Override
     public <F extends IVariableFacade> void write(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tagCompound, F variableFacade, IVariableFacadeHandler<F> handler) {
         tagCompound.putString("_type", handler.getUniqueName().toString());
-        tagCompound.putInt("_id", variableFacade.getId());
+        tagCompound.putInt(KEY_ID, variableFacade.getId());
         handler.setVariableFacade(valueDeseralizationContext, tagCompound, variableFacade);
     }
 
@@ -160,7 +165,7 @@ public class VariableFacadeHandlerRegistry implements IVariableFacadeHandlerRegi
         ItemStack copy = itemStack.copy();
         int newId = generateId ? VariableFacadeBase.generateId() : -1;
         CompoundTag tagCopy = itemStack.get(RegistryEntries.DATACOMPONENT_VARIABLE_FACADE).copy();
-        tagCopy.putInt("_id", newId);
+        tagCopy.putInt(KEY_ID, newId);
         copy.set(RegistryEntries.DATACOMPONENT_VARIABLE_FACADE, tagCopy);
         return copy;
     }

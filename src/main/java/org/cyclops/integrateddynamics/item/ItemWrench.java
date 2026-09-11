@@ -15,6 +15,7 @@ import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -27,6 +28,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.inventory.InventoryLocationPlayer;
+import org.cyclops.cyclopscore.inventory.ItemLocation;
+import org.cyclops.cyclopscore.inventory.container.NamedContainerProviderItem;
+import org.cyclops.integrateddynamics.inventory.container.ContainerWrenchConfig;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.network.INetwork;
@@ -74,6 +79,20 @@ public class ItemWrench extends Item {
         if (player.isSecondaryUseActive() && !world.isClientSide()) {
             incrementMode(itemStack);
             player.displayClientMessage(Component.translatable("item.integrateddynamics.wrench.mode", Component.translatable(getMode(itemStack).getLabel())), true);
+            return MinecraftHelpers.successAction(itemStack);
+        }
+        // Show what is inside the Wrench, so that parts of it can be switched off before pasting
+        if (!player.isSecondaryUseActive() && getMode(itemStack).isConfig()
+                && itemStack.has(RegistryEntries.DATACOMPONENT_WRENCH_PART_CONFIG)) {
+            if (!world.isClientSide()) {
+                ItemLocation itemLocation = InventoryLocationPlayer.getInstance()
+                        .handToLocation(player, hand, player.getInventory().selected);
+                org.cyclops.integrateddynamics.IntegratedDynamics._instance.getModHelpers().getMinecraftHelpers().openMenu((ServerPlayer) player,
+                        new NamedContainerProviderItem(itemLocation,
+                                Component.translatable("gui.integrateddynamics.wrench_config"),
+                                ContainerWrenchConfig::new),
+                        packetBuffer -> ItemLocation.writeToPacketBuffer(packetBuffer, itemLocation));
+            }
             return MinecraftHelpers.successAction(itemStack);
         }
         return super.use(world, player, hand);

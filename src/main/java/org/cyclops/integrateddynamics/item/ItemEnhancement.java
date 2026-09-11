@@ -22,6 +22,11 @@ import java.util.Objects;
  */
 public class ItemEnhancement extends Item {
 
+    /**
+     * What one offset enhancement is worth, which is what its recipe gives it.
+     */
+    public static final int DEFAULT_OFFSET_VALUE = 4;
+
     private final Type type;
 
     public ItemEnhancement(Type type, Properties properties) {

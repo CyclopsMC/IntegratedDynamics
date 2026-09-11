@@ -52,4 +52,12 @@ public enum PartConfigSection implements StringRepresentable {
         return "item.integrateddynamics.wrench.mode.config.section." + name().toLowerCase(Locale.ENGLISH);
     }
 
+    /**
+     * @return The name of this section as a gui calls it, which is a name for one entry of it,
+     *         rather than for everything that the section holds.
+     */
+    public String getGuiTranslationKey() {
+        return "gui.integrateddynamics.wrench_config.section." + name().toLowerCase(Locale.ENGLISH);
+    }
+
 }

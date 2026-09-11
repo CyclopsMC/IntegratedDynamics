@@ -27,7 +27,7 @@ public class ItemEnhancementOffsetConfig extends ItemConfig {
     protected Collection<ItemStack> getDefaultCreativeTabEntries() {
         List<ItemStack> itemStacks = Lists.newArrayList();
         ItemStack itemStack = new ItemStack(getInstance());
-        ((ItemEnhancement) getInstance()).setEnhancementValue(itemStack, 4);
+        ((ItemEnhancement) getInstance()).setEnhancementValue(itemStack, ItemEnhancement.DEFAULT_OFFSET_VALUE);
         itemStacks.add(itemStack);
         return itemStacks;
     }
