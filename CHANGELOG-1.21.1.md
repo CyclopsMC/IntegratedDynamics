@@ -1,8 +1,15 @@
 # Changelog for Minecraft 1.21.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.21.1-1.37.1"></a>
+## [1.21.1-1.37.1](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.37.0...1.21.1-1.37.1) - 2026-09-11 21:26:39
+
+
+### Fixed
+* Fix new CyclopsCore version not being required at startup
+
 <a name="1.21.1-1.37.0"></a>
-## [1.21.1-1.37.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.36.0...1.21.1-1.37.0) - 2026-09-11 21:14:21
+## [1.21.1-1.37.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.36.0...1.21.1-1.37.0) - 2026-09-11 21:14:21 +0200
 
 
 ### Added
