@@ -1,6 +1,15 @@
 # Changelog for Minecraft 1.21.1
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+
+### Added
+* Allow materialized variables to be copied to, and pasted from, the clipboard
+  The Materializer gained two copy buttons, and the Logic Programmer gained a Clipboard element to paste with.
+  Closes #674
+
+
 <a name="1.21.1-1.37.1"></a>
 ## [1.21.1-1.37.1](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.37.0...1.21.1-1.37.1) - 2026-09-11 21:26:39
 

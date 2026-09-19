@@ -16,6 +16,7 @@ public class LogicProgrammerElementTypes {
 
     public static final ValueTypeLPElementType VALUETYPE = REGISTRY.addType(new ValueTypeLPElementType());
     public static final OperatorLPElementType OPERATOR  = REGISTRY.addType(new OperatorLPElementType());
+    public static final SingleLPElementType<ClipboardLPElement> CLIPBOARD = REGISTRY.addType(new SingleLPElementType<>(ClipboardLPElement::new, "clipboard"));
 
     public static boolean areEqual(ILogicProgrammerElement e1, ILogicProgrammerElement e2) {
         if(e1 == null) {
