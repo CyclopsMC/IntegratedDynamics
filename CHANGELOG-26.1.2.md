@@ -1,8 +1,18 @@
 # Changelog for Minecraft 26.1.2
 All notable changes to this project will be documented in this file.
 
+<a name="26.1.2-1.35.1"></a>
+## [26.1.2-1.35.1](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.35.0...26.1.2-1.35.1) - 2026-09-19 09:06:04
+
+
+### Added
+* Re-enable The One Probe support
+
+### Fixed
+* Fix client crash when looking at a proxy with Jade
+
 <a name="26.1.2-1.35.0"></a>
-## [26.1.2-1.35.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.34.1...26.1.2-1.35.0) - 2026-09-11 21:37:13
+## [26.1.2-1.35.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.34.1...26.1.2-1.35.0) - 2026-09-11 21:37:13 +0200
 
 
 ### Added
