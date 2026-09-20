@@ -6,26 +6,24 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "functions": [
+          "modifier": [
             {
-              "function": "minecraft:copy_name",
+              "type": "minecraft:copy_name",
               "source": "block_entity"
             },
             {
-              "function": "integrateddynamics:copy_mechanical_machine_energy"
+              "type": "integrateddynamics:copy_mechanical_machine_energy"
             },
             {
-              "function": "integrateddynamics:copy_mechanical_squeezer_tank"
+              "type": "integrateddynamics:copy_mechanical_squeezer_tank"
             }
           ],
           "name": "integrateddynamics:mechanical_squeezer"
         }
       ],
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
-      ]
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      }
     }
   ]
 }
