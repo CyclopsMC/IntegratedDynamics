@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:simple_block",
+  "to_place": {
+    "type": "minecraft:noise",
+    "noise": {
+      "base_amplitude": 1.0,
+      "base_octave": 0,
+      "octave_count": 1
+    },
+    "scale": 0.020833334,
+    "seed": 3456,
+    "states": [
+      "minecraft:blue_orchid",
+      "minecraft:oxeye_daisy",
+      "minecraft:white_tulip",
+      "minecraft:lily_of_the_valley"
+    ]
+  }
+}

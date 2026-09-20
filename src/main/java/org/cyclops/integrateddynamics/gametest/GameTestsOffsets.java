@@ -11,7 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.RedStoneWireBlock;
+import net.minecraft.world.level.block.RedstoneWireBlock;
 import net.minecraft.world.level.block.state.properties.RedstoneSide;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -75,8 +75,8 @@ public class GameTestsOffsets {
             helper.assertTrue(changedOffsetReader, Component.literal("Setting offset in reader failed"));
             helper.assertTrue(changedOffsetWriter, Component.literal("Setting offset in writer failed"));
 
-            helper.assertBlockProperty(POS.offset(2, 0, 0).east().east(), RedStoneWireBlock.WEST, RedstoneSide.SIDE);
-            helper.assertBlockProperty(POS.offset(2, 0, 0).east().east(), RedStoneWireBlock.POWER, 14);
+            helper.assertBlockProperty(POS.offset(2, 0, 0).east().east(), RedstoneWireBlock.WEST, RedstoneSide.SIDE);
+            helper.assertBlockProperty(POS.offset(2, 0, 0).east().east(), RedstoneWireBlock.POWER, 14);
 
             IPartStateWriter partStateWriter = (IPartStateWriter) PartHelpers.getPart(PartPos.of(helper.getLevel(), helper.absolutePos(POS.east()), Direction.EAST)).getState();
             helper.assertFalse(partStateWriter.isDeactivated(), Component.literal("Writer is deactivated"));
@@ -132,8 +132,8 @@ public class GameTestsOffsets {
             helper.assertTrue(changedOffsetReader, Component.literal("Setting offset in reader failed"));
             helper.assertTrue(changedOffsetWriter, Component.literal("Setting offset in writer failed"));
 
-            helper.assertBlockProperty(POS.offset(2, 0, 0).east().east(), RedStoneWireBlock.WEST, RedstoneSide.SIDE);
-            helper.assertBlockProperty(POS.offset(2, 0, 0).east().east(), RedStoneWireBlock.POWER, 14);
+            helper.assertBlockProperty(POS.offset(2, 0, 0).east().east(), RedstoneWireBlock.WEST, RedstoneSide.SIDE);
+            helper.assertBlockProperty(POS.offset(2, 0, 0).east().east(), RedstoneWireBlock.POWER, 14);
 
             IPartStateWriter partStateWriter = (IPartStateWriter) PartHelpers.getPart(PartPos.of(helper.getLevel(), helper.absolutePos(POS.east()), Direction.EAST)).getState();
             helper.assertFalse(partStateWriter.isDeactivated(), Component.literal("Writer is deactivated"));
@@ -191,8 +191,8 @@ public class GameTestsOffsets {
             helper.assertTrue(changedOffsetReader, Component.literal("Setting offset in reader failed"));
             helper.assertTrue(changedOffsetWriter, Component.literal("Setting offset in writer failed"));
 
-            helper.assertBlockProperty(POS.offset(2, 0, 0).east().east(), RedStoneWireBlock.WEST, RedstoneSide.SIDE);
-            helper.assertBlockProperty(POS.offset(2, 0, 0).east().east(), RedStoneWireBlock.POWER, 14);
+            helper.assertBlockProperty(POS.offset(2, 0, 0).east().east(), RedstoneWireBlock.WEST, RedstoneSide.SIDE);
+            helper.assertBlockProperty(POS.offset(2, 0, 0).east().east(), RedstoneWireBlock.POWER, 14);
 
             IPartStateWriter partStateWriter = (IPartStateWriter) PartHelpers.getPart(PartPos.of(helper.getLevel(), helper.absolutePos(POS.east()), Direction.EAST)).getState();
             helper.assertFalse(partStateWriter.isDeactivated(), Component.literal("Writer is deactivated"));
@@ -245,8 +245,8 @@ public class GameTestsOffsets {
         helper.setBlock(POS.east().east().east(), Blocks.REDSTONE_WIRE);
 
         helper.succeedWhen(() -> {
-            helper.assertBlockProperty(POS.east().east(), RedStoneWireBlock.WEST, RedstoneSide.SIDE);
-            helper.assertBlockProperty(POS.east().east(), RedStoneWireBlock.POWER, 14);
+            helper.assertBlockProperty(POS.east().east(), RedstoneWireBlock.WEST, RedstoneSide.SIDE);
+            helper.assertBlockProperty(POS.east().east(), RedstoneWireBlock.POWER, 14);
 
             IPartStateWriter partStateWriter = (IPartStateWriter) PartHelpers.getPart(PartPos.of(helper.getLevel(), helper.absolutePos(POS.east()), Direction.EAST)).getState();
             helper.assertFalse(partStateWriter.isDeactivated(), Component.literal("Writer is deactivated"));
@@ -300,8 +300,8 @@ public class GameTestsOffsets {
             helper.assertFalse(changedOffsetReader, Component.literal("Setting offset in reader did not fail"));
             helper.assertFalse(changedOffsetWriter, Component.literal("Setting offset in writer did not fail"));
 
-            helper.assertBlockProperty(POS.offset(2, 0, 0).east().east(), RedStoneWireBlock.WEST, RedstoneSide.SIDE);
-            helper.assertBlockProperty(POS.offset(2, 0, 0).east().east(), RedStoneWireBlock.POWER, 0);
+            helper.assertBlockProperty(POS.offset(2, 0, 0).east().east(), RedstoneWireBlock.WEST, RedstoneSide.SIDE);
+            helper.assertBlockProperty(POS.offset(2, 0, 0).east().east(), RedstoneWireBlock.POWER, 0);
         });
     }
 
@@ -347,8 +347,8 @@ public class GameTestsOffsets {
             helper.assertFalse(changedOffsetReader, Component.literal("Setting offset in reader did not fail"));
             helper.assertFalse(changedOffsetWriter, Component.literal("Setting offset in writer did not fail"));
 
-            helper.assertBlockProperty(POS.offset(2, 0, 0).east().east(), RedStoneWireBlock.WEST, RedstoneSide.SIDE);
-            helper.assertBlockProperty(POS.offset(2, 0, 0).east().east(), RedStoneWireBlock.POWER, 0);
+            helper.assertBlockProperty(POS.offset(2, 0, 0).east().east(), RedstoneWireBlock.WEST, RedstoneSide.SIDE);
+            helper.assertBlockProperty(POS.offset(2, 0, 0).east().east(), RedstoneWireBlock.POWER, 0);
         });
     }
 

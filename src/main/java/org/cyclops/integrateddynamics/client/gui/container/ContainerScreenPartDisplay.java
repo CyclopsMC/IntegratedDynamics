@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.client.gui.container;
 
+
 import com.google.common.collect.Lists;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -14,7 +15,6 @@ import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.core.client.gui.container.ContainerScreenMultipart;
 import org.cyclops.integrateddynamics.core.part.panel.PartTypePanelVariableDriven;
 import org.cyclops.integrateddynamics.inventory.container.ContainerPartPanelVariableDriven;
-import org.lwjgl.glfw.GLFW;
 
 
 /**
@@ -78,7 +78,8 @@ public class ContainerScreenPartDisplay<P extends PartTypePanelVariableDriven<P,
 
     @Override
     public boolean charTyped(CharacterEvent evt) {
-        if (GLFW.GLFW_KEY_C == evt.codepoint() && KeyModifier.CONTROL.isActive(KeyConflictContext.GUI)) {
+        // A codepoint, not a key code: GLFW_KEY_C happened to equal 'C', SDL scancodes do not
+        if ('C' == evt.codepoint() && KeyModifier.CONTROL.isActive(KeyConflictContext.GUI)) {
             valueToClipboard();
             return true;
         }

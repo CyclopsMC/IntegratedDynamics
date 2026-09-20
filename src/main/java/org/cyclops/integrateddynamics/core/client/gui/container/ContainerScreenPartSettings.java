@@ -1,5 +1,7 @@
 package org.cyclops.integrateddynamics.core.client.gui.container;
 
+import com.mojang.blaze3d.platform.InputConstants;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import net.minecraft.ChatFormatting;
@@ -25,7 +27,6 @@ import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.core.client.gui.IDropdownEntry;
 import org.cyclops.integrateddynamics.core.client.gui.WidgetTextFieldDropdown;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerPartSettings;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -196,7 +197,7 @@ public class ContainerScreenPartSettings<T extends ContainerPartSettings> extend
 
     @Override
     public boolean keyPressed(KeyEvent evt) {
-        if (evt.key() != GLFW.GLFW_KEY_ESCAPE) {
+        if (evt.key() != InputConstants.KEY_ESCAPE) {
             if (isFieldSideEnabled()) {
                 if (this.dropdownFieldSide.keyPressed(evt)) {
                     return true;

@@ -1,5 +1,7 @@
 package org.cyclops.integrateddynamics.client.gui.container;
 
+import com.mojang.blaze3d.platform.InputConstants;
+
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
@@ -23,7 +25,6 @@ import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLabeller;
 import org.cyclops.integrateddynamics.network.packet.ItemStackRenamePacket;
-import org.lwjgl.glfw.GLFW;
 
 /**
  * Gui for the labeller.
@@ -104,7 +105,7 @@ public class ContainerScreenLabeller extends ContainerScreenExtended<ContainerLa
 
     @Override
     public boolean keyPressed(KeyEvent evt) {
-        if (evt.input() != GLFW.GLFW_KEY_ESCAPE) {
+        if (evt.input() != InputConstants.KEY_ESCAPE) {
             this.searchField.keyPressed(evt);
             return true;
         }

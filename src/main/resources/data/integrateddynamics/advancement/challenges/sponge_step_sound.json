@@ -27,7 +27,7 @@
               "value": {
                 "type": "serialized",
                 "value_type": "integrateddynamics:block",
-                "value": "{v:{Name:\"minecraft:wet_sponge\"}}"
+                "value": "{v:{id:\"minecraft:wet_sponge\"}}"
               }
             }
           }

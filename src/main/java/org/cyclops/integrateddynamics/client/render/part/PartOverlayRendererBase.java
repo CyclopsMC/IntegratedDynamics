@@ -49,8 +49,8 @@ public abstract class PartOverlayRendererBase implements IPartOverlayRenderer {
         } else if (direction == Direction.DOWN) {
             rotationX = 90;
         }
-        matrixStack.mulPose(Axis.YP.rotationDegrees(rotationY));
-        matrixStack.mulPose(Axis.XP.rotationDegrees(rotationX));
+        matrixStack.rotateDegrees(Axis.YP, rotationY);
+        matrixStack.rotateDegrees(Axis.XP, rotationX);
     }
 
 }

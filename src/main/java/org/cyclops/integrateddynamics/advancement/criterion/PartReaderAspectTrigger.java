@@ -2,10 +2,10 @@ package org.cyclops.integrateddynamics.advancement.criterion;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.advancements.predicates.ContextAwarePredicate;
-import net.minecraft.advancements.predicates.entity.EntityPredicate;
+import net.minecraft.core.Holder;
 import net.minecraft.advancements.triggers.SimpleCriterionTrigger;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import org.cyclops.cyclopscore.advancement.criterion.ICriterionInstanceTestable;
@@ -24,7 +24,7 @@ public class PartReaderAspectTrigger extends SimpleCriterionTrigger<PartReaderAs
 
     public static final Codec<PartReaderAspectTrigger.Instance> CODEC = RecordCodecBuilder.create(
             p_311401_ -> p_311401_.group(
-                            EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(PartReaderAspectTrigger.Instance::player),
+                            LootItemCondition.CODEC.optionalFieldOf("player").forGetter(PartReaderAspectTrigger.Instance::player),
                             Codecs.PART_TYPE.optionalFieldOf("parttype").forGetter(PartReaderAspectTrigger.Instance::partType),
                             Codecs.ASPECT.optionalFieldOf("aspect").forGetter(PartReaderAspectTrigger.Instance::aspect)
                     )
@@ -52,7 +52,7 @@ public class PartReaderAspectTrigger extends SimpleCriterionTrigger<PartReaderAs
     }
 
     public static record Instance(
-            Optional<ContextAwarePredicate> player,
+            Optional<Holder<LootItemCondition>> player,
             Optional<IPartType> partType,
             Optional<IAspect> aspect
     ) implements SimpleCriterionTrigger.SimpleInstance, ICriterionInstanceTestable<PartReaderAspectEvent> {

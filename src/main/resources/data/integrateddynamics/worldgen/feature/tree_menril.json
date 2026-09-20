@@ -1,0 +1,55 @@
+{
+  "type": "minecraft:tree",
+  "below_trunk_provider": "minecraft:soil_beneath_tree",
+  "decorators": [],
+  "foliage_placer": {
+    "type": "integrateddynamics:menril",
+    "offset": 0,
+    "radius": 2
+  },
+  "foliage_provider": {
+    "id": "integrateddynamics:menril_leaves",
+    "properties": {
+      "distance": "7",
+      "persistent": "false",
+      "waterlogged": "false"
+    }
+  },
+  "ignore_vines": true,
+  "minimum_size": {
+    "type": "minecraft:two_layers_feature_size",
+    "limit": 1,
+    "lower_size": 0,
+    "upper_size": 2
+  },
+  "trunk_placer": {
+    "type": "integrateddynamics:menril",
+    "base_height": 5,
+    "height_rand_a": 2,
+    "height_rand_b": 2,
+    "trunk_height_wider": 3
+  },
+  "trunk_provider": {
+    "type": "minecraft:weighted",
+    "entries": [
+      {
+        "data": {
+          "id": "integrateddynamics:menril_log",
+          "properties": {
+            "axis": "y"
+          }
+        },
+        "weight": 10
+      },
+      {
+        "data": {
+          "id": "integrateddynamics:menril_log_filled",
+          "properties": {
+            "axis": "y"
+          }
+        },
+        "weight": 1
+      }
+    ]
+  }
+}

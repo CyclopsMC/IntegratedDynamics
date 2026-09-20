@@ -6,6 +6,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.util.Prediction;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -145,11 +146,11 @@ public class ContainerPartReader<P extends IPartTypeReader<P, S>, S extends IPar
                 ItemStack itemStack;
                 itemStack = inputSlots.removeItemNoUpdate(i);
                 if (!itemStack.isEmpty()) {
-                    player.drop(itemStack, false);
+                    player.drop(itemStack, false, Prediction.SERVER_ONLY);
                 }
                 itemStack = outputSlots.removeItemNoUpdate(i);
                 if (!itemStack.isEmpty()) {
-                    player.drop(itemStack, false);
+                    player.drop(itemStack, false, Prediction.SERVER_ONLY);
                 }
             }
         }

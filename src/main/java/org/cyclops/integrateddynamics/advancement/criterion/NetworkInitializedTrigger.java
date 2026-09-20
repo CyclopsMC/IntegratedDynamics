@@ -2,10 +2,10 @@ package org.cyclops.integrateddynamics.advancement.criterion;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.advancements.predicates.ContextAwarePredicate;
-import net.minecraft.advancements.predicates.entity.EntityPredicate;
+import net.minecraft.core.Holder;
 import net.minecraft.advancements.triggers.SimpleCriterionTrigger;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import org.cyclops.cyclopscore.advancement.criterion.ICriterionInstanceTestable;
@@ -21,7 +21,7 @@ public class NetworkInitializedTrigger extends SimpleCriterionTrigger<NetworkIni
 
     public static final Codec<NetworkInitializedTrigger.Instance> CODEC = RecordCodecBuilder.create(
             p_311401_ -> p_311401_.group(
-                            EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(NetworkInitializedTrigger.Instance::player),
+                            LootItemCondition.CODEC.optionalFieldOf("player").forGetter(NetworkInitializedTrigger.Instance::player),
                             Codec.INT.optionalFieldOf("min_cables").forGetter(NetworkInitializedTrigger.Instance::minCables)
                     )
                     .apply(p_311401_, NetworkInitializedTrigger.Instance::new)
@@ -48,7 +48,7 @@ public class NetworkInitializedTrigger extends SimpleCriterionTrigger<NetworkIni
     }
 
     public static record Instance(
-            Optional<ContextAwarePredicate> player,
+            Optional<Holder<LootItemCondition>> player,
             Optional<Integer> minCables
     ) implements SimpleCriterionTrigger.SimpleInstance, ICriterionInstanceTestable<NetworkInitializedEvent> {
         @Override

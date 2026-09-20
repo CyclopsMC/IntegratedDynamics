@@ -8,7 +8,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.RedStoneWireBlock;
+import net.minecraft.world.level.block.RedstoneWireBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.phys.AABB;
@@ -396,7 +396,7 @@ public class AspectReadBuilders {
             int power = dimPos.getLevel(true).getSignal(dimPos.getBlockPos(), input.getLeft().getTarget().getSide());
             if (power == 0) {
                 BlockState targetBlockState = dimPos.getLevel(true).getBlockState(dimPos.getBlockPos());
-                power = targetBlockState.getBlock() == Blocks.REDSTONE_WIRE ? targetBlockState.getValue(RedStoneWireBlock.POWER) : 0;
+                power = targetBlockState.getBlock() == Blocks.REDSTONE_WIRE ? targetBlockState.getValue(RedstoneWireBlock.POWER) : 0;
             }
             return power;
         };

@@ -10,6 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.world.phys.Vec3;
 import org.cyclops.integrateddynamics.core.helper.WrenchHelpers;
 
 /**
@@ -22,12 +23,14 @@ public class LootConditionMatchWrench implements LootItemCondition {
 
     @Override
     public boolean test(LootContext lootContext) {
-        ItemInstance itemInstance = lootContext.getOptionalParameter(LootContextParams.TOOL);
-        Entity entity = lootContext.getOptionalParameter(LootContextParams.THIS_ENTITY);
-        BlockPos blockPos = BlockPos.containing(lootContext.getParameter(LootContextParams.ORIGIN));
-        return itemInstance instanceof ItemStack itemStack
+        ItemInstance itemInstance = lootContext.getOptional(LootContextParams.TOOL);
+        Entity entity = lootContext.getOptional(LootContextParams.THIS_ENTITY);
+        // ORIGIN has no required getter anymore, so it is read optionally
+        Vec3 origin = lootContext.getOptional(LootContextParams.ORIGIN);
+        return origin != null
+                && itemInstance instanceof ItemStack itemStack
                 && entity instanceof Player
-                && WrenchHelpers.isWrench((Player) entity, itemStack, entity.level(), blockPos, null);
+                && WrenchHelpers.isWrench((Player) entity, itemStack, entity.level(), BlockPos.containing(origin), null);
     }
 
     @Override

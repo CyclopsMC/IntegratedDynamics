@@ -3,10 +3,10 @@ package org.cyclops.integrateddynamics.block;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.TintedParticleLeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockClientConfig;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfigCommon;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -38,15 +38,11 @@ public class BlockMenrilLeavesConfig extends BlockConfigCommon<IntegratedDynamic
                         return 20;
                     }
                 },
-                getDefaultItemConstructor(IntegratedDynamics._instance)
+                getDefaultItemConstructor(IntegratedDynamics._instance,
+                        properties -> properties.compostable(ContextIntProviders.COMPOSTABLE_LOW))
         );
     }
 
-    @Override
-    public void onRegistryRegistered() {
-        super.onRegistryRegistered();
-        ComposterBlock.COMPOSTABLES.put(getItemInstance(), 0.3F);
-    }
 
     @Override
     public BlockClientConfig<IntegratedDynamics> constructBlockClientConfig() {

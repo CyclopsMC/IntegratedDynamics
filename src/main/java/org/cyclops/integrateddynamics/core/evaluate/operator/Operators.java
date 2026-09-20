@@ -34,7 +34,6 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
@@ -46,7 +45,6 @@ import net.minecraft.world.phys.*;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.common.IShearable;
 import net.neoforged.neoforge.common.SoundActions;
-import net.neoforged.neoforge.event.EventHooks;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import net.neoforged.neoforge.transfer.ResourceHandler;
@@ -75,6 +73,7 @@ import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.IOperatorValuePropagator;
 import org.cyclops.integrateddynamics.core.evaluate.OperatorBuilders;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
+import org.cyclops.integrateddynamics.core.helper.FuelHelpers;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.helper.NbtHelpers;
@@ -1786,10 +1785,8 @@ public final class Operators {
             .symbol("burn_time").operatorName("burntime").interactName("burnTime")
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_INT.build(itemStack -> {
                 if (!itemStack.isEmpty()) {
-                    int burnTime = itemStack.getBurnTime(null, ServerLifecycleHooks.getCurrentServer().fuelValues());
-                    return EventHooks.getItemBurnTime(itemStack, burnTime == -1
-                            ? itemStack.getBurnTime(RecipeType.SMELTING, ServerLifecycleHooks.getCurrentServer().fuelValues())
-                            : burnTime, null, ServerLifecycleHooks.getCurrentServer().fuelValues());
+                    // Burn times are block-dependent since 26.3, so a plain furnace is assumed here
+                    return FuelHelpers.getFurnaceBurnTime(ServerLifecycleHooks.getCurrentServer().overworld(), itemStack);
                 }
                 return 0;
             })).build());
@@ -1801,7 +1798,7 @@ public final class Operators {
             .output(ValueTypes.BOOLEAN)
             .symbol("can_burn").operatorName("canburn").interactName("canBurn")
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_BOOLEAN
-                    .build(stack -> stack.getBurnTime(null, ServerLifecycleHooks.getCurrentServer().fuelValues()) > 0))
+                    .build(FuelHelpers::isFuel))
             .build());
 
     /**

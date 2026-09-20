@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.loot.functions;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.Holder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -11,7 +12,7 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import org.cyclops.cyclopscore.RegistryEntries;
 import org.cyclops.integrateddynamics.core.blockentity.BlockEntityMechanicalMachine;
 
-import java.util.List;
+import java.util.Optional;
 
 /**
  * Copies mechanical machine energy.
@@ -23,13 +24,13 @@ public class LootFunctionCopyMechanicalMachineEnergy extends LootItemConditional
             builder -> commonFields(builder).apply(builder, LootFunctionCopyMechanicalMachineEnergy::new)
     );
 
-    protected LootFunctionCopyMechanicalMachineEnergy(List<LootItemCondition> conditionsIn) {
-        super(conditionsIn);
+    protected LootFunctionCopyMechanicalMachineEnergy(Optional<Holder<LootItemCondition>> condition) {
+        super(condition);
     }
 
     @Override
     public ItemStack run(ItemStack itemStack, LootContext lootContext) {
-        BlockEntity tile = lootContext.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
+        BlockEntity tile = lootContext.getOptional(LootContextParams.BLOCK_ENTITY);
         if (tile instanceof BlockEntityMechanicalMachine) {
             itemStack.set(RegistryEntries.COMPONENT_ENERGY_STORAGE, ((BlockEntityMechanicalMachine) tile).getEnergyHandler().getAmountAsInt());
         }

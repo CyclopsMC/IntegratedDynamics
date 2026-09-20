@@ -10,7 +10,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.TreeFeature;
-import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.trunkplacers.TrunkPlacer;
 import net.minecraft.world.level.levelgen.feature.trunkplacers.TrunkPlacerType;
@@ -43,7 +42,7 @@ public class TrunkPlacerMenril extends TrunkPlacer {
 
     @Override
     public List<FoliagePlacer.FoliageAttachment> placeTrunk(WorldGenLevel world, BiConsumer<BlockPos, BlockState> callback, RandomSource rand, int height,
-                                                            BlockPos pos, TreeConfiguration config) {
+                                                            BlockPos pos, TreeFeature tree) {
         // Only generate if stump is fully on ground (other checks are done in TreeFeature.place)
         BlockPos basePos = pos;
         if (!TreeFeature.isAirOrLeaves(world, basePos.north())
@@ -56,43 +55,43 @@ public class TrunkPlacerMenril extends TrunkPlacer {
 
         // Ensure dirt is below tree
         BlockPos posStump = pos.below();
-        setDirtAt(world, callback, rand, posStump, config);
+        setDirtAt(world, callback, rand, posStump, tree);
 
         // Create stump
-        if (placeLog(world, callback, rand, pos.north(), config, Function.identity())) {
-            setDirtAt(world, callback, rand, posStump.north(), config);
+        if (placeLog(world, callback, rand, pos.north(), tree, Function.identity())) {
+            setDirtAt(world, callback, rand, posStump.north(), tree);
         }
-        if (placeLog(world, callback, rand, pos.east(), config, Function.identity())) {
-            setDirtAt(world, callback, rand, posStump.east(), config);
+        if (placeLog(world, callback, rand, pos.east(), tree, Function.identity())) {
+            setDirtAt(world, callback, rand, posStump.east(), tree);
         }
-        if (placeLog(world, callback, rand, pos.south(), config, Function.identity())) {
-            setDirtAt(world, callback, rand, posStump.south(), config);
+        if (placeLog(world, callback, rand, pos.south(), tree, Function.identity())) {
+            setDirtAt(world, callback, rand, posStump.south(), tree);
         }
-        if (placeLog(world, callback, rand, pos.west(), config, Function.identity())) {
-            setDirtAt(world, callback, rand, posStump.west(), config);
+        if (placeLog(world, callback, rand, pos.west(), tree, Function.identity())) {
+            setDirtAt(world, callback, rand, posStump.west(), tree);
         }
 
         // Create base trunk
         for(int i = 0; i < height; ++i) {
-            placeLog(world, callback, rand, pos.above(i), config, Function.identity());
+            placeLog(world, callback, rand, pos.above(i), tree, Function.identity());
         }
 
         // Create wider trunk
         for(int i = height; i < height + heightWider; ++i) {
             BlockPos posIt = pos.above(i);
-            placeLog(world, callback, rand, posIt, config, Function.identity());
-            placeLog(world, callback, rand, posIt.north(), config, Function.identity());
-            placeLog(world, callback, rand, posIt.east(), config, Function.identity());
-            placeLog(world, callback, rand, posIt.south(), config, Function.identity());
-            placeLog(world, callback, rand, posIt.west(), config, Function.identity());
+            placeLog(world, callback, rand, posIt, tree, Function.identity());
+            placeLog(world, callback, rand, posIt.north(), tree, Function.identity());
+            placeLog(world, callback, rand, posIt.east(), tree, Function.identity());
+            placeLog(world, callback, rand, posIt.south(), tree, Function.identity());
+            placeLog(world, callback, rand, posIt.west(), tree, Function.identity());
         }
 
         return ImmutableList.of(new FoliagePlacer.FoliageAttachment(pos.above(height + heightWider), 0 /*radius*/, false));
     }
 
-    protected boolean placeLog(WorldGenLevel world, BiConsumer<BlockPos, BlockState> callback, RandomSource rand, BlockPos pos, TreeConfiguration config, Function<BlockState, BlockState> transformer) {
+    protected boolean placeLog(WorldGenLevel world, BiConsumer<BlockPos, BlockState> callback, RandomSource rand, BlockPos pos, TreeFeature tree, Function<BlockState, BlockState> transformer) {
         if (TreeFeature.validTreePos(world, pos)) {
-            BlockState logs = transformer.apply(config.trunkProvider.getState(world, rand, pos));
+            BlockState logs = transformer.apply(tree.trunkProvider().value().getState(world, rand, pos));
             logs = logs.getBlock() instanceof BlockMenrilLogFilled
                     ? logs.setValue(BlockMenrilLogFilled.SIDE, Direction.Plane.HORIZONTAL.getRandomDirection(rand))
                     : logs;
@@ -103,8 +102,8 @@ public class TrunkPlacerMenril extends TrunkPlacer {
         }
     }
 
-    protected void setDirtAt(WorldGenLevel world, BiConsumer<BlockPos, BlockState> callback, RandomSource rand, BlockPos pos, TreeConfiguration config) {
-        placeBelowTrunkBlock(world, callback, rand, pos, config);
+    protected void setDirtAt(WorldGenLevel world, BiConsumer<BlockPos, BlockState> callback, RandomSource rand, BlockPos pos, TreeFeature tree) {
+        placeBelowTrunkBlock(world, callback, rand, pos, tree);
     }
 
 }

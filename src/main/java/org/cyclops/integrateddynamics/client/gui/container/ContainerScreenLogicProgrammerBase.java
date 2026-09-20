@@ -37,7 +37,6 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgramm
 import org.cyclops.integrateddynamics.network.packet.LogicProgrammerActivateElementPacket;
 import org.cyclops.integrateddynamics.network.packet.LogicProgrammerLabelPacket;
 import org.cyclops.integrateddynamics.proxy.ClientProxy;
-import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
 import java.awt.*;
@@ -336,7 +335,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
 
     protected boolean handleKeyCode(KeyEvent evt) {
         InputConstants.Key inputCode = InputConstants.getKey(evt);
-        if(evt.key() != GLFW.GLFW_KEY_LEFT_SHIFT && evt.key() != GLFW.GLFW_KEY_RIGHT_SHIFT) {
+        if(evt.key() != InputConstants.KEY_LSHIFT && evt.key() != InputConstants.KEY_RSHIFT) {
             ContainerLogicProgrammerBase container = getMenu();
             int pageSize = container.getPageSize();
             int stepModifier = IModHelpers.get().getMinecraftClientHelpers().isShifted() ? pageSize - 1 : 1;
@@ -352,11 +351,11 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
                 operatorInfoPattern.onButtonEditClick();
                 swallowNextCharacter = true;
                 return true;
-            } else if (GLFW.GLFW_KEY_LEFT == evt.key() && (!isElementFocused && isSearchFieldFocussed())) {
+            } else if (InputConstants.KEY_LEFT == evt.key() && (!isElementFocused && isSearchFieldFocussed())) {
                 // Unfocus search field
                 setSearchFieldFocussed(isSearchFieldFocussed());
                 return true;
-            } else if (!isElementFocused && GLFW.GLFW_KEY_DOWN == evt.key()) {
+            } else if (!isElementFocused && InputConstants.KEY_DOWN == evt.key()) {
                 // Scroll down
                 if (!selectPageElement(relativeStep += stepModifier)) {
                     relativeStep -= stepModifier;
@@ -366,7 +365,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
                     }
                 }
                 return true;
-            } else if (!isElementFocused && GLFW.GLFW_KEY_UP == evt.key()) {
+            } else if (!isElementFocused && InputConstants.KEY_UP == evt.key()) {
                 // Scroll up
                 if (!(relativeStep >= 0 && selectPageElement(relativeStep -= stepModifier))) {
                     getScrollbar().scrollRelative(stepModifier);
@@ -374,8 +373,8 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
                 }
                 return true;
             } else if (!isElementFocused
-                    && (GLFW.GLFW_KEY_RIGHT == evt.key() || GLFW.GLFW_KEY_TAB == evt.key()
-                    || GLFW.GLFW_KEY_ENTER == evt.key() || GLFW.GLFW_KEY_KP_ENTER == evt.key())) {
+                    && (InputConstants.KEY_RIGHT == evt.key() || InputConstants.KEY_TAB == evt.key()
+                    || InputConstants.KEY_RETURN == evt.key() || InputConstants.KEY_NUMPADENTER == evt.key())) {
                 if (container.getActiveElement() != null) {
                     container.getActiveElement().getClient().setFocused(operatorConfigPattern, true);
                     setSearchFieldFocussed(false);
@@ -398,7 +397,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
 
     @Override
     public boolean keyPressed(KeyEvent evt) {
-        if (evt.key() != GLFW.GLFW_KEY_ESCAPE) {
+        if (evt.key() != InputConstants.KEY_ESCAPE) {
             if (this.subGuiHolder.keyPressed(evt) || handleKeyCode(evt)) {
                 return true;
             }
@@ -516,7 +515,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
 
         @Override
         public boolean keyPressed(KeyEvent evt) {
-            if (this.searchField.isFocused() && evt.key() != GLFW.GLFW_KEY_ESCAPE) {
+            if (this.searchField.isFocused() && evt.key() != InputConstants.KEY_ESCAPE) {
                 this.searchField.keyPressed(evt);
                 label(this.searchField.getValue());
                 return true;

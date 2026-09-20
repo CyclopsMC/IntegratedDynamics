@@ -6,7 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.world.level.WorldGenLevel;
-import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
+import net.minecraft.world.level.levelgen.feature.TreeFeature;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerType;
 import org.cyclops.integrateddynamics.RegistryEntries;
@@ -27,17 +27,17 @@ public class FoliagePlacerMenril extends FoliagePlacer {
     }
 
     @Override
-    protected void createFoliage(WorldGenLevel world, FoliagePlacer.FoliageSetter callback, RandomSource rand, TreeConfiguration config,
+    protected void createFoliage(WorldGenLevel world, FoliagePlacer.FoliageSetter callback, RandomSource rand, TreeFeature tree,
                                  int mimimumHeight, FoliagePlacer.FoliageAttachment foliage, int foliageHeight, int spread, int offset) {
         BlockPos blockpos = foliage.pos();
         for(int l = offset; l >= -foliageHeight; --l) {
             int radius = (l == offset || l == -foliageHeight) ? 1 : 2;
-            this.placeLeavesRow(world, callback, rand, config, blockpos, radius, l, foliage.doubleTrunk());
+            this.placeLeavesRow(world, callback, rand, tree, blockpos, radius, l, foliage.doubleTrunk());
         }
     }
 
     @Override
-    public int foliageHeight(RandomSource rand, int treeHeight, TreeConfiguration config) {
+    public int foliageHeight(RandomSource rand, int treeHeight, TreeFeature tree) {
         return 5;
     }
 

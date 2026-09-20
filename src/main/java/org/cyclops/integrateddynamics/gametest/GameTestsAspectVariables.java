@@ -27,7 +27,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.RedStoneWireBlock;
+import net.minecraft.world.level.block.RedstoneWireBlock;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.gametest.GameTest;
@@ -865,9 +865,9 @@ public class GameTestsAspectVariables {
                 AspectWriteBuilders.Redstone.PROP_PULSE_EMIT_VALUE,
                 createVariableForValue(helper.getLevel(), ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(7)));
         helper.startSequence()
-                .thenWaitUntil(() -> helper.assertBlockProperty(POS.west(), RedStoneWireBlock.POWER, 0))
-                .thenWaitUntil(() -> helper.assertBlockProperty(POS.west(), RedStoneWireBlock.POWER, 7))
-                .thenWaitUntil(() -> helper.assertBlockProperty(POS.west(), RedStoneWireBlock.POWER, 0))
+                .thenWaitUntil(() -> helper.assertBlockProperty(POS.west(), RedstoneWireBlock.POWER, 0))
+                .thenWaitUntil(() -> helper.assertBlockProperty(POS.west(), RedstoneWireBlock.POWER, 7))
+                .thenWaitUntil(() -> helper.assertBlockProperty(POS.west(), RedstoneWireBlock.POWER, 0))
                 .thenSucceed();
     }
 
@@ -881,7 +881,7 @@ public class GameTestsAspectVariables {
         setAspectPropertyVariable(partPos(helper, POS), Aspects.Write.Redstone.INTEGER,
                 AspectWriteBuilders.Redstone.PROP_STRONG_POWER,
                 createVariableForValue(helper.getLevel(), ValueTypes.BOOLEAN, ValueTypeBoolean.ValueBoolean.of(true)));
-        helper.succeedWhen(() -> helper.assertBlockProperty(POS.west().above(), RedStoneWireBlock.POWER, 15));
+        helper.succeedWhen(() -> helper.assertBlockProperty(POS.west().above(), RedstoneWireBlock.POWER, 15));
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
@@ -893,7 +893,7 @@ public class GameTestsAspectVariables {
         setAspectPropertyVariable(partPos(helper, POS), Aspects.Write.Redstone.INTEGER,
                 AspectWriteBuilders.Redstone.PROP_STRONG_POWER,
                 createVariableForValue(helper.getLevel(), ValueTypes.BOOLEAN, ValueTypeBoolean.ValueBoolean.of(false)));
-        helper.succeedWhen(() -> helper.assertBlockProperty(POS.west().above(), RedStoneWireBlock.POWER, 0));
+        helper.succeedWhen(() -> helper.assertBlockProperty(POS.west().above(), RedstoneWireBlock.POWER, 0));
     }
 
     @GameTest(template = TEMPLATE_EMPTY, environment = "integrateddynamics:aspectvariablesredstonestrongpower")
@@ -921,9 +921,9 @@ public class GameTestsAspectVariables {
                 .thenWaitUntil(() -> helper.assertTrue(getEffectiveAspectProperty(partPos(helper, POS),
                                 Aspects.Write.Redstone.INTEGER, AspectWriteBuilders.Redstone.PROP_STRONG_POWER).getRawValue(),
                         "The strong power setting was never driven to true by its variable"))
-                .thenWaitUntil(() -> helper.assertBlockProperty(POS.west().above(), RedStoneWireBlock.POWER, 15))
-                .thenWaitUntil(() -> helper.assertBlockProperty(POS.west().above(), RedStoneWireBlock.POWER, 0))
-                .thenWaitUntil(() -> helper.assertBlockProperty(POS.west().above(), RedStoneWireBlock.POWER, 15))
+                .thenWaitUntil(() -> helper.assertBlockProperty(POS.west().above(), RedstoneWireBlock.POWER, 15))
+                .thenWaitUntil(() -> helper.assertBlockProperty(POS.west().above(), RedstoneWireBlock.POWER, 0))
+                .thenWaitUntil(() -> helper.assertBlockProperty(POS.west().above(), RedstoneWireBlock.POWER, 15))
                 .thenSucceed();
     }
 
@@ -945,12 +945,12 @@ public class GameTestsAspectVariables {
                 createVariableForValue(helper.getLevel(), ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(10)));
 
         helper.startSequence()
-                .thenWaitUntil(() -> helper.assertBlockProperty(POS.west(), RedStoneWireBlock.POWER, 0))
-                .thenWaitUntil(() -> helper.assertBlockProperty(POS.west(), RedStoneWireBlock.POWER, 15))
+                .thenWaitUntil(() -> helper.assertBlockProperty(POS.west(), RedstoneWireBlock.POWER, 0))
+                .thenWaitUntil(() -> helper.assertBlockProperty(POS.west(), RedstoneWireBlock.POWER, 15))
                 // Verify that the pulse is still active after several ticks
                 .thenIdle(5)
-                .thenExecute(() -> helper.assertBlockProperty(POS.west(), RedStoneWireBlock.POWER, 15))
-                .thenWaitUntil(() -> helper.assertBlockProperty(POS.west(), RedStoneWireBlock.POWER, 0))
+                .thenExecute(() -> helper.assertBlockProperty(POS.west(), RedstoneWireBlock.POWER, 15))
+                .thenWaitUntil(() -> helper.assertBlockProperty(POS.west(), RedstoneWireBlock.POWER, 0))
                 .thenSucceed();
     }
 

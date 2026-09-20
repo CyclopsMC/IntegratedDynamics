@@ -4,10 +4,10 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders;
 import net.minecraft.world.item.component.Consumable;
 import net.minecraft.world.item.component.Consumables;
 import net.minecraft.world.item.consume_effects.ApplyStatusEffectsConsumeEffect;
-import net.minecraft.world.level.block.ComposterBlock;
 import org.cyclops.cyclopscore.config.ConfigurablePropertyCommon;
 import org.cyclops.cyclopscore.config.extendedconfig.ItemConfigCommon;
 import org.cyclops.cyclopscore.init.IModBase;
@@ -28,7 +28,8 @@ public class ItemMenrilBerriesConfig extends ItemConfigCommon<IModBase> {
                 IntegratedDynamics._instance,
                 "menril_berries",
                 (eConfig, properties) -> new Item(properties
-                        .food(createFood(), createConsumable()))
+                        .food(createFood(), createConsumable())
+                        .compostable(ContextIntProviders.COMPOSTABLE_MEDIUM))
         );
     }
 
@@ -46,12 +47,6 @@ public class ItemMenrilBerriesConfig extends ItemConfigCommon<IModBase> {
             builder = builder.onConsume(new ApplyStatusEffectsConsumeEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 20, 1), 1));
         }
         return builder.build();
-    }
-
-    @Override
-    public void onRegistryRegistered() {
-        super.onRegistryRegistered();
-        ComposterBlock.COMPOSTABLES.put(getInstance(), 0.65F);
     }
 
 }

@@ -1,13 +1,11 @@
 package org.cyclops.integrateddynamics.block;
 
-import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -29,8 +27,6 @@ import javax.annotation.Nullable;
  */
 public class BlockProxy extends BlockWithEntityGuiCabled {
 
-    public static final MapCodec<BlockProxy> CODEC = simpleCodec(BlockProxy::new);
-
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
 
     public BlockProxy(Properties properties) {
@@ -39,10 +35,6 @@ public class BlockProxy extends BlockWithEntityGuiCabled {
                 .setValue(FACING, Direction.NORTH));
     }
 
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return CODEC;
-    }
 
     @Override
     @Nullable

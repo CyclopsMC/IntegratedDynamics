@@ -1,13 +1,11 @@
 package org.cyclops.integrateddynamics.block;
 
-import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -31,8 +29,6 @@ import javax.annotation.Nullable;
  */
 public class BlockMechanicalSqueezer extends BlockMechanicalMachine {
 
-    public static final MapCodec<BlockMechanicalSqueezer> CODEC = simpleCodec(BlockMechanicalSqueezer::new);
-
     public static final String NBT_TANK = "tank";
 
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
@@ -44,10 +40,6 @@ public class BlockMechanicalSqueezer extends BlockMechanicalMachine {
                 .setValue(LIT, false));
     }
 
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return CODEC;
-    }
 
     @Override
     @Nullable

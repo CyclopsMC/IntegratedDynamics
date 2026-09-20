@@ -15,6 +15,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.Prediction;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
@@ -241,9 +242,9 @@ public final class Helpers {
 
     public static void returnItemToPlayer(Player player, ItemStack itemStack) {
         if (player.isAlive() && (!(player instanceof ServerPlayer) || !((ServerPlayer)player).hasDisconnected())) {
-            player.getInventory().placeItemBackInInventory(itemStack);
+            player.getInventory().placeItemBackInInventory(itemStack, Prediction.SERVER_ONLY);
         } else {
-            player.drop(itemStack, false);
+            player.drop(itemStack, false, Prediction.SERVER_ONLY);
         }
     }
 
