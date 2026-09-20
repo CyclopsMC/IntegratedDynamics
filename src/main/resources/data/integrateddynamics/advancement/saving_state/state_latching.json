@@ -1,0 +1,67 @@
+{
+  "display": {
+    "icon": {
+      "id": "integrateddynamics:variable",
+      "components": {
+        "integrateddynamics:variable_facade": {
+          "partId": 1,
+          "_id": 1,
+          "_type": "integrateddynamics:operator",
+          "operatorName": "integrateddynamics:logical_or",
+          "variableIds": [1, 1]
+        }
+      }
+    },
+    "title": {
+      "translate": "advancement.integrateddynamics.state_latching"
+    },
+    "description": {
+      "translate": "advancement.integrateddynamics.state_latching.desc"
+    }
+  },
+  "parent": "integrateddynamics:saving_state/variable_delaying",
+  "criteria": {
+    "criteria_0": {
+      "trigger": "integrateddynamics:part_writer_aspect",
+      "conditions": {
+        "parttype": "integrateddynamics:redstone_writer",
+        "variable": {
+          "type": "operator",
+          "operator": "integrateddynamics:logical_or",
+          "input": {
+            "0": {
+              "type": "aspect",
+              "aspect": "integrateddynamics:read_boolean_redstone_nonlow"
+            },
+            "1": {
+              "type": "operator",
+              "operator": "integrateddynamics:logical_and",
+              "input": {
+                "0": {
+                  "type": "operator",
+                  "operator": "integrateddynamics:list_get_or_default",
+                  "input": {
+                    "0": {
+                      "type": "value_type",
+                      "value_type": "integrateddynamics:list"
+                    }
+                  }
+                },
+                "1": {
+                  "type": "operator",
+                  "operator": "integrateddynamics:logical_not",
+                  "input": {
+                    "0": {
+                      "type": "aspect",
+                      "aspect": "integrateddynamics:read_boolean_redstone_nonlow"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

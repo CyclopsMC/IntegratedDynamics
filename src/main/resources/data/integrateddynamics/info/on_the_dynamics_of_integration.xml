@@ -192,6 +192,32 @@
                 </rewards>
             </appendix>
         </section>
+        <section name="info_book.integrateddynamics.tutorials.saving_state">
+            <paragraph>info_book.integrateddynamics.tutorials.saving_state.text1</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.saving_state.text2</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.saving_state.text3</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.saving_state.text4</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.saving_state.text5</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.saving_state.text6</paragraph>
+            <appendix type="minecraft:crafting">integrateddynamics:crafting/delay</appendix>
+            <appendix type="integrateddynamics:operator">integrateddynamics:list_get_or_default</appendix>
+            <appendix type="integrateddynamics:operator">integrateddynamics:logical_or</appendix>
+            <appendix type="integrateddynamics:operator">integrateddynamics:relational_equals</appendix>
+            <appendix type="integrateddynamics:operator">integrateddynamics:general_choice</appendix>
+            <appendix type="advancement_rewards" id="integrateddynamics:saving_state">
+                <advancements>
+                    <advancement id="integrateddynamics:saving_state/variable_delaying" />
+                    <advancement id="integrateddynamics:saving_state/state_latching" />
+                    <advancement id="integrateddynamics:saving_state/state_toggling" />
+                </advancements>
+                <rewards>
+                    <reward type="item" amount="2">integrateddynamics:delay</reward>
+                    <reward type="item" amount="5">integrateddynamics:part_redstone_reader</reward>
+                    <reward type="item" amount="5">integrateddynamics:part_redstone_writer</reward>
+                    <reward type="item" amount="64">integrateddynamics:variable</reward>
+                </rewards>
+            </appendix>
+        </section>
         <section name="info_book.integrateddynamics.tutorials.recipe_handling">
             <paragraph>info_book.integrateddynamics.tutorials.recipe_handling.text1</paragraph>
             <paragraph>info_book.integrateddynamics.tutorials.recipe_handling.text2</paragraph>
