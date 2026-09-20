@@ -42,7 +42,6 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 
 import javax.annotation.Nullable;
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 import java.util.List;
 import java.util.Set;
@@ -487,8 +486,14 @@ public class GameTestsWrenchConfig {
                         ((PartConfigApplyResult) args[6]).addApplied(Component.literal(EXTRA_APPLIED));
                         yield null;
                     }
-                    // Called on the proxy, so that the hooks above are the ones that the helpers reach
-                    case "snapshotConfig", "applyConfig" -> InvocationHandler.invokeDefault(proxy, method, args);
+                    // Routed through the proxy, so that the hooks above are the ones that the helpers reach
+                    case "snapshotConfig" -> PartConfigHelpers.snapshot(
+                            (ValueDeseralizationContext) args[0], (IPartType<?, ?>) proxy,
+                            (IPartState<?>) args[1], (Set<PartConfigSection>) args[2]);
+                    case "applyConfig" -> PartConfigHelpers.apply(
+                            (ValueDeseralizationContext) args[0], (INetwork) args[1], (PartTarget) args[3],
+                            (IPartType<?, ?>) proxy, (IPartState<?>) args[4], (PartConfigSnapshot) args[5],
+                            (Set<PartConfigSection>) args[6], (Player) args[7]);
                     default -> method.invoke(delegate, args);
                 });
     }

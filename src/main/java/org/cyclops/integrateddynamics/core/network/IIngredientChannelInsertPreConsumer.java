@@ -14,21 +14,6 @@ public interface IIngredientChannelInsertPreConsumer<T> {
 
     /**
      * Called before an ingredient is inserted into the network.
-     * If nothing needs to be consumed, the same instance can be returned.
-     * @param channel The network channel.
-     * @param ingredient The ingredient instance.
-     * @param transaction The current transaction.
-     * @return The remaining ingredient instance.
-     * @deprecated Implement {@link #insert(int, Object, Object, TransactionContext)} instead,
-     *             which also tracks the part of the insertion that is still unclaimed.
-     */
-    @Deprecated // TODO: rm in next major
-    public default T insert(int channel, @Nonnull T ingredient, TransactionContext transaction) {
-        return ingredient;
-    }
-
-    /**
-     * Called before an ingredient is inserted into the network.
      *
      * All pre-consumers of a network observe the same insertion, one after the other,
      * each one receiving what the previous one left.
@@ -44,10 +29,8 @@ public interface IIngredientChannelInsertPreConsumer<T> {
      * @param transaction The current transaction.
      * @return What is left to insert into the network, and what of it is left unclaimed.
      */
-    public default Result<T> insert(int channel, @Nonnull T ingredient, @Nonnull T unclaimed,
-                                    TransactionContext transaction) {
-        return new Result<>(insert(channel, ingredient, transaction), unclaimed);
-    }
+    public Result<T> insert(int channel, @Nonnull T ingredient, @Nonnull T unclaimed,
+                            TransactionContext transaction);
 
     /**
      * Run the given ingredient instance through all the given pre-consumers.
@@ -68,7 +51,7 @@ public interface IIngredientChannelInsertPreConsumer<T> {
             ingredient = result.remaining();
             unclaimed = result.unclaimed();
 
-            // Pre-consumers on the deprecated api take away without claiming, so restore the invariant
+            // A pre-consumer may take away without claiming, so restore the invariant
             long remainingQuantity = matcher.getQuantity(ingredient);
             if (matcher.getQuantity(unclaimed) > remainingQuantity) {
                 unclaimed = matcher.withQuantity(unclaimed, remainingQuantity);
