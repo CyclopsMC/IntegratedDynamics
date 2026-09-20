@@ -3,7 +3,7 @@ loaderVersion="${neoforge_loader_version_range}"
 issueTrackerURL="${issue_tracker_url}"
 displayURL="${display_url}"
 license="${license}"
-logoFile="logo.png"
+iconFile="logo.png"
 authors="${mod_author}"
 [[mods]]
 modId="${mod_id}"
