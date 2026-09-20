@@ -36,10 +36,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
-import net.minecraft.nbt.CompoundTag;
 import org.cyclops.integrateddynamics.core.helper.PartConfigHelpers;
 import org.cyclops.integrateddynamics.core.part.PartConfigApplyResult;
-import org.cyclops.integrateddynamics.core.part.PartConfigEntry;
 import org.cyclops.integrateddynamics.core.part.PartConfigSection;
 import org.cyclops.integrateddynamics.core.part.PartConfigSnapshot;
 
@@ -365,29 +363,5 @@ public abstract class PartTypeAdapter<P extends IPartType<P, S>, S extends IPart
                                                      PartTarget target, S state, PartConfigSnapshot snapshot,
                                                      Set<PartConfigSection> sections, Player player) {
         return PartConfigHelpers.apply(valueDeseralizationContext, network, target, this, state, snapshot, sections, player);
-    }
-
-    @Override
-    public CompoundTag snapshotConfigExtra(ValueDeseralizationContext valueDeseralizationContext, S state,
-                                                   PartConfigSection section) {
-        return new CompoundTag();
-    }
-
-    @Override
-    public void applyConfigExtra(ValueDeseralizationContext valueDeseralizationContext, PartTarget target,
-                                         S state, PartConfigSection section, PartConfigSnapshot snapshot,
-                                         Player player, PartConfigApplyResult result) {
-
-    }
-
-    @Override
-    public List<Component> getConfigExtraRequirements(PartConfigSnapshot snapshot, PartConfigSection section) {
-        return List.of();
-    }
-
-    @Override
-    public List<PartConfigEntry> getConfigExtraEntries(ValueDeseralizationContext valueDeseralizationContext,
-                                                               PartConfigSnapshot snapshot, PartConfigSection section) {
-        return List.of();
     }
 }

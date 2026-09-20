@@ -253,8 +253,10 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param section The configuration section that is being copied.
      * @return What to store for that section, or an empty tag to store nothing.
      */
-    public CompoundTag snapshotConfigExtra(ValueDeseralizationContext valueDeseralizationContext, S state,
-                                                   PartConfigSection section);
+    public default CompoundTag snapshotConfigExtra(ValueDeseralizationContext valueDeseralizationContext, S state,
+                                                   PartConfigSection section) {
+        return new CompoundTag();
+    }
 
     /**
      * Paste back what {@link #snapshotConfigExtra(ValueDeseralizationContext, IPartState, PartConfigSection)} stored.
@@ -279,9 +281,11 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param player The player that is pasting.
      * @param result The outcome to report into.
      */
-    public void applyConfigExtra(ValueDeseralizationContext valueDeseralizationContext, PartTarget target,
+    public default void applyConfigExtra(ValueDeseralizationContext valueDeseralizationContext, PartTarget target,
                                          S state, PartConfigSection section, PartConfigSnapshot snapshot,
-                                         Player player, PartConfigApplyResult result);
+                                         Player player, PartConfigApplyResult result) {
+
+    }
 
     /**
      * What a player needs in their inventory before
@@ -294,7 +298,9 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param section The configuration section that would be pasted.
      * @return One line per requirement, or nothing if pasting needs nothing from the player.
      */
-    public List<Component> getConfigExtraRequirements(PartConfigSnapshot snapshot, PartConfigSection section);
+    public default List<Component> getConfigExtraRequirements(PartConfigSnapshot snapshot, PartConfigSection section) {
+        return List.of();
+    }
 
     /**
      * The separate things that
@@ -312,8 +318,10 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param section The configuration section to list the entries of.
      * @return The entries that the given section holds.
      */
-    public List<PartConfigEntry> getConfigExtraEntries(ValueDeseralizationContext valueDeseralizationContext,
-                                                               PartConfigSnapshot snapshot, PartConfigSection section);
+    public default List<PartConfigEntry> getConfigExtraEntries(ValueDeseralizationContext valueDeseralizationContext,
+                                                               PartConfigSnapshot snapshot, PartConfigSection section) {
+        return List.of();
+    }
 
     /**
      * @param state The state
