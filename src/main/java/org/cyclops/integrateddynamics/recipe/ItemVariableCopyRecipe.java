@@ -10,12 +10,10 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
-import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
-import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
-import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
+import org.cyclops.integrateddynamics.core.helper.PartConfigHelpers;
 import org.cyclops.integrateddynamics.item.ItemVariable;
 
 /**
@@ -83,20 +81,9 @@ public class ItemVariableCopyRecipe extends CustomRecipe {
             if(!element.isEmpty() && element.getItem() instanceof ItemVariable) {
                 IVariableFacade facade = RegistryEntries.ITEM_VARIABLE.get().getVariableFacade(lastValueDeseralizationContext, element);
                 if(facade.isValid()) {
-                    // Create a copy with a new id.
-                    ItemStack copy = IntegratedDynamics._instance.getRegistryManager()
-                            .getRegistry(IVariableFacadeHandlerRegistry.class).copy(!MinecraftHelpers.isClientSideThread(), element);
-
-                    // If the input had a label, also copy the label
-                    String label = LabelsWorldStorage.getInstance(IntegratedDynamics._instance).getLabel(facade.getId());
-                    if(label != null) {
-                        IVariableFacade facadeCopy = RegistryEntries.ITEM_VARIABLE.get().getVariableFacade(lastValueDeseralizationContext, copy);
-                        if (facadeCopy != null) {
-                            LabelsWorldStorage.getInstance(IntegratedDynamics._instance).put(facadeCopy.getId(), label);
-                        }
-                    }
-
-                    ret.set(j, copy);
+                    // Create a copy with a new id, and copy the label of the input as well.
+                    ret.set(j, PartConfigHelpers.copyVariable(lastValueDeseralizationContext, element,
+                            !MinecraftHelpers.isClientSideThread()));
                 }
             }
         }
