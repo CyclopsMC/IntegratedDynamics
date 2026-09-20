@@ -71,8 +71,8 @@ public class TestIngredientChannelInsertPreConsumer {
     }
 
     @Test
-    public void testDeprecatedPreConsumersCanNotBeOverClaimed() {
-        DeprecatedConsumingPreConsumer first = new DeprecatedConsumingPreConsumer(2);
+    public void testNonClaimingPreConsumersCanNotBeOverClaimed() {
+        NonClaimingConsumingPreConsumer first = new NonClaimingConsumingPreConsumer(2);
         ClaimingPreConsumer second = new ClaimingPreConsumer(5);
 
         long remaining = IIngredientChannelInsertPreConsumer.applyAll(
@@ -121,19 +121,19 @@ public class TestIngredientChannelInsertPreConsumer {
     }
 
     /**
-     * Takes part of the instance away through the deprecated api, which is unaware of claiming.
+     * Takes part of the instance away without claiming any of it.
      */
-    private static class DeprecatedConsumingPreConsumer implements IIngredientChannelInsertPreConsumer<Long> {
+    private static class NonClaimingConsumingPreConsumer implements IIngredientChannelInsertPreConsumer<Long> {
 
         private final long capacity;
 
-        public DeprecatedConsumingPreConsumer(long capacity) {
+        public NonClaimingConsumingPreConsumer(long capacity) {
             this.capacity = capacity;
         }
 
         @Override
-        public Long insert(int channel, Long ingredient, TransactionContext transaction) {
-            return ingredient - Math.min(this.capacity, ingredient);
+        public Result<Long> insert(int channel, Long ingredient, Long unclaimed, TransactionContext transaction) {
+            return new Result<>(ingredient - Math.min(this.capacity, ingredient), unclaimed);
         }
     }
 

@@ -36,8 +36,8 @@
       "predicate": {
         "type": "minecraft:would_survive",
         "state": {
-          "Name": "integrateddynamics:menril_sapling",
-          "Properties": {
+          "id": "integrateddynamics:menril_sapling",
+          "properties": {
             "stage": "0"
           }
         }

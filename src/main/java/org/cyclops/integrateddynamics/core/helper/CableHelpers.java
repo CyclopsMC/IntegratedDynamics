@@ -350,23 +350,6 @@ public class CableHelpers {
      * @param saveState       If the element state should be saved in the item.
      * @param blockState      The block state.
      * @param blockEntity     The block entity.
-     * @return If the cable was removed from the network.
-     */
-    @Deprecated // TODO: rm in next major
-    public static boolean onCableRemoving(Level world, BlockPos pos, boolean dropMainElement, boolean saveState, BlockState blockState, BlockEntity blockEntity) {
-        return onCableRemoving(world, pos, dropMainElement, saveState, blockState, blockEntity, false);
-    }
-
-    /**
-     * This should be called when a cable is being removed, while the part entity is still present.
-     * This method won't do anything when called client-side.
-     *
-     * @param world           The world.
-     * @param pos             The position.
-     * @param dropMainElement If the main part element should be dropped.
-     * @param saveState       If the element state should be saved in the item.
-     * @param blockState      The block state.
-     * @param blockEntity     The block entity.
      * @param isMoving If the cable is being moved to another location. If false, items won't be dropped.
      * @return If the cable was removed from the network.
      */

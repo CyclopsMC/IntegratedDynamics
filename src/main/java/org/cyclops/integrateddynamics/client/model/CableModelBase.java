@@ -5,6 +5,8 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.mojang.math.Quadrant;
+import com.mojang.blaze3d.platform.Transparency;
+import net.minecraft.client.resources.model.cuboid.CuboidRotation;
 import net.minecraft.client.model.geom.builders.UVPair;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
@@ -12,7 +14,6 @@ import net.minecraft.client.renderer.block.dispatch.BlockModelRotation;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.renderer.block.dispatch.ModelState;
@@ -193,8 +194,9 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
         String DUMMY_TEXTURE_NAME = "";
         CuboidFace blockPartFace = new CuboidFace(NO_FACE_CULLING, originalQuad.materialInfo().tintIndex(), DUMMY_TEXTURE_NAME, blockFaceUV, Quadrant.R0);
         ModelState transformation = getRotation(side);
-        boolean APPLY_SHADING = true;
-        quads.add(FaceBakery.bakeQuad(MODEL_BAKER, from, to, blockPartFace, new Material.Baked(texture, false), Direction.NORTH, transformation, null, APPLY_SHADING, 0));
+        CuboidRotation NO_ROTATION = null;
+        Direction DEFAULT_SHADING = null; // A null override means the quad shades by its own direction
+        quads.add(FaceBakery.bakeQuad(MODEL_BAKER, from, to, blockPartFace, new Material.Baked(texture, false), Direction.NORTH, transformation, NO_ROTATION, DEFAULT_SHADING, 0));
     }
 
     public static BlockModelRotation getRotation(Direction facing) {
@@ -285,7 +287,7 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
                                     UVPair.pack(texture.getU(INV_LENGTH_CONNECTION / 16f), texture.getV(invert ? 0 : length / 16f)),
                                     UVPair.pack(texture.getU(LENGTH_CONNECTION / 16f), texture.getV(invert ? 0 : length / 16f)),
                                     realSide,
-                                    new BakedQuad.MaterialInfo(texture, ChunkSectionLayer.SOLID, RenderTypes.entityCutout(texture.atlasLocation()), -1, true, 0),
+                                    BakedQuad.MaterialInfo.of(new Material.Baked(texture, false), Transparency.NONE, -1, null, 0),
                                     BakedNormals.UNSPECIFIED,
                                     BakedColors.DEFAULT
                             ));

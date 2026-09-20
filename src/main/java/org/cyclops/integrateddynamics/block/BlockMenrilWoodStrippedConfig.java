@@ -6,14 +6,9 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.MapColor;
-import net.neoforged.neoforge.common.ItemAbilities;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.level.BlockEvent;
 import org.cyclops.cyclopscore.config.extendedconfig.BlockConfigCommon;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
-import org.cyclops.integrateddynamics.RegistryEntries;
 
 /**
  * Config for the Stripped Menril Wood.
@@ -42,18 +37,7 @@ public class BlockMenrilWoodStrippedConfig extends BlockConfigCommon<IntegratedD
                 },
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );
-        NeoForge.EVENT_BUS.addListener(BlockMenrilWoodStrippedConfig::toolActionEvent);
     }
 
-    public static void toolActionEvent(BlockEvent.BlockToolModificationEvent event) {
-        if (event.getItemAbility() == ItemAbilities.AXE_STRIP && event.getState().getBlock() == RegistryEntries.BLOCK_MENRIL_WOOD.get()) {
-            BlockState blockStateNew = RegistryEntries.BLOCK_MENRIL_WOOD_STRIPPED.get().defaultBlockState();
-            for (Property property : event.getState().getProperties()) {
-                if(blockStateNew.hasProperty(property))
-                    blockStateNew = blockStateNew.setValue(property, event.getState().getValue(property));
-            }
-            event.setFinalState(blockStateNew);
-        }
-    }
 
 }

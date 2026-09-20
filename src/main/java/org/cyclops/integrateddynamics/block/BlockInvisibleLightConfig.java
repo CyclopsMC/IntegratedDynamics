@@ -28,7 +28,7 @@ public class BlockInvisibleLightConfig extends BlockConfigCommon<IntegratedDynam
                         .strength(3.0F)
                         .sound(SoundType.METAL)
                         .lightLevel((blockState) -> 15)
-                        .pushReaction(PushReaction.DESTROY)),
+                        .pushReaction(PushReaction.POPPED)),
                 getDefaultItemConstructor(IntegratedDynamics._instance)
         );
     }

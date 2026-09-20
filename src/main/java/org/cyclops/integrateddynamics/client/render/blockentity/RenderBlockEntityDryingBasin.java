@@ -89,9 +89,9 @@ public class RenderBlockEntityDryingBasin implements BlockEntityRenderer<BlockEn
             poseStack.scale(1.2F, 1.2F, 1.2F);
         } else {
             poseStack.translate(1F, 1.2F, 1F);
-            poseStack.mulPose(Axis.XP.rotationDegrees(25F));
-            poseStack.mulPose(Axis.YP.rotationDegrees(25F));
-            poseStack.mulPose(Axis.YP.rotationDegrees(renderStateDryingBasin.rotation));
+            poseStack.rotateDegrees(Axis.XP, 25F);
+            poseStack.rotateDegrees(Axis.YP, 25F);
+            poseStack.rotateDegrees(Axis.YP, renderStateDryingBasin.rotation);
         }
 
         renderState.submit(poseStack, submitNodeCollector, 15728880, OverlayTexture.NO_OVERLAY, 0);

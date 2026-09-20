@@ -12,12 +12,11 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelDebugName;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterItemModelsEvent;
@@ -68,11 +67,10 @@ public class BlockCableClientConfig extends BlockClientConfig<IntegratedDynamics
     public void registerClientExtensions(RegisterClientExtensionsEvent event) {
         event.registerBlock(new IClientBlockExtensions() {
             @Override
-            public boolean addHitEffects(BlockState blockState, Level world, HitResult target, ParticleEngine particleManager) {
-                BlockPos blockPos = ((BlockHitResult) target).getBlockPos();
+            public boolean addHitEffects(BlockState blockState, Level world, BlockPos blockPos, Direction face, ParticleEngine particleManager) {
                 if(CableHelpers.hasFacade(world, blockPos, blockState)) {
                     CableHelpers.getFacade(world, blockPos, blockState)
-                            .ifPresent(facadeState -> IModHelpers.get().getRenderHelpers().addBlockHitEffects(particleManager, (ClientLevel) world, facadeState, blockPos, ((BlockHitResult) target).getDirection()));
+                            .ifPresent(facadeState -> IModHelpers.get().getRenderHelpers().addBlockHitEffects(particleManager, (ClientLevel) world, facadeState, blockPos, face));
                     return true;
                 } else {
                     return false;

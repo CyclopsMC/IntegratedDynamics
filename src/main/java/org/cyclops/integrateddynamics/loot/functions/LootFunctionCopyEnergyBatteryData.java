@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.loot.functions;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.Holder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -15,7 +16,7 @@ import org.cyclops.integrateddynamics.blockentity.BlockEntityEnergyBattery;
 import org.cyclops.integrateddynamics.capability.energystorage.IEnergyStorageCapacity;
 import org.cyclops.integrateddynamics.capability.energystorage.IEnergyStorageMutable;
 
-import java.util.List;
+import java.util.Optional;
 
 /**
  * Copies energy battery data to the item.
@@ -27,13 +28,13 @@ public class LootFunctionCopyEnergyBatteryData extends LootItemConditionalFuncti
             builder -> commonFields(builder).apply(builder, LootFunctionCopyEnergyBatteryData::new)
     );
 
-    protected LootFunctionCopyEnergyBatteryData(List<LootItemCondition> conditionsIn) {
-        super(conditionsIn);
+    protected LootFunctionCopyEnergyBatteryData(Optional<Holder<LootItemCondition>> condition) {
+        super(condition);
     }
 
     @Override
     public ItemStack run(ItemStack itemStack, LootContext lootContext) {
-        BlockEntity tile = lootContext.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
+        BlockEntity tile = lootContext.getOptional(LootContextParams.BLOCK_ENTITY);
         if (tile instanceof BlockEntityEnergyBattery) {
             EnergyHandler energyStorage = itemStack.getCapability(Capabilities.Energy.ITEM, ItemAccess.forStack(itemStack));
             if (energyStorage != null) {

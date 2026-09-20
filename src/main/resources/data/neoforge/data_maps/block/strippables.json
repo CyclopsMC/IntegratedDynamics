@@ -1,0 +1,10 @@
+{
+  "values": {
+    "integrateddynamics:menril_log": {
+      "stripped_block": "integrateddynamics:menril_log_stripped"
+    },
+    "integrateddynamics:menril_wood": {
+      "stripped_block": "integrateddynamics:menril_wood_stripped"
+    }
+  }
+}

@@ -7,7 +7,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.RedStoneWireBlock;
+import net.minecraft.world.level.block.RedstoneWireBlock;
 import net.minecraft.world.level.block.state.properties.RedstoneSide;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.gametest.GameTest;
@@ -67,8 +67,8 @@ public class GameTestsCombinedAspects {
         helper.setBlock(POS.east().east().east(), Blocks.REDSTONE_WIRE);
 
         helper.succeedWhen(() -> {
-            helper.assertBlockProperty(POS.east().east(), RedStoneWireBlock.WEST, RedstoneSide.SIDE);
-            helper.assertBlockProperty(POS.east().east(), RedStoneWireBlock.POWER, 14);
+            helper.assertBlockProperty(POS.east().east(), RedstoneWireBlock.WEST, RedstoneSide.SIDE);
+            helper.assertBlockProperty(POS.east().east(), RedstoneWireBlock.POWER, 14);
 
             IPartStateWriter partStateWriter = (IPartStateWriter) PartHelpers.getPart(PartPos.of(helper.getLevel(), helper.absolutePos(POS.east()), Direction.EAST)).getState();
             helper.assertFalse(partStateWriter.isDeactivated(), Component.literal("Writer is deactivated"));
@@ -98,8 +98,8 @@ public class GameTestsCombinedAspects {
         helper.setBlock(POS.east().east().east(), Blocks.REDSTONE_WIRE);
 
         helper.succeedWhen(() -> {
-            helper.assertBlockProperty(POS.east().east(), RedStoneWireBlock.WEST, RedstoneSide.SIDE);
-            helper.assertBlockProperty(POS.east().east(), RedStoneWireBlock.POWER, 0);
+            helper.assertBlockProperty(POS.east().east(), RedstoneWireBlock.WEST, RedstoneSide.SIDE);
+            helper.assertBlockProperty(POS.east().east(), RedstoneWireBlock.POWER, 0);
 
             IPartStateWriter partStateWriter = (IPartStateWriter) PartHelpers.getPart(PartPos.of(helper.getLevel(), helper.absolutePos(POS.east()), Direction.EAST)).getState();
             helper.assertFalse(partStateWriter.isDeactivated(), Component.literal("Writer is deactivated"));
@@ -145,8 +145,8 @@ public class GameTestsCombinedAspects {
         helper.setBlock(POS.east().east().east().east(), Blocks.REDSTONE_WIRE);
 
         helper.succeedWhen(() -> {
-            helper.assertBlockProperty(POS.east().east().east(), RedStoneWireBlock.WEST, RedstoneSide.SIDE);
-            helper.assertBlockProperty(POS.east().east().east(), RedStoneWireBlock.POWER, 0);
+            helper.assertBlockProperty(POS.east().east().east(), RedstoneWireBlock.WEST, RedstoneSide.SIDE);
+            helper.assertBlockProperty(POS.east().east().east(), RedstoneWireBlock.POWER, 0);
 
             IPartStateWriter partStateWriter = (IPartStateWriter) PartHelpers.getPart(PartPos.of(helper.getLevel(), helper.absolutePos(POS.east().east()), Direction.EAST)).getState();
             IPartState partStateReader = PartHelpers.getPart(PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.WEST)).getState();
@@ -711,7 +711,7 @@ public class GameTestsCombinedAspects {
 
         // Verify writer works (redstone signal is 15)
         helper.runAtTickTime(5, () -> {
-            helper.assertBlockProperty(posA.west(), RedStoneWireBlock.POWER, 15);
+            helper.assertBlockProperty(posA.west(), RedstoneWireBlock.POWER, 15);
 
             // Now simulate a network rebuild by removing cable B (the middle cable)
             // This will trigger beforeNetworkKill on the old network and afterNetworkAlive on the new network for cable A's writer
@@ -720,7 +720,7 @@ public class GameTestsCombinedAspects {
 
         // After the network rebuild, the writer should still have its activeAspect and still write the value
         helper.succeedWhen(() -> {
-            helper.assertBlockProperty(posA.west(), RedStoneWireBlock.POWER, 15);
+            helper.assertBlockProperty(posA.west(), RedstoneWireBlock.POWER, 15);
 
             IPartStateWriter partStateWriter = (IPartStateWriter) PartHelpers.getPart(writerPos).getState();
             helper.assertFalse(partStateWriter.isDeactivated(), "Writer is deactivated after network rebuild");
@@ -749,7 +749,7 @@ public class GameTestsCombinedAspects {
             // Not assertValueEqual, as that throws a NullPointerException when no aspect is active
             helper.assertTrue(partStateWriter.getActiveAspect() == Aspects.Write.Redstone.BOOLEAN,
                     "Aspect was not activated without a player, but was " + partStateWriter.getActiveAspect());
-            helper.assertBlockProperty(POS.west(), RedStoneWireBlock.POWER, 15);
+            helper.assertBlockProperty(POS.west(), RedstoneWireBlock.POWER, 15);
         });
     }
 

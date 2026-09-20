@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.loot.functions;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.Holder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -13,7 +14,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityMechanicalDryingBasin;
 
-import java.util.List;
+import java.util.Optional;
 
 /**
  * Copies the mechanical drying basin tanks.
@@ -25,13 +26,13 @@ public class LootFunctionCopyMechanicalDryingBasinTanks extends LootItemConditio
             builder -> commonFields(builder).apply(builder, LootFunctionCopyMechanicalDryingBasinTanks::new)
     );
 
-    protected LootFunctionCopyMechanicalDryingBasinTanks(List<LootItemCondition> conditionsIn) {
-        super(conditionsIn);
+    protected LootFunctionCopyMechanicalDryingBasinTanks(Optional<Holder<LootItemCondition>> condition) {
+        super(condition);
     }
 
     @Override
     public ItemStack run(ItemStack itemStack, LootContext lootContext) {
-        BlockEntity tile = lootContext.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
+        BlockEntity tile = lootContext.getOptional(LootContextParams.BLOCK_ENTITY);
         if (tile instanceof BlockEntityMechanicalDryingBasin) {
             itemStack.set(RegistryEntries.DATACOMPONENT_FLUID_CONTENT_IN_OUT, Pair.of(
                     SimpleFluidContent.copyOf(((BlockEntityMechanicalDryingBasin) tile).getTankInput().getFluid()),

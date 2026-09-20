@@ -1,5 +1,7 @@
 package org.cyclops.integrateddynamics.core.client.gui;
 
+import com.mojang.blaze3d.platform.InputConstants;
+
 import com.google.common.collect.Lists;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -13,7 +15,6 @@ import net.minecraft.util.ARGB;
 import net.minecraft.util.FormattedCharSequence;
 import org.cyclops.cyclopscore.client.gui.component.input.WidgetTextFieldExtended;
 import org.cyclops.cyclopscore.helper.IModHelpers;
-import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -130,24 +131,24 @@ public class WidgetTextFieldDropdown<T> extends WidgetTextFieldExtended {
         selectedDropdownPossibility = null;
         if (!possibilities.isEmpty()) {
             switch (evt.key()) {
-                case GLFW.GLFW_KEY_UP:
+                case InputConstants.KEY_UP:
                     if (visiblePossibilitiesIndex >= 0) {
                         visiblePossibilitiesIndex--;
                     } else {
                         visiblePossibilitiesIndex = visiblePossibilities.size() - 1;
                     }
                     return true;
-                case GLFW.GLFW_KEY_TAB:
-                case GLFW.GLFW_KEY_DOWN:
+                case InputConstants.KEY_TAB:
+                case InputConstants.KEY_DOWN:
                     if (visiblePossibilitiesIndex < visiblePossibilities.size() - 1) {
                         visiblePossibilitiesIndex++;
                     } else {
                         visiblePossibilitiesIndex = 0;
                     }
                     return true;
-                case GLFW.GLFW_KEY_KP_ENTER:
-                case GLFW.GLFW_KEY_ENTER:
-                case GLFW.GLFW_KEY_RIGHT:
+                case InputConstants.KEY_NUMPADENTER:
+                case InputConstants.KEY_RETURN:
+                case InputConstants.KEY_RIGHT:
                     if (visiblePossibilitiesIndex >= 0
                             && visiblePossibilitiesIndex < visiblePossibilities.size()) {
                         selectVisiblePossibility(visiblePossibilitiesIndex);

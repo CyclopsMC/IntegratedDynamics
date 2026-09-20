@@ -19,7 +19,6 @@ import org.cyclops.integrateddynamics.core.inventory.container.slot.SlotVariable
 import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDataClient;
 import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDiagnosticsPartOverlayRenderer;
 import org.cyclops.integrateddynamics.core.network.diagnostics.http.DiagnosticsWebServer;
-import org.lwjgl.glfw.GLFW;
 
 /**
  * Client Proxy
@@ -55,11 +54,11 @@ public class ClientProxy extends ClientProxyComponent {
         super.registerKeyBindings(keyRegistry, event);
         event.register(FOCUS_LP_SEARCH = new KeyMapping(
                 "key." + Reference.MOD_ID + ".logic_programmer_focus_search",
-                KeyConflictContext.GUI, KeyModifier.ALT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_F,
+                KeyConflictContext.GUI, KeyModifier.ALT, InputConstants.Type.KEYBOARD, InputConstants.KEY_F,
                 getMainKeyCategory()));
         event.register(FOCUS_LP_RENAME = new KeyMapping(
                 "key." + Reference.MOD_ID + ".logic_programmer_open_rename",
-                KeyConflictContext.GUI, KeyModifier.ALT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R,
+                KeyConflictContext.GUI, KeyModifier.ALT, InputConstants.Type.KEYBOARD, InputConstants.KEY_R,
                 getMainKeyCategory()));
     }
 

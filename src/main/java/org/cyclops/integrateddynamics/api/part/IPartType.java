@@ -29,7 +29,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.network.*;
-import org.cyclops.integrateddynamics.core.helper.PartConfigHelpers;
 import org.cyclops.integrateddynamics.core.part.PartConfigApplyResult;
 import org.cyclops.integrateddynamics.core.part.PartConfigEntry;
 import org.cyclops.integrateddynamics.core.part.PartConfigSection;
@@ -206,10 +205,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param target The target block.
      * @param state The state.
      */
-    // TODO: make non-default in nextmajor
-    public default void onAspectVariablesChanged(PartTarget target, S state) {
-        state.markAspectVariablesChanged();
-    }
+    public void onAspectVariablesChanged(PartTarget target, S state);
 
     /**
      * Take a snapshot of the configuration of this part, so that it can be pasted onto another part.
@@ -218,11 +214,8 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param sections The configuration sections to include.
      * @return The snapshot.
      */
-    // TODO: make non-default in nextmajor
-    public default PartConfigSnapshot snapshotConfig(ValueDeseralizationContext valueDeseralizationContext, S state,
-                                                     Set<PartConfigSection> sections) {
-        return PartConfigHelpers.snapshot(valueDeseralizationContext, this, state, sections);
-    }
+    public PartConfigSnapshot snapshotConfig(ValueDeseralizationContext valueDeseralizationContext, S state,
+                                                     Set<PartConfigSection> sections);
 
     /**
      * Paste a configuration snapshot onto this part.
@@ -239,13 +232,10 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param player The player that is pasting, whose inventory is used for the variable cards.
      * @return The outcome.
      */
-    // TODO: make non-default in nextmajor
-    public default PartConfigApplyResult applyConfig(ValueDeseralizationContext valueDeseralizationContext,
+    public PartConfigApplyResult applyConfig(ValueDeseralizationContext valueDeseralizationContext,
                                                      @Nullable INetwork network, @Nullable IPartNetwork partNetwork,
                                                      PartTarget target, S state, PartConfigSnapshot snapshot,
-                                                     Set<PartConfigSection> sections, Player player) {
-        return PartConfigHelpers.apply(valueDeseralizationContext, network, target, this, state, snapshot, sections, player);
-    }
+                                                     Set<PartConfigSection> sections, Player player);
 
     /**
      * Take a snapshot of the state that {@link PartConfigSnapshot} does not know about itself.
@@ -263,11 +253,8 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param section The configuration section that is being copied.
      * @return What to store for that section, or an empty tag to store nothing.
      */
-    // TODO: make non-default in nextmajor
-    public default CompoundTag snapshotConfigExtra(ValueDeseralizationContext valueDeseralizationContext, S state,
-                                                   PartConfigSection section) {
-        return new CompoundTag();
-    }
+    public CompoundTag snapshotConfigExtra(ValueDeseralizationContext valueDeseralizationContext, S state,
+                                                   PartConfigSection section);
 
     /**
      * Paste back what {@link #snapshotConfigExtra(ValueDeseralizationContext, IPartState, PartConfigSection)} stored.
@@ -292,12 +279,9 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param player The player that is pasting.
      * @param result The outcome to report into.
      */
-    // TODO: make non-default in nextmajor
-    public default void applyConfigExtra(ValueDeseralizationContext valueDeseralizationContext, PartTarget target,
+    public void applyConfigExtra(ValueDeseralizationContext valueDeseralizationContext, PartTarget target,
                                          S state, PartConfigSection section, PartConfigSnapshot snapshot,
-                                         Player player, PartConfigApplyResult result) {
-
-    }
+                                         Player player, PartConfigApplyResult result);
 
     /**
      * What a player needs in their inventory before
@@ -310,10 +294,7 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param section The configuration section that would be pasted.
      * @return One line per requirement, or nothing if pasting needs nothing from the player.
      */
-    // TODO: make non-default in nextmajor
-    public default List<Component> getConfigExtraRequirements(PartConfigSnapshot snapshot, PartConfigSection section) {
-        return List.of();
-    }
+    public List<Component> getConfigExtraRequirements(PartConfigSnapshot snapshot, PartConfigSection section);
 
     /**
      * The separate things that
@@ -331,11 +312,8 @@ public interface IPartType<P extends IPartType<P, S>, S extends IPartState<P>> e
      * @param section The configuration section to list the entries of.
      * @return The entries that the given section holds.
      */
-    // TODO: make non-default in nextmajor
-    public default List<PartConfigEntry> getConfigExtraEntries(ValueDeseralizationContext valueDeseralizationContext,
-                                                               PartConfigSnapshot snapshot, PartConfigSection section) {
-        return List.of();
-    }
+    public List<PartConfigEntry> getConfigExtraEntries(ValueDeseralizationContext valueDeseralizationContext,
+                                                               PartConfigSnapshot snapshot, PartConfigSection section);
 
     /**
      * @param state The state

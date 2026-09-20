@@ -2,23 +2,23 @@ package org.cyclops.integrateddynamics.blockentity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackTemplate;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import net.neoforged.neoforge.transfer.energy.EnergyHandler;
 import net.neoforged.neoforge.transfer.energy.SimpleEnergyHandler;
 import org.cyclops.cyclopscore.datastructure.DataSlotSupplied;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.persist.nbt.NBTPersist;
+import org.cyclops.integrateddynamics.core.helper.FuelHelpers;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.network.IEnergyNetwork;
@@ -143,8 +143,10 @@ public class BlockEntityCoalGenerator extends BlockEntityCableConnectableInvento
         return EnergyHelpers.fillNeigbours(getLevel(), getBlockPos(), energy, simulate);
     }
 
-    public static int getFuelTime(ItemStack itemStack) {
-        return itemStack.getBurnTime(RecipeType.SMELTING, ServerLifecycleHooks.getCurrentServer().fuelValues());
+    public int getFuelTime(ItemStack itemStack) {
+        return getLevel() instanceof ServerLevel serverLevel
+                ? FuelHelpers.getBurnTime(serverLevel, this, getInventory(), itemStack)
+                : 0;
     }
 
     @Override
@@ -175,7 +177,7 @@ public class BlockEntityCoalGenerator extends BlockEntityCableConnectableInvento
                 }
                 if (!blockEntity.isBurning()) {
                     ItemStack fuel;
-                    if (getFuelTime(blockEntity.getInventory().getItem(SLOT_FUEL)) > 0
+                    if (blockEntity.getFuelTime(blockEntity.getInventory().getItem(SLOT_FUEL)) > 0
                             && !(fuel = blockEntity.getInventory().removeItem(SLOT_FUEL, 1)).isEmpty()) {
                         if(blockEntity.getInventory().getItem(SLOT_FUEL).isEmpty()) {
                             ItemStackTemplate remainder = fuel.getItem().getCraftingRemainder(fuel);
@@ -183,7 +185,7 @@ public class BlockEntityCoalGenerator extends BlockEntityCableConnectableInvento
                                 blockEntity.getInventory().setItem(SLOT_FUEL, remainder.create());
                             }
                         }
-                        blockEntity.currentlyBurningMax = getFuelTime(fuel);
+                        blockEntity.currentlyBurningMax = blockEntity.getFuelTime(fuel);
                         blockEntity.currentlyBurning = 0;
                         blockEntity.setChanged();
                     }

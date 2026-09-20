@@ -24,7 +24,7 @@ public class BlockFluidLiquidChorusConfig extends BlockConfigCommon<IntegratedDy
                         .replaceable()
                         .noCollision()
                         .strength(100.0F)
-                        .pushReaction(PushReaction.DESTROY)
+                        .pushReaction(PushReaction.POPPED)
                         .noLootTable()
                         .liquid()),
                 getDefaultItemConstructor(IntegratedDynamics._instance)

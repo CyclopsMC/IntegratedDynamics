@@ -1,5 +1,5 @@
 plugins {
-    id 'net.neoforged.moddev' version '2.0.141'
+    id 'net.neoforged.moddev' version '2.0.147'
     id 'net.darkhax.curseforgegradle' version '1.1.28'
     id 'com.diffplug.spotless' version '7.2.1'
     id 'com.gradleup.shadow' version '8.3.8'
@@ -140,16 +140,18 @@ dependencies {
         implementation "org.cyclops.cyclopscore:cyclopscore-${project.minecraft_version}-neoforge:${project.cyclopscore_version}"
     }
 	
+    // TODO: re-enable once IntegratedDynamics-Compat has a 26.3 build, and bump integrateddynamicscompat_version to it.
+    // It depends on this mod, so it cannot be built until this one is published for 26.3.
     // Add something like 'integrateddynamicscompat_version_local=0.1.0-DEV' to your secrets.properties if you want to use a custom local Integrated Dynamics Compat version.
-    if(secrets.integrateddynamicscompat_version_local) {
-        shadow("org.cyclops.integrateddynamicscompat:integrateddynamicscompat-${project.minecraft_version}-neoforge:${secrets.integrateddynamicscompat_version_local}") {
-            transitive = false
-        }
-    } else {
-        shadow("org.cyclops.integrateddynamicscompat:integrateddynamicscompat-${project.integrateddynamicscompat_version}") {
-            transitive = false
-        }
-    }
+//    if(secrets.integrateddynamicscompat_version_local) {
+//        shadow("org.cyclops.integrateddynamicscompat:integrateddynamicscompat-${project.minecraft_version}-neoforge:${secrets.integrateddynamicscompat_version_local}") {
+//            transitive = false
+//        }
+//    } else {
+//        shadow("org.cyclops.integrateddynamicscompat:integrateddynamicscompat-${project.integrateddynamicscompat_version}") {
+//            transitive = false
+//        }
+//    }
 
     if(secrets.commoncapabilities_version_local) {
         implementation "org.cyclops.commoncapabilities:commoncapabilities-${project.minecraft_version}-neoforge:${secrets.commoncapabilities_version_local}"

@@ -24,7 +24,7 @@ public class BlockFluidMenrilResinConfig extends BlockConfigCommon<IntegratedDyn
                         .replaceable()
                         .noCollision()
                         .strength(100.0F)
-                        .pushReaction(PushReaction.DESTROY)
+                        .pushReaction(PushReaction.POPPED)
                         .noLootTable()
                         .liquid()),
                 getDefaultItemConstructor(IntegratedDynamics._instance)

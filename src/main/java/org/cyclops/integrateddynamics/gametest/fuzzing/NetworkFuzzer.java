@@ -12,16 +12,15 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
+import org.cyclops.integrateddynamics.core.helper.FuelHelpers;
 import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
@@ -673,7 +672,7 @@ public class NetworkFuzzer {
         List<net.minecraft.world.item.Item> fuelItems = BuiltInRegistries.ITEM.stream()
                 .filter(item -> BuiltInRegistries.ITEM.getKey(item)
                         .getNamespace().equals("minecraft"))
-                .filter(item -> new ItemStack(item).getBurnTime(RecipeType.SMELTING, ServerLifecycleHooks.getCurrentServer().fuelValues()) > 0)
+                .filter(item -> FuelHelpers.isFuel(new ItemStack(item)))
                 .toList();
 
         if (fuelItems.isEmpty()) {

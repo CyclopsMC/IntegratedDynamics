@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.entity.LivingEntity;
@@ -43,7 +44,7 @@ public class BlockFluidLiquidChorus extends LiquidBlock {
                     entityLiving.stopRiding();
                 }
 
-                if (entityLiving.randomTeleport(d3, d4, d5, true)) {
+                if (entityLiving.randomTeleport(d3, d4, d5, true, BlockTags.CONSUMABLE_DOES_NOT_TELEPORT_TO)) {
                     level.playSound(null, d0, d1, d2, SoundEvents.CHORUS_FRUIT_TELEPORT, SoundSource.PLAYERS, 1.0F, 1.0F);
                     entityLiving.playSound(SoundEvents.CHORUS_FRUIT_TELEPORT, 1.0F, 1.0F);
                     break;

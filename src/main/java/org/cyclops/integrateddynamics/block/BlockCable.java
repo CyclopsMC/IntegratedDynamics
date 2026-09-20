@@ -2,7 +2,6 @@ package org.cyclops.integrateddynamics.block;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.mojang.serialization.MapCodec;
 import net.minecraft.client.renderer.chunk.RenderSectionRegion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -15,7 +14,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.*;
-import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
@@ -74,8 +72,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBlock {
 
-    public static final MapCodec<BlockCable> CODEC = simpleCodec(BlockCable::new);
-
     public static final float BLOCK_HARDNESS = 3.0F;
 
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
@@ -131,10 +127,6 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
         this.registerDefaultState(this.stateDefinition.any().setValue(WATERLOGGED, false));
     }
 
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return CODEC;
-    }
 
     @Override
     public boolean useShapeForLightOcclusion(BlockState p_60576_) {
@@ -381,7 +373,7 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
     }
 
     @Override
-    public boolean canConnectRedstone(BlockState blockState, BlockGetter world, BlockPos pos, Direction side) {
+    protected boolean shouldRedstoneWireConnectTo(BlockState blockState, BlockGetter world, BlockPos pos, @Nullable Direction side) {
         if (world instanceof ILevelExtension levelExtension) {
             if (side == null) {
                 for (Direction dummySide : Direction.values()) {

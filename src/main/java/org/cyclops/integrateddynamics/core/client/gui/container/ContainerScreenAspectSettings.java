@@ -1,5 +1,7 @@
 package org.cyclops.integrateddynamics.core.client.gui.container;
 
+import com.mojang.blaze3d.platform.InputConstants;
+
 import com.google.common.collect.Lists;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -33,7 +35,6 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.gui.GuiElementValue
 import org.cyclops.integrateddynamics.core.evaluate.variable.gui.SubGuiValueTypeInfoBase;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerAspectSettings;
 import org.cyclops.integrateddynamics.core.logicprogrammer.client.RenderPattern;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.Collections;
 import java.util.List;
@@ -204,7 +205,7 @@ public class ContainerScreenAspectSettings extends ContainerScreenExtended<Conta
 
     @Override
     public boolean keyPressed(KeyEvent evt) {
-        if (evt.key() != GLFW.GLFW_KEY_ESCAPE) {
+        if (evt.key() != InputConstants.KEY_ESCAPE) {
             if (this.subGuiHolder.keyPressed(evt)) {
                 if(guiElement != null) {
                     onValueChanged();

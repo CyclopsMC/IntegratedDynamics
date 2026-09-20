@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.loot.functions;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.Holder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -11,7 +12,7 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.fluids.SimpleFluidContent;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityMechanicalSqueezer;
 
-import java.util.List;
+import java.util.Optional;
 
 /**
  * Copies the mechanical squeezer tank.
@@ -23,13 +24,13 @@ public class LootFunctionCopyMechanicalSqueezerTank extends LootItemConditionalF
             builder -> commonFields(builder).apply(builder, LootFunctionCopyMechanicalSqueezerTank::new)
     );
 
-    protected LootFunctionCopyMechanicalSqueezerTank(List<LootItemCondition> conditionsIn) {
-        super(conditionsIn);
+    protected LootFunctionCopyMechanicalSqueezerTank(Optional<Holder<LootItemCondition>> condition) {
+        super(condition);
     }
 
     @Override
     public ItemStack run(ItemStack itemStack, LootContext lootContext) {
-        BlockEntity tile = lootContext.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
+        BlockEntity tile = lootContext.getOptional(LootContextParams.BLOCK_ENTITY);
         if (tile instanceof BlockEntityMechanicalSqueezer) {
             itemStack.set(org.cyclops.cyclopscore.RegistryEntries.COMPONENT_FLUID_CONTENT, SimpleFluidContent.copyOf(((BlockEntityMechanicalSqueezer) tile).getTank().getFluid()));
         }

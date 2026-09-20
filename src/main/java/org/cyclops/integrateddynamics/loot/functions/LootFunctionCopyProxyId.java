@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.loot.functions;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.Holder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -11,7 +12,7 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityProxy;
 
-import java.util.List;
+import java.util.Optional;
 
 /**
  * Copies a proxy id to the item.
@@ -23,13 +24,13 @@ public class LootFunctionCopyProxyId extends LootItemConditionalFunction {
             builder -> commonFields(builder).apply(builder, LootFunctionCopyProxyId::new)
     );
 
-    protected LootFunctionCopyProxyId(List<LootItemCondition> conditionsIn) {
-        super(conditionsIn);
+    protected LootFunctionCopyProxyId(Optional<Holder<LootItemCondition>> condition) {
+        super(condition);
     }
 
     @Override
     public ItemStack run(ItemStack itemStack, LootContext lootContext) {
-        BlockEntity tile = lootContext.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
+        BlockEntity tile = lootContext.getOptional(LootContextParams.BLOCK_ENTITY);
         if (tile instanceof BlockEntityProxy) {
             itemStack.set(RegistryEntries.DATACOMPONENT_PROXY_ID, ((BlockEntityProxy) tile).getProxyId());
         }

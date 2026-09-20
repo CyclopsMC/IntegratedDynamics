@@ -85,7 +85,7 @@ public class DisplayPartOverlayRenderer extends PartOverlayRendererBase {
             }
             int rotation = partState.getFacingRotation().ordinal() - 2;
             matrixStack.translate(6, 6, 0);
-            matrixStack.mulPose(Axis.ZP.rotationDegrees(rotation * 90));
+            matrixStack.rotateDegrees(Axis.ZP, rotation * 90);
             matrixStack.translate(-6, -6, 0);
 
             IValue value = partState.getDisplayValue();

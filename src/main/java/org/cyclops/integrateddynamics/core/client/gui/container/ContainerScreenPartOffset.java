@@ -1,5 +1,7 @@
 package org.cyclops.integrateddynamics.core.client.gui.container;
 
+import com.mojang.blaze3d.platform.InputConstants;
+
 import com.google.common.collect.Lists;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -23,7 +25,6 @@ import org.cyclops.cyclopscore.helper.ValueNotifierHelpers;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.core.inventory.container.ContainerPartOffset;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.Collections;
 import java.util.List;
@@ -116,7 +117,7 @@ public class ContainerScreenPartOffset<T extends ContainerPartOffset> extends Co
 
     @Override
     public boolean keyPressed(KeyEvent evt) {
-        if (evt.key() != GLFW.GLFW_KEY_ESCAPE) {
+        if (evt.key() != InputConstants.KEY_ESCAPE) {
             if (this.numberFieldX.keyPressed(evt)
                     || this.numberFieldY.keyPressed(evt)
                     || this.numberFieldZ.keyPressed(evt)) {
