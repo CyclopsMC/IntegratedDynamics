@@ -6,26 +6,29 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "functions": [
+          "modifier": [
             {
-              "function": "minecraft:copy_name",
+              "type": "minecraft:copy_name",
               "source": "block_entity"
             },
             {
-              "function": "integrateddynamics:copy_proxy_id"
+              "type": "integrateddynamics:copy_proxy_id"
             }
           ],
           "name": "integrateddynamics:delay"
         }
       ],
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        },
-        {
-          "condition": "integrateddynamics:match_wrench"
-        }
-      ]
+      "condition": {
+        "type": "minecraft:all_of",
+        "terms": [
+          {
+            "type": "minecraft:survives_explosion"
+          },
+          {
+            "type": "integrateddynamics:match_wrench"
+          }
+        ]
+      }
     },
     {
       "rolls": 1,
@@ -35,14 +38,12 @@
           "name": "integrateddynamics:delay"
         }
       ],
-      "conditions": [
-        {
-          "condition": "minecraft:inverted",
-          "term": {
-            "condition": "integrateddynamics:match_wrench"
-          }
+      "condition": {
+        "type": "minecraft:inverted",
+        "term": {
+          "type": "integrateddynamics:match_wrench"
         }
-      ]
+      }
     }
   ]
 }

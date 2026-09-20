@@ -6,19 +6,15 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "functions": [
-            {
-              "function": "integrateddynamics:copy_energy_battery_data"
-            }
-          ],
+          "modifier": {
+            "type": "integrateddynamics:copy_energy_battery_data"
+          },
           "name": "integrateddynamics:energy_battery"
         }
       ],
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
-      ]
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      }
     }
   ]
 }
