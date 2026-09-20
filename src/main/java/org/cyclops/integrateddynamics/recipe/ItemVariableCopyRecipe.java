@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.recipe;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
@@ -9,6 +10,7 @@ import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.common.CommonHooks;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
@@ -76,14 +78,24 @@ public class ItemVariableCopyRecipe extends CustomRecipe {
     @Override
     public NonNullList<ItemStack> getRemainingItems(CraftingInput inv) {
         NonNullList<ItemStack> ret = NonNullList.withSize(inv.size(), ItemStack.EMPTY);
+        boolean clientSide = MinecraftHelpers.isClientSideThread();
+        Player craftingPlayer = clientSide ? null : CommonHooks.getCraftingPlayer();
         for(int j = 0; j < inv.size(); j++) {
             ItemStack element = inv.getItem(j);
             if(!element.isEmpty() && element.getItem() instanceof ItemVariable) {
                 IVariableFacade facade = RegistryEntries.ITEM_VARIABLE.get().getVariableFacade(lastValueDeseralizationContext, element);
                 if(facade.isValid()) {
                     // Create a copy with a new id, and copy the label of the input as well.
-                    ret.set(j, PartConfigHelpers.copyVariable(lastValueDeseralizationContext, element,
-                            !MinecraftHelpers.isClientSideThread()));
+                    ItemStack copy = PartConfigHelpers.copyVariable(lastValueDeseralizationContext, element, !clientSide);
+
+                    if (craftingPlayer != null) {
+                        // Hand the copy to the player instead of leaving it behind in the crafting grid.
+                        // A lone variable card in the grid matches the recipe that clears variable cards,
+                        // so shift-clicking the result would craft the copy away again. (Closes #725)
+                        PartConfigHelpers.giveOrDrop(craftingPlayer, copy);
+                    } else {
+                        ret.set(j, copy);
+                    }
                 }
             }
         }
