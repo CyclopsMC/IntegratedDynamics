@@ -144,7 +144,6 @@ public class BlockEntityCoalGenerator extends BlockEntityCableConnectableInvento
     }
 
     public int getFuelTime(ItemStack itemStack) {
-        // Burn times resolve against the burning block since 26.3, so they are read through this generator
         return getLevel() instanceof ServerLevel serverLevel
                 ? FuelHelpers.getBurnTime(serverLevel, this, getInventory(), itemStack)
                 : 0;

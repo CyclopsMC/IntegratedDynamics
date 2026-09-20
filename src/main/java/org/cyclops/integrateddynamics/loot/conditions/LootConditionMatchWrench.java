@@ -25,7 +25,6 @@ public class LootConditionMatchWrench implements LootItemCondition {
     public boolean test(LootContext lootContext) {
         ItemInstance itemInstance = lootContext.getOptional(LootContextParams.TOOL);
         Entity entity = lootContext.getOptional(LootContextParams.THIS_ENTITY);
-        // ORIGIN has no required getter anymore, so it is read optionally
         Vec3 origin = lootContext.getOptional(LootContextParams.ORIGIN);
         return origin != null
                 && itemInstance instanceof ItemStack itemStack

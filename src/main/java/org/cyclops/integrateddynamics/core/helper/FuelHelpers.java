@@ -21,9 +21,6 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 
 /**
- * Fuel burn times became block-dependent in Minecraft 26.3: {@link CookingFuel} holds a
- * {@link ResolvableInt} that is resolved against a {@link LootContextParamSets#CONTAINER_PROCESS}
- * context, so a blast furnace burns the same item faster than a regular furnace.
  * @author rubensworks
  */
 public final class FuelHelpers {

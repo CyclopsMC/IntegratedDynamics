@@ -1785,7 +1785,6 @@ public final class Operators {
             .symbol("burn_time").operatorName("burntime").interactName("burnTime")
             .function(OperatorBuilders.FUNCTION_ITEMSTACK_TO_INT.build(itemStack -> {
                 if (!itemStack.isEmpty()) {
-                    // Burn times are block-dependent since 26.3, so a plain furnace is assumed here
                     return FuelHelpers.getFurnaceBurnTime(ServerLifecycleHooks.getCurrentServer().overworld(), itemStack);
                 }
                 return 0;

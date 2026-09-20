@@ -78,7 +78,6 @@ public class ContainerScreenPartDisplay<P extends PartTypePanelVariableDriven<P,
 
     @Override
     public boolean charTyped(CharacterEvent evt) {
-        // A codepoint, not a key code: GLFW_KEY_C happened to equal 'C', SDL scancodes do not
         if ('C' == evt.codepoint() && KeyModifier.CONTROL.isActive(KeyConflictContext.GUI)) {
             valueToClipboard();
             return true;
