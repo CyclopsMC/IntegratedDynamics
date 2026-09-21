@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.gametest;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -23,6 +24,7 @@ import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
 import org.cyclops.integrateddynamics.item.ItemVariable;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.cyclops.integrateddynamics.gametest.GameTestHelpersIntegratedDynamics.createVariableForValue;
 import static org.cyclops.integrateddynamics.gametest.GameTestHelpersIntegratedDynamics.getVariableFacade;
@@ -76,6 +78,36 @@ public class GameTestsVariableCopy {
         // The copy must refer to a new variable
         helper.assertTrue(getVariableFacade(level, cards.get(0)).getId() != getVariableFacade(level, cards.get(1)).getId(),
                 "Both cards refer to the same variable");
+
+        helper.succeed();
+    }
+
+    /**
+     * Shift-clicking must keep crafting copies for as long as there are blank cards to copy onto.
+     */
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testCopyVariableMultipleTimes(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        LabelsWorldStorage labels = LabelsWorldStorage.getInstance(IntegratedDynamics._instance);
+
+        // Create a variable card, and label it
+        ItemStack original = createVariableForValue(level, ValueTypes.BOOLEAN, ValueTypeBoolean.ValueBoolean.of(true));
+        labels.put(getVariableFacade(level, original).getId(), "MyLabel");
+
+        // Craft the labelled card together with three blank cards
+        List<ItemStack> cards = craftVariableCopy(helper, original,
+                new ItemStack(RegistryEntries.ITEM_VARIABLE.get(), 3), ClickType.QUICK_MOVE);
+
+        // Each blank card must have become a labelled copy, referring to its own variable
+        helper.assertValueEqual(cards.size(), 4, "Number of variable cards after crafting");
+        Set<Integer> ids = Sets.newHashSet();
+        for (ItemStack card : cards) {
+            IVariableFacade facade = getVariableFacade(level, card);
+            helper.assertTrue(facade.isValid(), "A card lost its variable");
+            helper.assertTrue("MyLabel".equals(labels.getLabel(facade.getId())), "A card lost its label");
+            ids.add(facade.getId());
+        }
+        helper.assertValueEqual(ids.size(), 4, "Number of distinct variables after crafting");
 
         helper.succeed();
     }
