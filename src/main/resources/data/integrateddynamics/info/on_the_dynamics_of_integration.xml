@@ -199,8 +199,12 @@
             <paragraph>info_book.integrateddynamics.tutorials.saving_state.text4</paragraph>
             <paragraph>info_book.integrateddynamics.tutorials.saving_state.text5</paragraph>
             <paragraph>info_book.integrateddynamics.tutorials.saving_state.text6</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.saving_state.text7</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.saving_state.text8</paragraph>
             <appendix type="minecraft:crafting">integrateddynamics:crafting/delay</appendix>
             <appendix type="integrateddynamics:operator">integrateddynamics:list_get_or_default</appendix>
+            <appendix type="integrateddynamics:operator">integrateddynamics:logical_not</appendix>
+            <appendix type="integrateddynamics:operator">integrateddynamics:logical_and</appendix>
             <appendix type="integrateddynamics:operator">integrateddynamics:logical_or</appendix>
             <appendix type="integrateddynamics:operator">integrateddynamics:relational_equals</appendix>
             <appendix type="integrateddynamics:operator">integrateddynamics:general_choice</appendix>
