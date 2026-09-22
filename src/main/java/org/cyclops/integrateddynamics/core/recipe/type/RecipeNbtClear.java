@@ -11,6 +11,8 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import org.cyclops.integrateddynamics.RegistryEntries;
 
+import java.lang.ref.WeakReference;
+
 /**
  * Crafting recipe to clear item NBT data.
  * @author rubensworks
@@ -43,7 +45,7 @@ public class RecipeNbtClear extends CustomRecipe {
      * @param level The level that is being crafted in.
      */
     public static void protectLeftover(ItemStack itemStack, Level level) {
-        PROTECTED_LEFTOVER.set(new Leftover(itemStack, level.getGameTime()));
+        PROTECTED_LEFTOVER.set(new Leftover(new WeakReference<>(itemStack), level.getGameTime()));
     }
 
     protected boolean isProtected(CraftingInput inv, Level level) {
@@ -51,8 +53,12 @@ public class RecipeNbtClear extends CustomRecipe {
         if (leftover == null || leftover.gameTime() != level.getGameTime()) {
             return false;
         }
+        ItemStack protectedItemStack = leftover.itemStack().get();
+        if (protectedItemStack == null) {
+            return false;
+        }
         for (int j = 0; j < inv.size(); j++) {
-            if (inv.getItem(j) == leftover.itemStack()) {
+            if (inv.getItem(j) == protectedItemStack) {
                 return true;
             }
         }
@@ -120,7 +126,8 @@ public class RecipeNbtClear extends CustomRecipe {
 
     /**
      * An item stack that is left behind in a crafting grid, and the tick it was left behind in.
+     * The item stack is held weakly, as one that is no longer reachable can not be in a crafting grid.
      */
-    protected record Leftover(ItemStack itemStack, long gameTime) {
+    protected record Leftover(WeakReference<ItemStack> itemStack, long gameTime) {
     }
 }
