@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:blasting",
-  "ingredient": {
-    "item": "integrateddynamics:menril_log"
-  },
-  "result": "minecraft:charcoal",
-  "experience": 0.15,
-  "cookingtime": 100
-}
