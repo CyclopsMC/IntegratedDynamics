@@ -27,6 +27,11 @@ public class ValueTypeListProxyMaterializedFactory implements IValueTypeListProx
     }
 
     @Override
+    public boolean isMaterialized() {
+        return true;
+    }
+
+    @Override
     public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, ValueTypeListProxyMaterialized<IValueType<IValue>, IValue> values) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
         CompoundTag tag = new CompoundTag();
         ListTag list = new ListTag();

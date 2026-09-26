@@ -618,6 +618,7 @@
                 <paragraph>info_book.integrateddynamics.manual.machines.materializer.text1</paragraph>
                 <paragraph>info_book.integrateddynamics.manual.machines.materializer.text2</paragraph>
                 <paragraph>info_book.integrateddynamics.manual.machines.materializer.text3</paragraph>
+                <paragraph>info_book.integrateddynamics.manual.machines.materializer.text4</paragraph>
                 <appendix type="minecraft:crafting">integrateddynamics:crafting/materializer</appendix>
             </section>
             <section name="info_book.integrateddynamics.manual.machines.proxy">
@@ -673,6 +674,7 @@
             <paragraph>info_book.integrateddynamics.manual.logic_programming.text5</paragraph>
             <paragraph>info_book.integrateddynamics.manual.logic_programming.text6</paragraph>
             <paragraph>info_book.integrateddynamics.manual.logic_programming.text7</paragraph>
+            <paragraph>info_book.integrateddynamics.manual.logic_programming.text8</paragraph>
             <appendix type="minecraft:crafting">integrateddynamics:crafting/logic_programmer</appendix>
             <appendix type="minecraft:crafting">integrateddynamics:crafting/logic_programmer_to_portable</appendix>
             <appendix type="minecraft:crafting">integrateddynamics:crafting/logic_programmer_from_portable</appendix>

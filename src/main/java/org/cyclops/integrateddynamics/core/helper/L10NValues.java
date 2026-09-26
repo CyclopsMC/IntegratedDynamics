@@ -34,6 +34,9 @@ public class L10NValues {
     public static final String GUI_LOGICPROGRAMMER_INFO_MODIFY = "gui." + NS + ".logicprogrammer.info.modify";
     public static final String GUI_LOGICPROGRAMMER_TOOLTIP_WRITESLOT_CREATE = "gui." + NS + ".logicprogrammer.tooltip.writeslot.create";
     public static final String GUI_LOGICPROGRAMMER_TOOLTIP_WRITESLOT_MODIFY = "gui." + NS + ".logicprogrammer.tooltip.writeslot.modify";
+    public static final String GUI_LOGICPROGRAMMER_CLIPBOARD = "gui." + NS + ".logicprogrammer.clipboard";
+    public static final String GUI_LOGICPROGRAMMER_CLIPBOARD_TOOLTIP = "gui." + NS + ".logicprogrammer.clipboard.tooltip";
+    public static final String GUI_LOGICPROGRAMMER_CLIPBOARD_PASTE = "gui." + NS + ".logicprogrammer.clipboard.paste";
     public static final String GUI_INPUT = "gui." + NS + ".input";
     public static final String GUI_OUTPUT = "gui." + NS + ".output";
     public static final String GUI_RECIPE_STRICTNBT = "gui." + NS + ".recipe.strictnbt";
@@ -43,6 +46,20 @@ public class L10NValues {
     public static final String GUI_OPERATOR_LOCALNAME = "gui." + NS + ".operator.localname";
     // 0: value
     public static final String GUI_MECHANICAL_SQUEEZER_TOGGLEFLUIDAUTOEJECT = "gui." + NS + ".mechanical_squeezer.togglefluidautoeject";
+
+    public static final String VARIABLE_CLIPBOARD_ERROR_PARSE = "variable_clipboard." + NS + ".error.parse";
+    // 0: payload version, 1: supported version
+    public static final String VARIABLE_CLIPBOARD_ERROR_VERSION = "variable_clipboard." + NS + ".error.version";
+    // 0: payload length, 1: maximum length
+    public static final String VARIABLE_CLIPBOARD_ERROR_TOOLARGE = "variable_clipboard." + NS + ".error.too_large";
+    // 0: the offending proxy or serializer name
+    public static final String VARIABLE_CLIPBOARD_ERROR_UNMATERIALIZED = "variable_clipboard." + NS + ".error.unmaterialized";
+    // 0: value type name
+    public static final String VARIABLE_CLIPBOARD_ERROR_VALUETYPE = "variable_clipboard." + NS + ".error.value_type";
+    public static final String VARIABLE_CLIPBOARD_ERROR_DISABLED = "variable_clipboard." + NS + ".error.disabled";
+    public static final String VARIABLE_CLIPBOARD_ERROR_NOVALUE = "variable_clipboard." + NS + ".error.no_value";
+    public static final String VARIABLE_CLIPBOARD_ERROR_NOTHINGTOCOPY = "variable_clipboard." + NS + ".error.nothing_to_copy";
+    public static final String VARIABLE_CLIPBOARD_COPIED = "variable_clipboard." + NS + ".copied";
 
     public static final String VALUE_ERROR = "valuetype." + NS + ".error.value";
     public static final String VALUETYPE_VALUETYPE = "valuetype." + NS + ".value_type";
