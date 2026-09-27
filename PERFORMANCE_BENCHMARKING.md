@@ -24,7 +24,7 @@ The performance benchmarking system consists of three main components:
 
 3. **Network Generation Command** (`src/main/java/org/cyclops/integrateddynamics/command/CommandGenerateNetwork.java`)
    - Provides `/integrateddynamics generatenetwork` command for manual testing
-   - Supports different network presets: `emptynetwork`, `idlenetwork`, `clear`
+   - Supports different network presets: `empty`, `idle`, `redstoneioclock`, `redstoneioclockvariables`, `displaypanels`, `clear`
    - Can be used in both single-player and multiplayer environments
 
 ## Network Presets
@@ -52,6 +52,12 @@ The performance benchmarking system consists of three main components:
 - **Description**: A cube of logic cables with redstone readers on the east side connected to redstone writers on the west side, creating a clock signal with variables in between.
 - **Benchmark**: Measures performance with active parts and operator variables
 - **Sizes tested**: 25×25×25
+
+### Display Panels Network
+- **Preset**: `displaypanels`
+- **Description**: A square wall of logic cables with display panels facing north, each showing a different integer value
+- **Benchmark**: Used by the client benchmark to measure the rendering of part overlays
+- **Sizes tested**: 12×12
 
 ## Performance Metrics
 
@@ -159,6 +165,34 @@ To manually test network performance in a Minecraft world:
    ```
    /integrateddynamics generatenetwork clear 100
    ```
+
+## Client Benchmark
+
+Next to the server-side benchmarks above, the `Client Benchmark` job in `.github/workflows/performance.yml`
+measures client-side rendering performance, to detect FPS regressions.
+
+The script `.github/client_benchmark.sh` uses [clientdevbridge](https://github.com/CyclopsMC/clientdevbridge-cli)
+to launch a headless dev client, generates fixed scenes with the `/integrateddynamics generatenetwork` command,
+and measures each scene for 10 seconds with the vanilla client profiler (the same as F3+L).
+The scenes are:
+
+- `control`: an empty view, as baseline
+- `cables`: a 16×16×16 cube of logic cables without parts
+- `displaypanels`: a 12×12 wall of display panels showing values
+
+For each scene, the following metrics are reported as the average time per frame:
+
+- **CLIENT FRAME**: the total time spent in rendering a frame.
+  As CI machines have no GPU, rendering happens in software (llvmpipe), so this mostly depends on the rasterization of chunk geometry.
+- **CLIENT BLOCK ENTITIES**: the time spent in rendering block entities, such as the cable and part overlay renderers.
+  This is the most relevant metric for rendering regressions within the mod.
+
+Screenshots of each scene are uploaded as a workflow artifact, to check what was measured.
+
+The client benchmark can also be executed locally, where `clientdevbridge` is installed:
+```bash
+CDB=clientdevbridge bash .github/client_benchmark.sh
+```
 
 ## Integration with CI/CD
 
