@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
+import net.minecraft.world.phys.Vec3;
 import org.cyclops.integrateddynamics.api.client.render.part.IPartOverlayRenderer;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.client.render.part.PartOverlayRenderers;
@@ -22,6 +23,12 @@ public class RenderCable implements BlockEntityRenderer<BlockEntityMultipartTick
 
     public RenderCable(BlockEntityRendererProvider.Context context) {
         this.context = context;
+    }
+
+    @Override
+    public boolean shouldRender(BlockEntityMultipartTicking tile, Vec3 cameraPos) {
+        // Skip part-less cables, to avoid per-frame dispatch overhead (such as light lookups) for rendering nothing.
+        return tile.getPartContainer().hasParts() && BlockEntityRenderer.super.shouldRender(tile, cameraPos);
     }
 
     @Override
