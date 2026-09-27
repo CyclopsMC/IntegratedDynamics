@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.cyclops.integrateddynamics.Capabilities;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
@@ -526,6 +527,21 @@ public class GameTestsParts {
                     Sets.newHashSet(Direction.WEST),
                     "Connected cables 2 are invalid"
             );
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testPartsCableLightEmission(GameTestHelper helper) {
+        // Place cables, and let one emit light from one side
+        helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
+        helper.setBlock(POS.east(), RegistryEntries.BLOCK_CABLE.value());
+        BlockPos posLight = helper.absolutePos(POS);
+        BlockPos posDark = helper.absolutePos(POS.east());
+        helper.getLevel().getCapability(Capabilities.DynamicLight.BLOCK, posLight, Direction.NORTH).setLightLevel(10);
+
+        helper.succeedWhen(() -> {
+            helper.assertValueEqual(helper.getLevel().getBlockState(posLight).getLightEmission(helper.getLevel(), posLight), 10, "Light emission of cable with light");
+            helper.assertValueEqual(helper.getLevel().getBlockState(posDark).getLightEmission(helper.getLevel(), posDark), 0, "Light emission of cable without light");
         });
     }
 
