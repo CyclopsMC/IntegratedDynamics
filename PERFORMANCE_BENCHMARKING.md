@@ -35,6 +35,18 @@ The performance benchmarking system consists of three main components:
 - **Benchmark**: Measures baseline performance with cable networks only
 - **Sizes tested**: 25×25×25
 
+### Large Empty Network
+- **Preset**: `empty`
+- **Description**: A large cube of logic cables with no parts attached, placed above the test template as it does not fit inside of it
+- **Benchmark**: Measures the overhead per cable, which is too small to exceed the noise of the server tick time at smaller sizes
+- **Sizes tested**: 32×32×32
+
+### Control
+- **Preset**: `control`
+- **Description**: No network at all
+- **Benchmark**: Measures the server tick time without any network, as baseline for the other benchmarks
+- **Sizes tested**: 0
+
 ### Idle Network
 - **Preset**: `idle`
 - **Description**: A cube of logic cables with random parts on all outer surfaces

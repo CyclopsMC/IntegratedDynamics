@@ -39,6 +39,10 @@ public class GameTestsPerformance {
     public static final int APPEND_CABLE_COUNT = 100;
     public static final String TEMPLATE_EMPTY = "empty10";
     public static final BlockPos START_POS = BlockPos.ZERO.offset(1, 1, 1);
+    // Large enough for the cost per cable to exceed the noise of the server tick time.
+    public static final int LARGE_SIZE = 32;
+    // Placed above the template, as it does not fit inside of it.
+    public static final BlockPos LARGE_START_POS = BlockPos.ZERO.offset(1, 20, 1);
 
     private static final String RESULTS_FILE = "logs/benchmark_results.txt";
 
@@ -69,6 +73,27 @@ public class GameTestsPerformance {
     @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = (EXECUTION_SECONDS + 10) * 20, batch = "performance_empty")
     public void testPerformanceEmptyNetwork(GameTestHelper helper) {
         testPerformance(helper, "empty", (measureServerTickTimeNow) -> CommandGenerateNetwork.NetworkGenerationHelper.generateEmptyNetwork(helper.getLevel(), helper.absolutePos(START_POS), RADIUS));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = (EXECUTION_SECONDS + 30) * 20, batch = "performance_empty_large")
+    public void testPerformanceEmptyNetworkLarge(GameTestHelper helper) {
+        BlockPos startPos = helper.absolutePos(LARGE_START_POS);
+        BlockPos endPos = startPos.offset(LARGE_SIZE - 1, LARGE_SIZE - 1, LARGE_SIZE - 1);
+        testPerformance(helper, "empty", LARGE_SIZE, (measureServerTickTimeNow) -> {
+            setChunksForced(helper, startPos, endPos, true);
+            CommandGenerateNetwork.NetworkGenerationHelper.generateEmptyNetwork(helper.getLevel(), startPos, LARGE_SIZE);
+        }, () -> {
+            CommandGenerateNetwork.NetworkGenerationHelper.clearCables(helper.getLevel(), startPos, endPos);
+            setChunksForced(helper, startPos, endPos, false);
+        });
+    }
+
+    /**
+     * Measure without any network, as baseline for the other benchmarks.
+     */
+    @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = (EXECUTION_SECONDS + 10) * 20, batch = "performance_control")
+    public void testPerformanceControl(GameTestHelper helper) {
+        testPerformance(helper, "control", 0, (measureServerTickTimeNow) -> {}, () -> {});
     }
 
     @GameTest(template = TEMPLATE_EMPTY, timeoutTicks = (EXECUTION_SECONDS + 10) * 20, batch = "performance_idle")
@@ -141,6 +166,13 @@ public class GameTestsPerformance {
     }
 
     public static void testPerformance(GameTestHelper helper, String networkName, Consumer<Runnable> networkConstructor) {
+        testPerformance(helper, networkName, RADIUS, networkConstructor, () -> {
+            CommandGenerateNetwork.NetworkGenerationHelper.clearCables(helper.getLevel(), helper.absolutePos(START_POS), RADIUS);
+            clearAppendedCables(helper);
+        });
+    }
+
+    public static void testPerformance(GameTestHelper helper, String networkName, int size, Consumer<Runnable> networkConstructor, Runnable cleanup) {
         if (!isBenchmarkingEnabled()) {
             IntegratedDynamics.clog(Level.INFO, "Performance benchmarking disabled (PERFORMANCE_BENCHMARK_ENABLED not set)");
             helper.succeed();
@@ -177,12 +209,19 @@ public class GameTestsPerformance {
             }
 
             List<String> results = new ArrayList<>();
-            results.add(String.format("preset=%s size=%d avgNetworkTickTime=%.2f avgServerTickTime=%.2f", networkName, RADIUS, avgTickTime, avgServerTickTime.get()));
+            results.add(String.format("preset=%s size=%d avgNetworkTickTime=%.2f avgServerTickTime=%.2f", networkName, size, avgTickTime, avgServerTickTime.get()));
             writeResults(results, true);
 
-            CommandGenerateNetwork.NetworkGenerationHelper.clearCables(helper.getLevel(), helper.absolutePos(START_POS), RADIUS);
-            clearAppendedCables(helper);
+            cleanup.run();
         });
+    }
+
+    private static void setChunksForced(GameTestHelper helper, BlockPos from, BlockPos to, boolean forced) {
+        for (int x = from.getX() >> 4; x <= to.getX() >> 4; x++) {
+            for (int z = from.getZ() >> 4; z <= to.getZ() >> 4; z++) {
+                helper.getLevel().setChunkForced(x, z, forced);
+            }
+        }
     }
 
     static void ensureResultsDirectory() {
