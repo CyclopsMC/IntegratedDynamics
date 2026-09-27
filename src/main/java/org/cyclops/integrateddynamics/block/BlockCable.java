@@ -79,6 +79,12 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
     public static final float BLOCK_HARDNESS = 3.0F;
 
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
+    /**
+     * If the block entity ticks.
+     * Cables without parts disable this once idle, to reduce server load.
+     * Defaults to true, so that cables from older worlds without this property tick at least once.
+     */
+    public static final BooleanProperty TICKING = BooleanProperty.create("ticking");
 
     // Model Properties
     public static final ModelProperty<Boolean> REALCABLE = new ModelProperty<>();
@@ -125,7 +131,7 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
 
     public BlockCable(Properties properties) {
         super(properties, BlockEntityMultipartTicking::new);
-        this.registerDefaultState(this.stateDefinition.any().setValue(WATERLOGGED, false));
+        this.registerDefaultState(this.stateDefinition.any().setValue(WATERLOGGED, false).setValue(TICKING, true));
     }
 
     @Override
@@ -141,13 +147,27 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
     @Override
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState blockState, BlockEntityType<T> blockEntityType) {
-        return level.isClientSide ? null : createTickerHelper(blockEntityType, RegistryEntries.BLOCK_ENTITY_MULTIPART_TICKING.get(), new BlockEntityMultipartTicking.Ticker<>());
+        return level.isClientSide || !blockState.getValue(TICKING) ? null : createTickerHelper(blockEntityType, RegistryEntries.BLOCK_ENTITY_MULTIPART_TICKING.get(), new BlockEntityMultipartTicking.Ticker<>());
+    }
+
+    /**
+     * Enable or disable ticking of the cable block entity at the given position.
+     * This only affects the server-side ticker, so clients and neighbours are not notified.
+     * @param level The level.
+     * @param pos The position.
+     * @param ticking If the block entity should tick.
+     */
+    public static void setTicking(Level level, BlockPos pos, boolean ticking) {
+        BlockState blockState = level.getBlockState(pos);
+        if (blockState.hasProperty(TICKING) && blockState.getValue(TICKING) != ticking) {
+            level.setBlock(pos, blockState.setValue(TICKING, ticking), Block.UPDATE_KNOWN_SHAPE);
+        }
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
-        builder.add(WATERLOGGED);
+        builder.add(WATERLOGGED, TICKING);
     }
 
     @Override
