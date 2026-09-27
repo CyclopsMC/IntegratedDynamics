@@ -472,6 +472,13 @@ public class BlockCable extends BlockWithEntity implements SimpleWaterloggedBloc
     public int getLightEmission(BlockState blockState, BlockGetter world, BlockPos pos) {
         int light = 0;
         if (world instanceof ILevelExtension levelExtension) {
+            // Fast path that avoids a capability lookup per side, as this is called for every cable each frame.
+            if (world.getBlockEntity(pos) instanceof BlockEntityMultipartTicking tile) {
+                for (int lightLevel : tile.getLightLevels().values()) {
+                    light = Math.max(light, lightLevel);
+                }
+                return light;
+            }
             for (Direction side : Direction.values()) {
                 IDynamicLight dynamicLight = levelExtension.getCapability(Capabilities.DynamicLight.BLOCK, pos, blockState, null, side);
                 if (dynamicLight != null) {

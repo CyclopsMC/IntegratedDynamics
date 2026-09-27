@@ -230,9 +230,10 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
             List<BakedQuad> ret = Lists.newLinkedList();
             TextureAtlasSprite texture = getParticleIcon();
             Optional<BlockState> blockStateHolder = getFacade(modelData);
-            boolean renderCable = isItemStack() || (isRealCable(modelData) && (
+            // Cable quads are not bound to a cull face, so only emit them for the unculled side to avoid duplicates.
+            boolean renderCable = getRenderingSide() == null && (isItemStack() || (isRealCable(modelData) && (
                     (!blockStateHolder.isPresent() && this.renderType == RenderType.solid())
-                            || (blockStateHolder.isPresent() && this.renderType == RenderType.translucent())));
+                            || (blockStateHolder.isPresent() && this.renderType == RenderType.translucent()))));
             for (Direction side : Direction.values()) {
                 boolean isConnected = isItemStack() ? side == Direction.EAST || side == Direction.WEST : isConnected(modelData, side);
                 boolean hasPart = !isItemStack() && hasPart(modelData, side);
@@ -298,7 +299,7 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
             }
 
             // Close the cable connections for items
-            if (isItemStack()) {
+            if (isItemStack() && getRenderingSide() == null) {
                 addBakedQuad(ret, MIN, MAX, MIN, MAX, 1, texture, Direction.EAST);
                 addBakedQuad(ret, MIN, MAX, MIN, MAX, 1, texture, Direction.WEST);
             }
