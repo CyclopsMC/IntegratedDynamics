@@ -110,7 +110,9 @@ public class GameTestsAspectsReadWorld {
 
     @GameTest(template = TEMPLATE_EMPTY)
     public void testAspectsReadWorldTps(GameTestHelper helper) {
-        testReadAspect(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.DOUBLE_TPS, ValueTypeDouble.ValueDouble.of(20));
+        // TPS drops below 20 when the server is under load, so only check that we're in a valid range.
+        testReadAspectPredicate(POS, helper, PartTypes.WORLD_READER, Aspects.Read.World.DOUBLE_TPS,
+                tps -> tps.getRawValue() > 0 && tps.getRawValue() <= 20);
     }
 
     @GameTest(template = TEMPLATE_EMPTY, batch = "daynight6")

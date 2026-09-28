@@ -1,0 +1,61 @@
+{
+  "display": {
+    "icon": {
+      "id": "integrateddynamics:variable",
+      "components": {
+        "integrateddynamics:variable_facade": {
+          "partId": 1,
+          "_id": 1,
+          "_type": "integrateddynamics:operator",
+          "operatorName": "integrateddynamics:general_choice",
+          "variableIds": [1, 1, 1]
+        }
+      }
+    },
+    "title": {
+      "translate": "advancement.integrateddynamics.state_toggling"
+    },
+    "description": {
+      "translate": "advancement.integrateddynamics.state_toggling.desc"
+    }
+  },
+  "parent": "integrateddynamics:saving_state/state_latching",
+  "criteria": {
+    "criteria_0": {
+      "trigger": "integrateddynamics:part_writer_aspect",
+      "conditions": {
+        "parttype": "integrateddynamics:redstone_writer",
+        "variable": {
+          "type": "operator",
+          "operator": "integrateddynamics:general_choice",
+          "input": {
+            "0": {
+              "type": "operator",
+              "operator": "integrateddynamics:relational_equals",
+              "input": {
+                "0": {
+                  "type": "value_type",
+                  "value_type": "integrateddynamics:list"
+                }
+              }
+            },
+            "1": {
+              "type": "operator",
+              "operator": "integrateddynamics:logical_not",
+              "input": {
+                "0": {
+                  "type": "operator",
+                  "operator": "integrateddynamics:list_get_or_default"
+                }
+              }
+            },
+            "2": {
+              "type": "operator",
+              "operator": "integrateddynamics:list_get_or_default"
+            }
+          }
+        }
+      }
+    }
+  }
+}

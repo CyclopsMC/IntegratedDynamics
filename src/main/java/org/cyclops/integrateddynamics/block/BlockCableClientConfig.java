@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleEngine;
+import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
@@ -92,8 +93,9 @@ public class BlockCableClientConfig extends BlockClientConfig<IntegratedDynamics
         public BakedModel createDynamicModel(Consumer<Pair<ModelResourceLocation, BakedModel>> modelConsumer) {
             CableModel model = new CableModel();
             ResourceLocation registryName = BuiltInRegistries.BLOCK.getKey(RegistryEntries.BLOCK_CABLE.get());
-            modelConsumer.accept(Pair.of(new ModelResourceLocation(registryName, "waterlogged=false"), model));
-            modelConsumer.accept(Pair.of(new ModelResourceLocation(registryName, "waterlogged=true"), model));
+            for (BlockState blockState : RegistryEntries.BLOCK_CABLE.get().getStateDefinition().getPossibleStates()) {
+                modelConsumer.accept(Pair.of(BlockModelShaper.stateToModelLocation(blockState), model));
+            }
             modelConsumer.accept(Pair.of(new ModelResourceLocation(registryName, "inventory"), model));
             return model;
         }

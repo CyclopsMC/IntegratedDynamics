@@ -1,8 +1,18 @@
 # Changelog for Minecraft 1.20.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.20.1-1.31.3"></a>
+## [1.20.1-1.31.3](/compare/1.20.1-1.31.2...1.20.1-1.31.3) - 2026-09-27 07:42:34
+
+
+### Changed
+* Make Menril wood variants burn into charcoal (#1748)
+
+### Fixed
+* Remove redundant Menril log charcoal recipes (#1747), Closes #1746
+
 <a name="1.20.1-1.31.2"></a>
-## [1.20.1-1.31.2](/compare/1.20.1-1.31.1...1.20.1-1.31.2) - 2026-09-11 21:08:35
+## [1.20.1-1.31.2](/compare/1.20.1-1.31.1...1.20.1-1.31.2) - 2026-09-11 21:08:35 +0200
 
 
 ### Added

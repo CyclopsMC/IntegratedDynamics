@@ -1,7 +1,6 @@
 {
   "replace": false,
   "values": [
-    "integrateddynamics:menril_log",
-    "integrateddynamics:menril_log_filled"
+    "#integrateddynamics:menril_logs"
   ]
 }

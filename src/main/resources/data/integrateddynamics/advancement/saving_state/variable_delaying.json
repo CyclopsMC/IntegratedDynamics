@@ -1,0 +1,22 @@
+{
+  "display": {
+    "icon": {
+      "id": "integrateddynamics:delay"
+    },
+    "title": {
+      "translate": "advancement.integrateddynamics.variable_delaying"
+    },
+    "description": {
+      "translate": "advancement.integrateddynamics.variable_delaying.desc"
+    }
+  },
+  "parent": "integrateddynamics:advanced_network_components/variable_proxying",
+  "criteria": {
+    "criteria_0": {
+      "trigger": "integrateddynamics:variable_created",
+      "conditions": {
+        "block": "integrateddynamics:delay"
+      }
+    }
+  }
+}

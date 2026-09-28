@@ -56,7 +56,7 @@ public class CommandGenerateNetwork implements Command<CommandSourceStack> {
 
     @Override
     public int run(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        context.getSource().sendFailure(Component.literal("Please specify a preset: empty, idle, redstoneioclock, or clear")
+        context.getSource().sendFailure(Component.literal("Please specify a preset: empty, idle, redstoneioclock, redstoneioclockvariables, displaypanels, or clear")
                 .withStyle(ChatFormatting.RED));
         return 0;
     }
@@ -66,6 +66,7 @@ public class CommandGenerateNetwork implements Command<CommandSourceStack> {
         IDLE,
         REDSTONEIOCLOCK,
         REDSTONEIOCLOCKVARIABLES,
+        DISPLAYPANELS,
         CLEAR
     }
 
@@ -84,7 +85,7 @@ public class CommandGenerateNetwork implements Command<CommandSourceStack> {
         @Override
         public int run(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
             if (!hasPreset) {
-                context.getSource().sendFailure(Component.literal("Please specify a preset: empty, idle, redstoneioclock, or clear")
+                context.getSource().sendFailure(Component.literal("Please specify a preset: empty, idle, redstoneioclock, redstoneioclockvariables, displaypanels, or clear")
                         .withStyle(ChatFormatting.RED));
                 return 0;
             }
@@ -122,6 +123,13 @@ public class CommandGenerateNetwork implements Command<CommandSourceStack> {
                                     .withStyle(ChatFormatting.GREEN),
                             true);
                     NetworkGenerationHelper.generateRedstoneNetworkVariables(level, playerPos.above(2), size);
+                    break;
+                case DISPLAYPANELS:
+                    context.getSource().sendSuccess(
+                            () -> Component.literal("Generating network preset: displaypanels (size: " + size + "x" + size + ")")
+                                    .withStyle(ChatFormatting.GREEN),
+                            true);
+                    NetworkGenerationHelper.generateDisplayPanelNetwork(level, playerPos.above(2), size);
                     break;
                 case CLEAR:
                     context.getSource().sendSuccess(
@@ -223,6 +231,40 @@ public class CommandGenerateNetwork implements Command<CommandSourceStack> {
         /**
          * Clear all cable blocks within a radius of the given position.
          */
+        /**
+         * Generate a size x size wall of logic cables with display panels facing north,
+         * where each display panel shows a different integer value.
+         */
+        public static void generateDisplayPanelNetwork(ServerLevel level, BlockPos startPos, int size) {
+            List<BlockPos> placedPositions = new ArrayList<>();
+
+            BlockCable.SKIP_NETWORK_INIT = true;
+            try {
+                for (int x = 0; x < size; x++) {
+                    for (int y = 0; y < size; y++) {
+                        BlockPos pos = startPos.offset(x, y, 0);
+                        level.setBlock(pos, RegistryEntries.BLOCK_CABLE.value().defaultBlockState(), 2);
+                        placedPositions.add(pos);
+                    }
+                }
+            } finally {
+                BlockCable.SKIP_NETWORK_INIT = false;
+            }
+
+            for (BlockPos pos : placedPositions) {
+                CableHelpers.updateConnectionsNeighbours(level, pos, CableHelpers.ALL_SIDES);
+            }
+
+            NetworkHelpers.initNetwork(level, startPos, null);
+
+            for (int i = 0; i < placedPositions.size(); i++) {
+                BlockPos pos = placedPositions.get(i);
+                PartHelpers.addPart(level, pos, Direction.NORTH, PartTypes.DISPLAY_PANEL, new ItemStack(PartTypes.DISPLAY_PANEL.getItem()));
+                ItemStack variable = GameTestHelpersIntegratedDynamics.createVariableForValue(level, ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(i));
+                GameTestHelpersIntegratedDynamics.placeVariableInDisplayPanel(level, PartPos.of(level, pos, Direction.NORTH), variable);
+            }
+        }
+
         public static void clearCables(ServerLevel level, BlockPos centerPos, int radius) {
             clearCables(level, centerPos.offset(-radius, -radius, -radius), centerPos.offset(radius, radius, radius));
         }
