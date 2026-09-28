@@ -55,7 +55,7 @@ import java.util.function.Predicate;
 /**
  * Helpers for copying and pasting part configurations.
  *
- * All methods in here are meant to be called server-side only.
+ * All methods in here are meant to be called server-side only, unless stated otherwise.
  *
  * @author rubensworks
  */
@@ -632,6 +632,18 @@ public final class PartConfigHelpers {
      * @return The copy.
      */
     public static ItemStack copyVariable(ValueDeseralizationContext valueDeseralizationContext, ItemStack itemStack) {
+        return copyVariable(valueDeseralizationContext, itemStack, true);
+    }
+
+    /**
+     * Copy the given variable card, so that the copy refers to a new variable.
+     * @param valueDeseralizationContext A value deserialization context.
+     * @param itemStack A variable card.
+     * @param generateId If a new variable id must be generated.
+     *                   This must be false clientside, as variable ids are only assigned by the server.
+     * @return The copy.
+     */
+    public static ItemStack copyVariable(ValueDeseralizationContext valueDeseralizationContext, ItemStack itemStack, boolean generateId) {
         if (!itemStack.is(RegistryEntries.ITEM_VARIABLE.get())
                 || !itemStack.has(RegistryEntries.DATACOMPONENT_VARIABLE_FACADE.get())) {
             return itemStack.copy();
@@ -640,7 +652,7 @@ public final class PartConfigHelpers {
         IVariableFacade facade = RegistryEntries.ITEM_VARIABLE.get()
                 .getVariableFacade(valueDeseralizationContext, itemStack);
         ItemStack copy = IntegratedDynamics._instance.getRegistryManager()
-                .getRegistry(IVariableFacadeHandlerRegistry.class).copy(true, itemStack);
+                .getRegistry(IVariableFacadeHandlerRegistry.class).copy(generateId, itemStack);
 
         // If the original had a label, also copy the label
         if (facade.isValid()) {
