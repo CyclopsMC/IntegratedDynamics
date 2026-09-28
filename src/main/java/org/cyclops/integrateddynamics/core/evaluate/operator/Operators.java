@@ -60,10 +60,12 @@ import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeDefinit
 import org.cyclops.commoncapabilities.api.ingredient.*;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.cyclopscore.helper.FluidHelpers;
+import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.nbt.path.INbtPathExpression;
 import org.cyclops.cyclopscore.nbt.path.NbtParseException;
 import org.cyclops.cyclopscore.nbt.path.NbtPath;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
@@ -76,6 +78,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.helper.NbtHelpers;
+import org.cyclops.integrateddynamics.core.helper.VariableClipboardHelpers;
 import org.cyclops.integrateddynamics.core.ingredient.ExtendedIngredientsList;
 import org.cyclops.integrateddynamics.core.ingredient.ExtendedIngredientsSingle;
 
@@ -4350,6 +4353,31 @@ public final class Operators {
                 Component.translatable(ValueTypes.NBT.getTranslationKey())));
       }
     }));
+
+    /**
+     * Any Parse operator which takes a value that was copied to the clipboard, in either of its forms.
+     */
+    public static final IOperator PARSE_ANY = Operators.REGISTRY.register(new ParseOperator<>(ValueTypes.CATEGORY_ANY, v -> {
+      ValueTypeString.ValueString value = v.getValue(0, ValueTypes.STRING);
+      if (!GeneralConfig.variableClipboardPasteEnabled) {
+        throw new EvaluationException(Component.translatable(L10NValues.VARIABLE_CLIPBOARD_ERROR_DISABLED));
+      }
+      try {
+        return VariableClipboardHelpers.deserialize(ValueDeseralizationContext.ofAllEnabled(), value.getRawValue(),
+                GeneralConfig.variableClipboardMaxPayloadLength);
+      } catch (VariableClipboardHelpers.VariableClipboardException e) {
+        throw new EvaluationException(e.getErrorMessage());
+      }
+    }) {
+      @Override
+      public void loadTooltip(List<Component> lines, boolean appendOptionalInfo) {
+        super.loadTooltip(lines, appendOptionalInfo);
+        if (appendOptionalInfo) {
+          // All parse operators share their translation key, so this one needs its own info
+          L10NHelpers.addOptionalInfo(lines, L10NValues.OPERATOR_PARSE_ANY);
+        }
+      }
+    });
 
     /**
      * ----------------------------------- GENERAL OPERATORS -----------------------------------

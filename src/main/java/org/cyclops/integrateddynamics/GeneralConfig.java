@@ -90,7 +90,7 @@ public class GeneralConfig extends DummyConfig {
     @ConfigurableProperty(category = "general", comment = "The base energy usage for the world reader.", minimalValue = 0, configLocation = ModConfig.Type.SERVER)
     public static int worldReaderBaseConsumption = 1;
 
-    @ConfigurableProperty(category = "machine", comment = "If materialized values may be pasted from the clipboard into variable cards.", configLocation = ModConfig.Type.SERVER)
+    @ConfigurableProperty(category = "machine", comment = "If materialized values may be pasted into variable cards, and parsed from strings by the Parse Any operator.", configLocation = ModConfig.Type.SERVER)
     public static boolean variableClipboardPasteEnabled = true;
 
     @ConfigurableProperty(category = "machine", comment = "The maximum length of an uncompressed value that can be copied to, or pasted from, the clipboard.", minimalValue = 1, configLocation = ModConfig.Type.SERVER)

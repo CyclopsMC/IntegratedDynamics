@@ -148,10 +148,43 @@ public class TestVariableClipboardHelpers {
     }
 
     @Test
-    public void testRejectNewerVersion() {
-        CompoundTag tag = VariableClipboardHelpers.serializeToTag(CONTEXT, ValueTypeInteger.ValueInteger.of(1));
-        tag.putInt(VariableClipboardHelpers.KEY_VERSION, VariableClipboardHelpers.VERSION + 1);
-        assertRejected(tag.toString(), MAX_LENGTH);
+    public void testWritesVersions() {
+        CompoundTag version = VariableClipboardHelpers.serializeToTag(CONTEXT, ValueTypeInteger.ValueInteger.of(1))
+                .getCompound(VariableClipboardHelpers.KEY_VERSION);
+        assertThat("the Minecraft version is written",
+                version.getString(VariableClipboardHelpers.KEY_VERSION_MINECRAFT).isEmpty(), is(false));
+        assertThat("the mod version is written",
+                version.getString(VariableClipboardHelpers.KEY_VERSION_MOD).isEmpty(), is(false));
+    }
+
+    @Test
+    public void testIgnoresVersions() throws VariableClipboardHelpers.VariableClipboardException {
+        IValue value = ValueTypeInteger.ValueInteger.of(1);
+
+        // Versions are only informative, so neither unknown, legacy nor missing versions reject a value
+        CompoundTag otherVersions = VariableClipboardHelpers.serializeToTag(CONTEXT, value);
+        CompoundTag version = new CompoundTag();
+        version.putString(VariableClipboardHelpers.KEY_VERSION_MINECRAFT, "99.0");
+        version.putString(VariableClipboardHelpers.KEY_VERSION_MOD, "99.0.0");
+        otherVersions.put(VariableClipboardHelpers.KEY_VERSION, version);
+        assertThat("other versions are accepted",
+                VariableClipboardHelpers.deserialize(CONTEXT, otherVersions.toString(), MAX_LENGTH), is(value));
+
+        CompoundTag legacyVersion = VariableClipboardHelpers.serializeToTag(CONTEXT, value);
+        legacyVersion.putInt(VariableClipboardHelpers.KEY_VERSION, 42);
+        assertThat("a legacy version is accepted",
+                VariableClipboardHelpers.deserialize(CONTEXT, legacyVersion.toString(), MAX_LENGTH), is(value));
+
+        CompoundTag noVersion = VariableClipboardHelpers.serializeToTag(CONTEXT, value);
+        noVersion.remove(VariableClipboardHelpers.KEY_VERSION);
+        assertThat("a missing version is accepted",
+                VariableClipboardHelpers.deserialize(CONTEXT, noVersion.toString(), MAX_LENGTH), is(value));
+    }
+
+    @Test
+    public void testRejectMissingValueType() {
+        assertRejected("{value:1}", MAX_LENGTH);
+        assertRejected("{valueType:\"integrateddynamics:integer\"}", MAX_LENGTH);
     }
 
     @Test
@@ -187,7 +220,6 @@ public class TestVariableClipboardHelpers {
         proxy.put("serialized", new CompoundTag());
 
         CompoundTag tag = new CompoundTag();
-        tag.putInt(VariableClipboardHelpers.KEY_VERSION, VariableClipboardHelpers.VERSION);
         tag.putString("valueType", "integrateddynamics:list");
         tag.put("value", proxy);
 
@@ -201,7 +233,6 @@ public class TestVariableClipboardHelpers {
         proxy.put("serialized", new CompoundTag());
 
         CompoundTag tag = new CompoundTag();
-        tag.putInt(VariableClipboardHelpers.KEY_VERSION, VariableClipboardHelpers.VERSION);
         tag.putString("valueType", "integrateddynamics:list");
         tag.put("value", proxy);
 
@@ -215,7 +246,6 @@ public class TestVariableClipboardHelpers {
         operator.put("value", new CompoundTag());
 
         CompoundTag tag = new CompoundTag();
-        tag.putInt(VariableClipboardHelpers.KEY_VERSION, VariableClipboardHelpers.VERSION);
         tag.putString("valueType", "integrateddynamics:operator");
         tag.put("value", operator);
 
@@ -238,7 +268,6 @@ public class TestVariableClipboardHelpers {
         materialized.put("serialized", inner);
 
         CompoundTag tag = new CompoundTag();
-        tag.putInt(VariableClipboardHelpers.KEY_VERSION, VariableClipboardHelpers.VERSION);
         tag.putString("valueType", "integrateddynamics:list");
         tag.put("value", materialized);
 
@@ -252,7 +281,6 @@ public class TestVariableClipboardHelpers {
         proxy.put("serialized", new CompoundTag());
 
         CompoundTag tag = new CompoundTag();
-        tag.putInt(VariableClipboardHelpers.KEY_VERSION, VariableClipboardHelpers.VERSION);
         tag.putString("valueType", "integrateddynamics:list");
         tag.put("value", proxy);
 
@@ -262,7 +290,6 @@ public class TestVariableClipboardHelpers {
     @Test
     public void testRejectDeeplyNested() {
         CompoundTag tag = new CompoundTag();
-        tag.putInt(VariableClipboardHelpers.KEY_VERSION, VariableClipboardHelpers.VERSION);
         tag.putString("valueType", "integrateddynamics:integer");
         CompoundTag nested = tag;
         for (int i = 0; i < VariableClipboardHelpers.MAX_DEPTH + 10; i++) {
@@ -277,7 +304,6 @@ public class TestVariableClipboardHelpers {
     public void testAcceptsPlainOperatorName() throws VariableClipboardHelpers.VariableClipboardException {
         // Operators without a dedicated serializer are stored as a plain name
         CompoundTag tag = new CompoundTag();
-        tag.putInt(VariableClipboardHelpers.KEY_VERSION, VariableClipboardHelpers.VERSION);
         tag.putString("valueType", "integrateddynamics:operator");
         tag.put("value", StringTag.valueOf(Operators.ARITHMETIC_ADDITION.getUniqueName().toString()));
 

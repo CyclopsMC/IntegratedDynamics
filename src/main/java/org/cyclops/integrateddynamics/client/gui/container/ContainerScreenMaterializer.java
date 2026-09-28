@@ -1,16 +1,16 @@
 package org.cyclops.integrateddynamics.client.gui.container;
 
-import com.google.common.collect.Lists;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import net.neoforged.neoforge.client.settings.KeyModifier;
-import org.cyclops.cyclopscore.client.gui.component.button.ButtonText;
-import org.cyclops.cyclopscore.helper.GuiHelpers;
+import org.cyclops.cyclopscore.client.gui.component.button.ButtonImage;
+import org.cyclops.cyclopscore.client.gui.image.IImage;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
+import org.cyclops.integrateddynamics.client.gui.image.Images;
 import org.cyclops.integrateddynamics.core.client.gui.ContainerScreenActiveVariableBase;
 import org.cyclops.integrateddynamics.inventory.container.ContainerMaterializer;
 import org.cyclops.integrateddynamics.network.packet.MaterializerCopyValuePacket;
@@ -25,14 +25,6 @@ public class ContainerScreenMaterializer extends ContainerScreenActiveVariableBa
     private static final int ERROR_X = 110;
     private static final int ERROR_Y = 26;
 
-    // The free area left of the read slot, which starts at x 76 and y 20
-    private static final int COPY_X = 8;
-    private static final int COPY_Y = 24;
-    private static final int COPY_COMPRESSED_X = 8;
-    private static final int COPY_COMPRESSED_Y = 38;
-    private static final int COPY_WIDTH = 32;
-    private static final int COPY_HEIGHT = 12;
-
     public ContainerScreenMaterializer(ContainerMaterializer container, Inventory inventory, Component title) {
         super(container, inventory, title);
     }
@@ -41,14 +33,17 @@ public class ContainerScreenMaterializer extends ContainerScreenActiveVariableBa
     public void init() {
         super.init();
 
-        addRenderableWidget(new ButtonText(getGuiLeftTotal() + COPY_X, getGuiTopTotal() + COPY_Y, COPY_WIDTH, COPY_HEIGHT,
-                Component.translatable("gui.integrateddynamics.button.copy"),
-                Component.translatable("gui.integrateddynamics.button.copy"),
-                (button) -> valueToClipboard(false), true));
-        addRenderableWidget(new ButtonText(getGuiLeftTotal() + COPY_COMPRESSED_X, getGuiTopTotal() + COPY_COMPRESSED_Y, COPY_WIDTH, COPY_HEIGHT,
-                Component.translatable("gui.integrateddynamics.button.copy_compressed"),
-                Component.translatable("gui.integrateddynamics.button.copy_compressed"),
-                (button) -> valueToClipboard(true), true));
+        // Next to the gui, where this mod puts the buttons of a part as well
+        addCopyButton(0, Images.BUTTON_MIDDLE_COPY, "gui.integrateddynamics.materializer.copy", false);
+        addCopyButton(20, Images.BUTTON_MIDDLE_COPY_COMPRESSED, "gui.integrateddynamics.materializer.copy_compressed", true);
+    }
+
+    protected void addCopyButton(int offsetY, IImage image, String tooltipKey, boolean compressed) {
+        ButtonImage button = new ButtonImage(this.leftPos - 20, this.topPos + offsetY, 18, 18,
+                Component.translatable(tooltipKey), (b) -> valueToClipboard(compressed),
+                new IImage[]{Images.BUTTON_BACKGROUND_INACTIVE, image}, false, 0, 0);
+        button.setTooltip(Tooltip.create(Component.translatable(tooltipKey)));
+        addRenderableWidget(button);
     }
 
     @Override
@@ -69,16 +64,6 @@ public class ContainerScreenMaterializer extends ContainerScreenActiveVariableBa
     @Override
     protected int getErrorY() {
         return ERROR_Y;
-    }
-
-    @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        super.renderLabels(guiGraphics, mouseX, mouseY);
-
-        GuiHelpers.renderTooltip(this, guiGraphics.pose(), COPY_X, COPY_Y, COPY_WIDTH, COPY_HEIGHT, mouseX, mouseY,
-                () -> Lists.newArrayList(Component.translatable("gui.integrateddynamics.button.copy.info")));
-        GuiHelpers.renderTooltip(this, guiGraphics.pose(), COPY_COMPRESSED_X, COPY_COMPRESSED_Y, COPY_WIDTH, COPY_HEIGHT, mouseX, mouseY,
-                () -> Lists.newArrayList(Component.translatable("gui.integrateddynamics.button.copy_compressed.info")));
     }
 
     @Override

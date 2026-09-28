@@ -8,6 +8,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.Helpers;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -37,10 +38,30 @@ import java.util.List;
  */
 public class ClipboardLPElement implements ILogicProgrammerElement<ISubGuiBox, ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase> {
 
+    // A text field, and two lines below it to show the pasted value or its error
+    private static final IConfigRenderPattern RENDER_PATTERN = new IConfigRenderPattern.Base(150, 44, new Pair[0], null);
+
+    private String inputString = "";
     @Nullable
     private IValue value = null;
     @Nullable
     private Component error = null;
+
+    /**
+     * @return What was pasted into the text field, which is only known client-side.
+     */
+    public String getInputString() {
+        return inputString;
+    }
+
+    public void setInputString(String inputString) {
+        this.inputString = inputString;
+    }
+
+    @Nullable
+    public Component getError() {
+        return error;
+    }
 
     @Nullable
     public IValue getValue() {
@@ -108,7 +129,7 @@ public class ClipboardLPElement implements ILogicProgrammerElement<ISubGuiBox, C
 
     @Override
     public boolean canCurrentlyReadFromOtherItem() {
-        return value == null;
+        return inputString.isEmpty();
     }
 
     @Override
@@ -149,17 +170,19 @@ public class ClipboardLPElement implements ILogicProgrammerElement<ISubGuiBox, C
 
     @Override
     public IConfigRenderPattern getRenderPattern() {
-        return IConfigRenderPattern.NONE;
+        return RENDER_PATTERN;
     }
 
     @Override
     public void activate() {
         clear();
+        inputString = "";
     }
 
     @Override
     public void deactivate() {
         clear();
+        inputString = "";
     }
 
     @Override
@@ -187,13 +210,13 @@ public class ClipboardLPElement implements ILogicProgrammerElement<ISubGuiBox, C
     @Override
     @OnlyIn(Dist.CLIENT)
     public boolean isFocused(ISubGuiBox subGui) {
-        return false;
+        return ((ClipboardLPElementRenderPattern) subGui).getTextField().isFocused();
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
     public void setFocused(ISubGuiBox subGui, boolean focused) {
-
+        ((ClipboardLPElementRenderPattern) subGui).getTextField().setFocused(focused);
     }
 
     @Override

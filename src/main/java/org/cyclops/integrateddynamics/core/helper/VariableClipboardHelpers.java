@@ -6,7 +6,12 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import org.cyclops.cyclopscore.helper.MinecraftHelpers;
+import org.cyclops.cyclopscore.init.ModBase;
+import org.cyclops.integrateddynamics.IntegratedDynamics;
+import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperatorSerializer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeListProxyFactoryTypeRegistry;
@@ -20,6 +25,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Optional;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -35,21 +41,24 @@ import java.util.zip.GZIPOutputStream;
 public class VariableClipboardHelpers {
 
     /**
-     * The version of the clipboard format.
-     */
-    public static final int VERSION = 1;
-
-    /**
      * The prefix that marks a gzipped and base64-encoded payload.
      */
-    public static final String PREFIX_COMPRESSED = "idynvar" + VERSION + ":";
+    public static final String PREFIX_COMPRESSED = "idynvar1:";
 
     /**
      * The maximum nesting depth of a payload, to bound the recursion over handcrafted payloads.
      */
     public static final int MAX_DEPTH = 512;
 
+    /**
+     * The versions of Minecraft and this mod that a value was copied in.
+     * These are only informative, so values are never rejected based on them.
+     */
     public static final String KEY_VERSION = "version";
+    public static final String KEY_VERSION_MINECRAFT = "minecraft";
+    public static final String KEY_VERSION_MOD = Reference.MOD_ID;
+    public static final String KEY_VALUE_TYPE = "valueType";
+    public static final String KEY_VALUE = "value";
     public static final String KEY_PROXY_NAME = "proxyName";
     public static final String KEY_SERIALIZER = "serializer";
 
@@ -61,8 +70,26 @@ public class VariableClipboardHelpers {
      */
     public static CompoundTag serializeToTag(ValueDeseralizationContext valueDeseralizationContext, IValue value) {
         CompoundTag tag = ValueHelpers.serialize(valueDeseralizationContext, value);
-        tag.putInt(KEY_VERSION, VERSION);
+        tag.put(KEY_VERSION, createVersionTag());
         return tag;
+    }
+
+    /**
+     * @return The versions of Minecraft and this mod that are running.
+     */
+    public static CompoundTag createVersionTag() {
+        CompoundTag tag = new CompoundTag();
+        tag.putString(KEY_VERSION_MINECRAFT, MinecraftHelpers.getMinecraftVersion());
+        tag.putString(KEY_VERSION_MOD, getModVersion());
+        return tag;
+    }
+
+    protected static String getModVersion() {
+        // The mod is not loaded outside a running game, such as in unit tests
+        return Optional.ofNullable(IntegratedDynamics._instance)
+                .map(ModBase::getContainer)
+                .map(container -> container.getModInfo().getVersion().toString())
+                .orElse("unknown");
     }
 
     /**
@@ -150,24 +177,21 @@ public class VariableClipboardHelpers {
     public static IValue deserialize(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag, int maxLength)
             throws VariableClipboardException {
         checkLength(tag.toString().length(), maxLength);
-
-        int version = tag.getInt(KEY_VERSION);
-        if (version > VERSION) {
-            throw new VariableClipboardException(Component.translatable(
-                    L10NValues.VARIABLE_CLIPBOARD_ERROR_VERSION, version, VERSION));
+        if (!tag.contains(KEY_VALUE_TYPE, Tag.TAG_STRING) || !tag.contains(KEY_VALUE)) {
+            throw new VariableClipboardException(Component.translatable(L10NValues.VARIABLE_CLIPBOARD_ERROR_PARSE));
         }
-
         validateMaterialized(tag);
 
         IValue value;
         try {
             value = ValueHelpers.deserialize(valueDeseralizationContext, tag);
-        } catch (IllegalArgumentException e) {
+        } catch (RuntimeException e) {
+            // Payloads can be handcrafted, so a value type can fail on them in any way
             throw new VariableClipboardException(Component.translatable(L10NValues.VARIABLE_CLIPBOARD_ERROR_PARSE));
         }
         if (value == null) {
             throw new VariableClipboardException(Component.translatable(L10NValues.VARIABLE_CLIPBOARD_ERROR_VALUETYPE,
-                    tag.getString("valueType")));
+                    tag.getString(KEY_VALUE_TYPE)));
         }
         return value;
     }
@@ -284,13 +308,13 @@ public class VariableClipboardHelpers {
      */
     public static class VariableClipboardException extends Exception {
 
-        private final Component errorMessage;
+        private final MutableComponent errorMessage;
 
-        public VariableClipboardException(Component errorMessage) {
+        public VariableClipboardException(MutableComponent errorMessage) {
             this.errorMessage = errorMessage;
         }
 
-        public Component getErrorMessage() {
+        public MutableComponent getErrorMessage() {
             return errorMessage;
         }
 

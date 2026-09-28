@@ -11,17 +11,21 @@ import net.minecraft.world.level.GameType;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import org.cyclops.cyclopscore.datastructure.DimPos;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.RegistryEntries;
+import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IValueTypeVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
+import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeItemStack;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeList;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeListProxyPositionedInventory;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeString;
+import org.cyclops.integrateddynamics.core.evaluate.variable.Variable;
 import org.cyclops.integrateddynamics.core.helper.VariableClipboardHelpers;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ClipboardLPElement;
 
@@ -132,6 +136,74 @@ public class GameTestsVariableClipboard {
 
         element.deactivate();
         helper.assertFalse(element.canWriteElementPre(), "A deactivated clipboard element can be written");
+        helper.succeed();
+    }
+
+    protected static IValue parseAny(String input) throws EvaluationException {
+        return Operators.PARSE_ANY.evaluate(new Variable<>(ValueTypeString.ValueString.of(input)));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testParseAnyReadable(GameTestHelper helper) throws EvaluationException {
+        IValue value = ValueTypeList.ValueList.ofAll(
+                ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.DIAMOND, 3)),
+                ValueObjectTypeItemStack.ValueItemStack.of(new ItemStack(Items.STICK))
+        );
+        String clipboard = VariableClipboardHelpers.serialize(ValueDeseralizationContext.of(helper.getLevel()), value);
+        assertValueEqual(parseAny(clipboard), value);
+        helper.succeed();
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testParseAnyCompressed(GameTestHelper helper) throws EvaluationException, VariableClipboardHelpers.VariableClipboardException {
+        IValue value = ValueTypeString.ValueString.of("Hello world");
+        String clipboard = VariableClipboardHelpers.serializeCompressed(ValueDeseralizationContext.of(helper.getLevel()), value);
+        assertValueEqual(parseAny(clipboard), value);
+        helper.succeed();
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testParseAnyRejectsGarbage(GameTestHelper helper) {
+        try {
+            parseAny("this is not a value");
+            helper.fail("Garbage was parsed into a value");
+        } catch (EvaluationException e) {
+            // Expected
+        }
+        helper.succeed();
+    }
+
+    /**
+     * Strings can be built with operators, so the operator must not accept what pasting refuses.
+     */
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testParseAnyRejectsPositionedList(GameTestHelper helper) {
+        ValueDeseralizationContext context = ValueDeseralizationContext.of(helper.getLevel());
+        IValue value = ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyPositionedInventory(
+                DimPos.of(helper.getLevel(), helper.absolutePos(POS)), Direction.UP));
+        try {
+            parseAny(VariableClipboardHelpers.serialize(context, value));
+            helper.fail("A positioned list was parsed into a value");
+        } catch (EvaluationException e) {
+            // Expected
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testParseAnyDisabled(GameTestHelper helper) {
+        String clipboard = VariableClipboardHelpers.serialize(ValueDeseralizationContext.of(helper.getLevel()),
+                ValueTypeInteger.ValueInteger.of(1));
+        boolean enabled = GeneralConfig.variableClipboardPasteEnabled;
+        GeneralConfig.variableClipboardPasteEnabled = false;
+        try {
+            parseAny(clipboard);
+            helper.fail("A value was parsed while pasting is disabled");
+        } catch (EvaluationException e) {
+            // Expected
+        } finally {
+            GeneralConfig.variableClipboardPasteEnabled = enabled;
+        }
         helper.succeed();
     }
 

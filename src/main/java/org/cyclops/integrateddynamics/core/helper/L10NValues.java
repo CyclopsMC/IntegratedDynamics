@@ -36,7 +36,7 @@ public class L10NValues {
     public static final String GUI_LOGICPROGRAMMER_TOOLTIP_WRITESLOT_MODIFY = "gui." + NS + ".logicprogrammer.tooltip.writeslot.modify";
     public static final String GUI_LOGICPROGRAMMER_CLIPBOARD = "gui." + NS + ".logicprogrammer.clipboard";
     public static final String GUI_LOGICPROGRAMMER_CLIPBOARD_TOOLTIP = "gui." + NS + ".logicprogrammer.clipboard.tooltip";
-    public static final String GUI_LOGICPROGRAMMER_CLIPBOARD_PASTE = "gui." + NS + ".logicprogrammer.clipboard.paste";
+    public static final String GUI_LOGICPROGRAMMER_CLIPBOARD_HINT = "gui." + NS + ".logicprogrammer.clipboard.hint";
     public static final String GUI_INPUT = "gui." + NS + ".input";
     public static final String GUI_OUTPUT = "gui." + NS + ".output";
     public static final String GUI_RECIPE_STRICTNBT = "gui." + NS + ".recipe.strictnbt";
@@ -47,9 +47,9 @@ public class L10NValues {
     // 0: value
     public static final String GUI_MECHANICAL_SQUEEZER_TOGGLEFLUIDAUTOEJECT = "gui." + NS + ".mechanical_squeezer.togglefluidautoeject";
 
+    public static final String OPERATOR_PARSE_ANY = "operator." + NS + ".parse.any";
+
     public static final String VARIABLE_CLIPBOARD_ERROR_PARSE = "variable_clipboard." + NS + ".error.parse";
-    // 0: payload version, 1: supported version
-    public static final String VARIABLE_CLIPBOARD_ERROR_VERSION = "variable_clipboard." + NS + ".error.version";
     // 0: payload length, 1: maximum length
     public static final String VARIABLE_CLIPBOARD_ERROR_TOOLARGE = "variable_clipboard." + NS + ".error.too_large";
     // 0: the offending proxy or serializer name
