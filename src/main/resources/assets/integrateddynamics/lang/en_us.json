@@ -1681,7 +1681,7 @@
     "operator.integrateddynamics.general.isnotnull": "Is Not Null",
     "operator.integrateddynamics.general.isnotnull.info": "If the given value is not null",
     "operator.integrateddynamics.general.encode": "Encode",
-    "operator.integrateddynamics.general.encode.info": "A materialized copy of the input value, encoded as a readable string that the Decode operator turns back into the value.",
+    "operator.integrateddynamics.general.encode.info": "A materialized copy of the input value, encoded as a readable string.",
     "operator.integrateddynamics.general.encode_compressed": "Encode Compressed",
     "operator.integrateddynamics.general.encode_compressed.info": "A materialized copy of the input value, encoded as a compressed string.",
     "operator.integrateddynamics.general.decode": "Decode",
