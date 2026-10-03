@@ -24,6 +24,18 @@ public interface IOperatorSerializer<O extends IOperator> {
     public ResourceLocation getUniqueName();
 
     /**
+     * If the operators handled by this serializer are materialized,
+     * meaning that they can exist without any external references.
+     *
+     * Only materialized operators can be shared between worlds.
+     *
+     * @return If the handled operators are materialized.
+     */
+    default boolean isMaterialized() {
+        return true;
+    }
+
+    /**
      * Serialize the given operator.
      *
      * @param valueDeseralizationContext

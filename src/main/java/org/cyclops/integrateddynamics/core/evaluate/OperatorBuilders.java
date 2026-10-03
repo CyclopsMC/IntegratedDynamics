@@ -119,6 +119,10 @@ public class OperatorBuilders {
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> NULLABLE = OperatorBuilder.forType(ValueTypes.CATEGORY_NULLABLE).appendKind("general");
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> NULLABLE_1_PREFIX = NULLABLE.inputTypes(1, ValueTypes.CATEGORY_NULLABLE).renderPattern(IConfigRenderPattern.PREFIX_1);
 
+    // --------------- General builders ---------------
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> GENERAL = OperatorBuilder.forType(ValueTypes.CATEGORY_ANY).appendKind("general");
+    public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> GENERAL_1_PREFIX_LONG = GENERAL.inputTypes(1, ValueTypes.CATEGORY_ANY).renderPattern(IConfigRenderPattern.PREFIX_1_LONG);
+
     // --------------- List builders ---------------
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> LIST = OperatorBuilder.forType(ValueTypes.LIST).appendKind("list");
     public static final OperatorBuilder<OperatorBase.SafeVariablesGetter> LIST_1_PREFIX = LIST.inputTypes(1, ValueTypes.LIST).renderPattern(IConfigRenderPattern.PREFIX_1);

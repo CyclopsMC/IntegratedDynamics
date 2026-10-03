@@ -70,6 +70,18 @@ public interface IValueTypeListProxyFactoryTypeRegistry extends IRegistry {
         public ResourceLocation getName();
 
         /**
+         * If the proxies of this factory are materialized,
+         * meaning that they can exist without any external references.
+         *
+         * Only materialized proxies can be shared between worlds.
+         *
+         * @return If the proxies of this factory are materialized.
+         */
+        default boolean isMaterialized() {
+            return false;
+        }
+
+        /**
          * Serialize the given value.
          *
          * @param valueDeseralizationContext

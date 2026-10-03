@@ -90,6 +90,12 @@ public abstract class PositionedOperator extends OperatorBase implements INBTPro
         }
 
         @Override
+        public boolean isMaterialized() {
+            // Positioned operators refer to a position in a world
+            return false;
+        }
+
+        @Override
         public Tag serialize(ValueDeseralizationContext valueDeseralizationContext, PositionedOperator operator) {
             CompoundTag tag = new CompoundTag();
             operator.writeGeneratedFieldsToNBT(tag, valueDeseralizationContext.holderLookupProvider());

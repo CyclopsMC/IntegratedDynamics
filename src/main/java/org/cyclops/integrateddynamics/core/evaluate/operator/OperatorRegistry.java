@@ -30,6 +30,7 @@ import org.cyclops.integrateddynamics.core.evaluate.expression.LazyExpression;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.item.OperatorVariableFacade;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -128,6 +129,12 @@ public class OperatorRegistry implements IOperatorRegistry {
     public void registerSerializer(IOperatorSerializer serializer) {
         serializers.add(serializer);
         namedSerializers.put(serializer.getUniqueName().toString(), serializer);
+    }
+
+    @Nullable
+    @Override
+    public IOperatorSerializer getSerializer(ResourceLocation name) {
+        return namedSerializers.get(name.toString());
     }
 
     @Override

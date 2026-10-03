@@ -9,6 +9,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationC
 import org.cyclops.integrateddynamics.api.item.IOperatorVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandler;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Map;
 
@@ -64,6 +65,14 @@ public interface IOperatorRegistry extends IRegistry, IVariableFacadeHandler<IOp
      * @param serializer The operator serializer.
      */
     public void registerSerializer(IOperatorSerializer serializer);
+
+    /**
+     * Get a serializer by name.
+     * @param name The unique name of a serializer.
+     * @return The serializer, or null if no serializer is registered under that name.
+     */
+    @Nullable
+    public IOperatorSerializer getSerializer(ResourceLocation name);
 
     /**
      * Serialize the given operator.

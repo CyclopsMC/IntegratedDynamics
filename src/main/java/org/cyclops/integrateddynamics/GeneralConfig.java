@@ -90,6 +90,15 @@ public class GeneralConfig extends DummyConfig {
     @ConfigurableProperty(category = "general", comment = "The base energy usage for the world reader.", minimalValue = 0, configLocation = ModConfig.Type.SERVER)
     public static int worldReaderBaseConsumption = 1;
 
+    @ConfigurableProperty(category = "machine", comment = "If encoded values may be decoded, by the Decode Value element of the Logic Programmer and by the Decode operator.", configLocation = ModConfig.Type.SERVER)
+    public static boolean valueDecodingEnabled = true;
+
+    @ConfigurableProperty(category = "machine", comment = "The maximum length of an uncompressed encoded value, both when encoding and when decoding.", minimalValue = 1, configLocation = ModConfig.Type.SERVER)
+    public static int valueEncodingMaxLength = 65536;
+
+    @ConfigurableProperty(category = "machine", comment = "The maximum nesting depth of an encoded value, both when encoding and when decoding.", minimalValue = 1, configLocation = ModConfig.Type.SERVER)
+    public static int valueEncodingMaxDepth = 512;
+
     @ConfigurableProperty(category = "general", comment = "The maximum render distance for part overlays to render. The higher, the more resource intensive.", isCommandable = true, minimalValue = 1, configLocation = ModConfig.Type.CLIENT)
     public static int partOverlayRenderdistance = 15;
 
