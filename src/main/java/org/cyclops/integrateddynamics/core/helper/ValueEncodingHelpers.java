@@ -10,6 +10,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.init.ModBase;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperatorSerializer;
@@ -44,11 +45,6 @@ public class ValueEncodingHelpers {
      * The prefix that marks a gzipped and base64-encoded value, standing for Integrated Dynamics Compressed Encoding.
      */
     public static final String PREFIX_COMPRESSED = "idce:";
-
-    /**
-     * The maximum nesting depth of an encoded value, to bound the recursion over handcrafted ones.
-     */
-    public static final int MAX_DEPTH = 512;
 
     /**
      * The versions of Minecraft and this mod that a value was encoded in.
@@ -268,7 +264,7 @@ public class ValueEncodingHelpers {
     }
 
     protected static void validateMaterialized(Tag tag, int depth) throws ValueEncodingException {
-        if (depth > MAX_DEPTH) {
+        if (depth > GeneralConfig.valueEncodingMaxDepth) {
             throw new ValueEncodingException(Component.translatable(L10NValues.VALUE_ENCODING_ERROR_PARSE));
         }
         if (tag instanceof CompoundTag compoundTag) {

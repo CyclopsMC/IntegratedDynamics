@@ -4,6 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.resources.ResourceLocation;
 import org.cyclops.cyclopscore.helper.CyclopsCoreInstance;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.ModBaseMocked;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
@@ -317,7 +318,7 @@ public class TestValueEncodingHelpers {
         CompoundTag tag = new CompoundTag();
         tag.putString("valueType", "integrateddynamics:integer");
         CompoundTag nested = tag;
-        for (int i = 0; i < ValueEncodingHelpers.MAX_DEPTH + 10; i++) {
+        for (int i = 0; i < GeneralConfig.valueEncodingMaxDepth + 10; i++) {
             CompoundTag next = new CompoundTag();
             nested.put("value", next);
             nested = next;
