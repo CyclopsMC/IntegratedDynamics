@@ -46,7 +46,7 @@
     "gui.integrateddynamics.logicprogrammer.tooltip.writeslot.create": "Insert Variable Card to bind to a §lnew§r value",
     "gui.integrateddynamics.logicprogrammer.tooltip.writeslot.modify": "Insert Variable Card to §lload§r its value",
     "gui.integrateddynamics.materializer.encode": "Encode the value to your clipboard",
-    "gui.integrateddynamics.materializer.encode_compressed": "Encode the value to your clipboard in a compressed form, which is shorter, but not readable",
+    "gui.integrateddynamics.materializer.encode_compressed": "Encode value to clipboard in compressed form",
     "gui.integrateddynamics.logicprogrammer.decode": "Decoded Value",
     "gui.integrateddynamics.logicprogrammer.decode.tooltip": "Decode a value that was encoded in a §lMaterializer§r or by the §lEncode§r operator, possibly in another world",
     "gui.integrateddynamics.logicprogrammer.decode.hint": "Paste an encoded value",
