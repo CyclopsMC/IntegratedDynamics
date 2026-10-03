@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
 import org.cyclops.integrateddynamics.api.client.render.part.IPartOverlayRenderer;
@@ -66,7 +67,7 @@ public class RenderCable implements BlockEntityRenderer<BlockEntityMultipartTick
             // Draw part overlays
             for (IPartOverlayRenderer renderer : PartOverlayRenderers.REGISTRY.getRenderers(entry.getValue())) {
                 renderer.submitPartOverlay(this.context, renderState.partContainer, entry.getKey(), entry.getValue(),
-                        renderState.partialTicks, poseStack, submitNodeCollector, renderState.lightCoords, 0);
+                        renderState.partialTicks, poseStack, submitNodeCollector, renderState.lightCoords, OverlayTexture.NO_OVERLAY);
             }
         }
     }
