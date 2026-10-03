@@ -56,9 +56,8 @@ public class RecipeValueTypeWorldRenderer implements IValueTypeWorldRenderer {
 
             matrixStack.pushPose();
             matrixStack.scale(0.3F, 0.3F, 1F);
-            nodeCollector.submitText(matrixStack, 8, 15, Component.translatable("gui.integrateddynamics.input_short").getVisualOrderText(), false, Font.DisplayMode.NORMAL, combinedLight, IModHelpers.get().getBaseHelpers().RGBToInt(255, 255, 255), 0, 0);
-            nodeCollector.submitText(matrixStack, 8, 15, Component.translatable("gui.integrateddynamics.input_short").getVisualOrderText(), false, Font.DisplayMode.NORMAL, combinedLight, IModHelpers.get().getBaseHelpers().RGBToInt(255, 255, 255), 0, 0);
-            nodeCollector.submitText(matrixStack, 46, 15, Component.translatable("gui.integrateddynamics.output_short").getVisualOrderText(), false, Font.DisplayMode.NORMAL, combinedLight, IModHelpers.get().getBaseHelpers().RGBToInt(255, 255, 255), 0, 0);
+            nodeCollector.submitText(matrixStack, 8, 15, Component.translatable("gui.integrateddynamics.input_short").getVisualOrderText(), false, Font.DisplayMode.NORMAL, combinedLight, IModHelpers.get().getBaseHelpers().addAlphaToColor(IModHelpers.get().getBaseHelpers().RGBToInt(255, 255, 255), alpha), 0, 0);
+            nodeCollector.submitText(matrixStack, 46, 15, Component.translatable("gui.integrateddynamics.output_short").getVisualOrderText(), false, Font.DisplayMode.NORMAL, combinedLight, IModHelpers.get().getBaseHelpers().addAlphaToColor(IModHelpers.get().getBaseHelpers().RGBToInt(255, 255, 255), alpha), 0, 0);
             matrixStack.popPose();
 
             matrixStack.translate(0, 2 * DisplayPartOverlayRenderer.MAX / 3, 0);
