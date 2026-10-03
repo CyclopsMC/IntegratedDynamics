@@ -1,9 +1,11 @@
 package org.cyclops.integrateddynamics.core.network;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntLinkedOpenHashSet;
@@ -36,13 +38,25 @@ import java.util.function.Consumer;
  */
 public class IngredientObserver<T, M> {
 
-    private static final ExecutorService WORKER_POOL = Executors.newFixedThreadPool(GeneralConfig.ingredientNetworkObserverThreads);
+    // Daemon threads, so they don't prevent the client JVM from exiting.
+    private static final ExecutorService WORKER_POOL = Executors.newFixedThreadPool(
+            GeneralConfig.ingredientNetworkObserverThreads,
+            new ThreadFactoryBuilder()
+                    .setNameFormat("IntegratedDynamics Ingredient Observer #%d")
+                    .setDaemon(true)
+                    .build()
+    );
     static {
         NeoForge.EVENT_BUS.addListener((Consumer<ServerStoppingEvent>) event -> {
             if (event.getServer().isDedicatedServer()) {
                 WORKER_POOL.shutdown();
             }
         });
+    }
+
+    @VisibleForTesting
+    public static ExecutorService getWorkerPool() {
+        return WORKER_POOL;
     }
 
     private final IPositionedAddonsNetworkIngredients<T, M> network;
