@@ -14,6 +14,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueDeseralization
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeList;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeListProxyAppend;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeListProxyFactories;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeOperator;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeString;
@@ -28,10 +29,10 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 /**
- * Test the copying of values to, and pasting of values from, the clipboard.
+ * Test the encoding and decoding of values.
  * @author rubensworks
  */
-public class TestVariableClipboardHelpers {
+public class TestValueEncodingHelpers {
 
     static { CyclopsCoreInstance.MOD = new ModBaseMocked(); }
 
@@ -49,36 +50,36 @@ public class TestVariableClipboardHelpers {
                 PositionedOperator.class, POSITIONED_SERIALIZER));
     }
 
-    protected void assertRoundTrip(IValue value) throws VariableClipboardHelpers.VariableClipboardException {
-        String readable = VariableClipboardHelpers.serialize(CONTEXT, value);
+    protected void assertRoundTrip(IValue value) throws ValueEncodingHelpers.ValueEncodingException {
+        String readable = ValueEncodingHelpers.encode(CONTEXT, value, MAX_LENGTH);
         assertThat("the readable form round-trips",
-                VariableClipboardHelpers.deserialize(CONTEXT, readable, MAX_LENGTH), is(value));
+                ValueEncodingHelpers.decode(CONTEXT, readable, MAX_LENGTH), is(value));
 
-        String compressed = VariableClipboardHelpers.serializeCompressed(CONTEXT, value);
+        String compressed = ValueEncodingHelpers.encodeCompressed(CONTEXT, value, MAX_LENGTH);
         assertThat("the compressed form is prefixed",
-                compressed, startsWith(VariableClipboardHelpers.PREFIX_COMPRESSED));
+                compressed, startsWith(ValueEncodingHelpers.PREFIX_COMPRESSED));
         assertThat("the compressed form is a single line", compressed.contains("\n"), is(false));
         assertThat("the compressed form round-trips",
-                VariableClipboardHelpers.deserialize(CONTEXT, compressed, MAX_LENGTH), is(value));
+                ValueEncodingHelpers.decode(CONTEXT, compressed, MAX_LENGTH), is(value));
     }
 
     @Test
-    public void testBoolean() throws VariableClipboardHelpers.VariableClipboardException {
+    public void testBoolean() throws ValueEncodingHelpers.ValueEncodingException {
         assertRoundTrip(ValueTypeBoolean.ValueBoolean.of(true));
     }
 
     @Test
-    public void testInteger() throws VariableClipboardHelpers.VariableClipboardException {
+    public void testInteger() throws ValueEncodingHelpers.ValueEncodingException {
         assertRoundTrip(ValueTypeInteger.ValueInteger.of(42));
     }
 
     @Test
-    public void testString() throws VariableClipboardHelpers.VariableClipboardException {
+    public void testString() throws ValueEncodingHelpers.ValueEncodingException {
         assertRoundTrip(ValueTypeString.ValueString.of("abc"));
     }
 
     @Test
-    public void testMaterializedList() throws VariableClipboardHelpers.VariableClipboardException {
+    public void testMaterializedList() throws ValueEncodingHelpers.ValueEncodingException {
         assertRoundTrip(ValueTypeList.ValueList.ofAll(
                 ValueTypeInteger.ValueInteger.of(1),
                 ValueTypeInteger.ValueInteger.of(2),
@@ -87,7 +88,7 @@ public class TestVariableClipboardHelpers {
     }
 
     @Test
-    public void testCurriedOperator() throws VariableClipboardHelpers.VariableClipboardException {
+    public void testCurriedOperator() throws ValueEncodingHelpers.ValueEncodingException {
         assertRoundTrip(ValueTypeOperator.ValueOperator.of(new CurriedOperator(
                 Operators.ARITHMETIC_ADDITION,
                 new Variable<>(ValueTypeInteger.ValueInteger.of(1))
@@ -95,28 +96,52 @@ public class TestVariableClipboardHelpers {
     }
 
     @Test
-    public void testReadableAndCompressedAreEqual() throws VariableClipboardHelpers.VariableClipboardException {
+    public void testReadableAndCompressedAreEqual() throws ValueEncodingHelpers.ValueEncodingException {
         IValue value = ValueTypeString.ValueString.of("Hello world");
-        String readable = VariableClipboardHelpers.serialize(CONTEXT, value);
-        String compressed = VariableClipboardHelpers.serializeCompressed(CONTEXT, value);
+        String readable = ValueEncodingHelpers.encode(CONTEXT, value, MAX_LENGTH);
+        String compressed = ValueEncodingHelpers.encodeCompressed(CONTEXT, value, MAX_LENGTH);
         assertThat("both forms are different strings", compressed, is(not(readable)));
-        assertThat("both forms deserialize to the same value",
-                VariableClipboardHelpers.deserialize(CONTEXT, compressed, MAX_LENGTH),
-                is(VariableClipboardHelpers.deserialize(CONTEXT, readable, MAX_LENGTH)));
+        assertThat("both forms decode to the same value",
+                ValueEncodingHelpers.decode(CONTEXT, compressed, MAX_LENGTH),
+                is(ValueEncodingHelpers.decode(CONTEXT, readable, MAX_LENGTH)));
     }
 
     @Test
-    public void testWhitespaceIsIgnored() throws VariableClipboardHelpers.VariableClipboardException {
+    public void testWhitespaceIsIgnored() throws ValueEncodingHelpers.ValueEncodingException {
         IValue value = ValueTypeInteger.ValueInteger.of(7);
-        assertThat("surrounding whitespace is trimmed", VariableClipboardHelpers.deserialize(CONTEXT,
-                "  " + VariableClipboardHelpers.serialize(CONTEXT, value) + "\n", MAX_LENGTH), is(value));
+        assertThat("surrounding whitespace is trimmed", ValueEncodingHelpers.decode(CONTEXT,
+                "  " + ValueEncodingHelpers.encode(CONTEXT, value, MAX_LENGTH) + "\n", MAX_LENGTH), is(value));
+    }
+
+    @Test
+    public void testEncodeRejectsTooLarge() {
+        try {
+            ValueEncodingHelpers.encode(CONTEXT, ValueTypeString.ValueString.of("abcdefghij"), 10);
+            fail("Expected a value beyond the maximum length to not be encoded");
+        } catch (ValueEncodingHelpers.ValueEncodingException e) {
+            // Expected
+        }
+    }
+
+    @Test
+    public void testEncodeRejectsUnmaterialized() {
+        // An appended list refers to its source list, so it must be materialized before it can be encoded
+        IValue value = ValueTypeList.ValueList.ofFactory(new ValueTypeListProxyAppend(
+                ValueTypeList.ValueList.ofAll(ValueTypeInteger.ValueInteger.of(1)).getRawValue(),
+                ValueTypeInteger.ValueInteger.of(2)));
+        try {
+            ValueEncodingHelpers.encode(CONTEXT, value, MAX_LENGTH);
+            fail("Expected a value that is not materialized to not be encoded");
+        } catch (ValueEncodingHelpers.ValueEncodingException e) {
+            // Expected
+        }
     }
 
     protected void assertRejected(String input, int maxLength) {
         try {
-            VariableClipboardHelpers.deserialize(CONTEXT, input, maxLength);
+            ValueEncodingHelpers.decode(CONTEXT, input, maxLength);
             fail("Expected the payload to be rejected: " + input);
-        } catch (VariableClipboardHelpers.VariableClipboardException e) {
+        } catch (ValueEncodingHelpers.ValueEncodingException e) {
             // Expected
         }
     }
@@ -138,47 +163,47 @@ public class TestVariableClipboardHelpers {
 
     @Test
     public void testRejectMalformedCompressed() {
-        assertRejected(VariableClipboardHelpers.PREFIX_COMPRESSED + "not-base-64-%%%", MAX_LENGTH);
+        assertRejected(ValueEncodingHelpers.PREFIX_COMPRESSED + "not-base-64-%%%", MAX_LENGTH);
     }
 
     @Test
-    public void testRejectTruncatedCompressed() throws VariableClipboardHelpers.VariableClipboardException {
-        String compressed = VariableClipboardHelpers.serializeCompressed(CONTEXT, ValueTypeInteger.ValueInteger.of(1));
+    public void testRejectTruncatedCompressed() throws ValueEncodingHelpers.ValueEncodingException {
+        String compressed = ValueEncodingHelpers.encodeCompressed(CONTEXT, ValueTypeInteger.ValueInteger.of(1), MAX_LENGTH);
         assertRejected(compressed.substring(0, compressed.length() - 10), MAX_LENGTH);
     }
 
     @Test
-    public void testWritesVersions() {
-        CompoundTag version = VariableClipboardHelpers.serializeToTag(CONTEXT, ValueTypeInteger.ValueInteger.of(1))
-                .getCompound(VariableClipboardHelpers.KEY_VERSION);
+    public void testWritesVersions() throws ValueEncodingHelpers.ValueEncodingException {
+        CompoundTag version = ValueEncodingHelpers.encodeToTag(CONTEXT, ValueTypeInteger.ValueInteger.of(1), MAX_LENGTH)
+                .getCompound(ValueEncodingHelpers.KEY_VERSION);
         assertThat("the Minecraft version is written",
-                version.getString(VariableClipboardHelpers.KEY_VERSION_MINECRAFT).isEmpty(), is(false));
+                version.getString(ValueEncodingHelpers.KEY_VERSION_MINECRAFT).isEmpty(), is(false));
         assertThat("the mod version is written",
-                version.getString(VariableClipboardHelpers.KEY_VERSION_MOD).isEmpty(), is(false));
+                version.getString(ValueEncodingHelpers.KEY_VERSION_MOD).isEmpty(), is(false));
     }
 
     @Test
-    public void testIgnoresVersions() throws VariableClipboardHelpers.VariableClipboardException {
+    public void testIgnoresVersions() throws ValueEncodingHelpers.ValueEncodingException {
         IValue value = ValueTypeInteger.ValueInteger.of(1);
 
         // Versions are only informative, so neither unknown, legacy nor missing versions reject a value
-        CompoundTag otherVersions = VariableClipboardHelpers.serializeToTag(CONTEXT, value);
+        CompoundTag otherVersions = ValueEncodingHelpers.encodeToTag(CONTEXT, value, MAX_LENGTH);
         CompoundTag version = new CompoundTag();
-        version.putString(VariableClipboardHelpers.KEY_VERSION_MINECRAFT, "99.0");
-        version.putString(VariableClipboardHelpers.KEY_VERSION_MOD, "99.0.0");
-        otherVersions.put(VariableClipboardHelpers.KEY_VERSION, version);
+        version.putString(ValueEncodingHelpers.KEY_VERSION_MINECRAFT, "99.0");
+        version.putString(ValueEncodingHelpers.KEY_VERSION_MOD, "99.0.0");
+        otherVersions.put(ValueEncodingHelpers.KEY_VERSION, version);
         assertThat("other versions are accepted",
-                VariableClipboardHelpers.deserialize(CONTEXT, otherVersions.toString(), MAX_LENGTH), is(value));
+                ValueEncodingHelpers.decode(CONTEXT, otherVersions.toString(), MAX_LENGTH), is(value));
 
-        CompoundTag legacyVersion = VariableClipboardHelpers.serializeToTag(CONTEXT, value);
-        legacyVersion.putInt(VariableClipboardHelpers.KEY_VERSION, 42);
+        CompoundTag legacyVersion = ValueEncodingHelpers.encodeToTag(CONTEXT, value, MAX_LENGTH);
+        legacyVersion.putInt(ValueEncodingHelpers.KEY_VERSION, 42);
         assertThat("a legacy version is accepted",
-                VariableClipboardHelpers.deserialize(CONTEXT, legacyVersion.toString(), MAX_LENGTH), is(value));
+                ValueEncodingHelpers.decode(CONTEXT, legacyVersion.toString(), MAX_LENGTH), is(value));
 
-        CompoundTag noVersion = VariableClipboardHelpers.serializeToTag(CONTEXT, value);
-        noVersion.remove(VariableClipboardHelpers.KEY_VERSION);
+        CompoundTag noVersion = ValueEncodingHelpers.encodeToTag(CONTEXT, value, MAX_LENGTH);
+        noVersion.remove(ValueEncodingHelpers.KEY_VERSION);
         assertThat("a missing version is accepted",
-                VariableClipboardHelpers.deserialize(CONTEXT, noVersion.toString(), MAX_LENGTH), is(value));
+                ValueEncodingHelpers.decode(CONTEXT, noVersion.toString(), MAX_LENGTH), is(value));
     }
 
     @Test
@@ -188,27 +213,27 @@ public class TestVariableClipboardHelpers {
     }
 
     @Test
-    public void testRejectUnknownValueType() {
-        CompoundTag tag = VariableClipboardHelpers.serializeToTag(CONTEXT, ValueTypeInteger.ValueInteger.of(1));
+    public void testRejectUnknownValueType() throws ValueEncodingHelpers.ValueEncodingException {
+        CompoundTag tag = ValueEncodingHelpers.encodeToTag(CONTEXT, ValueTypeInteger.ValueInteger.of(1), MAX_LENGTH);
         tag.putString("valueType", "integrateddynamics:nonexistent");
         assertRejected(tag.toString(), MAX_LENGTH);
     }
 
     @Test
-    public void testRejectTooLargeReadable() {
-        String readable = VariableClipboardHelpers.serialize(CONTEXT, ValueTypeString.ValueString.of("abcdefghij"));
+    public void testRejectTooLargeReadable() throws ValueEncodingHelpers.ValueEncodingException {
+        String readable = ValueEncodingHelpers.encode(CONTEXT, ValueTypeString.ValueString.of("abcdefghij"), MAX_LENGTH);
         assertRejected(readable, readable.length() - 1);
     }
 
     @Test
-    public void testRejectTooLargeAfterDecompression() throws VariableClipboardHelpers.VariableClipboardException {
+    public void testRejectTooLargeAfterDecompression() throws ValueEncodingHelpers.ValueEncodingException {
         // A compressed payload is short, but must still be rejected once it expands beyond the maximum
         StringBuilder longString = new StringBuilder();
         for (int i = 0; i < 10000; i++) {
             longString.append('a');
         }
-        String compressed = VariableClipboardHelpers.serializeCompressed(CONTEXT,
-                ValueTypeString.ValueString.of(longString.toString()));
+        String compressed = ValueEncodingHelpers.encodeCompressed(CONTEXT,
+                ValueTypeString.ValueString.of(longString.toString()), MAX_LENGTH);
         assertThat("the compressed payload itself is below the maximum", compressed.length() < 1000, is(true));
         assertRejected(compressed, 1000);
     }
@@ -216,7 +241,7 @@ public class TestVariableClipboardHelpers {
     @Test
     public void testRejectUnmaterializedList() {
         CompoundTag proxy = new CompoundTag();
-        proxy.putString(VariableClipboardHelpers.KEY_PROXY_NAME, "integrateddynamics:positioned_inventory");
+        proxy.putString(ValueEncodingHelpers.KEY_PROXY_NAME, "integrateddynamics:positioned_inventory");
         proxy.put("serialized", new CompoundTag());
 
         CompoundTag tag = new CompoundTag();
@@ -229,7 +254,7 @@ public class TestVariableClipboardHelpers {
     @Test
     public void testRejectUnknownListProxy() {
         CompoundTag proxy = new CompoundTag();
-        proxy.putString(VariableClipboardHelpers.KEY_PROXY_NAME, "integrateddynamics:nonexistent");
+        proxy.putString(ValueEncodingHelpers.KEY_PROXY_NAME, "integrateddynamics:nonexistent");
         proxy.put("serialized", new CompoundTag());
 
         CompoundTag tag = new CompoundTag();
@@ -242,7 +267,7 @@ public class TestVariableClipboardHelpers {
     @Test
     public void testRejectPositionedOperator() {
         CompoundTag operator = new CompoundTag();
-        operator.putString(VariableClipboardHelpers.KEY_SERIALIZER, POSITIONED_SERIALIZER.toString());
+        operator.putString(ValueEncodingHelpers.KEY_SERIALIZER, POSITIONED_SERIALIZER.toString());
         operator.put("value", new CompoundTag());
 
         CompoundTag tag = new CompoundTag();
@@ -256,7 +281,7 @@ public class TestVariableClipboardHelpers {
     public void testRejectNestedUnmaterializedValue() {
         // The offending proxy is nested inside a materialized list, so a shallow check would miss it
         CompoundTag proxy = new CompoundTag();
-        proxy.putString(VariableClipboardHelpers.KEY_PROXY_NAME, "integrateddynamics:positioned_inventory");
+        proxy.putString(ValueEncodingHelpers.KEY_PROXY_NAME, "integrateddynamics:positioned_inventory");
         proxy.put("serialized", new CompoundTag());
 
         CompoundTag inner = new CompoundTag();
@@ -264,7 +289,7 @@ public class TestVariableClipboardHelpers {
         inner.put("value", proxy);
 
         CompoundTag materialized = new CompoundTag();
-        materialized.putString(VariableClipboardHelpers.KEY_PROXY_NAME, "integrateddynamics:materialized");
+        materialized.putString(ValueEncodingHelpers.KEY_PROXY_NAME, "integrateddynamics:materialized");
         materialized.put("serialized", inner);
 
         CompoundTag tag = new CompoundTag();
@@ -277,7 +302,7 @@ public class TestVariableClipboardHelpers {
     @Test
     public void testRejectMalformedProxyName() {
         CompoundTag proxy = new CompoundTag();
-        proxy.putString(VariableClipboardHelpers.KEY_PROXY_NAME, "NOT A RESOURCE LOCATION");
+        proxy.putString(ValueEncodingHelpers.KEY_PROXY_NAME, "NOT A RESOURCE LOCATION");
         proxy.put("serialized", new CompoundTag());
 
         CompoundTag tag = new CompoundTag();
@@ -292,7 +317,7 @@ public class TestVariableClipboardHelpers {
         CompoundTag tag = new CompoundTag();
         tag.putString("valueType", "integrateddynamics:integer");
         CompoundTag nested = tag;
-        for (int i = 0; i < VariableClipboardHelpers.MAX_DEPTH + 10; i++) {
+        for (int i = 0; i < ValueEncodingHelpers.MAX_DEPTH + 10; i++) {
             CompoundTag next = new CompoundTag();
             nested.put("value", next);
             nested = next;
@@ -301,14 +326,14 @@ public class TestVariableClipboardHelpers {
     }
 
     @Test
-    public void testAcceptsPlainOperatorName() throws VariableClipboardHelpers.VariableClipboardException {
+    public void testAcceptsPlainOperatorName() throws ValueEncodingHelpers.ValueEncodingException {
         // Operators without a dedicated serializer are stored as a plain name
         CompoundTag tag = new CompoundTag();
         tag.putString("valueType", "integrateddynamics:operator");
         tag.put("value", StringTag.valueOf(Operators.ARITHMETIC_ADDITION.getUniqueName().toString()));
 
         assertThat("a plain operator is accepted",
-                VariableClipboardHelpers.deserialize(CONTEXT, tag.toString(), MAX_LENGTH),
+                ValueEncodingHelpers.decode(CONTEXT, tag.toString(), MAX_LENGTH),
                 is(ValueTypeOperator.ValueOperator.of(Operators.ARITHMETIC_ADDITION)));
     }
 

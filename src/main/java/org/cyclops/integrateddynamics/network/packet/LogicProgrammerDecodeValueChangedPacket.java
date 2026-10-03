@@ -17,32 +17,32 @@ import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
-import org.cyclops.integrateddynamics.core.helper.VariableClipboardHelpers;
-import org.cyclops.integrateddynamics.core.logicprogrammer.ClipboardLPElement;
+import org.cyclops.integrateddynamics.core.helper.ValueEncodingHelpers;
+import org.cyclops.integrateddynamics.core.logicprogrammer.DecodeLPElement;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 
 /**
- * Packet for sending a pasted value to the clipboard element of the logic programmer.
+ * Packet for sending a pasted encoded value to the decode element of the logic programmer.
  *
  * The value is sent as a tag instead of a string,
- * as pasted values can easily exceed the maximum length of a string on the network.
+ * as encoded values can easily exceed the maximum length of a string on the network.
  *
  * @author rubensworks
  *
  */
-public class LogicProgrammerClipboardValueChangedPacket extends PacketCodec {
+public class LogicProgrammerDecodeValueChangedPacket extends PacketCodec {
 
-    public static final Type<LogicProgrammerClipboardValueChangedPacket> ID = new Type<>(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "logic_programmer_clipboard_value_changed"));
-    public static final StreamCodec<RegistryFriendlyByteBuf, LogicProgrammerClipboardValueChangedPacket> CODEC = getCodec(LogicProgrammerClipboardValueChangedPacket::new);
+    public static final Type<LogicProgrammerDecodeValueChangedPacket> ID = new Type<>(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "logic_programmer_decode_value_changed"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, LogicProgrammerDecodeValueChangedPacket> CODEC = getCodec(LogicProgrammerDecodeValueChangedPacket::new);
 
     @CodecField
     private CompoundTag value;
 
-    public LogicProgrammerClipboardValueChangedPacket() {
+    public LogicProgrammerDecodeValueChangedPacket() {
         super(ID);
     }
 
-    public LogicProgrammerClipboardValueChangedPacket(CompoundTag value) {
+    public LogicProgrammerDecodeValueChangedPacket(CompoundTag value) {
         super(ID);
         this.value = value;
     }
@@ -62,18 +62,18 @@ public class LogicProgrammerClipboardValueChangedPacket extends PacketCodec {
     public void actionServer(Level world, ServerPlayer player) {
         if (player.containerMenu instanceof ContainerLogicProgrammerBase container) {
             ILogicProgrammerElement element = container.getActiveElement();
-            if (element instanceof ClipboardLPElement clipboardElement) {
-                if (!GeneralConfig.variableClipboardPasteEnabled) {
-                    clipboardElement.setError(Component.translatable(L10NValues.VARIABLE_CLIPBOARD_ERROR_DISABLED));
+            if (element instanceof DecodeLPElement decodeElement) {
+                if (!GeneralConfig.valueDecodingEnabled) {
+                    decodeElement.setError(Component.translatable(L10NValues.VALUE_ENCODING_ERROR_DISABLED));
                 } else if (value == null || value.isEmpty()) {
-                    clipboardElement.clear();
+                    decodeElement.clear();
                 } else {
                     try {
-                        clipboardElement.setValue(VariableClipboardHelpers.deserialize(
+                        decodeElement.setValue(ValueEncodingHelpers.decode(
                                 ValueDeseralizationContext.of(world), value,
-                                GeneralConfig.variableClipboardMaxPayloadLength));
-                    } catch (VariableClipboardHelpers.VariableClipboardException e) {
-                        clipboardElement.setError(e.getErrorMessage());
+                                GeneralConfig.valueEncodingMaxLength));
+                    } catch (ValueEncodingHelpers.ValueEncodingException e) {
+                        decodeElement.setError(e.getErrorMessage());
                     }
                 }
                 container.onDirty();

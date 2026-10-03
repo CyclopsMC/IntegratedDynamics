@@ -30,28 +30,28 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 /**
- * Helpers for copying materialized values to, and pasting them from, the clipboard.
+ * Helpers for encoding materialized values into strings, and decoding them again.
  *
- * Values are shared as a single SNBT compound, optionally gzipped and base64-encoded behind a prefix.
- * Only materialized values can be pasted, as other values refer to state that is meaningless,
+ * Values are encoded as a single SNBT compound, optionally gzipped and base64-encoded behind a prefix.
+ * Only materialized values can be encoded and decoded, as other values refer to state that is meaningless,
  * or even abusable, in another world.
  *
  * @author rubensworks
  */
-public class VariableClipboardHelpers {
+public class ValueEncodingHelpers {
 
     /**
-     * The prefix that marks a gzipped and base64-encoded payload.
+     * The prefix that marks a gzipped and base64-encoded value.
      */
     public static final String PREFIX_COMPRESSED = "idynvar1:";
 
     /**
-     * The maximum nesting depth of a payload, to bound the recursion over handcrafted payloads.
+     * The maximum nesting depth of an encoded value, to bound the recursion over handcrafted ones.
      */
     public static final int MAX_DEPTH = 512;
 
     /**
-     * The versions of Minecraft and this mod that a value was copied in.
+     * The versions of Minecraft and this mod that a value was encoded in.
      * These are only informative, so values are never rejected based on them.
      */
     public static final String KEY_VERSION = "version";
@@ -63,14 +63,20 @@ public class VariableClipboardHelpers {
     public static final String KEY_SERIALIZER = "serializer";
 
     /**
-     * Serialize the given value to a versioned tag, as it is sent over the network.
+     * Encode the given value into a versioned tag, as it is sent over the network.
      * @param valueDeseralizationContext A value deserialization context.
-     * @param value The value to serialize.
-     * @return The serialized value.
+     * @param value A materialized value.
+     * @param maxLength The maximum length of the uncompressed encoded value.
+     * @return The encoded value.
+     * @throws ValueEncodingException If the value is not materialized or too large.
      */
-    public static CompoundTag serializeToTag(ValueDeseralizationContext valueDeseralizationContext, IValue value) {
+    public static CompoundTag encodeToTag(ValueDeseralizationContext valueDeseralizationContext, IValue value, int maxLength)
+            throws ValueEncodingException {
         CompoundTag tag = ValueHelpers.serialize(valueDeseralizationContext, value);
         tag.put(KEY_VERSION, createVersionTag());
+        // Fail when encoding, instead of producing something that can never be decoded
+        validateMaterialized(tag);
+        checkLength(tag.toString().length(), maxLength);
         return tag;
     }
 
@@ -93,92 +99,96 @@ public class VariableClipboardHelpers {
     }
 
     /**
-     * Format the given serialized value as a clipboard string.
-     * @param tag A serialized value.
+     * Format the given encoded value as a string.
+     * @param tag An encoded value.
      * @param compressed If the compressed form must be used instead of the human-readable one.
-     * @return The clipboard string.
-     * @throws VariableClipboardException If the value could not be compressed.
+     * @return The encoded string.
+     * @throws ValueEncodingException If the value could not be compressed.
      */
-    public static String format(CompoundTag tag, boolean compressed) throws VariableClipboardException {
+    public static String format(CompoundTag tag, boolean compressed) throws ValueEncodingException {
         String snbt = tag.toString();
         return compressed ? compress(snbt) : snbt;
     }
 
     /**
-     * Serialize the given value to a human-readable SNBT string.
+     * Encode the given value into a human-readable SNBT string.
      * @param valueDeseralizationContext A value deserialization context.
-     * @param value The value to serialize.
-     * @return The serialized value.
+     * @param value A materialized value.
+     * @param maxLength The maximum length of the encoded value.
+     * @return The encoded value.
+     * @throws ValueEncodingException If the value is not materialized or too large.
      */
-    public static String serialize(ValueDeseralizationContext valueDeseralizationContext, IValue value) {
-        return serializeToTag(valueDeseralizationContext, value).toString();
+    public static String encode(ValueDeseralizationContext valueDeseralizationContext, IValue value, int maxLength)
+            throws ValueEncodingException {
+        return format(encodeToTag(valueDeseralizationContext, value, maxLength), false);
     }
 
     /**
-     * Serialize the given value to a compressed single-line string.
+     * Encode the given value into a compressed single-line string.
      * @param valueDeseralizationContext A value deserialization context.
-     * @param value The value to serialize.
-     * @return The serialized value.
-     * @throws VariableClipboardException If the value could not be compressed.
+     * @param value A materialized value.
+     * @param maxLength The maximum length of the uncompressed encoded value.
+     * @return The encoded value.
+     * @throws ValueEncodingException If the value is not materialized, too large, or could not be compressed.
      */
-    public static String serializeCompressed(ValueDeseralizationContext valueDeseralizationContext, IValue value)
-            throws VariableClipboardException {
-        return compress(serialize(valueDeseralizationContext, value));
+    public static String encodeCompressed(ValueDeseralizationContext valueDeseralizationContext, IValue value, int maxLength)
+            throws ValueEncodingException {
+        return format(encodeToTag(valueDeseralizationContext, value, maxLength), true);
     }
 
-    protected static String compress(String snbt) throws VariableClipboardException {
+    protected static String compress(String snbt) throws ValueEncodingException {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         try (GZIPOutputStream gzip = new GZIPOutputStream(output)) {
             gzip.write(snbt.getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
-            throw new VariableClipboardException(Component.translatable(L10NValues.VARIABLE_CLIPBOARD_ERROR_PARSE));
+            throw new ValueEncodingException(Component.translatable(L10NValues.VALUE_ENCODING_ERROR_PARSE));
         }
         return PREFIX_COMPRESSED + Base64.getEncoder().encodeToString(output.toByteArray());
     }
 
     /**
-     * Deserialize a value from the given clipboard string.
+     * Decode a value from the given encoded string.
      * Both the human-readable and the compressed form are accepted.
      * @param valueDeseralizationContext A value deserialization context.
-     * @param input A clipboard string.
-     * @param maxLength The maximum length of the uncompressed payload.
+     * @param input An encoded string.
+     * @param maxLength The maximum length of the uncompressed encoded value.
      * @return The value.
-     * @throws VariableClipboardException If the string does not hold a valid materialized value.
+     * @throws ValueEncodingException If the string does not hold a valid materialized value.
      */
-    public static IValue deserialize(ValueDeseralizationContext valueDeseralizationContext, String input, int maxLength)
-            throws VariableClipboardException {
-        return deserialize(valueDeseralizationContext, parse(input, maxLength), maxLength);
+    public static IValue decode(ValueDeseralizationContext valueDeseralizationContext, String input, int maxLength)
+            throws ValueEncodingException {
+        return decode(valueDeseralizationContext, parse(input, maxLength), maxLength);
     }
 
     /**
-     * Parse the given clipboard string into a serialized value.
+     * Parse the given encoded string into an encoded value.
      * Both the human-readable and the compressed form are accepted.
-     * @param input A clipboard string.
-     * @param maxLength The maximum length of the uncompressed payload.
-     * @return The serialized value.
-     * @throws VariableClipboardException If the string is malformed or too large.
+     * @param input An encoded string.
+     * @param maxLength The maximum length of the uncompressed encoded value.
+     * @return The encoded value.
+     * @throws ValueEncodingException If the string is malformed or too large.
      */
-    public static CompoundTag parse(String input, int maxLength) throws VariableClipboardException {
+    public static CompoundTag parse(String input, int maxLength) throws ValueEncodingException {
         try {
             return TagParser.parseTag(toSnbt(input, maxLength));
         } catch (CommandSyntaxException e) {
-            throw new VariableClipboardException(Component.translatable(L10NValues.VARIABLE_CLIPBOARD_ERROR_PARSE));
+            throw new ValueEncodingException(Component.translatable(L10NValues.VALUE_ENCODING_ERROR_PARSE));
         }
     }
 
     /**
-     * Deserialize a value from the given serialized tag.
+     * Decode a value from the given encoded value.
      * @param valueDeseralizationContext A value deserialization context.
-     * @param tag A serialized value.
-     * @param maxLength The maximum length of the uncompressed payload.
+     * @param tag An encoded value.
+     * @param maxLength The maximum length of the uncompressed encoded value.
      * @return The value.
-     * @throws VariableClipboardException If the tag does not hold a valid materialized value.
+     * @throws ValueEncodingException If the tag does not hold a valid materialized value.
      */
-    public static IValue deserialize(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag, int maxLength)
-            throws VariableClipboardException {
+    public static IValue decode(ValueDeseralizationContext valueDeseralizationContext, CompoundTag tag, int maxLength)
+            throws ValueEncodingException {
         checkLength(tag.toString().length(), maxLength);
         if (!tag.contains(KEY_VALUE_TYPE, Tag.TAG_STRING) || !tag.contains(KEY_VALUE)) {
-            throw new VariableClipboardException(Component.translatable(L10NValues.VARIABLE_CLIPBOARD_ERROR_PARSE));
+            throw new ValueEncodingException(Component.translatable(L10NValues.VALUE_ENCODING_ERROR_PARSE));
         }
         validateMaterialized(tag);
 
@@ -186,43 +196,43 @@ public class VariableClipboardHelpers {
         try {
             value = ValueHelpers.deserialize(valueDeseralizationContext, tag);
         } catch (RuntimeException e) {
-            // Payloads can be handcrafted, so a value type can fail on them in any way
-            throw new VariableClipboardException(Component.translatable(L10NValues.VARIABLE_CLIPBOARD_ERROR_PARSE));
+            // Encoded values can be handcrafted, so a value type can fail on them in any way
+            throw new ValueEncodingException(Component.translatable(L10NValues.VALUE_ENCODING_ERROR_PARSE));
         }
         if (value == null) {
-            throw new VariableClipboardException(Component.translatable(L10NValues.VARIABLE_CLIPBOARD_ERROR_VALUETYPE,
+            throw new ValueEncodingException(Component.translatable(L10NValues.VALUE_ENCODING_ERROR_VALUETYPE,
                     tag.getString(KEY_VALUE_TYPE)));
         }
         return value;
     }
 
     /**
-     * @param input A clipboard string.
-     * @param maxLength The maximum length of the uncompressed payload.
-     * @return The uncompressed SNBT payload of the given clipboard string.
-     * @throws VariableClipboardException If the string is malformed or too large.
+     * @param input An encoded string.
+     * @param maxLength The maximum length of the uncompressed encoded value.
+     * @return The uncompressed SNBT of the given encoded string.
+     * @throws ValueEncodingException If the string is malformed or too large.
      */
-    protected static String toSnbt(String input, int maxLength) throws VariableClipboardException {
+    protected static String toSnbt(String input, int maxLength) throws ValueEncodingException {
         String trimmed = input.trim();
         if (trimmed.startsWith(PREFIX_COMPRESSED)) {
             return decompress(trimmed.substring(PREFIX_COMPRESSED.length()), maxLength);
         }
         if (!trimmed.startsWith("{")) {
-            throw new VariableClipboardException(Component.translatable(L10NValues.VARIABLE_CLIPBOARD_ERROR_PARSE));
+            throw new ValueEncodingException(Component.translatable(L10NValues.VALUE_ENCODING_ERROR_PARSE));
         }
         checkLength(trimmed.length(), maxLength);
         return trimmed;
     }
 
-    protected static String decompress(String base64, int maxLength) throws VariableClipboardException {
+    protected static String decompress(String base64, int maxLength) throws ValueEncodingException {
         byte[] compressed;
         try {
             compressed = Base64.getDecoder().decode(base64);
         } catch (IllegalArgumentException e) {
-            throw new VariableClipboardException(Component.translatable(L10NValues.VARIABLE_CLIPBOARD_ERROR_PARSE));
+            throw new ValueEncodingException(Component.translatable(L10NValues.VALUE_ENCODING_ERROR_PARSE));
         }
 
-        // Read at most one byte beyond the maximum, so that a small payload can not expand into a huge one.
+        // Stop reading beyond the maximum, so that a small string can not expand into a huge one
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         byte[] buffer = new byte[4096];
         try (GZIPInputStream gzip = new GZIPInputStream(new ByteArrayInputStream(compressed))) {
@@ -232,34 +242,34 @@ public class VariableClipboardHelpers {
                 checkLength(output.size(), maxLength);
             }
         } catch (IOException e) {
-            throw new VariableClipboardException(Component.translatable(L10NValues.VARIABLE_CLIPBOARD_ERROR_PARSE));
+            throw new ValueEncodingException(Component.translatable(L10NValues.VALUE_ENCODING_ERROR_PARSE));
         }
         return output.toString(StandardCharsets.UTF_8);
     }
 
-    protected static void checkLength(int length, int maxLength) throws VariableClipboardException {
+    protected static void checkLength(int length, int maxLength) throws ValueEncodingException {
         if (length > maxLength) {
-            throw new VariableClipboardException(Component.translatable(
-                    L10NValues.VARIABLE_CLIPBOARD_ERROR_TOOLARGE, length, maxLength));
+            throw new ValueEncodingException(Component.translatable(
+                    L10NValues.VALUE_ENCODING_ERROR_TOOLARGE, length, maxLength));
         }
     }
 
     /**
      * Check that the given tag only holds materialized state.
      *
-     * Non-materialized values refer to a position in a world, which would allow a handcrafted payload
+     * Non-materialized values refer to a position in a world, which would allow a handcrafted value
      * to read blocks that the player has no access to.
      *
-     * @param tag A serialized value.
-     * @throws VariableClipboardException If the tag holds anything that is not materialized.
+     * @param tag An encoded value.
+     * @throws ValueEncodingException If the tag holds anything that is not materialized.
      */
-    public static void validateMaterialized(Tag tag) throws VariableClipboardException {
+    public static void validateMaterialized(Tag tag) throws ValueEncodingException {
         validateMaterialized(tag, 0);
     }
 
-    protected static void validateMaterialized(Tag tag, int depth) throws VariableClipboardException {
+    protected static void validateMaterialized(Tag tag, int depth) throws ValueEncodingException {
         if (depth > MAX_DEPTH) {
-            throw new VariableClipboardException(Component.translatable(L10NValues.VARIABLE_CLIPBOARD_ERROR_PARSE));
+            throw new ValueEncodingException(Component.translatable(L10NValues.VALUE_ENCODING_ERROR_PARSE));
         }
         if (tag instanceof CompoundTag compoundTag) {
             if (compoundTag.contains(KEY_PROXY_NAME, Tag.TAG_STRING)) {
@@ -267,8 +277,8 @@ public class VariableClipboardHelpers {
                 IValueTypeListProxyFactoryTypeRegistry.IProxyFactory factory = ValueTypeListProxyFactories.REGISTRY
                         .getFactory(parseName(proxyName));
                 if (factory == null || !factory.isMaterialized()) {
-                    throw new VariableClipboardException(Component.translatable(
-                            L10NValues.VARIABLE_CLIPBOARD_ERROR_UNMATERIALIZED, proxyName));
+                    throw new ValueEncodingException(Component.translatable(
+                            L10NValues.VALUE_ENCODING_ERROR_UNMATERIALIZED, proxyName));
                 }
             }
             if (compoundTag.contains(KEY_SERIALIZER, Tag.TAG_STRING)) {
@@ -276,8 +286,8 @@ public class VariableClipboardHelpers {
                 IOperatorSerializer serializer = Operators.REGISTRY
                         .getSerializer(parseName(serializerName));
                 if (serializer == null || !serializer.isMaterialized()) {
-                    throw new VariableClipboardException(Component.translatable(
-                            L10NValues.VARIABLE_CLIPBOARD_ERROR_UNMATERIALIZED, serializerName));
+                    throw new ValueEncodingException(Component.translatable(
+                            L10NValues.VALUE_ENCODING_ERROR_UNMATERIALIZED, serializerName));
                 }
             }
             for (String key : compoundTag.getAllKeys()) {
@@ -291,26 +301,26 @@ public class VariableClipboardHelpers {
     }
 
     /**
-     * @param name A name from a payload, which can be anything.
+     * @param name A name from an encoded value, which can be anything.
      * @return The parsed name, which never matches a registered one if the name is malformed.
      */
-    protected static ResourceLocation parseName(String name) throws VariableClipboardException {
+    protected static ResourceLocation parseName(String name) throws ValueEncodingException {
         ResourceLocation parsed = ResourceLocation.tryParse(name);
         if (parsed == null) {
-            throw new VariableClipboardException(Component.translatable(
-                    L10NValues.VARIABLE_CLIPBOARD_ERROR_UNMATERIALIZED, name));
+            throw new ValueEncodingException(Component.translatable(
+                    L10NValues.VALUE_ENCODING_ERROR_UNMATERIALIZED, name));
         }
         return parsed;
     }
 
     /**
-     * An error while copying or pasting a value.
+     * An error while encoding or decoding a value.
      */
-    public static class VariableClipboardException extends Exception {
+    public static class ValueEncodingException extends Exception {
 
         private final MutableComponent errorMessage;
 
-        public VariableClipboardException(MutableComponent errorMessage) {
+        public ValueEncodingException(MutableComponent errorMessage) {
             this.errorMessage = errorMessage;
         }
 

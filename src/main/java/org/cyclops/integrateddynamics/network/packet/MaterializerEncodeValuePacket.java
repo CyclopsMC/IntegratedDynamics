@@ -23,27 +23,27 @@ import org.cyclops.integrateddynamics.blockentity.BlockEntityMaterializer;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
-import org.cyclops.integrateddynamics.core.helper.VariableClipboardHelpers;
+import org.cyclops.integrateddynamics.core.helper.ValueEncodingHelpers;
 import org.cyclops.integrateddynamics.inventory.container.ContainerMaterializer;
 
 /**
- * Packet for requesting the materialized value of a materializer, so that it can be copied to the clipboard.
+ * Packet for requesting the encoded materialized value of a materializer, so that it can be copied to the clipboard.
  * @author rubensworks
  *
  */
-public class MaterializerCopyValuePacket extends PacketCodec {
+public class MaterializerEncodeValuePacket extends PacketCodec {
 
-    public static final Type<MaterializerCopyValuePacket> ID = new Type<>(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "materializer_copy_value"));
-    public static final StreamCodec<RegistryFriendlyByteBuf, MaterializerCopyValuePacket> CODEC = getCodec(MaterializerCopyValuePacket::new);
+    public static final Type<MaterializerEncodeValuePacket> ID = new Type<>(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "materializer_encode_value"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, MaterializerEncodeValuePacket> CODEC = getCodec(MaterializerEncodeValuePacket::new);
 
     @CodecField
     private boolean compressed;
 
-    public MaterializerCopyValuePacket() {
+    public MaterializerEncodeValuePacket() {
         super(ID);
     }
 
-    public MaterializerCopyValuePacket(boolean compressed) {
+    public MaterializerEncodeValuePacket(boolean compressed) {
         super(ID);
         this.compressed = compressed;
     }
@@ -82,20 +82,21 @@ public class MaterializerCopyValuePacket extends PacketCodec {
             }
         }
         if (value == null) {
-            player.sendSystemMessage(Component.translatable(L10NValues.VARIABLE_CLIPBOARD_ERROR_NOTHINGTOCOPY));
+            player.sendSystemMessage(Component.translatable(L10NValues.VALUE_ENCODING_ERROR_NOTHINGTOENCODE));
             return;
         }
 
-        CompoundTag tag = VariableClipboardHelpers.serializeToTag(ValueDeseralizationContext.of(world), value);
-        int length = tag.toString().length();
-        if (length > GeneralConfig.variableClipboardMaxPayloadLength) {
-            player.sendSystemMessage(Component.translatable(L10NValues.VARIABLE_CLIPBOARD_ERROR_TOOLARGE,
-                    length, GeneralConfig.variableClipboardMaxPayloadLength));
+        CompoundTag tag;
+        try {
+            tag = ValueEncodingHelpers.encodeToTag(ValueDeseralizationContext.of(world), value,
+                    GeneralConfig.valueEncodingMaxLength);
+        } catch (ValueEncodingHelpers.ValueEncodingException e) {
+            player.sendSystemMessage(e.getErrorMessage());
             return;
         }
 
         IntegratedDynamics._instance.getPacketHandler().sendToPlayer(
-                new VariableClipboardCopyPacket(tag, compressed), player);
+                new EncodedValueClipboardPacket(tag, compressed), player);
     }
 
 }

@@ -15,28 +15,28 @@ import org.cyclops.cyclopscore.network.CodecField;
 import org.cyclops.cyclopscore.network.PacketCodec;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
-import org.cyclops.integrateddynamics.core.helper.VariableClipboardHelpers;
+import org.cyclops.integrateddynamics.core.helper.ValueEncodingHelpers;
 
 /**
- * Packet for placing a serialized value on the clipboard of a player.
+ * Packet for placing an encoded value on the clipboard of a player.
  * @author rubensworks
  *
  */
-public class VariableClipboardCopyPacket extends PacketCodec {
+public class EncodedValueClipboardPacket extends PacketCodec {
 
-    public static final Type<VariableClipboardCopyPacket> ID = new Type<>(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "variable_clipboard_copy"));
-    public static final StreamCodec<RegistryFriendlyByteBuf, VariableClipboardCopyPacket> CODEC = getCodec(VariableClipboardCopyPacket::new);
+    public static final Type<EncodedValueClipboardPacket> ID = new Type<>(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "encoded_value_clipboard"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, EncodedValueClipboardPacket> CODEC = getCodec(EncodedValueClipboardPacket::new);
 
     @CodecField
     private CompoundTag value;
     @CodecField
     private boolean compressed;
 
-    public VariableClipboardCopyPacket() {
+    public EncodedValueClipboardPacket() {
         super(ID);
     }
 
-    public VariableClipboardCopyPacket(CompoundTag value, boolean compressed) {
+    public EncodedValueClipboardPacket(CompoundTag value, boolean compressed) {
         super(ID);
         this.value = value;
         this.compressed = compressed;
@@ -51,10 +51,10 @@ public class VariableClipboardCopyPacket extends PacketCodec {
     @OnlyIn(Dist.CLIENT)
     public void actionClient(Level world, Player player) {
         try {
-            Minecraft.getInstance().keyboardHandler.setClipboard(VariableClipboardHelpers.format(value, compressed));
+            Minecraft.getInstance().keyboardHandler.setClipboard(ValueEncodingHelpers.format(value, compressed));
             // An overlay message would be hidden behind the open gui, so this goes to the chat
-            player.displayClientMessage(Component.translatable(L10NValues.VARIABLE_CLIPBOARD_COPIED), false);
-        } catch (VariableClipboardHelpers.VariableClipboardException e) {
+            player.displayClientMessage(Component.translatable(L10NValues.VALUE_ENCODING_COPIED), false);
+        } catch (ValueEncodingHelpers.ValueEncodingException e) {
             player.displayClientMessage(e.getErrorMessage(), false);
         }
     }

@@ -60,7 +60,6 @@ import org.cyclops.commoncapabilities.api.capability.recipehandler.RecipeDefinit
 import org.cyclops.commoncapabilities.api.ingredient.*;
 import org.cyclops.cyclopscore.helper.BlockHelpers;
 import org.cyclops.cyclopscore.helper.FluidHelpers;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
 import org.cyclops.cyclopscore.nbt.path.INbtPathExpression;
 import org.cyclops.cyclopscore.nbt.path.NbtParseException;
@@ -78,7 +77,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.helper.NbtHelpers;
-import org.cyclops.integrateddynamics.core.helper.VariableClipboardHelpers;
+import org.cyclops.integrateddynamics.core.helper.ValueEncodingHelpers;
 import org.cyclops.integrateddynamics.core.ingredient.ExtendedIngredientsList;
 import org.cyclops.integrateddynamics.core.ingredient.ExtendedIngredientsSingle;
 
@@ -4355,31 +4354,6 @@ public final class Operators {
     }));
 
     /**
-     * Any Parse operator which takes a value that was copied to the clipboard, in either of its forms.
-     */
-    public static final IOperator PARSE_ANY = Operators.REGISTRY.register(new ParseOperator<>(ValueTypes.CATEGORY_ANY, v -> {
-      ValueTypeString.ValueString value = v.getValue(0, ValueTypes.STRING);
-      if (!GeneralConfig.variableClipboardPasteEnabled) {
-        throw new EvaluationException(Component.translatable(L10NValues.VARIABLE_CLIPBOARD_ERROR_DISABLED));
-      }
-      try {
-        return VariableClipboardHelpers.deserialize(ValueDeseralizationContext.ofAllEnabled(), value.getRawValue(),
-                GeneralConfig.variableClipboardMaxPayloadLength);
-      } catch (VariableClipboardHelpers.VariableClipboardException e) {
-        throw new EvaluationException(e.getErrorMessage());
-      }
-    }) {
-      @Override
-      public void loadTooltip(List<Component> lines, boolean appendOptionalInfo) {
-        super.loadTooltip(lines, appendOptionalInfo);
-        if (appendOptionalInfo) {
-          // All parse operators share their translation key, so this one needs its own info
-          L10NHelpers.addOptionalInfo(lines, L10NValues.OPERATOR_PARSE_ANY);
-        }
-      }
-    });
-
-    /**
      * ----------------------------------- GENERAL OPERATORS -----------------------------------
      */
 
@@ -4397,5 +4371,39 @@ public final class Operators {
      * Constant operator with two any inputs and one any output
      */
     public static final GeneralOperator GENERAL_CONSTANT = REGISTRY.register(new GeneralConstantOperator("K", "constant", "constant"));
+
+    /**
+     * Encode operator with one input any and one output string, which decode turns back into the value.
+     */
+    public static final IOperator GENERAL_ENCODE = REGISTRY.register(OperatorBuilders.GENERAL_1_PREFIX_LONG
+            .symbol("encode").operatorName("encode").interactName("encode")
+            .output(ValueTypes.STRING).function(variables -> {
+                IValue value = variables.getValue(0);
+                IValue materialized = (IValue) ((IValueType) value.getType()).materialize(value);
+                try {
+                    return ValueTypeString.ValueString.of(ValueEncodingHelpers.encode(
+                            ValueDeseralizationContext.ofAllEnabled(), materialized, GeneralConfig.valueEncodingMaxLength));
+                } catch (ValueEncodingHelpers.ValueEncodingException e) {
+                    throw new EvaluationException(e.getErrorMessage());
+                }
+            }).build());
+
+    /**
+     * Decode operator with one input string and one output any, which takes a value in either of its encoded forms.
+     */
+    public static final IOperator GENERAL_DECODE = REGISTRY.register(OperatorBuilders.GENERAL_1_PREFIX_LONG
+            .symbol("decode").operatorName("decode").interactName("decode")
+            .inputType(ValueTypes.STRING).output(ValueTypes.CATEGORY_ANY).function(variables -> {
+                ValueTypeString.ValueString value = variables.getValue(0, ValueTypes.STRING);
+                if (!GeneralConfig.valueDecodingEnabled) {
+                    throw new EvaluationException(Component.translatable(L10NValues.VALUE_ENCODING_ERROR_DISABLED));
+                }
+                try {
+                    return ValueEncodingHelpers.decode(ValueDeseralizationContext.ofAllEnabled(), value.getRawValue(),
+                            GeneralConfig.valueEncodingMaxLength);
+                } catch (ValueEncodingHelpers.ValueEncodingException e) {
+                    throw new EvaluationException(e.getErrorMessage());
+                }
+            }).build());
 
 }

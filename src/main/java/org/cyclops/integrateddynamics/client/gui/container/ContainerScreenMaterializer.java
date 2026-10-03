@@ -13,7 +13,7 @@ import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.client.gui.image.Images;
 import org.cyclops.integrateddynamics.core.client.gui.ContainerScreenActiveVariableBase;
 import org.cyclops.integrateddynamics.inventory.container.ContainerMaterializer;
-import org.cyclops.integrateddynamics.network.packet.MaterializerCopyValuePacket;
+import org.cyclops.integrateddynamics.network.packet.MaterializerEncodeValuePacket;
 import org.lwjgl.glfw.GLFW;
 
 /**
@@ -34,13 +34,13 @@ public class ContainerScreenMaterializer extends ContainerScreenActiveVariableBa
         super.init();
 
         // Next to the gui, where this mod puts the buttons of a part as well
-        addCopyButton(0, Images.BUTTON_MIDDLE_COPY, "gui.integrateddynamics.materializer.copy", false);
-        addCopyButton(20, Images.BUTTON_MIDDLE_COPY_COMPRESSED, "gui.integrateddynamics.materializer.copy_compressed", true);
+        addEncodeButton(0, Images.BUTTON_MIDDLE_ENCODE, "gui.integrateddynamics.materializer.encode", false);
+        addEncodeButton(20, Images.BUTTON_MIDDLE_ENCODE_COMPRESSED, "gui.integrateddynamics.materializer.encode_compressed", true);
     }
 
-    protected void addCopyButton(int offsetY, IImage image, String tooltipKey, boolean compressed) {
+    protected void addEncodeButton(int offsetY, IImage image, String tooltipKey, boolean compressed) {
         ButtonImage button = new ButtonImage(this.leftPos - 20, this.topPos + offsetY, 18, 18,
-                Component.translatable(tooltipKey), (b) -> valueToClipboard(compressed),
+                Component.translatable(tooltipKey), (b) -> encodeToClipboard(compressed),
                 new IImage[]{Images.BUTTON_BACKGROUND_INACTIVE, image}, false, 0, 0);
         button.setTooltip(Tooltip.create(Component.translatable(tooltipKey)));
         addRenderableWidget(button);
@@ -69,17 +69,17 @@ public class ContainerScreenMaterializer extends ContainerScreenActiveVariableBa
     @Override
     public boolean charTyped(char typedChar, int keyCode) {
         if (GLFW.GLFW_KEY_C == keyCode && KeyModifier.CONTROL.isActive(KeyConflictContext.GUI)) {
-            valueToClipboard(false);
+            encodeToClipboard(false);
             return true;
         }
         return super.charTyped(typedChar, keyCode);
     }
 
     /**
-     * Ask the server for the materialized value, which is then placed on the clipboard.
+     * Ask the server for the encoded materialized value, which is then placed on the clipboard.
      * @param compressed If the compressed form must be used instead of the human-readable one.
      */
-    protected void valueToClipboard(boolean compressed) {
-        IntegratedDynamics._instance.getPacketHandler().sendToServer(new MaterializerCopyValuePacket(compressed));
+    protected void encodeToClipboard(boolean compressed) {
+        IntegratedDynamics._instance.getPacketHandler().sendToServer(new MaterializerEncodeValuePacket(compressed));
     }
 }

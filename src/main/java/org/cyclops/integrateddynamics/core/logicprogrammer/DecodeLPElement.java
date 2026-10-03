@@ -31,12 +31,12 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 /**
- * Element for creating a variable from a value that was copied to the clipboard,
- * possibly in another world.
+ * Element for creating a variable from an encoded value,
+ * which may have been encoded in another world.
  *
  * @author rubensworks
  */
-public class ClipboardLPElement implements ILogicProgrammerElement<ISubGuiBox, ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase> {
+public class DecodeLPElement implements ILogicProgrammerElement<ISubGuiBox, ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase> {
 
     // A text field, and two lines below it to show the pasted value or its error
     private static final IConfigRenderPattern RENDER_PATTERN = new IConfigRenderPattern.Base(150, 44, new Pair[0], null);
@@ -85,7 +85,7 @@ public class ClipboardLPElement implements ILogicProgrammerElement<ISubGuiBox, C
 
     @Override
     public ILogicProgrammerElementType getType() {
-        return LogicProgrammerElementTypes.CLIPBOARD;
+        return LogicProgrammerElementTypes.DECODE;
     }
 
     @Override
@@ -160,12 +160,12 @@ public class ClipboardLPElement implements ILogicProgrammerElement<ISubGuiBox, C
 
     @Override
     public Component getName() {
-        return Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_CLIPBOARD);
+        return Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_DECODE);
     }
 
     @Override
     public void loadTooltip(List<Component> lines) {
-        lines.add(Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_CLIPBOARD_TOOLTIP));
+        lines.add(Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_DECODE_TOOLTIP));
     }
 
     @Override
@@ -191,7 +191,7 @@ public class ClipboardLPElement implements ILogicProgrammerElement<ISubGuiBox, C
             return error;
         }
         if (value == null) {
-            return Component.translatable(L10NValues.VARIABLE_CLIPBOARD_ERROR_NOVALUE);
+            return Component.translatable(L10NValues.VALUE_ENCODING_ERROR_NOVALUE);
         }
         return null;
     }
@@ -204,19 +204,19 @@ public class ClipboardLPElement implements ILogicProgrammerElement<ISubGuiBox, C
     @Override
     public String getSymbol() {
         // This is what the element list shows
-        return L10NHelpers.localize(L10NValues.GUI_LOGICPROGRAMMER_CLIPBOARD);
+        return L10NHelpers.localize(L10NValues.GUI_LOGICPROGRAMMER_DECODE);
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
     public boolean isFocused(ISubGuiBox subGui) {
-        return ((ClipboardLPElementRenderPattern) subGui).getTextField().isFocused();
+        return ((DecodeLPElementRenderPattern) subGui).getTextField().isFocused();
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
     public void setFocused(ISubGuiBox subGui, boolean focused) {
-        ((ClipboardLPElementRenderPattern) subGui).getTextField().setFocused(focused);
+        ((DecodeLPElementRenderPattern) subGui).getTextField().setFocused(focused);
     }
 
     @Override
@@ -234,7 +234,7 @@ public class ClipboardLPElement implements ILogicProgrammerElement<ISubGuiBox, C
     @OnlyIn(Dist.CLIENT)
     public ISubGuiBox createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
                                    ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
-        return new ClipboardLPElementRenderPattern(this, baseX, baseY, maxWidth, maxHeight, gui, container);
+        return new DecodeLPElementRenderPattern(this, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 
 }

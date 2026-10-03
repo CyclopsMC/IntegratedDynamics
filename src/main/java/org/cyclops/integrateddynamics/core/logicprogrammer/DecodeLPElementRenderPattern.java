@@ -17,16 +17,16 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
-import org.cyclops.integrateddynamics.core.helper.VariableClipboardHelpers;
+import org.cyclops.integrateddynamics.core.helper.ValueEncodingHelpers;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
-import org.cyclops.integrateddynamics.network.packet.LogicProgrammerClipboardValueChangedPacket;
+import org.cyclops.integrateddynamics.network.packet.LogicProgrammerDecodeValueChangedPacket;
 
 /**
- * Render pattern for the clipboard element, into which a copied value is pasted.
+ * Render pattern for the decode element, into which an encoded value is pasted.
  * @author rubensworks
  */
 @OnlyIn(Dist.CLIENT)
-public class ClipboardLPElementRenderPattern extends RenderPattern<ClipboardLPElement, ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase> {
+public class DecodeLPElementRenderPattern extends RenderPattern<DecodeLPElement, ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase> {
 
     private static final int COLOR_VALUE = Helpers.RGBToInt(40, 40, 40);
     private static final int COLOR_HINT = Helpers.RGBToInt(110, 110, 110);
@@ -35,7 +35,7 @@ public class ClipboardLPElementRenderPattern extends RenderPattern<ClipboardLPEl
     @Getter
     private WidgetTextFieldExtended textField = null;
 
-    public ClipboardLPElementRenderPattern(ClipboardLPElement element, int baseX, int baseY, int maxWidth, int maxHeight,
+    public DecodeLPElementRenderPattern(DecodeLPElement element, int baseX, int baseY, int maxWidth, int maxHeight,
                                            ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
         super(element, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
@@ -45,8 +45,8 @@ public class ClipboardLPElementRenderPattern extends RenderPattern<ClipboardLPEl
         super.init(guiLeft, guiTop);
         Font font = Minecraft.getInstance().font;
         this.textField = new WidgetTextFieldExtended(font, guiLeft + getX() + 6, guiTop + getY() + 6, getWidth() - 12,
-                font.lineHeight + 3, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_CLIPBOARD), true);
-        this.textField.setMaxLength(GeneralConfig.variableClipboardMaxPayloadLength);
+                font.lineHeight + 3, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_DECODE), true);
+        this.textField.setMaxLength(GeneralConfig.valueEncodingMaxLength);
         this.textField.setBordered(false);
         this.textField.setTextColor(16777215);
         this.textField.setCanLoseFocus(true);
@@ -73,7 +73,7 @@ public class ClipboardLPElementRenderPattern extends RenderPattern<ClipboardLPEl
             guiGraphics.drawWordWrap(fontRenderer, getElement().getError(), x, y, width, COLOR_ERROR);
         } else {
             // A hint inside the text field would only show while it is not focused
-            guiGraphics.drawWordWrap(fontRenderer, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_CLIPBOARD_HINT),
+            guiGraphics.drawWordWrap(fontRenderer, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_DECODE_HINT),
                     x, y, width, COLOR_HINT);
         }
     }
@@ -115,11 +115,11 @@ public class ClipboardLPElementRenderPattern extends RenderPattern<ClipboardLPEl
             getElement().clear();
         } else {
             try {
-                tag = VariableClipboardHelpers.parse(input, GeneralConfig.variableClipboardMaxPayloadLength);
+                tag = ValueEncodingHelpers.parse(input, GeneralConfig.valueEncodingMaxLength);
                 // Validated client-side as well, so that errors are shown without a round trip
-                getElement().setValue(VariableClipboardHelpers.deserialize(ValueDeseralizationContext.ofClient(), tag,
-                        GeneralConfig.variableClipboardMaxPayloadLength));
-            } catch (VariableClipboardHelpers.VariableClipboardException e) {
+                getElement().setValue(ValueEncodingHelpers.decode(ValueDeseralizationContext.ofClient(), tag,
+                        GeneralConfig.valueEncodingMaxLength));
+            } catch (ValueEncodingHelpers.ValueEncodingException e) {
                 getElement().setError(e.getErrorMessage());
                 tag = new CompoundTag();
             }
@@ -128,7 +128,7 @@ public class ClipboardLPElementRenderPattern extends RenderPattern<ClipboardLPEl
 
         // The server validates the value again, the client is only trusted for showing it
         IntegratedDynamics._instance.getPacketHandler().sendToServer(
-                new LogicProgrammerClipboardValueChangedPacket(tag));
+                new LogicProgrammerDecodeValueChangedPacket(tag));
     }
 
 }
