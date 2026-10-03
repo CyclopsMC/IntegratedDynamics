@@ -72,6 +72,7 @@ org.cyclops.integrateddynamics.core.inventory.container
 org.cyclops.integrateddynamics.core.inventory.container.slot
 org.cyclops.integrateddynamics.core.item
 org.cyclops.integrateddynamics.core.logicprogrammer
+org.cyclops.integrateddynamics.core.logicprogrammer.client
 org.cyclops.integrateddynamics.core.logicprogrammer.event
 org.cyclops.integrateddynamics.core.network
 org.cyclops.integrateddynamics.core.network.diagnostics
@@ -87,12 +88,16 @@ org.cyclops.integrateddynamics.core.part.read
 org.cyclops.integrateddynamics.core.part.write
 org.cyclops.integrateddynamics.core.path
 org.cyclops.integrateddynamics.core.persist.world
+org.cyclops.integrateddynamics.core.recipe.category
+org.cyclops.integrateddynamics.core.recipe.display
 org.cyclops.integrateddynamics.core.recipe.handler
 org.cyclops.integrateddynamics.core.recipe.type
 org.cyclops.integrateddynamics.core.test
 org.cyclops.integrateddynamics.entity.item
 org.cyclops.integrateddynamics.fluid
 org.cyclops.integrateddynamics.gametest
+org.cyclops.integrateddynamics.gametest.fuzzing
+org.cyclops.integrateddynamics.gametest.integration
 org.cyclops.integrateddynamics.infobook
 org.cyclops.integrateddynamics.infobook.pageelement
 org.cyclops.integrateddynamics.inventory.container
