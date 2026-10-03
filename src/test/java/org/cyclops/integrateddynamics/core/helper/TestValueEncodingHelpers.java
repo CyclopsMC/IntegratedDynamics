@@ -318,6 +318,38 @@ public class TestValueEncodingHelpers {
     }
 
     @Test
+    public void testRejectNestedWithinDepthOnSmallStack() throws InterruptedException {
+        // The SNBT parser may overflow the stack before reaching the max depth
+        StringBuilder snbt = new StringBuilder("{valueType:\"integrateddynamics:integer\"");
+        for (int i = 0; i < GeneralConfig.valueEncodingMaxDepth - 1; i++) {
+            snbt.append(",v:{a:1");
+        }
+        for (int i = 0; i < GeneralConfig.valueEncodingMaxDepth; i++) {
+            snbt.append("}");
+        }
+        Throwable[] thrown = new Throwable[1];
+        Thread thread = new Thread(null, () -> {
+            try {
+                assertRejected(snbt.toString(), MAX_LENGTH);
+            } catch (Throwable e) {
+                thrown[0] = e;
+            }
+        }, "small-stack", 64 * 1024);
+        thread.start();
+        thread.join();
+        assertThat("no error is thrown", thrown[0], is((Throwable) null));
+    }
+
+    @Test
+    public void testBracketsInStringsDoNotCountAsNesting() throws ValueEncodingHelpers.ValueEncodingException {
+        String brackets = "{[\"'".repeat(GeneralConfig.valueEncodingMaxDepth + 10);
+        IValue value = ValueTypeString.ValueString.of(brackets);
+        assertThat("brackets in strings are decoded",
+                ValueEncodingHelpers.decode(CONTEXT, ValueEncodingHelpers.encode(CONTEXT, value, MAX_LENGTH), MAX_LENGTH),
+                is(value));
+    }
+
+    @Test
     public void testAcceptsPlainOperatorName() throws ValueEncodingHelpers.ValueEncodingException {
         // Operators without a dedicated serializer are stored as a plain name
         CompoundTag tag = new CompoundTag();

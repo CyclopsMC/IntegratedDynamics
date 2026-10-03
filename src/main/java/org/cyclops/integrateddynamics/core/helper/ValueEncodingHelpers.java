@@ -168,10 +168,41 @@ public class ValueEncodingHelpers {
      * @throws ValueEncodingException If the string is malformed or too large.
      */
     public static CompoundTag parse(String input, int maxLength) throws ValueEncodingException {
+        String snbt = toSnbt(input, maxLength);
+        // The SNBT parser recurses without a depth limit, so reject deep nesting before parsing
+        checkSnbtDepth(snbt);
         try {
-            return TagParser.parseCompoundFully(toSnbt(input, maxLength));
-        } catch (CommandSyntaxException e) {
+            return TagParser.parseCompoundFully(snbt);
+        } catch (CommandSyntaxException | StackOverflowError e) {
             throw new ValueEncodingException(Component.translatable(L10NValues.VALUE_ENCODING_ERROR_PARSE));
+        }
+    }
+
+    /**
+     * Check that the nesting depth of compounds and lists in the given SNBT string is within limits.
+     * @param snbt An SNBT string.
+     * @throws ValueEncodingException If the string is nested too deeply.
+     */
+    protected static void checkSnbtDepth(String snbt) throws ValueEncodingException {
+        int depth = 0;
+        char quote = 0;
+        for (int i = 0; i < snbt.length(); i++) {
+            char c = snbt.charAt(i);
+            if (quote != 0) {
+                if (c == '\\') {
+                    i++;
+                } else if (c == quote) {
+                    quote = 0;
+                }
+            } else if (c == '"' || c == '\'') {
+                quote = c;
+            } else if (c == '{' || c == '[') {
+                if (++depth > GeneralConfig.valueEncodingMaxDepth) {
+                    throw new ValueEncodingException(Component.translatable(L10NValues.VALUE_ENCODING_ERROR_PARSE));
+                }
+            } else if (c == '}' || c == ']') {
+                depth--;
+            }
         }
     }
 
