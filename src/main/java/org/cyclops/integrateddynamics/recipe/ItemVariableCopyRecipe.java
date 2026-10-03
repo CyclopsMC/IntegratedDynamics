@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.recipe;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
@@ -9,13 +10,13 @@ import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.common.CommonHooks;
 import org.cyclops.cyclopscore.helper.MinecraftHelpers;
-import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
-import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
-import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
+import org.cyclops.integrateddynamics.core.helper.PartConfigHelpers;
+import org.cyclops.integrateddynamics.core.recipe.type.RecipeNbtClear;
 import org.cyclops.integrateddynamics.item.ItemVariable;
 
 /**
@@ -78,22 +79,21 @@ public class ItemVariableCopyRecipe extends CustomRecipe {
     @Override
     public NonNullList<ItemStack> getRemainingItems(CraftingInput inv) {
         NonNullList<ItemStack> ret = NonNullList.withSize(inv.size(), ItemStack.EMPTY);
+        Player craftingPlayer = CommonHooks.getCraftingPlayer();
         for(int j = 0; j < inv.size(); j++) {
             ItemStack element = inv.getItem(j);
             if(!element.isEmpty() && element.getItem() instanceof ItemVariable) {
                 IVariableFacade facade = RegistryEntries.ITEM_VARIABLE.get().getVariableFacade(lastValueDeseralizationContext, element);
                 if(facade.isValid()) {
-                    // Create a copy with a new id.
-                    ItemStack copy = IntegratedDynamics._instance.getRegistryManager()
-                            .getRegistry(IVariableFacadeHandlerRegistry.class).copy(!MinecraftHelpers.isClientSideThread(), element);
+                    // Create a copy with a new id, and copy the label of the input as well.
+                    ItemStack copy = PartConfigHelpers.copyVariable(lastValueDeseralizationContext, element,
+                            !MinecraftHelpers.isClientSideThread());
 
-                    // If the input had a label, also copy the label
-                    String label = LabelsWorldStorage.getInstance(IntegratedDynamics._instance).getLabel(facade.getId());
-                    if(label != null) {
-                        IVariableFacade facadeCopy = RegistryEntries.ITEM_VARIABLE.get().getVariableFacade(lastValueDeseralizationContext, copy);
-                        if (facadeCopy != null) {
-                            LabelsWorldStorage.getInstance(IntegratedDynamics._instance).put(facadeCopy.getId(), label);
-                        }
+                    // This copy stays behind in the crafting grid, where it is a single variable card,
+                    // which is exactly what the recipe for clearing variable cards matches.
+                    // Protect it, so that shift-clicking the result does not clear it right away. (Closes #725)
+                    if (craftingPlayer != null) {
+                        RecipeNbtClear.protectLeftover(copy, craftingPlayer.level());
                     }
 
                     ret.set(j, copy);
