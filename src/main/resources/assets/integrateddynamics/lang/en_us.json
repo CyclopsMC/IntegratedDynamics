@@ -48,7 +48,7 @@
     "gui.integrateddynamics.materializer.encode": "Encode value to clipboard",
     "gui.integrateddynamics.materializer.encode_compressed": "Encode value to clipboard in compressed form",
     "gui.integrateddynamics.logicprogrammer.decode": "Decoded Value",
-    "gui.integrateddynamics.logicprogrammer.decode.tooltip": "Decode a value that was encoded in a §lMaterializer§r or by the §lEncode§r operator, possibly in another world",
+    "gui.integrateddynamics.logicprogrammer.decode.tooltip": "Decode an encoded value",
     "gui.integrateddynamics.logicprogrammer.decode.hint": "Paste an encoded value",
     "gui.integrateddynamics.rewards": "Rewards",
     "gui.integrateddynamics.rewards.collect": "Collect",
