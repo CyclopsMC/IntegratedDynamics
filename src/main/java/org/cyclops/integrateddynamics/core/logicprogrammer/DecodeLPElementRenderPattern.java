@@ -7,6 +7,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.FormattedCharSequence;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.client.gui.component.input.WidgetTextFieldExtended;
@@ -59,22 +60,33 @@ public class DecodeLPElementRenderPattern extends RenderPattern<DecodeLPElement,
         textField.render(guiGraphics, mouseX, mouseY, partialTicks);
 
         // Below the text field, show what the pasted value is, why it is invalid, or what to do
-        int x = guiLeft + getX() + 6;
+        int centerX = guiLeft + getX() + getWidth() / 2;
         int y = guiTop + getY() + 22;
         int width = getWidth() - 12;
         IValue value = getElement().getValue();
         if (value != null) {
             Component type = Component.translatable(value.getType().getTranslationKey());
-            guiGraphics.drawString(fontRenderer, fontRenderer.plainSubstrByWidth(type.getString(), width),
-                    x, y, value.getType().getDisplayColor(), false);
-            guiGraphics.drawString(fontRenderer, fontRenderer.plainSubstrByWidth(
-                    value.getType().toCompactString(value).getString(), width), x, y + 10, COLOR_VALUE, false);
+            drawCentered(guiGraphics, fontRenderer, fontRenderer.plainSubstrByWidth(type.getString(), width),
+                    centerX, y, value.getType().getDisplayColor());
+            drawCentered(guiGraphics, fontRenderer, fontRenderer.plainSubstrByWidth(
+                    value.getType().toCompactString(value).getString(), width), centerX, y + 10, COLOR_VALUE);
         } else if (getElement().getError() != null) {
-            guiGraphics.drawWordWrap(fontRenderer, getElement().getError(), x, y, width, COLOR_ERROR);
+            drawCenteredWrapped(guiGraphics, fontRenderer, getElement().getError(), centerX, y, width, COLOR_ERROR);
         } else {
             // A hint inside the text field would only show while it is not focused
-            guiGraphics.drawWordWrap(fontRenderer, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_DECODE_HINT),
-                    x, y, width, COLOR_HINT);
+            drawCenteredWrapped(guiGraphics, fontRenderer, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_DECODE_HINT),
+                    centerX, y, width, COLOR_HINT);
+        }
+    }
+
+    protected void drawCentered(GuiGraphics guiGraphics, Font font, String text, int centerX, int y, int color) {
+        guiGraphics.drawString(font, text, centerX - font.width(text) / 2, y, color, false);
+    }
+
+    protected void drawCenteredWrapped(GuiGraphics guiGraphics, Font font, Component text, int centerX, int y, int width, int color) {
+        for (FormattedCharSequence line : font.split(text, width)) {
+            guiGraphics.drawString(font, line, centerX - font.width(line) / 2, y, color, false);
+            y += font.lineHeight;
         }
     }
 

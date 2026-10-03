@@ -41,9 +41,9 @@ import java.util.zip.GZIPOutputStream;
 public class ValueEncodingHelpers {
 
     /**
-     * The prefix that marks a gzipped and base64-encoded value.
+     * The prefix that marks a gzipped and base64-encoded value, standing for Integrated Dynamics Compressed Encoding.
      */
-    public static final String PREFIX_COMPRESSED = "idynvar1:";
+    public static final String PREFIX_COMPRESSED = "idce:";
 
     /**
      * The maximum nesting depth of an encoded value, to bound the recursion over handcrafted ones.

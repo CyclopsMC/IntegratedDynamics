@@ -1681,7 +1681,9 @@
     "operator.integrateddynamics.general.isnotnull": "Is Not Null",
     "operator.integrateddynamics.general.isnotnull.info": "If the given value is not null",
     "operator.integrateddynamics.general.encode": "Encode",
-    "operator.integrateddynamics.general.encode.info": "A materialized copy of the input value, encoded as a string that the Decode operator turns back into the value.",
+    "operator.integrateddynamics.general.encode.info": "A materialized copy of the input value, encoded as a readable string that the Decode operator turns back into the value.",
+    "operator.integrateddynamics.general.encode_compressed": "Encode Compressed",
+    "operator.integrateddynamics.general.encode_compressed.info": "A materialized copy of the input value, encoded as a compressed string, which is shorter but not readable. The Decode operator turns it back into the value.",
     "operator.integrateddynamics.general.decode": "Decode",
     "operator.integrateddynamics.general.decode.info": "The value that was encoded in the given string, by the Encode operator or a Materializer, in either its readable or its compressed form.",
 
@@ -2015,7 +2017,7 @@
     "info_book.integrateddynamics.manual.logic_programming.text5": "The &lLogic Programmer&r allows you to search through the list of &lOperators&r by name using the textbox on the top. It also allows you to filter on input or output value types, by inserting a &lVariable Card&r of those types in the bottom-left slots.",
     "info_book.integrateddynamics.manual.logic_programming.text6": "If a &lLabeller&r is present in the player’s inventory, the resulting &lVariable Card&r can be labelled immediately by clicking on the ‘E’ button next to the output slot.",
     "info_book.integrateddynamics.manual.logic_programming.text7": "The &lLogic Programmer&r exists both in block-form and item-form. Both can be interchanged by placing them in a crafting grid.",
-    "info_book.integrateddynamics.manual.logic_programming.text8": "The &lDecoded Value&r element turns a value that was encoded in a &lMaterializer&r into a Variable Card, when it is pasted into its text field. This way, values can be shared between players and worlds. Inside a network, the &lEncode&r and &lDecode&r operators do the same with strings.",
+    "info_book.integrateddynamics.manual.logic_programming.text8": "The &lDecoded Value&r element turns a value that was encoded in a &lMaterializer&r into a Variable Card, when it is pasted into its text field. This way, values can be shared between players and worlds. Inside a network, the &lEncode&r, &lEncode Compressed&r and &lDecode&r operators do the same with strings.",
 
     "info_book.integrateddynamics.manual.diagnostics": "Network Diagnostics",
     "info_book.integrateddynamics.manual.diagnostics.text1": "Players with operator status have access to the &lNetwork Diagnostics&r tool, which allows the tick time across all networks on the server to be inspected.",

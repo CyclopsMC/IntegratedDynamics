@@ -4377,16 +4377,27 @@ public final class Operators {
      */
     public static final IOperator GENERAL_ENCODE = REGISTRY.register(OperatorBuilders.GENERAL_1_PREFIX_LONG
             .symbol("encode").operatorName("encode").interactName("encode")
-            .output(ValueTypes.STRING).function(variables -> {
-                IValue value = variables.getValue(0);
-                IValue materialized = (IValue) ((IValueType) value.getType()).materialize(value);
-                try {
-                    return ValueTypeString.ValueString.of(ValueEncodingHelpers.encode(
-                            ValueDeseralizationContext.ofAllEnabled(), materialized, GeneralConfig.valueEncodingMaxLength));
-                } catch (ValueEncodingHelpers.ValueEncodingException e) {
-                    throw new EvaluationException(e.getErrorMessage());
-                }
-            }).build());
+            .output(ValueTypes.STRING).function(variables -> encodeValue(variables.getValue(0), false)).build());
+
+    /**
+     * Compressed encode operator with one input any and one output string, which is shorter but not readable.
+     */
+    public static final IOperator GENERAL_ENCODE_COMPRESSED = REGISTRY.register(OperatorBuilders.GENERAL_1_PREFIX_LONG
+            .symbol("encode_compressed").operatorName("encode_compressed").interactName("encodeCompressed")
+            .output(ValueTypes.STRING).function(variables -> encodeValue(variables.getValue(0), true)).build());
+
+    private static ValueTypeString.ValueString encodeValue(IValue value, boolean compressed) throws EvaluationException {
+        IValue materialized = (IValue) ((IValueType) value.getType()).materialize(value);
+        try {
+            ValueDeseralizationContext context = ValueDeseralizationContext.ofAllEnabled();
+            int maxLength = GeneralConfig.valueEncodingMaxLength;
+            return ValueTypeString.ValueString.of(compressed
+                    ? ValueEncodingHelpers.encodeCompressed(context, materialized, maxLength)
+                    : ValueEncodingHelpers.encode(context, materialized, maxLength));
+        } catch (ValueEncodingHelpers.ValueEncodingException e) {
+            throw new EvaluationException(e.getErrorMessage());
+        }
+    }
 
     /**
      * Decode operator with one input string and one output any, which takes a value in either of its encoded forms.

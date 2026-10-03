@@ -89,6 +89,10 @@ public class GameTestsValueEncoding {
         return Operators.GENERAL_ENCODE.evaluate(new Variable<>(value));
     }
 
+    protected static IValue encodeCompressedOperator(IValue value) throws EvaluationException {
+        return Operators.GENERAL_ENCODE_COMPRESSED.evaluate(new Variable<>(value));
+    }
+
     protected static IValue decodeOperator(String encoded) throws EvaluationException {
         return Operators.GENERAL_DECODE.evaluate(new Variable<>(ValueTypeString.ValueString.of(encoded)));
     }
@@ -177,6 +181,27 @@ public class GameTestsValueEncoding {
         IValue encoded = encodeOperator(value);
         helper.assertTrue(encoded.getType() == ValueTypes.STRING, "Encoding does not give a string");
         assertValueEqual(decodeOperator(((ValueTypeString.ValueString) encoded).getRawValue()), value);
+        helper.succeed();
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testEncodeCompressedDecodeOperators(GameTestHelper helper) throws EvaluationException {
+        IValue value = itemStackList();
+        String encoded = ((ValueTypeString.ValueString) encodeCompressedOperator(value)).getRawValue();
+        helper.assertTrue(encoded.startsWith(ValueEncodingHelpers.PREFIX_COMPRESSED), "Encoding is not compressed");
+        assertValueEqual(decodeOperator(encoded), value);
+        helper.succeed();
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testEncodeCompressedOperatorMaterializes(GameTestHelper helper) throws EvaluationException {
+        helper.setBlock(POS, Blocks.CHEST);
+        ChestBlockEntity chest = helper.getBlockEntity(POS);
+        chest.setItem(0, new ItemStack(Items.DIAMOND, 3));
+
+        IValue positioned = positionedList(helper);
+        String encoded = ((ValueTypeString.ValueString) encodeCompressedOperator(positioned)).getRawValue();
+        assertValueEqual(decodeOperator(encoded), ValueTypes.LIST.materialize((ValueTypeList.ValueList) positioned));
         helper.succeed();
     }
 
