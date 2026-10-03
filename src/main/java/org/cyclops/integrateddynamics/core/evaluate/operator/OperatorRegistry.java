@@ -36,6 +36,7 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.item.OperatorVariableFacade;
 import org.slf4j.Logger;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 /**
@@ -131,6 +132,12 @@ public class OperatorRegistry implements IOperatorRegistry {
     public void registerSerializer(IOperatorSerializer serializer) {
         serializers.add(serializer);
         namedSerializers.put(serializer.getUniqueName().toString(), serializer);
+    }
+
+    @Nullable
+    @Override
+    public IOperatorSerializer getSerializer(Identifier name) {
+        return namedSerializers.get(name.toString());
     }
 
     @Override

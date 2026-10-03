@@ -1,8 +1,46 @@
 # Changelog for Minecraft 1.21.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.21.1-1.38.0"></a>
+## [1.21.1-1.38.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.37.1...1.21.1-1.38.0) - 2026-10-03 14:25:17
+
+
+### Added
+* Enable encoding and decoding of all values (#1737)
+  This introduces operators to encode any possible value into a string,
+  and decode the string again into a value.
+  This is useful to share values across worlds.
+  The materializer also has a button to export an encoded value.
+  A compressed encoding also exists.
+  Closes #674
+* Add a tutorial on saving state with the Delayer (#1744), Closes #613
+* Make Menril wood variants burn into charcoal (#1748)
+
+### Changed
+* Stop ticking cables without parts (#1753)
+  This significantly improves server performance on large networks
+  containing many cables without attached parts.
+  Closes #336
+* Avoid capability lookups in cable light emission to improve FPS
+* Skip cable block entity renderer for cables without overlays to improve FPS.
+* Fix cable quads being meshed once per model side to improve FPS
+
+### Fixed
+* Fix variable copying not properly taking over labels (#1742)
+  This also fixes a conflict with recipe clearing when shift-clicking.
+  Closes #725
+* Fix stripped Menril log and wood not smelting into charcoal (#1749)
+* Remove redundant Menril log charcoal recipes (#1747), Closes #1746
+
+<a name="1.21.1-1.37.1"></a>
+## [1.21.1-1.37.1](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.37.0...1.21.1-1.37.1) - 2026-09-11 21:26:39 +0200
+
+
+### Fixed
+* Fix new CyclopsCore version not being required at startup
+
 <a name="1.21.1-1.37.0"></a>
-## [1.21.1-1.37.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.36.0...1.21.1-1.37.0) - 2026-09-11 21:14:21
+## [1.21.1-1.37.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.36.0...1.21.1-1.37.0) - 2026-09-11 21:14:21 +0200
 
 
 ### Added

@@ -34,6 +34,9 @@ public class L10NValues {
     public static final String GUI_LOGICPROGRAMMER_INFO_MODIFY = "gui." + NS + ".logicprogrammer.info.modify";
     public static final String GUI_LOGICPROGRAMMER_TOOLTIP_WRITESLOT_CREATE = "gui." + NS + ".logicprogrammer.tooltip.writeslot.create";
     public static final String GUI_LOGICPROGRAMMER_TOOLTIP_WRITESLOT_MODIFY = "gui." + NS + ".logicprogrammer.tooltip.writeslot.modify";
+    public static final String GUI_LOGICPROGRAMMER_DECODE = "gui." + NS + ".logicprogrammer.decode";
+    public static final String GUI_LOGICPROGRAMMER_DECODE_TOOLTIP = "gui." + NS + ".logicprogrammer.decode.tooltip";
+    public static final String GUI_LOGICPROGRAMMER_DECODE_HINT = "gui." + NS + ".logicprogrammer.decode.hint";
     public static final String GUI_INPUT = "gui." + NS + ".input";
     public static final String GUI_OUTPUT = "gui." + NS + ".output";
     public static final String GUI_RECIPE_STRICTNBT = "gui." + NS + ".recipe.strictnbt";
@@ -43,6 +46,18 @@ public class L10NValues {
     public static final String GUI_OPERATOR_LOCALNAME = "gui." + NS + ".operator.localname";
     // 0: value
     public static final String GUI_MECHANICAL_SQUEEZER_TOGGLEFLUIDAUTOEJECT = "gui." + NS + ".mechanical_squeezer.togglefluidautoeject";
+
+    public static final String VALUE_ENCODING_ERROR_PARSE = "value_encoding." + NS + ".error.parse";
+    // 0: payload length, 1: maximum length
+    public static final String VALUE_ENCODING_ERROR_TOOLARGE = "value_encoding." + NS + ".error.too_large";
+    // 0: the offending proxy or serializer name
+    public static final String VALUE_ENCODING_ERROR_UNMATERIALIZED = "value_encoding." + NS + ".error.unmaterialized";
+    // 0: value type name
+    public static final String VALUE_ENCODING_ERROR_VALUETYPE = "value_encoding." + NS + ".error.value_type";
+    public static final String VALUE_ENCODING_ERROR_DISABLED = "value_encoding." + NS + ".error.disabled";
+    public static final String VALUE_ENCODING_ERROR_NOVALUE = "value_encoding." + NS + ".error.no_value";
+    public static final String VALUE_ENCODING_ERROR_NOTHINGTOENCODE = "value_encoding." + NS + ".error.nothing_to_encode";
+    public static final String VALUE_ENCODING_COPIED = "value_encoding." + NS + ".copied";
 
     public static final String VALUE_ERROR = "valuetype." + NS + ".error.value";
     public static final String VALUETYPE_VALUETYPE = "valuetype." + NS + ".value_type";

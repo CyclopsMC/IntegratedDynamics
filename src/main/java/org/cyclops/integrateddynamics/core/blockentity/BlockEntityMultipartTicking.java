@@ -80,6 +80,7 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
     private boolean forceLightCheckAtClient;
 
     private ModelData cachedState = null;
+    private boolean chunkUnloading = false;
 
     public EnumFacingMap<Boolean> getConnected() {
         return connected;
@@ -355,9 +356,59 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
         this.forceDisconnected.putAll(forceDisconnected);
     }
 
+    /**
+     * @return If this block entity currently has a ticker.
+     */
+    public boolean isTicking() {
+        BlockState blockState = getBlockState();
+        return !blockState.hasProperty(BlockCable.TICKING) || blockState.getValue(BlockCable.TICKING);
+    }
+
+    /**
+     * @return If this block entity has no pending work, so it does not have to tick anymore.
+     */
+    public boolean canStopTicking() {
+        return !partContainer.hasParts()
+                && scheduledPulseRemaining.isEmpty()
+                && !connected.isEmpty()
+                && (getNetwork() != null || !cableFakeable.isRealCable())
+                && !shouldSendUpdate();
+    }
+
+    @Override
+    public void sendUpdate() {
+        super.sendUpdate();
+        // Updates are normally sent by the ticker, so handle them here if we are not ticking.
+        if (getLevel() != null && !getLevel().isClientSide() && !isRemoved() && !isTicking()
+                && getLevel().isLoaded(getBlockPos())) {
+            if (partContainer.hasParts()) {
+                BlockCable.setTicking(getLevel(), getBlockPos(), true);
+            } else {
+                unsetSendUpdate();
+                IModHelpers.get().getBlockHelpers().markForUpdate(getLevel(), getBlockPos());
+            }
+        }
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        // Idle cables must be linked to their network after loading.
+        // Try this directly, and fall back to ticking if that is not possible yet (such as during server startup).
+        if (getLevel() != null && !getLevel().isClientSide() && !isTicking()) {
+            if (getNetwork() == null) {
+                NetworkHelpers.revalidateNetworkElements(getLevel(), getBlockPos());
+            }
+            if (!canStopTicking()) {
+                BlockCable.setTicking(getLevel(), getBlockPos(), true);
+            }
+        }
+    }
+
     @Override
     public void onChunkUnloaded() {
         super.onChunkUnloaded();
+        this.chunkUnloading = true;
         invalidateParts();
     }
 
@@ -393,7 +444,9 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
         // Only required for cases where cables are moved by commands or cleared after game tests,
         // or where the block entity is removed before the block itself,
         // which is what contraption mods such as Create do when they pick up a block.
-        if (getNetworkCarrier().getNetwork() != null) {
+        // This must not happen on chunk unloads, as the cable then remains part of its network,
+        // and accessing the level would load the chunk again.
+        if (!this.chunkUnloading && getNetworkCarrier().getNetwork() != null) {
             // Since onCableRemoving was not called for this position, the cables that are still
             // connected to it were never remembered. Do so here, so that onCableRemoved can
             // reinitialize their networks once the block is gone.
@@ -422,6 +475,11 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
             // Revalidate network if that hasn't happened yet
             if (blockEntity.getNetwork() == null) {
                 NetworkHelpers.revalidateNetworkElements(level, pos);
+            }
+
+            // Stop ticking once there is nothing left to do
+            if (blockEntity.canStopTicking()) {
+                BlockCable.setTicking(level, pos, false);
             }
         }
     }

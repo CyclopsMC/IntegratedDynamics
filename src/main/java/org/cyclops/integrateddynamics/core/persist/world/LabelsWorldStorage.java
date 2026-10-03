@@ -71,7 +71,7 @@ public class LabelsWorldStorage extends WorldStorage<LabelsWorldStorage> {
             IntegratedDynamics._instance.getPacketHandler().sendToServer(new ActionLabelPacket(variableId, label));
         } else {
             putUnsafe(variableId, label);
-            IntegratedDynamics._instance.getPacketHandler().sendToAll(new ActionLabelPacket(variableId, label));
+            sendToAll(new ActionLabelPacket(variableId, label));
         }
     }
 
@@ -84,7 +84,15 @@ public class LabelsWorldStorage extends WorldStorage<LabelsWorldStorage> {
             IntegratedDynamics._instance.getPacketHandler().sendToServer(new ActionLabelPacket(variableId, null));
         } else {
             removeUnsafe(variableId);
-            IntegratedDynamics._instance.getPacketHandler().sendToAll(new ActionLabelPacket(variableId, null));
+            sendToAll(new ActionLabelPacket(variableId, null));
+        }
+    }
+
+    private void sendToAll(ActionLabelPacket packet) {
+        try {
+            IntegratedDynamics._instance.getPacketHandler().sendToAll(packet);
+        } catch (Exception e) {
+            // Ignore if the packet cannot be sent (e.g., mock players in game tests have no connection)
         }
     }
 

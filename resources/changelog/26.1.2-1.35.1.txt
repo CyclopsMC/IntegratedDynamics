@@ -1,0 +1,8 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.31.0 or higher.
+
+Additions:
+* Re-enable The One Probe support
+
+Fixes:
+* Fix client crash when looking at a proxy with Jade

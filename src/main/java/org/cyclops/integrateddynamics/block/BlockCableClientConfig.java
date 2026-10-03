@@ -108,8 +108,9 @@ public class BlockCableClientConfig extends BlockClientConfig<IntegratedDynamics
         @Override
         public BlockStateModel createDynamicBlockModel(Consumer<Pair<BlockState, BlockStateModel>> modelConsumer, Function<BlockState, BlockStateModel> modelRetriever) {
             CableModel model = new CableModel();
-            modelConsumer.accept(Pair.of(RegistryEntries.BLOCK_CABLE.get().defaultBlockState(), model));
-            modelConsumer.accept(Pair.of(RegistryEntries.BLOCK_CABLE.get().defaultBlockState().setValue(BlockCable.WATERLOGGED, true), model));
+            for (BlockState blockState : RegistryEntries.BLOCK_CABLE.get().getStateDefinition().getPossibleStates()) {
+                modelConsumer.accept(Pair.of(blockState, model));
+            }
             return model;
         }
 

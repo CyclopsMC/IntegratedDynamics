@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:smelting",
-  "ingredient": "integrateddynamics:menril_log",
-  "result": {
-    "id": "minecraft:charcoal"
-  },
-  "experience": 0.15,
-  "cookingtime": 200
-}

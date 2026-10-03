@@ -23,6 +23,8 @@ import net.minecraft.client.resources.model.cuboid.ItemTransform;
 import net.minecraft.client.resources.model.cuboid.ItemTransforms;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.resources.model.sprite.Material;
+import net.minecraft.client.resources.model.SimpleModelWrapper;
+import net.minecraft.client.resources.model.geometry.QuadCollection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
@@ -226,6 +228,24 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
     }
 
     @Override
+    public void collectParts(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random, List<BlockStateModelPart> parts) {
+        super.collectParts(level, pos, state, random, parts);
+        // Cable quads are not bound to a cull face, so emit them once as unculled quads to avoid duplicates.
+        ModelData extraData = getModelData(level, pos, state, level.getModelData(pos));
+        for (ChunkSectionLayer renderType : getRenderTypes(state, random, extraData)) {
+            QuadCollection.Builder quadCollectionBuilder = new QuadCollection.Builder();
+            for (BakedQuad quad : handleBlockState(level, pos, state, null, random, extraData, renderType)) {
+                quadCollectionBuilder = quadCollectionBuilder.addUnculledFace(quad);
+            }
+            parts.add(new SimpleModelWrapper(
+                    quadCollectionBuilder.build(),
+                    usesBlockLight(),
+                    particleMaterial(level, pos, state)
+            ));
+        }
+    }
+
+    @Override
     public List<BakedQuad> getGeneralQuads() {
         Triple<IRenderState, Direction, ChunkSectionLayer> cacheKey = null;
         List<BakedQuad> cachedQuads = null;
@@ -240,9 +260,10 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
             List<BakedQuad> ret = Lists.newLinkedList();
             TextureAtlasSprite texture = particleIcon();
             Optional<BlockState> blockStateHolder = getFacade(modelData);
-            boolean renderCable = isItemStack() || (isRealCable(modelData) && (
+            // Cable quads are not bound to a cull face, so only emit them for the unculled side to avoid duplicates.
+            boolean renderCable = this.facing == null && (isItemStack() || (isRealCable(modelData) && (
                     (!blockStateHolder.isPresent() && this.renderType == ChunkSectionLayer.SOLID)
-                            || (blockStateHolder.isPresent() && this.renderType == ChunkSectionLayer.TRANSLUCENT)));
+                            || (blockStateHolder.isPresent() && this.renderType == ChunkSectionLayer.TRANSLUCENT))));
             for (Direction side : Direction.values()) {
                 boolean isConnected = isItemStack() ? side == Direction.EAST || side == Direction.WEST : isConnected(modelData, side);
                 boolean hasPart = !isItemStack() && hasPart(modelData, side);
@@ -309,7 +330,7 @@ public abstract class CableModelBase extends DelegatingDynamicItemAndBlockModel 
             }
 
             // Close the cable connections for items
-            if (isItemStack()) {
+            if (isItemStack() && this.facing == null) {
                 addBakedQuad(ret, MIN, MAX, MIN, MAX, 1, texture, Direction.EAST);
                 addBakedQuad(ret, MIN, MAX, MIN, MAX, 1, texture, Direction.WEST);
             }

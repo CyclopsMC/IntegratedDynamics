@@ -356,6 +356,10 @@ public class NetworkHelpers {
                         for (INetworkElement networkElement : networkElementProvider.createNetworkElements(world, pos)) {
                             networkElement.revalidate(network);
                         }
+                        // Positions without network elements (such as cables without parts) must also be linked to the network.
+                        if (networkCarrier.getNetwork() == null) {
+                            networkCarrier.setNetwork(network);
+                        }
                         foundNetwork = true;
                         break; // No need to check the other networks anymore
                     }
