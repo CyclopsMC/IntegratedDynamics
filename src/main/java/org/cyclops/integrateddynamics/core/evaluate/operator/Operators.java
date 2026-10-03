@@ -4383,6 +4383,7 @@ public final class Operators {
      * Compressed encode operator with one input any and one output string, which is shorter but not readable.
      */
     public static final IOperator GENERAL_ENCODE_COMPRESSED = REGISTRY.register(OperatorBuilders.GENERAL_1_PREFIX_LONG
+            .renderPattern(IConfigRenderPattern.PREFIX_1_VERYLONG)
             .symbol("encode_compressed").operatorName("encode_compressed").interactName("encodeCompressed")
             .output(ValueTypes.STRING).function(variables -> encodeValue(variables.getValue(0), true)).build());
 
