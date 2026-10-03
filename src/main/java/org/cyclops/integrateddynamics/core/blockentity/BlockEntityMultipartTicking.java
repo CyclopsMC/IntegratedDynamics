@@ -355,6 +355,55 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
         this.forceDisconnected.putAll(forceDisconnected);
     }
 
+    /**
+     * @return If this block entity currently has a ticker.
+     */
+    public boolean isTicking() {
+        BlockState blockState = getBlockState();
+        return !blockState.hasProperty(BlockCable.TICKING) || blockState.getValue(BlockCable.TICKING);
+    }
+
+    /**
+     * @return If this block entity has no pending work, so it does not have to tick anymore.
+     */
+    public boolean canStopTicking() {
+        return !partContainer.hasParts()
+                && scheduledPulseRemaining.isEmpty()
+                && !connected.isEmpty()
+                && (getNetwork() != null || !cableFakeable.isRealCable())
+                && !shouldSendUpdate();
+    }
+
+    @Override
+    public void sendUpdate() {
+        super.sendUpdate();
+        // Updates are normally sent by the ticker, so handle them here if we are not ticking.
+        if (getLevel() != null && !getLevel().isClientSide() && !isRemoved() && !isTicking()
+                && getLevel().isLoaded(getBlockPos())) {
+            if (partContainer.hasParts()) {
+                BlockCable.setTicking(getLevel(), getBlockPos(), true);
+            } else {
+                unsetSendUpdate();
+                IModHelpers.get().getBlockHelpers().markForUpdate(getLevel(), getBlockPos());
+            }
+        }
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        // Idle cables must be linked to their network after loading.
+        // Try this directly, and fall back to ticking if that is not possible yet (such as during server startup).
+        if (getLevel() != null && !getLevel().isClientSide() && !isTicking()) {
+            if (getNetwork() == null) {
+                NetworkHelpers.revalidateNetworkElements(getLevel(), getBlockPos());
+            }
+            if (!canStopTicking()) {
+                BlockCable.setTicking(getLevel(), getBlockPos(), true);
+            }
+        }
+    }
+
     @Override
     public void onChunkUnloaded() {
         super.onChunkUnloaded();
@@ -422,6 +471,11 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
             // Revalidate network if that hasn't happened yet
             if (blockEntity.getNetwork() == null) {
                 NetworkHelpers.revalidateNetworkElements(level, pos);
+            }
+
+            // Stop ticking once there is nothing left to do
+            if (blockEntity.canStopTicking()) {
+                BlockCable.setTicking(level, pos, false);
             }
         }
     }

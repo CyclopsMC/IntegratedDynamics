@@ -16,6 +16,7 @@ public class LogicProgrammerElementTypes {
 
     public static final ValueTypeLPElementType VALUETYPE = REGISTRY.addType(new ValueTypeLPElementType());
     public static final OperatorLPElementType OPERATOR  = REGISTRY.addType(new OperatorLPElementType());
+    public static final SingleLPElementType<DecodeLPElement> DECODE = REGISTRY.addType(new SingleLPElementType<>(DecodeLPElement::new, "decode"));
 
     public static boolean areEqual(ILogicProgrammerElement e1, ILogicProgrammerElement e2) {
         if(e1 == null) {

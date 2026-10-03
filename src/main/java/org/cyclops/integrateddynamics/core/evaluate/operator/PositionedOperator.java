@@ -88,6 +88,12 @@ public abstract class PositionedOperator extends OperatorBase implements INBTPro
         }
 
         @Override
+        public boolean isMaterialized() {
+            // Positioned operators refer to a position in a world
+            return false;
+        }
+
+        @Override
         public void serialize(ValueOutput valueOutput, PositionedOperator operator) {
             operator.writeGeneratedFieldsToNBT(valueOutput);
         }

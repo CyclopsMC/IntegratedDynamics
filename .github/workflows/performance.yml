@@ -62,3 +62,56 @@ jobs:
         with:
           body-path: ./commit-comment-body.txt
 
+
+  client-benchmark:
+    name: Client Benchmark
+    # Runs after the benchmark job, as both push to the same results repository
+    needs: benchmark
+    if: ${{ !cancelled() && github.event.repository.fork != true && (startsWith(github.ref, 'refs/heads/master') || startsWith(github.ref, 'refs/heads/feature')) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: 'Setup Java'
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'microsoft'
+          java-version: 21
+      - name: 'Setup Gradle'
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: wrapper
+          cache-read-only: false
+      - name: 'Install virtual display and software rendering'
+        run: sudo apt-get update && sudo apt-get install -y xvfb libgl1-mesa-dri
+      - name: 'Run client benchmarks'
+        run: bash .github/client_benchmark.sh
+        env:
+          GITHUB_USER: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: 'Upload screenshots'
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: client-benchmark-screenshots
+          path: .clientdevbridge/screenshots/
+      - name: Determine benchmarks total results target directory name
+        run: echo "BENCHMARK_DATA_DIR_PATH=CyclopsMC/IntegratedDynamics/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}/benchmarks" >> $GITHUB_ENV
+      - name: 'Store benchmark result'
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          name: Integrated Dynamics Client Benchmark
+          tool: customSmallerIsBetter
+          output-file-path: client_benchmark_results.json
+          github-token: ${{ secrets.PAT }}
+          auto-push: true
+          alert-threshold: '250%'
+          comment-on-alert: true
+          alert-comment-cc-users: '@rubensworks'
+          summary-always: true
+          gh-repository: github.com/CyclopsMC/cyclops-performance-results
+          gh-pages-branch: master
+          benchmark-data-dir-path: ${{ env.BENCHMARK_DATA_DIR_PATH }}

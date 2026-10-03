@@ -22,6 +22,11 @@ public class ValueTypeListProxyMaterializedFactory implements IValueTypeListProx
     }
 
     @Override
+    public boolean isMaterialized() {
+        return true;
+    }
+
+    @Override
     public void serialize(ValueOutput valueOutput, ValueTypeListProxyMaterialized<IValueType<IValue>, IValue> values) throws IValueTypeListProxyFactoryTypeRegistry.SerializationException {
         ValueOutput.ValueOutputList list = valueOutput.childrenList("values");
 

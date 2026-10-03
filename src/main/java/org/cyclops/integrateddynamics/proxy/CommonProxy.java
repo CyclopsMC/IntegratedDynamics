@@ -43,6 +43,9 @@ public class CommonProxy extends CommonProxyComponent {
         packetHandler.register(LogicProgrammerValueTypeBooleanValueChangedPacket.class, LogicProgrammerValueTypeBooleanValueChangedPacket.ID, LogicProgrammerValueTypeBooleanValueChangedPacket.CODEC);
         packetHandler.register(PartOffsetsSubscribePacket.class, PartOffsetsSubscribePacket.ID, PartOffsetsSubscribePacket.CODEC);
         packetHandler.register(PartOffsetsDataPacket.class, PartOffsetsDataPacket.ID, PartOffsetsDataPacket.CODEC);
+        packetHandler.register(LogicProgrammerDecodeValueChangedPacket.class, LogicProgrammerDecodeValueChangedPacket.ID, LogicProgrammerDecodeValueChangedPacket.CODEC);
+        packetHandler.register(MaterializerEncodeValuePacket.class, MaterializerEncodeValuePacket.ID, MaterializerEncodeValuePacket.CODEC);
+        packetHandler.register(EncodedValueClipboardPacket.class, EncodedValueClipboardPacket.ID, EncodedValueClipboardPacket.CODEC);
 
         IntegratedDynamics.clog("Registered packet handler.");
     }

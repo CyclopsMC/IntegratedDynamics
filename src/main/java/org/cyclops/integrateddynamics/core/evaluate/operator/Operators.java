@@ -66,6 +66,7 @@ import org.cyclops.cyclopscore.helper.IModHelpersNeoForge;
 import org.cyclops.cyclopscore.nbt.path.INbtPathExpression;
 import org.cyclops.cyclopscore.nbt.path.NbtParseException;
 import org.cyclops.cyclopscore.nbt.path.NbtPath;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
@@ -78,6 +79,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.helper.NbtHelpers;
+import org.cyclops.integrateddynamics.core.helper.ValueEncodingHelpers;
 import org.cyclops.integrateddynamics.core.ingredient.ExtendedIngredientsList;
 import org.cyclops.integrateddynamics.core.ingredient.ExtendedIngredientsSingle;
 import org.slf4j.Logger;
@@ -4393,5 +4395,51 @@ public final class Operators {
      * Constant operator with two any inputs and one any output
      */
     public static final GeneralOperator GENERAL_CONSTANT = REGISTRY.register(new GeneralConstantOperator("K", "constant", "constant"));
+
+    /**
+     * Encode operator with one input any and one output string, which decode turns back into the value.
+     */
+    public static final IOperator GENERAL_ENCODE = REGISTRY.register(OperatorBuilders.GENERAL_1_PREFIX_LONG
+            .symbol("encode").operatorName("encode").interactName("encode")
+            .output(ValueTypes.STRING).function(variables -> encodeValue(variables.getValue(0), false)).build());
+
+    /**
+     * Compressed encode operator with one input any and one output string, which is shorter but not readable.
+     */
+    public static final IOperator GENERAL_ENCODE_COMPRESSED = REGISTRY.register(OperatorBuilders.GENERAL_1_PREFIX_LONG
+            .renderPattern(IConfigRenderPattern.PREFIX_1_VERYLONG)
+            .symbol("encode_compressed").operatorName("encode_compressed").interactName("encodeCompressed")
+            .output(ValueTypes.STRING).function(variables -> encodeValue(variables.getValue(0), true)).build());
+
+    private static ValueTypeString.ValueString encodeValue(IValue value, boolean compressed) throws EvaluationException {
+        IValue materialized = (IValue) ((IValueType) value.getType()).materialize(value);
+        try {
+            ValueDeseralizationContext context = ValueDeseralizationContext.ofAllEnabled();
+            int maxLength = GeneralConfig.valueEncodingMaxLength;
+            return ValueTypeString.ValueString.of(compressed
+                    ? ValueEncodingHelpers.encodeCompressed(context, materialized, maxLength)
+                    : ValueEncodingHelpers.encode(context, materialized, maxLength));
+        } catch (ValueEncodingHelpers.ValueEncodingException e) {
+            throw new EvaluationException(e.getErrorMessage());
+        }
+    }
+
+    /**
+     * Decode operator with one input string and one output any, which takes a value in either of its encoded forms.
+     */
+    public static final IOperator GENERAL_DECODE = REGISTRY.register(OperatorBuilders.GENERAL_1_PREFIX_LONG
+            .symbol("decode").operatorName("decode").interactName("decode")
+            .inputType(ValueTypes.STRING).output(ValueTypes.CATEGORY_ANY).function(variables -> {
+                ValueTypeString.ValueString value = variables.getValue(0, ValueTypes.STRING);
+                if (!GeneralConfig.valueDecodingEnabled) {
+                    throw new EvaluationException(Component.translatable(L10NValues.VALUE_ENCODING_ERROR_DISABLED));
+                }
+                try {
+                    return ValueEncodingHelpers.decode(ValueDeseralizationContext.ofAllEnabled(), value.getRawValue(),
+                            GeneralConfig.valueEncodingMaxLength);
+                } catch (ValueEncodingHelpers.ValueEncodingException e) {
+                    throw new EvaluationException(e.getErrorMessage());
+                }
+            }).build());
 
 }

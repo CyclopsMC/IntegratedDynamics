@@ -334,6 +334,42 @@ public class GameTestsAdvancements {
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementVariableDelaying(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        ItemStack card = createVariableForValue(helper.getLevel(), ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(0));
+        IVariableFacade facade = getVariableFacade(helper.getLevel(), card);
+        fireVariableCreatedTrigger(player, facade, RegistryEntries.BLOCK_DELAY.get());
+        helper.succeedWhen(() -> assertAdvancement(helper, player, "integrateddynamics:saving_state/variable_delaying"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementStateLatching(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        GameTestsDelayer.placeStateNetwork(helper);
+        helper.runAfterDelay(2, () -> placeVariableInWriter(helper, helper.getLevel(), GameTestsDelayer.stateWriterPos(helper),
+                Aspects.Write.Redstone.BOOLEAN, GameTestsDelayer.buildStateLatch(helper), player));
+        helper.succeedWhen(() -> {
+            assertAdvancement(helper, player, "integrateddynamics:saving_state/state_latching");
+            assertAdvancementNotDone(helper, player, "integrateddynamics:saving_state/state_toggling");
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementStateToggling(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        GameTestsDelayer.placeStateNetwork(helper);
+        helper.runAfterDelay(2, () -> {
+            GameTestsDelayer.buildStateLatch(helper);
+            placeVariableInWriter(helper, helper.getLevel(), GameTestsDelayer.stateWriterPos(helper),
+                    Aspects.Write.Redstone.BOOLEAN, GameTestsDelayer.buildStateToggle(helper), player);
+        });
+        helper.succeedWhen(() -> {
+            assertAdvancement(helper, player, "integrateddynamics:saving_state/state_toggling");
+            assertAdvancementNotDone(helper, player, "integrateddynamics:saving_state/state_latching");
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
     public void testAdvancementRecipeCreation(GameTestHelper helper) {
         ServerPlayer player = mockServerPlayer(helper);
         ItemStack card = createVariableForValue(helper.getLevel(), ValueTypes.OBJECT_RECIPE,

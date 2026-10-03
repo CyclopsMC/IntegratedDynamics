@@ -31,6 +31,23 @@ public class RenderCable implements BlockEntityRenderer<BlockEntityMultipartTick
     }
 
     @Override
+    public boolean shouldRender(BlockEntityMultipartTicking tile, Vec3 cameraPos) {
+        // Most cables have no overlays, so skip them early to avoid per-frame light calculations.
+        return hasOverlayRenderers(tile) && BlockEntityRenderer.super.shouldRender(tile, cameraPos);
+    }
+
+    protected boolean hasOverlayRenderers(BlockEntityMultipartTicking tile) {
+        if (tile.getPartContainer().hasParts()) {
+            for (IPartType<?, ?> partType : tile.getPartContainer().getParts().values()) {
+                if (!PartOverlayRenderers.REGISTRY.getRenderers(partType).isEmpty()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
     public RenderCable.CableRenderState createRenderState() {
         return new RenderCable.CableRenderState();
     }
