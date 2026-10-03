@@ -1683,7 +1683,7 @@
     "operator.integrateddynamics.general.encode": "Encode",
     "operator.integrateddynamics.general.encode.info": "A materialized copy of the input value, encoded as a readable string that the Decode operator turns back into the value.",
     "operator.integrateddynamics.general.encode_compressed": "Encode Compressed",
-    "operator.integrateddynamics.general.encode_compressed.info": "A materialized copy of the input value, encoded as a compressed string, which is shorter but not readable. The Decode operator turns it back into the value.",
+    "operator.integrateddynamics.general.encode_compressed.info": "A materialized copy of the input value, encoded as a compressed string.",
     "operator.integrateddynamics.general.decode": "Decode",
     "operator.integrateddynamics.general.decode.info": "The value that was encoded in the given string, by the Encode operator or a Materializer, in either its readable or its compressed form.",
 
