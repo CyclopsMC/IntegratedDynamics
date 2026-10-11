@@ -1,0 +1,5 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.31.0 or higher.
+
+Fixes:
+* Fix chunk unloads loading neighbouring chunks via cable setRemoved (#1764), Closes #1763
