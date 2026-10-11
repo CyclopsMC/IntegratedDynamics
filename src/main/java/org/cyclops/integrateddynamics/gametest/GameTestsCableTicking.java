@@ -141,6 +141,26 @@ public class GameTestsCableTicking {
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
+    public void testCableTickingIdleChunkUnloadKeepsNetwork(GameTestHelper helper) {
+        helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
+        helper.setBlock(POS.east(), RegistryEntries.BLOCK_CABLE.value());
+
+        helper.runAfterDelay(20, () -> {
+            helper.assertFalse(isTicking(helper, POS), "Idle cable is still ticking");
+            INetwork network = NetworkHelpers.getNetworkChecked(helper.getLevel(), helper.absolutePos(POS), null);
+
+            // Simulate a chunk unload, during which the cable must remain part of its network,
+            // as it would otherwise be removed and recreated each time the chunk is loaded again.
+            BlockEntityMultipartTicking blockEntity = getBlockEntity(helper, POS);
+            blockEntity.onChunkUnloaded();
+            blockEntity.setRemoved();
+            helper.assertTrue(blockEntity.getNetwork() == network, "Unloaded cable was removed from its network");
+            helper.assertValueEqual(network.getCablesCount(), 2, "Network lost a cable during the chunk unload");
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
     public void testCableTickingIdleLoadFallbackTicking(GameTestHelper helper) {
         helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
         helper.setBlock(POS.east(), RegistryEntries.BLOCK_CABLE.value());
