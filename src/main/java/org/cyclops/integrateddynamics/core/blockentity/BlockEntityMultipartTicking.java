@@ -80,6 +80,7 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
     private boolean forceLightCheckAtClient;
 
     private ModelData cachedState = null;
+    private boolean chunkUnloading = false;
 
     public EnumFacingMap<Boolean> getConnected() {
         return connected;
@@ -407,6 +408,7 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
     @Override
     public void onChunkUnloaded() {
         super.onChunkUnloaded();
+        this.chunkUnloading = true;
         invalidateParts();
     }
 
@@ -442,7 +444,9 @@ public class BlockEntityMultipartTicking extends CyclopsBlockEntity implements P
         // Only required for cases where cables are moved by commands or cleared after game tests,
         // or where the block entity is removed before the block itself,
         // which is what contraption mods such as Create do when they pick up a block.
-        if (getNetworkCarrier().getNetwork() != null) {
+        // This must not happen on chunk unloads, as the cable then remains part of its network,
+        // and accessing the level would load the chunk again.
+        if (!this.chunkUnloading && getNetworkCarrier().getNetwork() != null) {
             // Since onCableRemoving was not called for this position, the cables that are still
             // connected to it were never remembered. Do so here, so that onCableRemoved can
             // reinitialize their networks once the block is gone.
