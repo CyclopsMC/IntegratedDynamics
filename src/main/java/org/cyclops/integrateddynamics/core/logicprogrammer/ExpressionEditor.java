@@ -25,7 +25,9 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The editing state of an expression in the logic programmer,
@@ -114,6 +116,52 @@ public class ExpressionEditor {
         lastResult = null;
     }
 
+    public boolean hasRefType(int variableId) {
+        return refTypes.containsKey(variableId);
+    }
+
+    @Nullable
+    public IValueType<?> getRefType(int variableId) {
+        return refTypes.get(variableId);
+    }
+
+    /**
+     * @return The known types of the variables referenced in the expression.
+     */
+    public Map<Integer, IValueType<?>> getRefTypes() {
+        Map<Integer, IValueType<?>> types = new HashMap<>();
+        for (int variableId : ExpressionTrees.getRefIds(expression.root())) {
+            IValueType<?> type = refTypes.get(variableId);
+            if (type != null) {
+                types.put(variableId, type);
+            }
+        }
+        return types;
+    }
+
+    /**
+     * For references of unknown type, take the type of the operator input they are in when that type is not a category.
+     * This holds for cards that were written without errors.
+     */
+    public void inferMissingRefTypes() {
+        inferMissingRefTypes(expression.root());
+        lastResult = null;
+    }
+
+    private void inferMissingRefTypes(ExpressionNode node) {
+        if (node instanceof ExpressionNode.Operator op) {
+            IValueType<?>[] inputTypes = op.operator().getInputTypes();
+            for (int i = 0; i < op.children().size(); i++) {
+                ExpressionNode child = op.children().get(i);
+                if (child instanceof ExpressionNode.Ref ref && !refTypes.containsKey(ref.variableId())
+                        && i < inputTypes.length && !(inputTypes[i] instanceof IValueTypeCategory<?>)) {
+                    refTypes.put(ref.variableId(), inputTypes[i]);
+                }
+                inferMissingRefTypes(child);
+            }
+        }
+    }
+
     /**
      * @return The type checking result of the current expression, cached until the next change.
      */
@@ -154,7 +202,8 @@ public class ExpressionEditor {
         if (node instanceof ExpressionNode.Param param && param.index() < expression.parameters().size()) {
             ExpressionParameter parameter = expression.parameters().get(param.index());
             IValueType<?> expectedType = getExpectedType(slot);
-            if (parameter.type() == ValueTypes.CATEGORY_ANY && !(expectedType instanceof IValueTypeCategory<?>)) {
+            if (parameter.type() == ValueTypes.CATEGORY_ANY && expectedType != ValueTypes.CATEGORY_ANY
+                    && (!(expectedType instanceof IValueTypeCategory<?>) || PARAMETER_TYPES.contains(expectedType))) {
                 List<ExpressionParameter> parameters = new ArrayList<>(expression.parameters());
                 parameters.set(param.index(), parameter.withType(expectedType));
                 expression = expression.withParameters(parameters);
@@ -233,6 +282,21 @@ public class ExpressionEditor {
         int index = PARAMETER_TYPES.indexOf(type);
         int size = PARAMETER_TYPES.size();
         return PARAMETER_TYPES.get(((index < 0 ? 0 : index + direction) % size + size) % size);
+    }
+
+    /**
+     * @param expectedType The type of the slot the operator is picked for.
+     * @param operator The picked operator.
+     * @param forceValue If the player asked to insert the operator as a value.
+     * @return If the operator is inserted as an operator value instead of as a nested call.
+     */
+    public static boolean isPickedAsValue(IValueType<?> expectedType, IOperator operator, boolean forceValue) {
+        if (!ValueHelpers.correspondsTo(expectedType, ValueTypes.OPERATOR)) {
+            return false;
+        }
+        // Operators that may return an operator are nested by default, as they are usually curried or combined
+        return forceValue || (expectedType == ValueTypes.OPERATOR
+                && !ValueHelpers.correspondsTo(operator.getOutputType(), ValueTypes.OPERATOR));
     }
 
     public static String sanitizeParameterName(String name) {

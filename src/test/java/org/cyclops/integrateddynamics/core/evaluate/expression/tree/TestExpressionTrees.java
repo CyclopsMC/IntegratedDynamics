@@ -402,6 +402,181 @@ public class TestExpressionTrees {
         assertThat(bool(eval(((ValueTypeOperator.ValueOperator) materialized).getRawValue(), ValueTypeString.ValueString.of("abcd"))), is(false));
     }
 
+    // --------------- Complex expressions ---------------
+
+    private static ExpressionNode opConst(IOperator operator) {
+        return new ExpressionNode.Const(ValueTypeOperator.ValueOperator.of(operator));
+    }
+
+    private static IValue i(int value) {
+        return ValueTypeInteger.ValueInteger.of(value);
+    }
+
+    // x -> x * 2
+    private static ExpressionOperator doubler() {
+        return ExpressionOperator.of(new Expression(op(Operators.ARITHMETIC_MULTIPLICATION, p(0), c(2)),
+                List.of(param("x", ValueTypes.INTEGER))));
+    }
+
+    @Test
+    public void testThreeParameters() throws EvaluationException {
+        ExpressionOperator operator = ExpressionOperator.of(new Expression(op(Operators.GENERAL_CHOICE,
+                op(Operators.RELATIONAL_GT, p(0), p(1)),
+                op(Operators.ARITHMETIC_MULTIPLICATION, p(0), p(2)),
+                op(Operators.ARITHMETIC_SUBTRACTION, p(1), p(2))),
+                List.of(param("a", ValueTypes.INTEGER), param("b", ValueTypes.INTEGER), param("c", ValueTypes.INTEGER))));
+        assertThat(ExpressionPrinter.print(operator.getExpression()), is("(a, b, c) -> a > b ? a * c : b - c"));
+        assertThat(operator.getRequiredInputLength(), is(3));
+        assertThat(operator.getOutputType(), is((IValueType) ValueTypes.INTEGER));
+        assertThat(integer(eval(operator, i(5), i(2), i(10))), is(50));
+        assertThat(integer(eval(operator, i(1), i(2), i(10))), is(-8));
+
+        // Partial application, one argument at a time
+        IOperator curried1 = ((ValueTypeOperator.ValueOperator) eval(operator, i(5))).getRawValue();
+        assertThat(curried1.getRequiredInputLength(), is(2));
+        IOperator curried2 = ((ValueTypeOperator.ValueOperator) eval(curried1, i(2))).getRawValue();
+        assertThat(integer(eval(curried2, i(10))), is(50));
+
+        // apply_2 with the first two arguments, then apply the last one
+        IValue applied = eval(Operators.OPERATOR_APPLY_2, ValueTypeOperator.ValueOperator.of(operator), i(1), i(2));
+        assertThat(integer(eval(((ValueTypeOperator.ValueOperator) applied).getRawValue(), i(10))), is(-8));
+
+        // flip swaps a and b
+        IOperator flipped = ((ValueTypeOperator.ValueOperator) eval(Operators.OPERATOR_FLIP, ValueTypeOperator.ValueOperator.of(operator))).getRawValue();
+        assertThat(integer(eval(flipped, i(2), i(5), i(10))), is(50));
+    }
+
+    @Test
+    public void testUnusedParameter() throws EvaluationException {
+        // (a, b) -> a + 1
+        ExpressionOperator operator = ExpressionOperator.of(new Expression(op(Operators.ARITHMETIC_ADDITION, p(0), c(1)),
+                List.of(param("a", ValueTypes.INTEGER), param("b", ValueTypes.CATEGORY_ANY))));
+        assertThat(integer(eval(operator, i(1), ValueTypeString.ValueString.of("ignored"))), is(2));
+    }
+
+    @Test
+    public void testHigherOrderParameter() throws EvaluationException {
+        // (f, x) -> apply(f, apply(f, x))
+        ExpressionOperator twice = ExpressionOperator.of(new Expression(
+                op(Operators.OPERATOR_APPLY, p(0), op(Operators.OPERATOR_APPLY, p(0), p(1))),
+                List.of(param("f", ValueTypes.OPERATOR), param("x", ValueTypes.CATEGORY_ANY))));
+        assertThat(integer(eval(twice, ValueTypeOperator.ValueOperator.of(doubler()), i(3))), is(12));
+        // Also works with a regular operator
+        assertThat(integer(eval(twice, ValueTypeOperator.ValueOperator.of(Operators.ARITHMETIC_INCREMENT), i(3))), is(5));
+        // And twice applied to itself through currying: twice(twice(double)) multiplies by 16
+        IOperator twiceDouble = ((ValueTypeOperator.ValueOperator) eval(twice, ValueTypeOperator.ValueOperator.of(doubler()))).getRawValue();
+        assertThat(integer(eval(twice, ValueTypeOperator.ValueOperator.of(twiceDouble), i(1))), is(16));
+    }
+
+    @Test
+    public void testExpressionOperatorAsConstant() throws EvaluationException {
+        // l -> reduce(+, map(double, l), 0), with operators as inline constants
+        ExpressionOperator operator = ExpressionOperator.of(new Expression(
+                op(Operators.OPERATOR_REDUCE, opConst(Operators.ARITHMETIC_ADDITION), op(Operators.OPERATOR_MAP, opConst(doubler()), p(0)), c(0)),
+                List.of(param("l", ValueTypes.LIST))));
+        assertThat(integer(eval(operator, ints(1, 2, 3))), is(12));
+
+        // Survives serialization, including the nested expression operator constant
+        CompoundTag tag = ValueHelpers.serialize(ValueDeseralizationContextMocked.get(), ValueTypeOperator.ValueOperator.of(operator));
+        IOperator read = ((ValueTypeOperator.ValueOperator) ValueHelpers.deserialize(ValueDeseralizationContextMocked.get(), tag)).getRawValue();
+        assertThat(integer(eval(read, ints(1, 2, 3))), is(12));
+        assertThat(read, is((IOperator) operator));
+    }
+
+    @Test
+    public void testExpressionOperatorsAsRefs() throws EvaluationException {
+        // (l) -> reduce(#add, map(#double, l), 0), where both refs are expression operators
+        ExpressionOperator add = ExpressionOperator.of(new Expression(op(Operators.ARITHMETIC_ADDITION, p(0), p(1)),
+                List.of(param("a", ValueTypes.INTEGER), param("b", ValueTypes.INTEGER))));
+        Int2ObjectMap<IVariable<?>> refs = new Int2ObjectOpenHashMap<>();
+        refs.put(1, new Variable<>(ValueTypeOperator.ValueOperator.of(add)));
+        refs.put(2, new Variable<>(ValueTypeOperator.ValueOperator.of(doubler())));
+        ExpressionOperator operator = ExpressionOperator.of(new Expression(
+                op(Operators.OPERATOR_REDUCE, ref(1), op(Operators.OPERATOR_MAP, ref(2), p(0)), c(0)),
+                List.of(param("l", ValueTypes.LIST))), refs);
+        assertThat(integer(eval(operator, ints(1, 2, 3))), is(12));
+        assertThat(ExpressionPrinter.print(operator.getExpression()), is("l -> reduce(#1, #2 map l, 0)"));
+
+        // Materializing keeps working when the refs are themselves expression operators
+        IOperator materialized = operator.materialize();
+        assertThat(integer(eval(materialized, ints(1, 2, 3))), is(12));
+    }
+
+    @Test
+    public void testNestedMaterialization() throws EvaluationException {
+        // Inner: x -> x + #limit, outer: l -> map(#inner, l)
+        MutableVariable<ValueTypeInteger.ValueInteger> limit = new MutableVariable<>(ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(1));
+        Int2ObjectMap<IVariable<?>> innerRefs = new Int2ObjectOpenHashMap<>();
+        innerRefs.put(5, limit);
+        ExpressionOperator inner = ExpressionOperator.of(new Expression(op(Operators.ARITHMETIC_ADDITION, p(0), ref(5)),
+                List.of(param("x", ValueTypes.INTEGER))), innerRefs);
+        Int2ObjectMap<IVariable<?>> outerRefs = new Int2ObjectOpenHashMap<>();
+        outerRefs.put(6, new Variable<>(ValueTypeOperator.ValueOperator.of(inner)));
+        ExpressionOperator outer = ExpressionOperator.of(new Expression(op(Operators.OPERATOR_MAP, ref(6), p(0)),
+                List.of(param("l", ValueTypes.LIST))), outerRefs);
+
+        IOperator materialized = outer.materialize();
+        limit.set(ValueTypeInteger.ValueInteger.of(100));
+        // The live operator follows the reference, the materialized one keeps the old value at every level
+        assertThat(eval(outer, ints(1, 2)), is((IValue) ints(101, 102)));
+        assertThat(eval(materialized, ints(1, 2)), is((IValue) ints(2, 3)));
+    }
+
+    @Test
+    public void testDeepParameterUse() throws EvaluationException {
+        // x -> (((x + 1) + 1) + 1)... 30 levels deep
+        ExpressionNode node = p(0);
+        for (int j = 0; j < 30; j++) {
+            node = op(Operators.ARITHMETIC_ADDITION, node, c(1));
+        }
+        ExpressionOperator operator = ExpressionOperator.of(new Expression(node, List.of(param("x", ValueTypes.INTEGER))));
+        assertThat(integer(eval(operator, i(0))), is(30));
+        assertThat(operator.getOutputType(), is((IValueType) ValueTypes.INTEGER));
+    }
+
+    @Test
+    public void testParameterInSeveralSubtrees() throws EvaluationException {
+        // (s, n) -> len(s) * n == n * len(s) && len(s) > n
+        ExpressionNode lenS = op(Operators.STRING_LENGTH, p(0));
+        ExpressionOperator operator = ExpressionOperator.of(new Expression(op(Operators.LOGICAL_AND,
+                op(Operators.RELATIONAL_EQUALS, op(Operators.ARITHMETIC_MULTIPLICATION, lenS, p(1)), op(Operators.ARITHMETIC_MULTIPLICATION, p(1), lenS)),
+                op(Operators.RELATIONAL_GT, lenS, p(1))),
+                List.of(param("s", ValueTypes.STRING), param("n", ValueTypes.INTEGER))));
+        assertThat(bool(eval(operator, ValueTypeString.ValueString.of("abcd"), i(3))), is(true));
+        assertThat(bool(eval(operator, ValueTypeString.ValueString.of("ab"), i(3))), is(false));
+        assertThat(ExpressionPrinter.print(operator.getExpression()), is("(s, n) -> ((len(s) * n) == (n * len(s))) && (len(s) > n)"));
+    }
+
+    @Test
+    public void testEvaluationErrorInNestedNode() {
+        // x -> 10 / (x - x)
+        ExpressionOperator operator = ExpressionOperator.of(new Expression(
+                op(Operators.ARITHMETIC_DIVISION, c(10), op(Operators.ARITHMETIC_SUBTRACTION, p(0), p(0))),
+                List.of(param("x", ValueTypes.INTEGER))));
+        try {
+            eval(operator, i(3));
+            fail("Expected division by zero");
+        } catch (EvaluationException e) {
+            // Expected
+        }
+    }
+
+    @Test
+    public void testFilterWithExpressionUsingRef() throws EvaluationException {
+        // l -> filter(#pred, l), with #pred = s -> len(s) > #limit, all through refs
+        MutableVariable<ValueTypeInteger.ValueInteger> limit = new MutableVariable<>(ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(3));
+        Int2ObjectMap<IVariable<?>> predRefs = new Int2ObjectOpenHashMap<>();
+        predRefs.put(1, limit);
+        ExpressionOperator pred = ExpressionOperator.of(new Expression(op(Operators.RELATIONAL_GT, op(Operators.STRING_LENGTH, p(0)), ref(1)),
+                List.of(param("s", ValueTypes.STRING))), predRefs);
+
+        // Parameterless lazy tree: filter(#pred, #list)
+        Variable<ValueTypeList.ValueList> list = new Variable<>(strings("a", "abcd", "abcdef"));
+        IVariable<?> tree = ExpressionEvaluator.buildLazy(op(Operators.LIST_LENGTH, op(Operators.OPERATOR_FILTER, ref(2), ref(3))),
+                9, new ExpressionEvaluator.LocalValueCache(), id -> id == 2 ? new Variable<>(ValueTypeOperator.ValueOperator.of(pred)) : list);
+        assertThat(integer(tree.getValue()), is(2));
+    }
+
     // --------------- Type checking ---------------
 
     @Test
@@ -508,11 +683,45 @@ public class TestExpressionTrees {
     }
 
     @Test
+    public void testPrintChoice() {
+        Expression expression = new Expression(op(Operators.GENERAL_CHOICE,
+                op(Operators.RELATIONAL_GT, p(0), p(1)),
+                op(Operators.ARITHMETIC_MULTIPLICATION, p(0), p(2)),
+                op(Operators.GENERAL_CHOICE, op(Operators.RELATIONAL_LT, p(1), p(2)), p(1), p(2))),
+                List.of(param("a", ValueTypes.INTEGER), param("b", ValueTypes.INTEGER), param("c", ValueTypes.INTEGER)));
+        assertThat(ExpressionPrinter.print(expression), is("(a, b, c) -> a > b ? a * c : (b < c ? b : c)"));
+
+        // Parenthesized inside other operators
+        Expression inInfix = new Expression(op(Operators.ARITHMETIC_ADDITION, op(Operators.GENERAL_CHOICE, p(0), c(1), c(2)), c(3)),
+                List.of(param("x", ValueTypes.BOOLEAN)));
+        assertThat(ExpressionPrinter.print(inInfix), is("x -> (x ? 1 : 2) + 3"));
+
+        // Incomplete choices are printed in prefix notation
+        Expression incomplete = new Expression(op(Operators.GENERAL_CHOICE, p(0), ExpressionNode.EMPTY, c(2)),
+                List.of(param("x", ValueTypes.BOOLEAN)));
+        assertThat(ExpressionPrinter.print(incomplete), is("x -> choice(x, ?, 2)"));
+        Expression incompleteCondition = new Expression(op(Operators.GENERAL_CHOICE,
+                op(Operators.RELATIONAL_GT, ExpressionNode.EMPTY, c(1)), c(1), c(2)));
+        assertThat(ExpressionPrinter.print(incompleteCondition), is("choice(? > 1, 1, 2)"));
+    }
+
+    @Test
+    public void testPrintOperatorValues() {
+        Expression expression = new Expression(op(Operators.OPERATOR_REDUCE, opConst(Operators.ARITHMETIC_ADDITION),
+                op(Operators.OPERATOR_MAP, opConst(Operators.STRING_LENGTH), p(0)), c(0)),
+                List.of(param("l", ValueTypes.LIST)));
+        assertThat(ExpressionPrinter.print(expression), is("l -> reduce((+), (len) map l, 0)"));
+        // Unregistered operators are printed by their full symbol
+        assertThat(ExpressionPrinter.printValue(ValueTypeOperator.ValueOperator.of(doubler())), is("(x -> x * 2)"));
+    }
+
+    @Test
     public void testShortNames() {
         assertThat(ExpressionPrinter.getShortName(Operators.RELATIONAL_GT), is(">"));
         assertThat(ExpressionPrinter.getShortName(Operators.LIST_LENGTH), is("| |"));
         assertThat(ExpressionPrinter.getShortName(Operators.NBT_COMPOUND_SIZE), is("size"));
         assertThat(ExpressionPrinter.getShortName(Operators.OBJECT_ITEMSTACK_DATA), is("nbt"));
+        assertThat(ExpressionPrinter.getShortName(Operators.GENERAL_CHOICE), is("choice"));
     }
 
     @Test

@@ -41,6 +41,7 @@ import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -51,6 +52,7 @@ public class ExpressionVariableFacade extends VariableFacadeBase implements IExp
 
     @Nullable
     private final Expression expression;
+    private final Map<Integer, IValueType<?>> referenceTypes;
     private IVariable<?> variable = null;
     private int lastNetworkHash = -1;
     private IValueType<?> outputType = null;
@@ -60,13 +62,28 @@ public class ExpressionVariableFacade extends VariableFacadeBase implements IExp
     private boolean validating = false;
 
     public ExpressionVariableFacade(boolean generateId, @Nullable Expression expression) {
-        super(generateId);
-        this.expression = expression;
+        this(generateId, expression, Map.of());
     }
 
     public ExpressionVariableFacade(int id, @Nullable Expression expression) {
+        this(id, expression, Map.of());
+    }
+
+    public ExpressionVariableFacade(boolean generateId, @Nullable Expression expression, Map<Integer, IValueType<?>> referenceTypes) {
+        super(generateId);
+        this.expression = expression;
+        this.referenceTypes = Map.copyOf(referenceTypes);
+    }
+
+    public ExpressionVariableFacade(int id, @Nullable Expression expression, Map<Integer, IValueType<?>> referenceTypes) {
         super(id);
         this.expression = expression;
+        this.referenceTypes = Map.copyOf(referenceTypes);
+    }
+
+    @Override
+    public Map<Integer, IValueType<?>> getReferenceTypes() {
+        return referenceTypes;
     }
 
     @Nullable

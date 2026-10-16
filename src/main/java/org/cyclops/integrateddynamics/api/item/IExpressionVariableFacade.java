@@ -1,8 +1,10 @@
 package org.cyclops.integrateddynamics.api.item;
 
 import org.cyclops.integrateddynamics.api.evaluate.expression.tree.Expression;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 
 import javax.annotation.Nullable;
+import java.util.Map;
 
 /**
  * Variable facade for variables that are defined by an expression tree,
@@ -21,5 +23,13 @@ public interface IExpressionVariableFacade extends IVariableFacade {
      */
     @Nullable
     public Expression getExpression();
+
+    /**
+     * @return The output types of the referenced variables, by variable id, as far as they were known when this card
+     *         was written. This is only used when editing the card, evaluation always uses the actual variables.
+     */
+    public default Map<Integer, IValueType<?>> getReferenceTypes() {
+        return Map.of();
+    }
 
 }

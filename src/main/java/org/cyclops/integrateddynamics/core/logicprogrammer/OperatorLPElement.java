@@ -1,8 +1,8 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
-import com.google.common.collect.Iterables;
-import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
-import it.unimi.dsi.fastutil.ints.IntSet;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.IntList;
 import lombok.Data;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -19,18 +19,17 @@ import org.cyclops.integrateddynamics.api.evaluate.expression.tree.Expression;
 import org.cyclops.integrateddynamics.api.evaluate.expression.tree.ExpressionNode;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeCategory;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IExpressionVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IOperatorVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
-import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandler;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
 import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
 import org.cyclops.integrateddynamics.core.evaluate.ExpressionVariableFacadeHandler;
+import org.cyclops.integrateddynamics.core.evaluate.ReferencePlaceholderVariableFacadeHandler;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionTrees;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionTypeChecker;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
@@ -40,11 +39,12 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.item.ExpressionVariableFacade;
 import org.cyclops.integrateddynamics.core.item.OperatorVariableFacade;
-import org.cyclops.integrateddynamics.core.item.ValueTypeVariableFacade;
+import org.cyclops.integrateddynamics.core.item.ReferencePlaceholderVariableFacade;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Element for operator.
@@ -65,7 +65,8 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
     @Nullable
     private ExpressionEditor editor;
 
-    private final IntSet placeholderRefIds = new IntOpenHashSet();
+    // The actual cards that were placed in slots, so they can be shown again after navigating
+    private final Int2ObjectMap<ItemStack> refCards = new Int2ObjectOpenHashMap<>();
 
     // Client-side UI state
     private int selectedSlot = -1;
@@ -152,8 +153,12 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
                 if (!(child instanceof ExpressionNode.Ref ref) || ref.variableId() != variableFacade.getId()) {
                     editor.setChild(slotId, new ExpressionNode.Ref(variableFacade.getId()));
                 }
-                // Types of placeholder cards for loaded references are unknown
-                if (!placeholderRefIds.contains(variableFacade.getId())) {
+                if (variableFacade instanceof ReferencePlaceholderVariableFacade placeholder) {
+                    if (!editor.hasRefType(placeholder.getId())) {
+                        editor.setRefType(placeholder.getId(), placeholder.getValueType());
+                    }
+                } else {
+                    refCards.put(variableFacade.getId(), itemStack.copyWithCount(1));
                     editor.setRefType(variableFacade.getId(), variableFacade.getOutputType());
                 }
             } else {
@@ -206,32 +211,60 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
                     new OperatorVariableFacadeFactory(operator, variableIds), player.level(), player, RegistryEntries.BLOCK_LOGIC_PROGRAMMER.get().defaultBlockState());
         }
         return registry.writeVariableFacadeItem(!player.level().isClientSide(), itemStack, ExpressionVariableFacadeHandler.getInstance(),
-                new ExpressionVariableFacadeFactory(expression), player.level(), player, RegistryEntries.BLOCK_LOGIC_PROGRAMMER.get().defaultBlockState());
+                new ExpressionVariableFacadeFactory(expression, editor.getRefTypes()), player.level(), player, RegistryEntries.BLOCK_LOGIC_PROGRAMMER.get().defaultBlockState());
     }
 
     @Override
     public void loadElement(IVariableFacade variableFacade) {
         if (variableFacade instanceof OperatorVariableFacade operatorVariableFacade) {
-            int[] variableIds = operatorVariableFacade.getVariableIds();
-            this.inputVariables = new IVariableFacade[variableIds.length];
-            for (int i = 0; i < variableIds.length; i++) {
-                this.inputVariables[i] = createPlaceholderFacade(variableIds[i], operator.getInputTypes()[i]);
-            }
-            this.editor.setExpression(ExpressionTrees.fromPlainOperator(operator, variableIds));
-            this.placeholderRefIds.addAll(ExpressionTrees.getRefIds(this.editor.getExpression().root()));
+            this.editor.setExpression(ExpressionTrees.fromPlainOperator(operator, operatorVariableFacade.getVariableIds()));
         } else if (variableFacade instanceof IExpressionVariableFacade expressionVariableFacade
                 && expressionVariableFacade.getExpression() != null) {
             this.editor.setExpression(expressionVariableFacade.getExpression());
-            this.placeholderRefIds.addAll(ExpressionTrees.getRefIds(this.editor.getExpression().root()));
-            this.inputVariables = new IVariableFacade[editor.getSlotCount()];
+            expressionVariableFacade.getReferenceTypes().forEach(this.editor::setRefType);
+        } else {
+            return;
+        }
+        this.editor.inferMissingRefTypes();
+        this.inputVariables = new IVariableFacade[editor.getSlotCount()];
+    }
+
+    /**
+     * Look for the variable cards that are referenced in the loaded expression in the player's inventory,
+     * so their actual types are known and the actual cards can be shown in the slots.
+     * @param player The player.
+     */
+    public void findReferencedCards(Player player) {
+        if (editor == null) {
+            return;
+        }
+        IntList refIds = ExpressionTrees.getRefIds(editor.getExpression().root());
+        IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
+        for (ItemStack itemStack : player.getInventory().items) {
+            if (itemStack.getItem() == RegistryEntries.ITEM_VARIABLE.get()) {
+                IVariableFacade variableFacade = registry.handle(ValueDeseralizationContext.of(player.level()), itemStack);
+                if (variableFacade.isValid() && refIds.contains(variableFacade.getId())
+                        && !(variableFacade instanceof ReferencePlaceholderVariableFacade) && !refCards.containsKey(variableFacade.getId())) {
+                    refCards.put(variableFacade.getId(), itemStack.copyWithCount(1));
+                    editor.setRefType(variableFacade.getId(), variableFacade.getOutputType());
+                }
+            }
         }
     }
 
-    protected static IVariableFacade createPlaceholderFacade(int variableId, IValueType valueType) {
-        if (valueType instanceof IValueTypeCategory<?> valueTypeCategory) {
-            valueType = Iterables.getFirst(valueTypeCategory.getElements(), ValueTypes.BOOLEAN);
+    /**
+     * @param variableId A referenced variable id.
+     * @return The item to show in a slot for the given reference, the actual card if it is known, otherwise a placeholder.
+     */
+    protected ItemStack getReferenceItem(int variableId) {
+        ItemStack card = refCards.get(variableId);
+        if (card != null) {
+            return card.copy();
         }
-        return new ValueTypeVariableFacade(variableId, valueType, valueType.getDefault());
+        return IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class)
+                .writeVariableFacadeItem(new ItemStack(RegistryEntries.ITEM_VARIABLE),
+                        new ReferencePlaceholderVariableFacade(variableId, editor.getRefType(variableId)),
+                        ReferencePlaceholderVariableFacadeHandler.getInstance());
     }
 
     @Override
@@ -246,10 +279,7 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
             ExpressionNode child = editor.getChild(i);
             ItemStack itemStack = ItemStack.EMPTY;
             if (child instanceof ExpressionNode.Ref ref) {
-                if (inputVariables[i] == null || inputVariables[i].getId() != ref.variableId()) {
-                    inputVariables[i] = createPlaceholderFacade(ref.variableId(), editor.getExpectedType(i));
-                }
-                itemStack = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).writeVariableFacadeItem(new ItemStack(RegistryEntries.ITEM_VARIABLE), inputVariables[i], (IVariableFacadeHandler) ValueTypes.REGISTRY);
+                itemStack = getReferenceItem(ref.variableId());
             } else if (isItemConstant(child)) {
                 itemStack = ((ValueObjectTypeItemStack.ValueItemStack) ((ExpressionNode.Const) child).value()).getRawValue().copy();
             }
@@ -296,7 +326,7 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
     @Override
     public void activate() {
         this.editor = new ExpressionEditor(operator);
-        this.placeholderRefIds.clear();
+        this.refCards.clear();
         this.inputVariables = new IVariableFacade[getRenderPattern().getSlotPositions().length];
         this.selectedSlot = -1;
         this.armedParameter = -1;
@@ -305,6 +335,7 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
     @Override
     public void deactivate() {
         this.inputVariables = null;
+        this.refCards.clear();
         this.editor = null;
         this.selectedSlot = -1;
         this.armedParameter = -1;
@@ -405,19 +436,25 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
     public static class ExpressionVariableFacadeFactory implements IVariableFacadeHandlerRegistry.IVariableFacadeFactory<IExpressionVariableFacade> {
 
         private final Expression expression;
+        private final Map<Integer, IValueType<?>> referenceTypes;
 
         public ExpressionVariableFacadeFactory(Expression expression) {
+            this(expression, Map.of());
+        }
+
+        public ExpressionVariableFacadeFactory(Expression expression, Map<Integer, IValueType<?>> referenceTypes) {
             this.expression = expression;
+            this.referenceTypes = referenceTypes;
         }
 
         @Override
         public IExpressionVariableFacade create(boolean generateId) {
-            return new ExpressionVariableFacade(generateId, expression);
+            return new ExpressionVariableFacade(generateId, expression, referenceTypes);
         }
 
         @Override
         public IExpressionVariableFacade create(int id) {
-            return new ExpressionVariableFacade(id, expression);
+            return new ExpressionVariableFacade(id, expression, referenceTypes);
         }
     }
 

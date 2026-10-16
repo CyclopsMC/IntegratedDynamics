@@ -48,6 +48,7 @@ public class L10NValues {
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_HINT_SELECTED_ITEM = "gui." + NS + ".logicprogrammer.expression.hint.selected_item";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_HINT_SELECTED_OTHER = "gui." + NS + ".logicprogrammer.expression.hint.selected_other";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_HINT_SELECTED_OPERATOR = "gui." + NS + ".logicprogrammer.expression.hint.selected_operator";
+    public static final String GUI_LOGICPROGRAMMER_EXPRESSION_HINT_SELECTED_OPERATOR_VALUE = "gui." + NS + ".logicprogrammer.expression.hint.selected_operator_value";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_HINT_PARAM = "gui." + NS + ".logicprogrammer.expression.hint.param";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_HINT_ERROR_HERE = "gui." + NS + ".logicprogrammer.expression.hint.error_here";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_HINT_ERROR_ELSEWHERE = "gui." + NS + ".logicprogrammer.expression.hint.error_elsewhere";
@@ -135,6 +136,7 @@ public class L10NValues {
     public static final String EXPRESSION_ERROR_NOVALUE = "expression." + NS + ".error.no_value";
     public static final String EXPRESSION_ERROR_INCOMPLETE = "expression." + NS + ".error.incomplete";
     public static final String EXPRESSION_TOOLTIP_EXPRESSION = "expression." + NS + ".tooltip.expression";
+    public static final String EXPRESSION_TOOLTIP_REFERENCE = "expression." + NS + ".tooltip.reference";
     public static final String EXPRESSION_TOOLTIP_TYPE = "expression." + NS + ".tooltip.type";
 
     public static final String OPERATOR_APPLIED_OPERATORNAME = "operator." + NS + ".applied.operator_name";

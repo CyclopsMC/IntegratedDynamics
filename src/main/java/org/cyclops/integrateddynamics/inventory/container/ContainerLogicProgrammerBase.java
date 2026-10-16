@@ -30,6 +30,7 @@ import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
 import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.inventory.container.slot.SlotVariable;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ExpressionEditor;
@@ -348,6 +349,9 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
                 }
                 temporaryInputSlots.removeDirtyMarkListener(this);
                 element.loadElement(variableFacade);
+                if (element instanceof OperatorLPElement operatorElement) {
+                    operatorElement.findReferencedCards(player);
+                }
                 if (MinecraftHelpers.isClientSideThread()) {
                     element.setValueInGui(getGui().getOperatorConfigPattern());
                 } else {
@@ -382,6 +386,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
 
     /**
      * Only show operators whose output fits the given type, used while an expression slot is selected.
+     * For operator slots, all operators are shown.
      * @param type The expected type, or null to disable this filter.
      */
     public void setExpressionSlotFilter(@Nullable IValueType type) {
@@ -393,8 +398,9 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
 
     @Override
     protected boolean additionalApplies(ILogicProgrammerElement item) {
+        // In operator slots, every operator can be picked as a value
         if (expressionSlotFilter != null && !(item instanceof OperatorLPElement
-                && item.matchesOutput(expressionSlotFilter)
+                && (expressionSlotFilter == ValueTypes.OPERATOR || item.matchesOutput(expressionSlotFilter))
                 && ((OperatorLPElement) item).getOperator().getRenderPattern() != null)) {
             return false;
         }

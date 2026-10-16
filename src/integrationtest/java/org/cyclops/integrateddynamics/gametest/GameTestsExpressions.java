@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import org.apache.commons.lang3.tuple.Pair;
+import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -233,6 +234,130 @@ public class GameTestsExpressions {
         });
     }
 
+    private static ExpressionNode p(int index) {
+        return new ExpressionNode.Param(index);
+    }
+
+    private static ItemStack store(GameTestHelper helper, int slot, ItemStack variable) {
+        BlockEntityVariablestore variableStore = helper.getBlockEntity(POS.north());
+        variableStore.getInventory().setItem(slot, variable);
+        return variable;
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testExpressionComposedFromExpressionCards(GameTestHelper helper) {
+        setupRedstoneNetwork(helper);
+
+        // #add = (a, b) -> a + b, #double = x -> x * 2
+        ItemStack variableAdd = store(helper, 1, createVariableForExpression(helper.getLevel(), new Expression(
+                op(Operators.ARITHMETIC_ADDITION, p(0), p(1)),
+                List.of(new ExpressionParameter("a", ValueTypes.INTEGER), new ExpressionParameter("b", ValueTypes.INTEGER)))));
+        ItemStack variableDouble = store(helper, 2, createVariableForExpression(helper.getLevel(), new Expression(
+                op(Operators.ARITHMETIC_MULTIPLICATION, p(0), c(2)),
+                List.of(new ExpressionParameter("x", ValueTypes.INTEGER)))));
+        ItemStack variableList = store(helper, 3, createVariableForValue(helper.getLevel(), ValueTypes.LIST,
+                ValueTypeList.ValueList.ofAll(ValueTypeInteger.ValueInteger.of(1), ValueTypeInteger.ValueInteger.of(2), ValueTypeInteger.ValueInteger.of(3))));
+        // #sumDoubled = l -> reduce(#add, map(#double, l), 0)
+        ItemStack variableSumDoubled = store(helper, 4, createVariableForExpression(helper.getLevel(), new Expression(
+                op(Operators.OPERATOR_REDUCE, ref(variableAdd, helper), op(Operators.OPERATOR_MAP, ref(variableDouble, helper), p(0)), c(0)),
+                List.of(new ExpressionParameter("l", ValueTypes.LIST)))));
+        // apply(#sumDoubled, #list)
+        ItemStack variableResult = createVariableForExpression(helper.getLevel(), new Expression(
+                op(Operators.OPERATOR_APPLY, ref(variableSumDoubled, helper), ref(variableList, helper))));
+        Pair<PartTypePanelDisplay, PartTypePanelDisplay.State> partAndState = display(helper, variableResult);
+
+        helper.succeedWhen(() -> assertValueEqual(partAndState.getRight().getDisplayValue(), ValueTypeInteger.ValueInteger.of(12)));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testExpressionThreeParametersPartiallyApplied(GameTestHelper helper) {
+        ItemStack variableRedstone = setupRedstoneNetwork(helper);
+
+        // #op = (a, b, c) -> a > b ? a * c : b - c
+        ItemStack variableOperator = store(helper, 1, createVariableForExpression(helper.getLevel(), new Expression(
+                op(Operators.GENERAL_CHOICE, op(Operators.RELATIONAL_GT, p(0), p(1)),
+                        op(Operators.ARITHMETIC_MULTIPLICATION, p(0), p(2)), op(Operators.ARITHMETIC_SUBTRACTION, p(1), p(2))),
+                List.of(new ExpressionParameter("a", ValueTypes.INTEGER), new ExpressionParameter("b", ValueTypes.INTEGER),
+                        new ExpressionParameter("c", ValueTypes.INTEGER)))));
+        // apply(apply_2(#op, #redstone, 2), 10) = 15 * 10
+        ItemStack variableResult = createVariableForExpression(helper.getLevel(), new Expression(
+                op(Operators.OPERATOR_APPLY, op(Operators.OPERATOR_APPLY_2, ref(variableOperator, helper), ref(variableRedstone, helper), c(2)), c(10))));
+        Pair<PartTypePanelDisplay, PartTypePanelDisplay.State> partAndState = display(helper, variableResult);
+
+        helper.succeedWhen(() -> assertValueEqual(partAndState.getRight().getDisplayValue(), ValueTypeInteger.ValueInteger.of(150)));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testExpressionUpdatesWhenReferenceChanges(GameTestHelper helper) {
+        ItemStack variableRedstone = setupRedstoneNetwork(helper);
+
+        // #op = x -> x + #redstone, displayed through apply(#op, 100) in a nested expression
+        ItemStack variableOperator = store(helper, 1, createVariableForExpression(helper.getLevel(), new Expression(
+                op(Operators.ARITHMETIC_ADDITION, p(0), ref(variableRedstone, helper)),
+                List.of(new ExpressionParameter("x", ValueTypes.INTEGER)))));
+        ItemStack variableResult = createVariableForExpression(helper.getLevel(), new Expression(
+                op(Operators.ARITHMETIC_MULTIPLICATION, op(Operators.OPERATOR_APPLY, ref(variableOperator, helper), c(100)), c(2))));
+        Pair<PartTypePanelDisplay, PartTypePanelDisplay.State> partAndState = display(helper, variableResult);
+
+        // First 15 from the redstone block, then 0 once it is removed
+        helper.startSequence()
+                .thenWaitUntil(() -> assertValueEqual(partAndState.getRight().getDisplayValue(), ValueTypeInteger.ValueInteger.of(230)))
+                .thenExecute(() -> helper.setBlock(POS.south(), Blocks.AIR))
+                .thenWaitUntil(() -> assertValueEqual(partAndState.getRight().getDisplayValue(), ValueTypeInteger.ValueInteger.of(200)))
+                .thenSucceed();
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testExpressionReferenceCycle(GameTestHelper helper) {
+        setupRedstoneNetwork(helper);
+
+        // #a = #b + 1 and #b = #a + 1, written with fixed ids so they can refer to each other
+        ItemStack variableA = createVariableForExpression(helper.getLevel(), new Expression(op(Operators.ARITHMETIC_ADDITION, c(0), c(1))));
+        ItemStack variableB = createVariableForExpression(helper.getLevel(), new Expression(op(Operators.ARITHMETIC_ADDITION, c(0), c(1))));
+        int idA = getVariableFacade(helper.getLevel(), variableA).getId();
+        int idB = getVariableFacade(helper.getLevel(), variableB).getId();
+        variableA = rewriteExpression(helper, variableA, new Expression(op(Operators.ARITHMETIC_ADDITION, new ExpressionNode.Ref(idB), c(1))));
+        variableB = rewriteExpression(helper, variableB, new Expression(op(Operators.ARITHMETIC_ADDITION, new ExpressionNode.Ref(idA), c(1))));
+        store(helper, 1, variableA);
+        store(helper, 2, variableB);
+        // A self-reference as well
+        ItemStack variableSelf = createVariableForExpression(helper.getLevel(), new Expression(op(Operators.ARITHMETIC_ADDITION, c(0), c(1))));
+        int idSelf = getVariableFacade(helper.getLevel(), variableSelf).getId();
+        store(helper, 3, rewriteExpression(helper, variableSelf, new Expression(op(Operators.ARITHMETIC_ADDITION, new ExpressionNode.Ref(idSelf), c(1)))));
+
+        Pair<PartTypePanelDisplay, PartTypePanelDisplay.State> partAndState = display(helper, variableA.copy());
+
+        helper.runAfterDelay(5, () -> {
+            // Nothing is displayed and nothing crashed
+            helper.assertTrue(partAndState.getRight().getDisplayValue() == null, "Display value should be empty");
+            IVariableFacade facadeSelf = getVariableFacade(helper.getLevel(), helper.<BlockEntityVariablestore>getBlockEntity(POS.north()).getInventory().getItem(3));
+            List<net.minecraft.network.chat.MutableComponent> errors = new java.util.ArrayList<>();
+            org.cyclops.integrateddynamics.api.network.INetwork network = org.cyclops.integrateddynamics.core.helper.NetworkHelpers
+                    .getNetworkChecked(helper.getLevel(), helper.absolutePos(POS), null);
+            org.cyclops.integrateddynamics.api.network.IPartNetwork partNetwork = org.cyclops.integrateddynamics.core.helper.NetworkHelpers
+                    .getPartNetwork(java.util.Optional.of(network)).orElseThrow();
+            facadeSelf.validate(network, partNetwork, errors::add, ValueTypes.INTEGER);
+            helper.assertTrue(!errors.isEmpty(), "A self-reference should be a validation error");
+            IVariableFacade facadeA = partNetwork.getVariableFacade(idA);
+            errors.clear();
+            facadeA.validate(network, partNetwork, errors::add, ValueTypes.INTEGER);
+            helper.assertTrue(!errors.isEmpty(), "A reference cycle should be a validation error");
+            helper.assertTrue(facadeA.getVariable(network, partNetwork) == null, "A reference cycle should not produce a variable");
+            helper.succeed();
+        });
+    }
+
+    private static ItemStack rewriteExpression(GameTestHelper helper, ItemStack variable, Expression expression) {
+        int id = getVariableFacade(helper.getLevel(), variable).getId();
+        net.minecraft.nbt.CompoundTag tag = new net.minecraft.nbt.CompoundTag();
+        IntegratedDynamics._instance.getRegistryManager().getRegistry(org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry.class)
+                .write(org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext.of(helper.getLevel()), tag,
+                        new ExpressionVariableFacade(id, expression), org.cyclops.integrateddynamics.core.evaluate.ExpressionVariableFacadeHandler.getInstance());
+        ItemStack copy = variable.copy();
+        copy.set(RegistryEntries.DATACOMPONENT_VARIABLE_FACADE, tag);
+        return copy;
+    }
+
     @GameTest(template = TEMPLATE_EMPTY)
     public void testExpressionPersistence(GameTestHelper helper) {
         ItemStack variableRedstone = setupRedstoneNetwork(helper);
@@ -311,6 +436,50 @@ public class GameTestsExpressions {
 
         // Other operators do not claim the card
         helper.assertTrue(!new OperatorLPElement(Operators.ARITHMETIC_SUBTRACTION).isFor(writtenExpressionFacade), "Wrong element claims the card");
+
+        helper.succeed();
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testLogicProgrammerLoadKeepsReferenceTypes(GameTestHelper helper) {
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        ItemStack variableString = createVariableForValue(helper.getLevel(), ValueTypes.STRING,
+                org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeString.ValueString.of("abc"));
+        int idString = getVariableFacade(helper.getLevel(), variableString).getId();
+
+        // == with a String card and a constant: the == inputs are Any, so the type is only known from the card itself
+        OperatorLPElement element = new OperatorLPElement(Operators.RELATIONAL_EQUALS);
+        element.activate();
+        element.onInputSlotUpdated(player, 0, variableString);
+        element.getEditor().setChild(1, new ExpressionNode.Const(ValueTypeInteger.ValueInteger.of(3)));
+        ItemStack written = element.writeElement(player, new ItemStack(RegistryEntries.ITEM_VARIABLE.get()));
+        ExpressionVariableFacade writtenFacade = (ExpressionVariableFacade) getVariableFacade(helper.getLevel(), written);
+        helper.assertTrue(writtenFacade.getReferenceTypes().get(idString) == ValueTypes.STRING, "Reference type was not stored");
+
+        // Loading restores the type, so using the reference where a number is needed is an error in the editor
+        OperatorLPElement loaded = new OperatorLPElement(Operators.RELATIONAL_EQUALS);
+        loaded.activate();
+        loaded.loadElement(writtenFacade);
+        helper.assertTrue(loaded.getEditor().getRefType(idString) == ValueTypes.STRING, "Reference type was not loaded");
+        loaded.getEditor().setChild(1, new ExpressionNode.Operator(Operators.ARITHMETIC_INCREMENT, List.of(new ExpressionNode.Ref(idString))));
+        helper.assertTrue(loaded.validate() != null, "The loaded String reference should not fit a number input");
+
+        // An old operator card: the types of references in inputs that are not categories are inferred
+        ItemStack variableOld = createVariableForOperator(helper.getLevel(), Operators.STRING_LENGTH, new int[]{idString});
+        OperatorLPElement loadedOld = new OperatorLPElement(Operators.STRING_LENGTH);
+        loadedOld.activate();
+        loadedOld.loadElement(getVariableFacade(helper.getLevel(), variableOld));
+        helper.assertTrue(loadedOld.getEditor().getRefType(idString) == ValueTypes.STRING, "Reference type was not inferred");
+
+        // An old card with Any inputs: the type is unknown until the card is found in the player's inventory
+        ItemStack variableOldAny = createVariableForOperator(helper.getLevel(), Operators.RELATIONAL_EQUALS, new int[]{idString, idString});
+        OperatorLPElement loadedOldAny = new OperatorLPElement(Operators.RELATIONAL_EQUALS);
+        loadedOldAny.activate();
+        loadedOldAny.loadElement(getVariableFacade(helper.getLevel(), variableOldAny));
+        helper.assertTrue(loadedOldAny.getEditor().getRefType(idString) == null, "Reference type should be unknown");
+        player.getInventory().add(variableString.copy());
+        loadedOldAny.findReferencedCards(player);
+        helper.assertTrue(loadedOldAny.getEditor().getRefType(idString) == ValueTypes.STRING, "Reference type was not found in the inventory");
 
         helper.succeed();
     }

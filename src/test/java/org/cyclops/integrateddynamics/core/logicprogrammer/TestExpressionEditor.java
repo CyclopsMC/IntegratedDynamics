@@ -11,6 +11,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueDeseralization
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeDouble;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeOperator;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeString;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.junit.Test;
@@ -105,6 +106,46 @@ public class TestExpressionEditor {
         // Cycling wraps around
         assertThat(ExpressionEditor.cycleParameterType(ValueTypes.CATEGORY_ANY, -1), is((IValueType) ExpressionEditor.PARAMETER_TYPES.get(ExpressionEditor.PARAMETER_TYPES.size() - 1)));
         assertThat(ExpressionEditor.cycleParameterType(ValueTypes.CATEGORY_ANY, 1), is((IValueType) ValueTypes.BOOLEAN));
+    }
+
+    @Test
+    public void testParameterTypeFromCategory() {
+        // Number slots give a Number parameter
+        ExpressionEditor editor = new ExpressionEditor(Operators.ARITHMETIC_ADDITION);
+        apply(editor, ExpressionEditor.actionAddParam());
+        apply(editor, ExpressionEditor.actionParam(new int[0], 0, 0));
+        assertThat(editor.getExpression().parameters().get(0).type(), is((IValueType) ValueTypes.CATEGORY_NUMBER));
+        assertThat(editor.check().errors().isEmpty(), is(true));
+
+        // Any slots leave the parameter untyped
+        editor = new ExpressionEditor(Operators.RELATIONAL_EQUALS);
+        apply(editor, ExpressionEditor.actionAddParam());
+        apply(editor, ExpressionEditor.actionParam(new int[0], 0, 0));
+        assertThat(editor.getExpression().parameters().get(0).type(), is((IValueType) ValueTypes.CATEGORY_ANY));
+    }
+
+    @Test
+    public void testPickOperatorAsValue() {
+        // In operator slots, operators that don't give an operator are values, others are nested unless forced
+        assertThat(ExpressionEditor.isPickedAsValue(ValueTypes.OPERATOR, Operators.STRING_LENGTH, false), is(true));
+        assertThat(ExpressionEditor.isPickedAsValue(ValueTypes.OPERATOR, Operators.OPERATOR_APPLY, false), is(false));
+        assertThat(ExpressionEditor.isPickedAsValue(ValueTypes.OPERATOR, Operators.OPERATOR_FLIP, false), is(false));
+        assertThat(ExpressionEditor.isPickedAsValue(ValueTypes.OPERATOR, Operators.OPERATOR_FLIP, true), is(true));
+        // Other slots only take operator values when forced and when an operator fits
+        assertThat(ExpressionEditor.isPickedAsValue(ValueTypes.CATEGORY_ANY, Operators.STRING_LENGTH, false), is(false));
+        assertThat(ExpressionEditor.isPickedAsValue(ValueTypes.CATEGORY_ANY, Operators.STRING_LENGTH, true), is(true));
+        assertThat(ExpressionEditor.isPickedAsValue(ValueTypes.INTEGER, Operators.STRING_LENGTH, true), is(false));
+
+        // l -> (len) map l
+        ExpressionEditor editor = new ExpressionEditor(Operators.OPERATOR_MAP);
+        apply(editor, ExpressionEditor.actionAddParam());
+        apply(editor, ExpressionEditor.actionRenameParam(0, "l"));
+        assertThat(apply(editor, ExpressionEditor.actionConst(ValueDeseralizationContextMocked.get(), new int[0], 0,
+                ValueTypeOperator.ValueOperator.of(Operators.STRING_LENGTH))), is(ExpressionEditor.ActionResult.SLOT_CHANGED));
+        apply(editor, ExpressionEditor.actionParam(new int[0], 1, 0));
+        assertThat(ExpressionPrinter.print(editor.getExpression()), is("l -> (len) map l"));
+        assertThat(editor.check().isValid(), is(true));
+        assertThat(editor.getExpression().parameters().get(0).type(), is((IValueType) ValueTypes.LIST));
     }
 
     @Test

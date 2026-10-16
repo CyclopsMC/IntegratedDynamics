@@ -8,6 +8,9 @@ import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
+import org.cyclops.integrateddynamics.core.evaluate.operator.GeneralChoiceOperator;
+import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeOperator;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeString;
 
 import javax.annotation.Nullable;
@@ -18,6 +21,7 @@ import java.util.regex.Pattern;
 
 /**
  * Pretty-prints expression trees, such as {@code item -> size(nbt(item)) > 3}.
+ * Choices are printed as {@code c ? a : b}, operator values as {@code (+)}.
  * @author rubensworks
  */
 public final class ExpressionPrinter {
@@ -113,7 +117,8 @@ public final class ExpressionPrinter {
      */
     public static String getShortName(IOperator operator) {
         String symbol = operator.getSymbol();
-        if (symbol != null && (symbol.length() <= 3 || SYMBOLIC.matcher(symbol).matches())) {
+        // "?" (choice) would read as an empty slot
+        if (symbol != null && !symbol.equals(EMPTY) && (symbol.length() <= 3 || SYMBOLIC.matcher(symbol).matches())) {
             return symbol;
         }
         return getPrefixName(operator);
@@ -156,6 +161,11 @@ public final class ExpressionPrinter {
         String text;
         if (value instanceof ValueTypeString.ValueString string) {
             text = "\"" + string.getRawValue() + "\"";
+        } else if (value instanceof ValueTypeOperator.ValueOperator operatorValue) {
+            IOperator operator = operatorValue.getRawValue();
+            // Registered operators by name, others (curried, combined, expressions) by their full symbol
+            text = "(" + (Operators.REGISTRY.getOperator(operator.getUniqueName()) == operator
+                    ? getShortName(operator) : operator.getSymbol()) + ")";
         } else {
             text = type.toCompactString(value).getString();
         }
@@ -213,7 +223,19 @@ public final class ExpressionPrinter {
             IOperator operator = node.operator();
             List<ExpressionNode> children = node.children();
             Notation notation = getNotation(operator);
-            if (notation == Notation.INFIX && children.size() == 2) {
+            if (isTernary(node)) {
+                if (nested) {
+                    tokens.add(new Token("(", path));
+                }
+                visit(children.get(0), ExpressionTrees.append(path, 0), isTernary(children.get(0)));
+                tokens.add(new Token(" ? ", path));
+                visit(children.get(1), ExpressionTrees.append(path, 1), isTernary(children.get(1)));
+                tokens.add(new Token(" : ", path));
+                visit(children.get(2), ExpressionTrees.append(path, 2), isTernary(children.get(2)));
+                if (nested) {
+                    tokens.add(new Token(")", path));
+                }
+            } else if (notation == Notation.INFIX && children.size() == 2) {
                 if (nested) {
                     tokens.add(new Token("(", path));
                 }
@@ -236,6 +258,12 @@ public final class ExpressionPrinter {
                 }
                 tokens.add(new Token(")", path));
             }
+        }
+
+        // Incomplete choices stay in prefix notation, as "? > ? ? a : b" is unreadable
+        private static boolean isTernary(ExpressionNode node) {
+            return node instanceof ExpressionNode.Operator op && op.operator() instanceof GeneralChoiceOperator
+                    && op.children().size() == 3 && ExpressionTrees.countEmpty(op) == 0;
         }
     }
 

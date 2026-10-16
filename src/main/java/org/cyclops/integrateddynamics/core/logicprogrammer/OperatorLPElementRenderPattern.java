@@ -6,6 +6,7 @@ import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -78,8 +79,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     private static final int STRIP_LINES = 6;
     private static final int STRIP_LINE_HEIGHT = 8;
     private static final int STATUS_Y = STRIP_Y + STRIP_LINES * STRIP_LINE_HEIGHT + 6;
-    private static final int HINT_Y = STATUS_Y + 32;
-    private static final int HINT_LINES = 3;
+    private static final int PANEL_BOTTOM = ContainerLogicProgrammerBase.EXPRESSION_PANEL_Y + ContainerLogicProgrammerBase.EXPRESSION_PANEL_HEIGHT - 4;
     private static final float SMALL = 0.75F;
 
     // Editor layout, relative to the gui
@@ -223,6 +223,12 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         int slot = element.getSelectedSlot();
         if (editor == null || slot < 0) {
             return false;
+        }
+        if (ExpressionEditor.isPickedAsValue(editor.getExpectedType(slot), operator, Screen.hasShiftDown())) {
+            sendAction(ExpressionEditor.actionConst(ValueDeseralizationContext.ofClient(), editor.getEditPath(), slot,
+                    ValueTypeOperator.ValueOperator.of(operator)));
+            selectSlot(-1);
+            return true;
         }
         sendAction(ExpressionEditor.actionOperator(editor.getEditPath(), slot, operator));
         selectSlot(-1);
@@ -478,8 +484,8 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
             int[] hoveredPath = hoveredSlot >= 0 && hoveredSlot < editor.getSlotCount() ? ExpressionTrees.append(editPath, hoveredSlot) : null;
             renderParameters(guiGraphics, guiLeft, guiTop, fontRenderer, editor);
             renderStrip(guiGraphics, guiLeft, guiTop, fontRenderer, editor, result, hoveredPath);
-            renderStatus(guiGraphics, guiLeft, guiTop, fontRenderer, editor, result);
-            renderHint(guiGraphics, guiLeft, guiTop, fontRenderer, editor, result);
+            int statusEnd = renderStatus(guiGraphics, guiLeft, guiTop, fontRenderer, editor, result);
+            renderHint(guiGraphics, guiLeft, guiTop, fontRenderer, editor, result, statusEnd + 6);
         }
     }
 
@@ -519,12 +525,20 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
             if (ExpressionEditor.isTextEditable(expectedType)) {
                 return Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_HINT_SELECTED_TEXT, typeName);
             }
+            if (expectedType == ValueTypes.OPERATOR) {
+                return Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_HINT_SELECTED_OPERATOR_VALUE);
+            }
             if (ValueHelpers.correspondsTo(expectedType, ValueTypes.OBJECT_ITEMSTACK)) {
                 return Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_HINT_SELECTED_ITEM, typeName);
             }
             return Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_HINT_SELECTED_OTHER, typeName);
         }
         if (!result.errors().isEmpty()) {
+            // Errors of the operator as a whole have no slot to hover
+            ExpressionTypeChecker.Error nodeError = result.getError(editor.getEditPath(), -1);
+            if (nodeError != null) {
+                return nodeError.message();
+            }
             return Component.translatable(result.hasErrorAt(editor.getEditPath())
                     ? L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_HINT_ERROR_HERE : L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_HINT_ERROR_ELSEWHERE);
         }
@@ -541,11 +555,12 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     }
 
     protected void renderHint(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font, ExpressionEditor editor,
-                              ExpressionTypeChecker.Result result) {
-        guiGraphics.fill(guiLeft + PANEL_X, guiTop + HINT_Y - 4, guiLeft + PANEL_X + PANEL_WIDTH, guiTop + HINT_Y - 3, 0xFF8B8B8B);
-        int y = HINT_Y;
+                              ExpressionTypeChecker.Result result, int hintY) {
+        guiGraphics.fill(guiLeft + PANEL_X, guiTop + hintY - 4, guiLeft + PANEL_X + PANEL_WIDTH, guiTop + hintY - 3, 0xFF8B8B8B);
+        int y = hintY;
+        int maxLines = (PANEL_BOTTOM - 6 - hintY) / 8 + 1;
         List<net.minecraft.util.FormattedCharSequence> lines = font.split(getHint(editor, result), (int) (PANEL_WIDTH / SMALL));
-        for (int i = 0; i < lines.size() && i < HINT_LINES; i++) {
+        for (int i = 0; i < lines.size() && i < maxLines; i++) {
             guiGraphics.pose().pushPose();
             guiGraphics.pose().translate(guiLeft + PANEL_X, guiTop + y, 300);
             guiGraphics.pose().scale(SMALL, SMALL, 1F);
@@ -678,8 +693,11 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         }
     }
 
-    protected void renderStatus(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font, ExpressionEditor editor,
-                                ExpressionTypeChecker.Result result) {
+    /**
+     * @return The y position below the status, relative to the gui.
+     */
+    protected int renderStatus(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font, ExpressionEditor editor,
+                               ExpressionTypeChecker.Result result) {
         Expression expression = editor.getExpression();
         MutableComponent type;
         if (expression.hasParameters()) {
@@ -720,6 +738,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
             guiGraphics.pose().popPose();
             y += 8;
         }
+        return y;
     }
 
     @Override
