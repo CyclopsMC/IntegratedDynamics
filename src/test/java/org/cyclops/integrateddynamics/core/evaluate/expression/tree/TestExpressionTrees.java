@@ -497,6 +497,14 @@ public class TestExpressionTrees {
     }
 
     @Test
+    public void testPrintWordySuffix() {
+        // Suffix operators with word-like symbols are printed in prefix notation
+        Expression expression = new Expression(op(Operators.RELATIONAL_GT, op(Operators.NBT_COMPOUND_SIZE, p(0)), c(3)),
+                List.of(param("tag", ValueTypes.NBT)));
+        assertThat(ExpressionPrinter.print(expression), is("tag -> size(tag) > 3"));
+    }
+
+    @Test
     public void testTokensHavePaths() {
         List<ExpressionPrinter.Token> tokens = ExpressionPrinter.tokenize(longString(), id -> null);
         boolean found = false;

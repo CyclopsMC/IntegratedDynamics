@@ -30,6 +30,8 @@ import org.cyclops.integrateddynamics.core.client.gui.subgui.SubGuiHolder;
 import org.cyclops.integrateddynamics.core.evaluate.variable.gui.GuiElementValueTypeString;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.logicprogrammer.LogicProgrammerElementTypes;
+import org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElement;
+import org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern;
 import org.cyclops.integrateddynamics.core.logicprogrammer.RenderPattern;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 import org.cyclops.integrateddynamics.network.packet.LogicProgrammerActivateElementPacket;
@@ -115,7 +117,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
 
     @Override
     protected int getBaseXSize() {
-        return 256;
+        return ContainerLogicProgrammerBase.EXPRESSION_PANEL_X + ContainerLogicProgrammerBase.EXPRESSION_PANEL_WIDTH;
     }
 
     @Override
@@ -143,7 +145,11 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
 
     @Override
     protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(guiGraphics, partialTicks, mouseX, mouseY);
+        drawBackgroundTexture(guiGraphics);
+        if (isSearchEnabled()) {
+            getSearchField().render(guiGraphics, mouseX, mouseY, partialTicks);
+        }
+        getScrollbar().renderWidget(guiGraphics, mouseX, mouseY, partialTicks);
         subGuiHolder.renderBg(guiGraphics, this.leftPos, this.topPos, getMinecraft().getTextureManager(), font, partialTicks, mouseX, mouseY);
 
         // Draw container name
@@ -189,6 +195,46 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
                 topPos + offsetY + ContainerLogicProgrammerBase.OUTPUT_Y - 4, subGuiHolder.isEmpty() ? 7 : 3, 240, 4, 4);
     }
 
+    /**
+     * Draw the background texture, and the expression side panel to the right of it.
+     * @param guiGraphics The gui graphics.
+     */
+    protected void drawBackgroundTexture(GuiGraphics guiGraphics) {
+        int x = leftPos + offsetX;
+        int y = topPos + offsetY;
+        drawPanel(guiGraphics, x + ContainerLogicProgrammerBase.EXPRESSION_PANEL_X, y + ContainerLogicProgrammerBase.EXPRESSION_PANEL_Y,
+                ContainerLogicProgrammerBase.EXPRESSION_PANEL_WIDTH, ContainerLogicProgrammerBase.EXPRESSION_PANEL_HEIGHT);
+        guiGraphics.blit(texture, x, y, 0, 0, 256, 240);
+    }
+
+    /**
+     * Draw a panel in the vanilla style.
+     */
+    public static void drawPanel(GuiGraphics guiGraphics, int x, int y, int width, int height) {
+        guiGraphics.fill(x + 1, y, x + width - 1, y + height, 0xFF000000);
+        guiGraphics.fill(x, y + 1, x + width, y + height - 1, 0xFF000000);
+        guiGraphics.fill(x + 1, y + 1, x + width - 1, y + height - 1, 0xFFC6C6C6);
+        guiGraphics.fill(x + 1, y + 1, x + width - 3, y + 3, 0xFFFFFFFF);
+        guiGraphics.fill(x + 1, y + 1, x + 3, y + height - 3, 0xFFFFFFFF);
+        guiGraphics.fill(x + 3, y + height - 3, x + width - 1, y + height - 1, 0xFF555555);
+        guiGraphics.fill(x + width - 3, y + 3, x + width - 1, y + height - 1, 0xFF555555);
+    }
+
+    /**
+     * Called when the expression node being edited in the active operator element has changed.
+     */
+    public void onExpressionNavigated() {
+        ILogicProgrammerElement element = container.getActiveElement();
+        if (element == null) {
+            return;
+        }
+        container.setExpressionSlotFilter(null);
+        subGuiHolder.removeSubGui(operatorConfigPattern);
+        subGuiHolder.addSubGui(operatorConfigPattern = (RenderPattern) element.createSubGui(ContainerLogicProgrammerBase.BASE_X, ContainerLogicProgrammerBase.BASE_Y, ContainerLogicProgrammerBase.MAX_WIDTH, ContainerLogicProgrammerBase.MAX_HEIGHT, this, (ContainerLogicProgrammerBase) getMenu()));
+        operatorConfigPattern.init(leftPos, topPos);
+        container.refreshElementInventory(element, operatorConfigPattern.getX(), operatorConfigPattern.getY());
+    }
+
     protected Rectangle getElementPosition(ContainerLogicProgrammerBase container, int i, boolean absolute) {
         return new Rectangle(ITEM_POSITION.x + offsetX + (absolute ? this.leftPos : 0),
                 ITEM_POSITION.y + BOX_HEIGHT * i + offsetY + (absolute ? this.topPos : 0),
@@ -200,6 +246,17 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
         subGuiHolder.drawGuiContainerForegroundLayer(guiGraphics, this.leftPos, this.topPos, getMinecraft().getTextureManager(), font, mouseX, mouseY);
+
+        // Draw expression panel hint
+        if (!(container.getActiveElement() instanceof OperatorLPElement)) {
+            int panelX = ContainerLogicProgrammerBase.EXPRESSION_PANEL_X + 6;
+            int panelY = ContainerLogicProgrammerBase.EXPRESSION_PANEL_Y + 6;
+            int panelWidth = ContainerLogicProgrammerBase.EXPRESSION_PANEL_WIDTH - 12;
+            guiGraphics.drawString(font, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TITLE),
+                    offsetX + panelX, offsetY + panelY, Helpers.RGBToInt(64, 64, 64), false);
+            guiGraphics.drawWordWrap(font, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_HINT),
+                    offsetX + panelX, offsetY + panelY + 14, panelWidth, Helpers.RGBToInt(100, 100, 100));
+        }
 
         // Draw usage information
         if (subGuiHolder.isEmpty()) {
@@ -246,6 +303,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     }
 
     protected void onDeactivateElement(ILogicProgrammerElement element) {
+        container.setExpressionSlotFilter(null);
         subGuiHolder.clear();
     }
 
@@ -411,6 +469,12 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
             if (container.isElementVisible(i)) {
                 ILogicProgrammerElement element = container.getVisibleElement(i);
                 if (isPointInRegion(getElementPosition(container, i, false), new Point((int) mouseX, (int) mouseY))) {
+                    // Nest the operator in the selected expression slot
+                    if (element instanceof OperatorLPElement operatorElement
+                            && operatorConfigPattern instanceof OperatorLPElementRenderPattern expressionPattern
+                            && expressionPattern.onOperatorPicked(operatorElement.getOperator())) {
+                        return true;
+                    }
                     boolean activated = handleElementActivation(element, true);
                     relativeStep = activated ? i : -1;
                     if (activated) {

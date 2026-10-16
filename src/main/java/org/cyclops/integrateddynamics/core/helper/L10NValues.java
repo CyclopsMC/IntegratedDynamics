@@ -28,6 +28,24 @@ public class L10NValues {
     public static final String PART_TOOLTIP_MAXOFFSET = "parttype." + NS + ".tooltip.maxoffset";
 
     public static final String GUI_RENAME = "gui." + NS + ".button.rename";
+    public static final String GUI_LOGICPROGRAMMER_EXPRESSION_TITLE = "gui." + NS + ".logicprogrammer.expression.title";
+    public static final String GUI_LOGICPROGRAMMER_EXPRESSION_HINT = "gui." + NS + ".logicprogrammer.expression.hint";
+    public static final String GUI_LOGICPROGRAMMER_EXPRESSION_TYPE = "gui." + NS + ".logicprogrammer.expression.type";
+    public static final String GUI_LOGICPROGRAMMER_EXPRESSION_PARAMS = "gui." + NS + ".logicprogrammer.expression.params";
+    public static final String GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_ADD = "gui." + NS + ".logicprogrammer.expression.param_add";
+    public static final String GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_NAME = "gui." + NS + ".logicprogrammer.expression.param_name";
+    public static final String GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_TOOLTIP = "gui." + NS + ".logicprogrammer.expression.param_tooltip";
+    public static final String GUI_LOGICPROGRAMMER_EXPRESSION_VALUE = "gui." + NS + ".logicprogrammer.expression.value";
+    public static final String GUI_LOGICPROGRAMMER_EXPRESSION_VALUE_INVALID = "gui." + NS + ".logicprogrammer.expression.value_invalid";
+    public static final String GUI_LOGICPROGRAMMER_EXPRESSION_VALUE_ITEM = "gui." + NS + ".logicprogrammer.expression.value_item";
+    public static final String GUI_LOGICPROGRAMMER_EXPRESSION_VALUE_NONE = "gui." + NS + ".logicprogrammer.expression.value_none";
+    public static final String GUI_LOGICPROGRAMMER_EXPRESSION_SLOT_TOOLTIP = "gui." + NS + ".logicprogrammer.expression.slot_tooltip";
+    public static final String GUI_LOGICPROGRAMMER_EXPRESSION_BREADCRUMB = "gui." + NS + ".logicprogrammer.expression.breadcrumb";
+    public static final String GUI_LOGICPROGRAMMER_EXPRESSION_STATUS_READY = "gui." + NS + ".logicprogrammer.expression.status.ready";
+    public static final String GUI_LOGICPROGRAMMER_EXPRESSION_STATUS_EMPTY = "gui." + NS + ".logicprogrammer.expression.status.empty";
+    public static final String GUI_LOGICPROGRAMMER_EXPRESSION_STATUS_ERRORS = "gui." + NS + ".logicprogrammer.expression.status.errors";
+    public static final String GUI_LOGICPROGRAMMER_EXPRESSION_STATUS_ERRORS_SLOT = "gui." + NS + ".logicprogrammer.expression.status.errors_slot";
+    public static final String GUI_LOGICPROGRAMMER_EXPRESSION_STATUS_DEEP = "gui." + NS + ".logicprogrammer.expression.status.deep";
     public static final String GUI_LOGICPROGRAMMER_FILTER = "gui." + NS + ".logicprogrammer.filter";
     public static final String GUI_LOGICPROGRAMMER_RESET = "gui." + NS + ".logicprogrammer.reset";
     public static final String GUI_LOGICPROGRAMMER_INFO_CREATE = "gui." + NS + ".logicprogrammer.info.create";

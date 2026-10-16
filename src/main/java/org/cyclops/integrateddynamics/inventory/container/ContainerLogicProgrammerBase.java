@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.inventory.container;
 
 import com.google.common.collect.Lists;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringUtil;
@@ -31,7 +32,9 @@ import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElemen
 import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.inventory.container.slot.SlotVariable;
+import org.cyclops.integrateddynamics.core.logicprogrammer.ExpressionEditor;
 import org.cyclops.integrateddynamics.core.logicprogrammer.LogicProgrammerElementTypes;
+import org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElement;
 import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
 
 import javax.annotation.Nullable;
@@ -51,6 +54,14 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     public static final int MAX_WIDTH = 160;
     public static final int MAX_HEIGHT = 87;
 
+    /**
+     * The expression side panel, to the right of the main panel.
+     */
+    public static final int EXPRESSION_PANEL_X = 252;
+    public static final int EXPRESSION_PANEL_Y = 4;
+    public static final int EXPRESSION_PANEL_WIDTH = 150;
+    public static final int EXPRESSION_PANEL_HEIGHT = 136;
+
     protected static final IItemPredicate<ILogicProgrammerElement> FILTERER =
             (item, pattern) -> pattern.matcher(item.getMatchString()).matches()
                     || pattern.matcher(item.getSymbol()).matches();
@@ -66,6 +77,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     private IValueType filterIn1 = null;
     private IValueType filterIn2 = null;
     private IValueType filterOut = null;
+    private IValueType expressionSlotFilter = null;
 
     @OnlyIn(Dist.CLIENT)
     private ContainerScreenLogicProgrammerBase gui;
@@ -207,6 +219,44 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
         this.lastLabel = "";
     }
 
+    /**
+     * Recreate the slots of the given element, for example when the element changes its render pattern.
+     * In contrast to {@link #setElementInventory(ILogicProgrammerElement, int, int)}, this keeps the current label.
+     * @param element The element.
+     * @param baseX The slots X coordinate
+     * @param baseY The slots Y coordinate
+     */
+    public void refreshElementInventory(final ILogicProgrammerElement element, int baseX, int baseY) {
+        String label = this.lastLabel;
+        this.setElementInventory(element, baseX, baseY);
+        this.lastLabel = label;
+        this.temporaryInputSlots.removeDirtyMarkListener(this);
+        element.setValueInContainer(this);
+        this.temporaryInputSlots.addDirtyMarkListener(this);
+    }
+
+    /**
+     * Apply an expression edit action to the active element.
+     * This is called on the server via a packet, and directly on the client.
+     * @param action The action.
+     */
+    public void applyExpressionAction(CompoundTag action) {
+        if (activeElement instanceof OperatorLPElement operatorElement) {
+            ExpressionEditor.ActionResult result = operatorElement.applyExpressionAction(this,
+                    ValueDeseralizationContext.of(player.level()), action);
+            if (result == ExpressionEditor.ActionResult.NAVIGATED) {
+                if (MinecraftHelpers.isClientSideThread()) {
+                    getGui().onExpressionNavigated();
+                } else {
+                    refreshElementInventory(operatorElement, 0, 0);
+                }
+            }
+            if (result != ExpressionEditor.ActionResult.NONE) {
+                onDirty();
+            }
+        }
+    }
+
     public boolean canWriteActiveElementPre() {
         if(activeElement != null) {
             return activeElement.canWriteElementPre();
@@ -330,8 +380,24 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
         }
     }
 
+    /**
+     * Only show operators whose output fits the given type, used while an expression slot is selected.
+     * @param type The expected type, or null to disable this filter.
+     */
+    public void setExpressionSlotFilter(@Nullable IValueType type) {
+        if (this.expressionSlotFilter != type) {
+            this.expressionSlotFilter = type;
+            refreshFilter();
+        }
+    }
+
     @Override
     protected boolean additionalApplies(ILogicProgrammerElement item) {
+        if (expressionSlotFilter != null && !(item instanceof OperatorLPElement
+                && item.matchesOutput(expressionSlotFilter)
+                && ((OperatorLPElement) item).getOperator().getRenderPattern() != null)) {
+            return false;
+        }
         return (
                 ((filterIn1 == null || item.matchesInput(filterIn1)) && (filterIn2 == null || item.matchesInput(filterIn2))) || (filterIn1 == null && filterIn2 == null))
                 && (filterOut == null || item.matchesOutput(filterOut));

@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 public final class ExpressionPrinter {
 
     private static final Pattern IDENTIFIER = Pattern.compile("[A-Za-z_][A-Za-z0-9_]*");
+    private static final Pattern SYMBOLIC = Pattern.compile("[^A-Za-z0-9]+");
     private static final int MAX_CONST_LENGTH = 24;
     public static final String EMPTY = "?";
 
@@ -37,6 +38,22 @@ public final class ExpressionPrinter {
     public static String print(Expression expression, IntFunction<String> labels) {
         StringBuilder sb = new StringBuilder();
         for (Token token : tokenize(expression, labels)) {
+            sb.append(token.text());
+        }
+        return sb.toString();
+    }
+
+    /**
+     * @param expression The expression that contains the node, for parameter names.
+     * @param node A node.
+     * @param labels Resolves the label of a variable id, may return null.
+     * @return The pretty-printed node, without the parameter list.
+     */
+    public static String printNode(Expression expression, ExpressionNode node, IntFunction<String> labels) {
+        List<Token> tokens = new ArrayList<>();
+        new Tokenizer(expression, labels, tokens).visit(node, new int[0], false);
+        StringBuilder sb = new StringBuilder();
+        for (Token token : tokens) {
             sb.append(token.text());
         }
         return sb.toString();
@@ -112,7 +129,7 @@ public final class ExpressionPrinter {
         if (before == 1 && after == 1) {
             return Notation.INFIX;
         }
-        if (before == 1 && after == 0) {
+        if (before == 1 && after == 0 && SYMBOLIC.matcher(operator.getSymbol()).matches()) {
             return Notation.SUFFIX;
         }
         return Notation.PREFIX;
