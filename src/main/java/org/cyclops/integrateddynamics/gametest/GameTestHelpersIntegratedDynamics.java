@@ -14,6 +14,7 @@ import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
+import org.cyclops.integrateddynamics.api.evaluate.expression.tree.Expression;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -36,6 +37,7 @@ import org.cyclops.integrateddynamics.api.part.read.IPartStateReader;
 import org.cyclops.integrateddynamics.api.part.read.IPartTypeReader;
 import org.cyclops.integrateddynamics.api.part.write.IPartStateWriter;
 import org.cyclops.integrateddynamics.api.part.write.IPartTypeWriter;
+import org.cyclops.integrateddynamics.core.evaluate.ExpressionVariableFacadeHandler;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeOperator;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
@@ -88,6 +90,13 @@ public class GameTestHelpersIntegratedDynamics {
         ItemStack itemStack = new ItemStack(RegistryEntries.ITEM_VARIABLE);
         return registry.writeVariableFacadeItem(true, itemStack, Operators.REGISTRY,
                 new OperatorLPElement.OperatorVariableFacadeFactory(operator, variableIds), level, null, RegistryEntries.BLOCK_LOGIC_PROGRAMMER.get().defaultBlockState());
+    }
+
+    public static ItemStack createVariableForExpression(Level level, Expression expression) {
+        IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
+        ItemStack itemStack = new ItemStack(RegistryEntries.ITEM_VARIABLE);
+        return registry.writeVariableFacadeItem(true, itemStack, ExpressionVariableFacadeHandler.getInstance(),
+                new OperatorLPElement.ExpressionVariableFacadeFactory(expression), level, null, RegistryEntries.BLOCK_LOGIC_PROGRAMMER.get().defaultBlockState());
     }
 
     public static IVariableFacade getVariableFacade(Level level, ItemStack itemStack) {
