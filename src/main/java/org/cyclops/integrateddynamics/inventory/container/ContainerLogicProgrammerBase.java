@@ -60,7 +60,7 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     public static final int EXPRESSION_PANEL_X = 252;
     public static final int EXPRESSION_PANEL_Y = 4;
     public static final int EXPRESSION_PANEL_WIDTH = 150;
-    public static final int EXPRESSION_PANEL_HEIGHT = 136;
+    public static final int EXPRESSION_PANEL_HEIGHT = 172;
 
     protected static final IItemPredicate<ILogicProgrammerElement> FILTERER =
             (item, pattern) -> pattern.matcher(item.getMatchString()).matches()

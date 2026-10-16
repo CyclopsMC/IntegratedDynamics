@@ -60,6 +60,12 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     protected int relativeStep = -1;
     protected boolean swallowNextCharacter = false;
     private ButtonText resetButton;
+    private ButtonText expressionPanelButton;
+
+    /**
+     * If the expression side panel is shown, remembered for the rest of the game session.
+     */
+    private static boolean expressionPanelOpen = true;
 
     public ContainerScreenLogicProgrammerBase(C container, Inventory playerInventory, Component title) {
         super(container, playerInventory, title);
@@ -88,7 +94,15 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
             }
         }));
         this.resetButton.setHeight(12);
-        resetButton.visible = false;
+        resetButton.visible = container.getActiveElement() != null;
+
+        // Button to show or hide the expression side panel
+        addRenderableWidget(this.expressionPanelButton = new ButtonText(this.leftPos + 238, this.topPos + 4, 12, 12,
+                Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TOGGLE),
+                Component.literal(expressionPanelOpen ? "\u00ab" : "\u00bb"), button -> {
+            expressionPanelOpen = !expressionPanelOpen;
+            rebuildWidgets();
+        }, true));
 
         subGuiHolder.init(this.leftPos, this.topPos);
         if (firstInit) {
@@ -117,7 +131,14 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
 
     @Override
     protected int getBaseXSize() {
-        return ContainerLogicProgrammerBase.EXPRESSION_PANEL_X + ContainerLogicProgrammerBase.EXPRESSION_PANEL_WIDTH;
+        return isExpressionPanelOpen() ? ContainerLogicProgrammerBase.EXPRESSION_PANEL_X + ContainerLogicProgrammerBase.EXPRESSION_PANEL_WIDTH : 256;
+    }
+
+    /**
+     * @return If the expression side panel is shown.
+     */
+    public static boolean isExpressionPanelOpen() {
+        return expressionPanelOpen;
     }
 
     @Override
@@ -202,8 +223,10 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     protected void drawBackgroundTexture(GuiGraphics guiGraphics) {
         int x = leftPos + offsetX;
         int y = topPos + offsetY;
-        drawPanel(guiGraphics, x + ContainerLogicProgrammerBase.EXPRESSION_PANEL_X, y + ContainerLogicProgrammerBase.EXPRESSION_PANEL_Y,
-                ContainerLogicProgrammerBase.EXPRESSION_PANEL_WIDTH, ContainerLogicProgrammerBase.EXPRESSION_PANEL_HEIGHT);
+        if (isExpressionPanelOpen()) {
+            drawPanel(guiGraphics, x + ContainerLogicProgrammerBase.EXPRESSION_PANEL_X, y + ContainerLogicProgrammerBase.EXPRESSION_PANEL_Y,
+                    ContainerLogicProgrammerBase.EXPRESSION_PANEL_WIDTH, ContainerLogicProgrammerBase.EXPRESSION_PANEL_HEIGHT);
+        }
         guiGraphics.blit(texture, x, y, 0, 0, 256, 240);
     }
 
@@ -248,7 +271,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         subGuiHolder.drawGuiContainerForegroundLayer(guiGraphics, this.leftPos, this.topPos, getMinecraft().getTextureManager(), font, mouseX, mouseY);
 
         // Draw expression panel hint
-        if (!(container.getActiveElement() instanceof OperatorLPElement)) {
+        if (isExpressionPanelOpen() && !(container.getActiveElement() instanceof OperatorLPElement)) {
             int panelX = ContainerLogicProgrammerBase.EXPRESSION_PANEL_X + 6;
             int panelY = ContainerLogicProgrammerBase.EXPRESSION_PANEL_Y + 6;
             int panelWidth = ContainerLogicProgrammerBase.EXPRESSION_PANEL_WIDTH - 12;
@@ -256,6 +279,13 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
                     offsetX + panelX, offsetY + panelY, Helpers.RGBToInt(64, 64, 64), false);
             guiGraphics.drawWordWrap(font, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_HINT),
                     offsetX + panelX, offsetY + panelY + 14, panelWidth, Helpers.RGBToInt(100, 100, 100));
+        }
+
+        // Tooltip on the expression panel button
+        if (expressionPanelButton.isHovered()) {
+            this.drawTooltip(Lists.newArrayList(Component.translatable(isExpressionPanelOpen()
+                    ? L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TOGGLE_HIDE : L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TOGGLE_SHOW)),
+                    guiGraphics.pose(), mouseX - this.leftPos, mouseY - this.topPos);
         }
 
         // Draw usage information
@@ -447,6 +477,11 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        // Escape first cancels an expression slot or parameter selection, before closing the gui
+        if (keyCode == GLFW.GLFW_KEY_ESCAPE && operatorConfigPattern instanceof OperatorLPElementRenderPattern expressionPattern
+                && expressionPattern.cancelSelection()) {
+            return true;
+        }
         if (keyCode != GLFW.GLFW_KEY_ESCAPE) {
             if (this.subGuiHolder.keyPressed(keyCode, scanCode, modifiers) || handleKeyCode(keyCode, scanCode)) {
                 return true;

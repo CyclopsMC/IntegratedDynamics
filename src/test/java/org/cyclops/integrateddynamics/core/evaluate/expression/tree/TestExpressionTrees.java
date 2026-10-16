@@ -443,6 +443,9 @@ public class TestExpressionTrees {
         assertThat(result.errors().size(), is(1));
         assertThat(result.errors().get(0).path(), is(new int[]{0}));
         assertThat(result.errors().get(0).slot(), is(0));
+        assertThat(result.hasErrorWithin(new int[0]), is(true));
+        assertThat(result.hasErrorWithin(new int[]{0}), is(true));
+        assertThat(result.hasErrorWithin(new int[]{1}), is(false));
     }
 
     @Test
@@ -502,6 +505,14 @@ public class TestExpressionTrees {
         Expression expression = new Expression(op(Operators.RELATIONAL_GT, op(Operators.NBT_COMPOUND_SIZE, p(0)), c(3)),
                 List.of(param("tag", ValueTypes.NBT)));
         assertThat(ExpressionPrinter.print(expression), is("tag -> size(tag) > 3"));
+    }
+
+    @Test
+    public void testShortNames() {
+        assertThat(ExpressionPrinter.getShortName(Operators.RELATIONAL_GT), is(">"));
+        assertThat(ExpressionPrinter.getShortName(Operators.LIST_LENGTH), is("| |"));
+        assertThat(ExpressionPrinter.getShortName(Operators.NBT_COMPOUND_SIZE), is("size"));
+        assertThat(ExpressionPrinter.getShortName(Operators.OBJECT_ITEMSTACK_DATA), is("nbt"));
     }
 
     @Test

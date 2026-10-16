@@ -19,6 +19,7 @@ import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionTr
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionTypeChecker;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeString;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 
 import javax.annotation.Nullable;
@@ -41,6 +42,16 @@ public class ExpressionEditor {
     public static final String ACTION_ADD_PARAM = "addparam";
     public static final String ACTION_REMOVE_PARAM = "rmparam";
     public static final String ACTION_RENAME_PARAM = "renameparam";
+    public static final String ACTION_PARAM_TYPE = "paramtype";
+
+    /**
+     * The types a parameter can be given in the logic programmer, in cycling order.
+     */
+    public static final List<IValueType<?>> PARAMETER_TYPES = List.of(
+            ValueTypes.CATEGORY_ANY, ValueTypes.BOOLEAN, ValueTypes.INTEGER, ValueTypes.LONG, ValueTypes.DOUBLE,
+            ValueTypes.CATEGORY_NUMBER, ValueTypes.STRING, ValueTypes.LIST, ValueTypes.OPERATOR, ValueTypes.NBT,
+            ValueTypes.OBJECT_ITEMSTACK, ValueTypes.OBJECT_BLOCK, ValueTypes.OBJECT_FLUIDSTACK, ValueTypes.OBJECT_ENTITY,
+            ValueTypes.OBJECT_INGREDIENTS, ValueTypes.OBJECT_RECIPE);
 
     private static final String[] DEFAULT_PARAM_NAMES = {"x", "y", "z", "a", "b", "c", "d", "e"};
 
@@ -203,6 +214,27 @@ public class ExpressionEditor {
         lastResult = null;
     }
 
+    public void setParameterType(int index, IValueType<?> type) {
+        if (index < 0 || index >= expression.parameters().size() || !PARAMETER_TYPES.contains(type)) {
+            return;
+        }
+        List<ExpressionParameter> parameters = new ArrayList<>(expression.parameters());
+        parameters.set(index, parameters.get(index).withType(type));
+        expression = expression.withParameters(parameters);
+        lastResult = null;
+    }
+
+    /**
+     * @param type A parameter type.
+     * @param direction 1 for the next type, -1 for the previous one.
+     * @return The next or previous parameter type, wrapping around.
+     */
+    public static IValueType<?> cycleParameterType(IValueType<?> type, int direction) {
+        int index = PARAMETER_TYPES.indexOf(type);
+        int size = PARAMETER_TYPES.size();
+        return PARAMETER_TYPES.get(((index < 0 ? 0 : index + direction) % size + size) % size);
+    }
+
     public static String sanitizeParameterName(String name) {
         StringBuilder sb = new StringBuilder();
         for (char c : name.toCharArray()) {
@@ -269,6 +301,13 @@ public class ExpressionEditor {
         CompoundTag tag = action(ACTION_RENAME_PARAM, new int[0]);
         tag.putInt("index", index);
         tag.putString("name", name);
+        return tag;
+    }
+
+    public static CompoundTag actionParamType(int index, IValueType<?> type) {
+        CompoundTag tag = action(ACTION_PARAM_TYPE, new int[0]);
+        tag.putInt("index", index);
+        tag.putString("type", type.getUniqueName().toString());
         return tag;
     }
 
@@ -345,6 +384,14 @@ public class ExpressionEditor {
                 removeParameter(action.getInt("index"));
                 return ActionResult.CHANGED;
             }
+            case ACTION_PARAM_TYPE -> {
+                IValueType<?> valueType = ValueTypes.REGISTRY.getValueType(ResourceLocation.parse(action.getString("type")));
+                if (valueType == null) {
+                    return ActionResult.NONE;
+                }
+                setParameterType(action.getInt("index"), valueType);
+                return ActionResult.CHANGED;
+            }
             case ACTION_RENAME_PARAM -> {
                 if (!action.contains("name", Tag.TAG_STRING)) {
                     return ActionResult.NONE;
@@ -367,7 +414,7 @@ public class ExpressionEditor {
     @Nullable
     public static IValue parseValue(IValueType<?> expectedType, String text) {
         if (text.isEmpty()) {
-            return null;
+            return expectedType == ValueTypes.STRING ? ValueTypeString.ValueString.of("") : null;
         }
         List<IValueType<?>> candidates = new ArrayList<>();
         if (expectedType == ValueTypes.CATEGORY_ANY) {

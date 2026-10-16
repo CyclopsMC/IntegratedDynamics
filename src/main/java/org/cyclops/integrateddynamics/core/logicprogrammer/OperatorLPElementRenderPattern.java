@@ -59,10 +59,15 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     private static final int COLOR_SELECTED = 0xFF3070FF;
     private static final int COLOR_PARAM = 0xFFE8C840;
     private static final int COLOR_CONST = 0xFFB0D0F0;
+    private static final int COLOR_BADGE = 0xFFFF9020;
+    private static final int COLOR_PARAM_ARMED = 0xFFFFF0A0;
+    private static final int COLOR_TAB = 0xFFD8DCE0;
+    private static final int COLOR_HINT = 0xFF505860;
+    private static final int COLOR_LINK = 0xFF2050A0;
+    private static final int COLOR_STRIP_HOVER = 0xFF5A5A5A;
     private static final int DOUBLE_CLICK_MS = 350;
     private static final int MAX_DEPTH_WARNING = 4;
 
-    // Band layout, relative to the gui
     // Side panel layout, relative to the gui
     private static final int PANEL_X = ContainerLogicProgrammerBase.EXPRESSION_PANEL_X + 6;
     private static final int PANEL_WIDTH = ContainerLogicProgrammerBase.EXPRESSION_PANEL_WIDTH - 12;
@@ -73,6 +78,8 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     private static final int STRIP_LINES = 6;
     private static final int STRIP_LINE_HEIGHT = 8;
     private static final int STATUS_Y = STRIP_Y + STRIP_LINES * STRIP_LINE_HEIGHT + 6;
+    private static final int HINT_Y = STATUS_Y + 32;
+    private static final int HINT_LINES = 3;
     private static final float SMALL = 0.75F;
 
     // Editor layout, relative to the gui
@@ -143,6 +150,19 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     }
 
     /**
+     * Cancel the selected slot or armed parameter.
+     * @return If something was selected.
+     */
+    public boolean cancelSelection() {
+        if (element.getSelectedSlot() >= 0 || element.getArmedParameter() >= 0) {
+            selectSlot(-1);
+            armParameter(-1);
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Update the value field for the current selection.
      */
     protected void updateEditor() {
@@ -206,6 +226,10 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         }
         sendAction(ExpressionEditor.actionOperator(editor.getEditPath(), slot, operator));
         selectSlot(-1);
+        // Open the nested operator right away, as its inputs are usually filled in next
+        if (operator.getRequiredInputLength() > 0) {
+            sendAction(ExpressionEditor.actionNavigate(ExpressionTrees.append(editor.getEditPath(), slot)));
+        }
         return true;
     }
 
@@ -273,6 +297,15 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
                 return true;
             }
         }
+
+        // Clicking the empty config area cancels the current selection
+        if ((element.getSelectedSlot() >= 0 || element.getArmedParameter() >= 0)
+                && gui.isHovering(ContainerLogicProgrammerBase.BASE_X, ContainerLogicProgrammerBase.BASE_Y,
+                ContainerLogicProgrammerBase.MAX_WIDTH, ContainerLogicProgrammerBase.MAX_HEIGHT, mouseX, mouseY)) {
+            selectSlot(-1);
+            armParameter(-1);
+            return true;
+        }
         return super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
@@ -293,11 +326,6 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
                 submitEditor();
                 return true;
             }
-            if (typedChar == GLFW.GLFW_KEY_ESCAPE) {
-                selectSlot(-1);
-                armParameter(-1);
-                return true;
-            }
             valueField.keyPressed(typedChar, keyCode, modifiers);
             editorError = null;
             return true;
@@ -307,18 +335,25 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
 
     // --------------- Rendering ---------------
 
-    protected static void drawSmallString(GuiGraphics guiGraphics, Font font, String text, int x, int y, int maxWidth, int color) {
+    /**
+     * Draw text centered in a box, at the largest of a few scales at which it fits, truncating it at the smallest one.
+     */
+    protected static void drawFitted(GuiGraphics guiGraphics, Font font, String text, int x, int y, int width, int height, int color) {
         float scale = 0.5F;
-        int width = font.width(text);
-        if (width * scale > maxWidth) {
-            while (text.length() > 1 && font.width(text + "…") * scale > maxWidth) {
+        for (float candidate : new float[]{1F, 0.75F}) {
+            if (font.width(text) * candidate <= width) {
+                scale = candidate;
+                break;
+            }
+        }
+        if (font.width(text) * scale > width) {
+            while (text.length() > 1 && font.width(text + "\u2026") * scale > width) {
                 text = text.substring(0, text.length() - 1);
             }
-            text = text + "…";
-            width = font.width(text);
+            text = text + "\u2026";
         }
         guiGraphics.pose().pushPose();
-        guiGraphics.pose().translate(x + (maxWidth - width * scale) / 2F, y, 300);
+        guiGraphics.pose().translate(x + (width - font.width(text) * scale) / 2F, y + (height - 7 * scale) / 2F, 300);
         guiGraphics.pose().scale(scale, scale, 1F);
         guiGraphics.drawString(font, text, 0, 0, color, false);
         guiGraphics.pose().popPose();
@@ -362,46 +397,54 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
             switch (child) {
                 case ExpressionNode.Operator op -> {
                     int background = 0xFF000000 | op.operator().getOutputType().getDisplayColor();
-                    int textColor = getContrastingTextColor(background);
                     guiGraphics.fill(x + 1, y + 1, x + 17, y + 17, background);
-                    drawSmallString(guiGraphics, fontRenderer, op.operator().getSymbol(), x + 1, y + 4, 16, textColor);
+                    drawFitted(guiGraphics, fontRenderer, ExpressionPrinter.getShortName(op.operator()), x + 1, y + 1, 16, 16,
+                            getContrastingTextColor(background));
                     if (ExpressionTrees.countEmpty(op) > 0) {
-                        drawSmallString(guiGraphics, fontRenderer, "( ? )", x + 1, y + 11, 16, textColor);
+                        // Badge for unfilled inputs
+                        guiGraphics.fill(x + 12, y + 1, x + 17, y + 6, 0xFF000000);
+                        guiGraphics.fill(x + 13, y + 2, x + 16, y + 5, COLOR_BADGE);
                     }
                 }
                 case ExpressionNode.Const constant -> {
                     if (!OperatorLPElement.isItemConstant(constant)) {
                         guiGraphics.fill(x + 1, y + 1, x + 17, y + 17, COLOR_CONST);
-                        drawSmallString(guiGraphics, fontRenderer, ExpressionPrinter.printValue(constant.value()), x + 1, y + 7, 16, COLOR_TEXT);
+                        drawFitted(guiGraphics, fontRenderer, ExpressionPrinter.printValue(constant.value()), x + 1, y + 1, 16, 16, COLOR_TEXT);
                     }
                 }
                 case ExpressionNode.Param param -> {
                     guiGraphics.fill(x + 1, y + 1, x + 17, y + 17, COLOR_PARAM);
                     ExpressionParameter parameter = editor.getExpression().parameters().get(param.index());
-                    drawSmallString(guiGraphics, fontRenderer, parameter.name(), x + 1, y + 7, 16, COLOR_TEXT);
+                    drawFitted(guiGraphics, fontRenderer, parameter.name(), x + 1, y + 1, 16, 16, COLOR_TEXT);
                 }
                 default -> {}
             }
-            if (result.getError(editPath, i) != null) {
+            if (result.getError(editPath, i) != null || result.hasErrorWithin(ExpressionTrees.append(editPath, i))) {
                 drawOutline(guiGraphics, x, y, 18, 18, COLOR_ERROR);
             } else if (element.getSelectedSlot() == i) {
                 drawOutline(guiGraphics, x, y, 18, 18, COLOR_SELECTED);
             }
         }
 
-        // Breadcrumb
+        // Breadcrumb, as tabs for the operators from the root to the edited one
         if (editPath.length > 0) {
             int x = ContainerLogicProgrammerBase.BASE_X + 2;
             int y = ContainerLogicProgrammerBase.BASE_Y + 2;
             List<IOperator> operators = editor.getOperatorsAlongPath(editPath);
             for (int i = 0; i < operators.size(); i++) {
-                String text = (i == 0 ? "" : " / ") + operators.get(i).getSymbol();
-                int width = fontRenderer.width(text);
+                if (i > 0) {
+                    guiGraphics.drawString(fontRenderer, "\u203a", guiLeft + x + 1, guiTop + y + 2, COLOR_TEXT, false);
+                    x += 8;
+                }
+                String text = ExpressionPrinter.getShortName(operators.get(i));
+                int width = fontRenderer.width(text) + 6;
                 boolean current = i == operators.size() - 1;
-                guiGraphics.drawString(fontRenderer, text, guiLeft + x, guiTop + y, current ? COLOR_TEXT : 0xFF2050A0, false);
+                guiGraphics.fill(guiLeft + x, guiTop + y, guiLeft + x + width, guiTop + y + 12, current ? 0xFFFFFFFF : COLOR_TAB);
+                drawOutline(guiGraphics, guiLeft + x, guiTop + y, width, 12, current ? COLOR_TEXT : 0xFF8B8B8B);
+                guiGraphics.drawString(fontRenderer, text, guiLeft + x + 3, guiTop + y + 2, current ? COLOR_TEXT : COLOR_LINK, false);
                 if (!current) {
                     int[] targetPath = Arrays.copyOf(editPath, i);
-                    regions.add(new Region(x, y, width, 9, button -> {
+                    regions.add(new Region(x, y, width, 12, button -> {
                         selectSlot(-1);
                         sendAction(ExpressionEditor.actionNavigate(targetPath));
                     }, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_BREADCRUMB)));
@@ -413,26 +456,107 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         // Value editor
         if (valueField.isVisible()) {
             valueField.render(guiGraphics, mouseX, mouseY, partialTicks);
-            Component hint = editorError != null ? editorError : getEditorHint(editor);
-            guiGraphics.drawString(fontRenderer, hint, guiLeft + EDITOR_X + EDITOR_WIDTH + 3, guiTop + EDITOR_Y + 2,
-                    editorError != null ? COLOR_ERROR : COLOR_TEXT, false);
-        } else if (element.getSelectedSlot() >= 0 && element.getSelectedSlot() < editor.getSlotCount()) {
-            IValueType<?> expectedType = editor.getExpectedType(element.getSelectedSlot());
-            Component hint = ValueHelpers.correspondsTo(expectedType, ValueTypes.OBJECT_ITEMSTACK)
-                    ? Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_VALUE_ITEM)
-                    : Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_VALUE_NONE);
-            drawSmallString(guiGraphics, fontRenderer, hint.getString(), guiLeft + EDITOR_X, guiTop + EDITOR_Y + 3, ContainerLogicProgrammerBase.MAX_WIDTH - 4, COLOR_TEXT);
+            int x = EDITOR_X + EDITOR_WIDTH + 3;
+            int y = EDITOR_Y + 2;
+            int armed = element.getArmedParameter();
+            if (armed >= 0 && armed < editor.getExpression().parameters().size()) {
+                renderParameterTypeCycler(guiGraphics, guiLeft, guiTop, fontRenderer, editor, armed, x, y);
+            } else {
+                Component hint = editorError != null ? editorError : getEditorHint(editor);
+                int available = ContainerLogicProgrammerBase.BASE_X + ContainerLogicProgrammerBase.MAX_WIDTH - 2 - x;
+                float scale = Math.min(1F, (float) available / fontRenderer.width(hint));
+                guiGraphics.pose().pushPose();
+                guiGraphics.pose().translate(guiLeft + x, guiTop + y + (1 - scale) * 4, 300);
+                guiGraphics.pose().scale(scale, scale, 1F);
+                guiGraphics.drawString(fontRenderer, hint, 0, 0, editorError != null ? COLOR_ERROR : COLOR_TEXT, false);
+                guiGraphics.pose().popPose();
+            }
         }
 
-        renderParameters(guiGraphics, guiLeft, guiTop, fontRenderer, editor);
-        renderStrip(guiGraphics, guiLeft, guiTop, fontRenderer, editor, result);
-        renderStatus(guiGraphics, guiLeft, guiTop, fontRenderer, editor, result);
+        if (ContainerScreenLogicProgrammerBase.isExpressionPanelOpen()) {
+            int hoveredSlot = getSlotAt(mouseX, mouseY);
+            int[] hoveredPath = hoveredSlot >= 0 && hoveredSlot < editor.getSlotCount() ? ExpressionTrees.append(editPath, hoveredSlot) : null;
+            renderParameters(guiGraphics, guiLeft, guiTop, fontRenderer, editor);
+            renderStrip(guiGraphics, guiLeft, guiTop, fontRenderer, editor, result, hoveredPath);
+            renderStatus(guiGraphics, guiLeft, guiTop, fontRenderer, editor, result);
+            renderHint(guiGraphics, guiLeft, guiTop, fontRenderer, editor, result);
+        }
     }
 
-    protected Component getEditorHint(ExpressionEditor editor) {
-        if (element.getArmedParameter() >= 0) {
-            return Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_NAME);
+    protected void renderParameterTypeCycler(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font, ExpressionEditor editor,
+                                             int index, int x, int y) {
+        IValueType<?> type = editor.getExpression().parameters().get(index).type();
+        Component typeName = Component.translatable(type.getTranslationKey());
+        guiGraphics.drawString(font, "<", guiLeft + x, guiTop + y, COLOR_LINK, false);
+        int nameX = x + font.width("<") + 3;
+        guiGraphics.drawString(font, typeName, guiLeft + nameX, guiTop + y, COLOR_TEXT, false);
+        int nextX = nameX + font.width(typeName) + 3;
+        guiGraphics.drawString(font, ">", guiLeft + nextX, guiTop + y, COLOR_LINK, false);
+        Component tooltip = Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_TYPE);
+        regions.add(new Region(x - 1, y - 1, font.width("<") + 2, 10,
+                button -> sendAction(ExpressionEditor.actionParamType(index, ExpressionEditor.cycleParameterType(type, -1))), tooltip));
+        regions.add(new Region(nameX, y - 1, nextX + font.width(">") + 1 - nameX, 10,
+                button -> sendAction(ExpressionEditor.actionParamType(index, ExpressionEditor.cycleParameterType(type, 1))), tooltip));
+    }
+
+    /**
+     * @return What the player can do next, given the current selection and state of the expression.
+     */
+    protected Component getHint(ExpressionEditor editor, ExpressionTypeChecker.Result result) {
+        int armed = element.getArmedParameter();
+        if (armed >= 0 && armed < editor.getExpression().parameters().size()) {
+            return Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_HINT_PARAM,
+                    editor.getExpression().parameters().get(armed).name());
         }
+        int slot = element.getSelectedSlot();
+        if (slot >= 0 && slot < editor.getSlotCount()) {
+            if (editor.getChild(slot) instanceof ExpressionNode.Operator op) {
+                return Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_HINT_SELECTED_OPERATOR,
+                        ExpressionPrinter.getShortName(op.operator()));
+            }
+            IValueType<?> expectedType = editor.getExpectedType(slot);
+            Component typeName = Component.translatable(expectedType.getTranslationKey());
+            if (ExpressionEditor.isTextEditable(expectedType)) {
+                return Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_HINT_SELECTED_TEXT, typeName);
+            }
+            if (ValueHelpers.correspondsTo(expectedType, ValueTypes.OBJECT_ITEMSTACK)) {
+                return Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_HINT_SELECTED_ITEM, typeName);
+            }
+            return Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_HINT_SELECTED_OTHER, typeName);
+        }
+        if (!result.errors().isEmpty()) {
+            return Component.translatable(result.hasErrorAt(editor.getEditPath())
+                    ? L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_HINT_ERROR_HERE : L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_HINT_ERROR_ELSEWHERE);
+        }
+        if (ExpressionTrees.countEmpty(editor.getCurrentNode()) > 0) {
+            boolean anyFilled = editor.getCurrentNode().children().stream().anyMatch(c -> !(c instanceof ExpressionNode.Empty));
+            return Component.translatable(anyFilled || editor.getEditPath().length > 0
+                    ? L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_HINT_EMPTY : L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_HINT_START);
+        }
+        if (result.emptySlots() > 0) {
+            return Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_HINT_EMPTY_ELSEWHERE);
+        }
+        return Component.translatable(container.hasWriteItemInSlot()
+                ? L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_HINT_WRITTEN : L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_HINT_READY);
+    }
+
+    protected void renderHint(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font, ExpressionEditor editor,
+                              ExpressionTypeChecker.Result result) {
+        guiGraphics.fill(guiLeft + PANEL_X, guiTop + HINT_Y - 4, guiLeft + PANEL_X + PANEL_WIDTH, guiTop + HINT_Y - 3, 0xFF8B8B8B);
+        int y = HINT_Y;
+        List<net.minecraft.util.FormattedCharSequence> lines = font.split(getHint(editor, result), (int) (PANEL_WIDTH / SMALL));
+        for (int i = 0; i < lines.size() && i < HINT_LINES; i++) {
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().translate(guiLeft + PANEL_X, guiTop + y, 300);
+            guiGraphics.pose().scale(SMALL, SMALL, 1F);
+            guiGraphics.drawString(font, lines.get(i), 0, 0, COLOR_HINT, false);
+            guiGraphics.pose().popPose();
+            y += 8;
+        }
+    }
+
+
+    protected Component getEditorHint(ExpressionEditor editor) {
         IValueType<?> expectedType = editor.getExpectedType(element.getSelectedSlot());
         return Component.translatable(expectedType.getTranslationKey());
     }
@@ -480,8 +604,8 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
             }
             int y = PARAMS_Y + 12 + row * 11;
             boolean armed = element.getArmedParameter() == i;
-            guiGraphics.fill(guiLeft + x, guiTop + y, guiLeft + x + width, guiTop + y + 10, armed ? COLOR_SELECTED : COLOR_PARAM);
-            drawOutline(guiGraphics, guiLeft + x, guiTop + y, width, 10, 0xFF806010);
+            guiGraphics.fill(guiLeft + x, guiTop + y, guiLeft + x + width, guiTop + y + 10, armed ? COLOR_PARAM_ARMED : COLOR_PARAM);
+            drawOutline(guiGraphics, guiLeft + x, guiTop + y, width, 10, armed ? COLOR_SELECTED : 0xFF806010);
             drawScaled(guiGraphics, font, Component.literal(text), guiLeft + x + 2, guiTop + y + 2, COLOR_TEXT);
             int index = i;
             regions.add(new Region(x, y, width, 10, button -> {
@@ -497,8 +621,12 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         }
     }
 
+    protected static boolean startsWith(int[] path, int[] prefix) {
+        return path.length >= prefix.length && Arrays.equals(Arrays.copyOf(path, prefix.length), prefix);
+    }
+
     protected void renderStrip(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font, ExpressionEditor editor,
-                               ExpressionTypeChecker.Result result) {
+                               ExpressionTypeChecker.Result result, @Nullable int[] hoveredPath) {
         int x = PANEL_X;
         int y = STRIP_Y;
         int height = STRIP_LINES * STRIP_LINE_HEIGHT + 3;
@@ -537,6 +665,9 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
                 if (text.equals(ExpressionPrinter.EMPTY)) {
                     color = 0xFFA0A0A0;
                 }
+                if (hoveredPath != null && startsWith(path, hoveredPath)) {
+                    guiGraphics.fill(guiLeft + tokenX, guiTop + tokenY - 1, guiLeft + tokenX + width, guiTop + tokenY + STRIP_LINE_HEIGHT - 1, COLOR_STRIP_HOVER);
+                }
                 regions.add(new Region(tokenX, tokenY, width, STRIP_LINE_HEIGHT, button -> {
                     selectSlot(-1);
                     sendAction(ExpressionEditor.actionNavigate(nodePath));
@@ -561,8 +692,10 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         int color;
         if (!result.errors().isEmpty()) {
             ExpressionTypeChecker.Error error = result.errors().get(0);
+            String operatorName = ExpressionTrees.get(expression.root(), error.path()) instanceof ExpressionNode.Operator op
+                    ? ExpressionPrinter.getShortName(op.operator()) : "?";
             status = error.slot() >= 0
-                    ? Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_STATUS_ERRORS_SLOT, result.errors().size(), error.slot() + 1)
+                    ? Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_STATUS_ERRORS_SLOT, result.errors().size(), error.slot() + 1, operatorName)
                     : Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_STATUS_ERRORS, result.errors().size());
             color = COLOR_ERROR;
         } else if (result.emptySlots() > 0) {
@@ -576,7 +709,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         if (depth > MAX_DEPTH_WARNING) {
             status = status.append(" ").append(Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_STATUS_DEEP, depth));
         }
-        drawScaled(guiGraphics, font, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TYPE, type),
+        drawScaled(guiGraphics, font, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TYPE, type.getString()),
                 guiLeft + PANEL_X, guiTop + STATUS_Y, COLOR_TEXT);
         int y = STATUS_Y + 9;
         for (net.minecraft.util.FormattedCharSequence line : font.split(status, (int) (PANEL_WIDTH / SMALL))) {
@@ -616,7 +749,6 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
                 }
                 if (temporaryInputSlots.getItem(i).isEmpty()) {
                     lines.addAll(getValueTypeTooltip(valueTypes[i]));
-                    lines.add(Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_SLOT_TOOLTIP).withStyle(ChatFormatting.GRAY));
                 }
                 if (!lines.isEmpty()) {
                     gui.drawTooltip(wrapTooltip(lines), guiGraphics.pose(), mouseX - guiLeft, mouseY - guiTop);

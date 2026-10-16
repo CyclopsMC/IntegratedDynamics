@@ -82,6 +82,19 @@ public final class ExpressionTypeChecker {
 
         /**
          * @param path A node path.
+         * @return If the node at this path or any node below it has an error.
+         */
+        public boolean hasErrorWithin(int[] path) {
+            for (Error error : errors) {
+                if (error.path().length >= path.length && java.util.Arrays.equals(java.util.Arrays.copyOf(error.path(), path.length), path)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /**
+         * @param path A node path.
          * @return If the operator node at this path or any of its slots has an error.
          */
         public boolean hasErrorAt(int[] path) {

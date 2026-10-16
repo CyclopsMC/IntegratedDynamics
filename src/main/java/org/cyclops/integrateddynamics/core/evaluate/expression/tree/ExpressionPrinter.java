@@ -109,6 +109,18 @@ public final class ExpressionPrinter {
 
     /**
      * @param operator An operator.
+     * @return A short label for the operator, its symbol when that is short or symbolic, otherwise its name.
+     */
+    public static String getShortName(IOperator operator) {
+        String symbol = operator.getSymbol();
+        if (symbol != null && (symbol.length() <= 3 || SYMBOLIC.matcher(symbol).matches())) {
+            return symbol;
+        }
+        return getPrefixName(operator);
+    }
+
+    /**
+     * @param operator An operator.
      * @return The notation in which this operator is printed.
      */
     public static Notation getNotation(IOperator operator) {

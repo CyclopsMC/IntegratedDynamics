@@ -94,6 +94,20 @@ public class TestExpressionEditor {
     }
 
     @Test
+    public void testParameterTypes() {
+        ExpressionEditor editor = new ExpressionEditor(Operators.ARITHMETIC_ADDITION);
+        apply(editor, ExpressionEditor.actionAddParam());
+        assertThat(apply(editor, ExpressionEditor.actionParamType(0, ValueTypes.INTEGER)), is(ExpressionEditor.ActionResult.CHANGED));
+        assertThat(editor.getExpression().parameters().get(0).type(), is((IValueType) ValueTypes.INTEGER));
+        // Types outside the list are ignored
+        apply(editor, ExpressionEditor.actionParamType(0, ValueTypes.CATEGORY_NAMED));
+        assertThat(editor.getExpression().parameters().get(0).type(), is((IValueType) ValueTypes.INTEGER));
+        // Cycling wraps around
+        assertThat(ExpressionEditor.cycleParameterType(ValueTypes.CATEGORY_ANY, -1), is((IValueType) ExpressionEditor.PARAMETER_TYPES.get(ExpressionEditor.PARAMETER_TYPES.size() - 1)));
+        assertThat(ExpressionEditor.cycleParameterType(ValueTypes.CATEGORY_ANY, 1), is((IValueType) ValueTypes.BOOLEAN));
+    }
+
+    @Test
     public void testParameterNames() {
         assertThat(ExpressionEditor.sanitizeParameterName("my item!"), is("myitem"));
         assertThat(ExpressionEditor.sanitizeParameterName("abcdefghijklmnopqrstuvwxyz").length(), is(16));
@@ -112,7 +126,8 @@ public class TestExpressionEditor {
         assertThat(ExpressionEditor.parseValue(ValueTypes.CATEGORY_ANY, "true"), is((IValue) ValueTypeBoolean.ValueBoolean.of(true)));
         assertThat(ExpressionEditor.parseValue(ValueTypes.CATEGORY_ANY, "hello"), is((IValue) ValueTypeString.ValueString.of("hello")));
         assertThat(ExpressionEditor.parseValue(ValueTypes.BOOLEAN, "yes"), nullValue());
-        assertThat(ExpressionEditor.parseValue(ValueTypes.STRING, ""), nullValue());
+        assertThat(ExpressionEditor.parseValue(ValueTypes.STRING, ""), is((IValue) ValueTypeString.ValueString.of("")));
+        assertThat(ExpressionEditor.parseValue(ValueTypes.INTEGER, ""), nullValue());
     }
 
 }
