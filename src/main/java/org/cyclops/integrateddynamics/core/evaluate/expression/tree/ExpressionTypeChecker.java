@@ -17,6 +17,7 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.IntFunction;
@@ -73,7 +74,7 @@ public final class ExpressionTypeChecker {
         @Nullable
         public Error getError(int[] path, int slot) {
             for (Error error : errors) {
-                if (error.slot() == slot && java.util.Arrays.equals(error.path(), path)) {
+                if (error.slot() == slot && Arrays.equals(error.path(), path)) {
                     return error;
                 }
             }
@@ -86,7 +87,7 @@ public final class ExpressionTypeChecker {
          */
         public boolean hasErrorWithin(int[] path) {
             for (Error error : errors) {
-                if (error.path().length >= path.length && java.util.Arrays.equals(java.util.Arrays.copyOf(error.path(), path.length), path)) {
+                if (error.path().length >= path.length && Arrays.equals(Arrays.copyOf(error.path(), path.length), path)) {
                     return true;
                 }
             }
@@ -99,7 +100,7 @@ public final class ExpressionTypeChecker {
          */
         public boolean hasErrorAt(int[] path) {
             for (Error error : errors) {
-                if (java.util.Arrays.equals(error.path(), path)) {
+                if (Arrays.equals(error.path(), path)) {
                     return true;
                 }
             }

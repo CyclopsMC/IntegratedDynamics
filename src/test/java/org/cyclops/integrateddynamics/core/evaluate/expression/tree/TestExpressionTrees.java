@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.core.evaluate.expression.tree;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtIo;
 import org.cyclops.cyclopscore.helper.CyclopsCoreInstance;
 import org.cyclops.integrateddynamics.ModBaseMocked;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -29,6 +30,9 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.Variable;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -112,10 +116,10 @@ public class TestExpressionTrees {
 
     private static int binarySize(CompoundTag tag) {
         try {
-            java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();
-            net.minecraft.nbt.NbtIo.write(tag, new java.io.DataOutputStream(out));
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            NbtIo.write(tag, new DataOutputStream(out));
             return out.size();
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

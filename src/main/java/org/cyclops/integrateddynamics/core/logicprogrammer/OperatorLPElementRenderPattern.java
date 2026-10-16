@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.Container;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -43,6 +44,7 @@ import org.lwjgl.glfw.GLFW;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.List;
 
 /**
@@ -559,7 +561,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         guiGraphics.fill(guiLeft + PANEL_X, guiTop + hintY - 4, guiLeft + PANEL_X + PANEL_WIDTH, guiTop + hintY - 3, 0xFF8B8B8B);
         int y = hintY;
         int maxLines = (PANEL_BOTTOM - 6 - hintY) / 8 + 1;
-        List<net.minecraft.util.FormattedCharSequence> lines = font.split(getHint(editor, result), (int) (PANEL_WIDTH / SMALL));
+        List<FormattedCharSequence> lines = font.split(getHint(editor, result), (int) (PANEL_WIDTH / SMALL));
         for (int i = 0; i < lines.size() && i < maxLines; i++) {
             guiGraphics.pose().pushPose();
             guiGraphics.pose().translate(guiLeft + PANEL_X, guiTop + y, 300);
@@ -730,7 +732,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         drawScaled(guiGraphics, font, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TYPE, type.getString()),
                 guiLeft + PANEL_X, guiTop + STATUS_Y, COLOR_TEXT);
         int y = STATUS_Y + 9;
-        for (net.minecraft.util.FormattedCharSequence line : font.split(status, (int) (PANEL_WIDTH / SMALL))) {
+        for (FormattedCharSequence line : font.split(status, (int) (PANEL_WIDTH / SMALL))) {
             guiGraphics.pose().pushPose();
             guiGraphics.pose().translate(guiLeft + PANEL_X, guiTop + y, 300);
             guiGraphics.pose().scale(SMALL, SMALL, 1F);
@@ -795,7 +797,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
                 wrapped.add(line);
             } else {
                 ChatFormatting format = line.getStyle().getColor() == null ? ChatFormatting.WHITE
-                        : java.util.Objects.requireNonNullElse(ChatFormatting.getByName(line.getStyle().getColor().serialize()), ChatFormatting.WHITE);
+                        : Objects.requireNonNullElse(ChatFormatting.getByName(line.getStyle().getColor().serialize()), ChatFormatting.WHITE);
                 for (String part : StringHelpers.splitLines(text, L10NHelpers.MAX_TOOLTIP_LINE_LENGTH, format.toString())) {
                     wrapped.add(Component.literal(part));
                 }

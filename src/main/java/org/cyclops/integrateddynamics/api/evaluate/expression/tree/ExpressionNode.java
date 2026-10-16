@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.api.evaluate.expression.tree;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -36,7 +37,7 @@ public sealed interface ExpressionNode permits ExpressionNode.Operator, Expressi
          */
         public static Operator ofEmpty(IOperator operator) {
             ExpressionNode[] children = new ExpressionNode[operator.getRequiredInputLength()];
-            java.util.Arrays.fill(children, EMPTY);
+            Arrays.fill(children, EMPTY);
             return new Operator(operator, List.of(children));
         }
 

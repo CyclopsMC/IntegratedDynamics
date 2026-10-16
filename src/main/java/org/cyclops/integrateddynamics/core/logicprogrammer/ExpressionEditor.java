@@ -25,6 +25,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -492,7 +493,7 @@ public class ExpressionEditor {
             candidates.add(ValueTypes.LONG);
             candidates.add(ValueTypes.DOUBLE);
         } else if (expectedType instanceof IValueTypeCategory<?> category) {
-            candidates.addAll((java.util.Collection) category.getElements());
+            candidates.addAll((Collection) category.getElements());
         } else {
             candidates.add(expectedType);
         }

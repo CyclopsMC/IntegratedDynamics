@@ -5,8 +5,10 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -26,9 +28,14 @@ import org.cyclops.integrateddynamics.api.evaluate.expression.tree.ExpressionNod
 import org.cyclops.integrateddynamics.api.evaluate.expression.tree.ExpressionParameter;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
+import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
+import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityVariablestore;
+import org.cyclops.integrateddynamics.core.evaluate.ExpressionVariableFacadeHandler;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionOperator;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionTrees;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
@@ -38,7 +45,9 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeList;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeOperator;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeString;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
+import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.item.ExpressionVariableFacade;
 import org.cyclops.integrateddynamics.core.item.OperatorVariableFacade;
@@ -47,7 +56,9 @@ import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.part.PartTypePanelDisplay;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.cyclops.integrateddynamics.gametest.GameTestHelpersIntegratedDynamics.*;
 
@@ -176,7 +187,7 @@ public class GameTestsExpressions {
             IValue value = partAndState.getRight().getDisplayValue();
             helper.assertTrue(value instanceof ValueTypeList.ValueList, "Display value is not a list: " + value);
             try {
-                List<IValue> items = new java.util.ArrayList<>();
+                List<IValue> items = new ArrayList<>();
                 for (Object item : ((ValueTypeList.ValueList) value).getRawValue()) {
                     items.add((IValue) item);
                 }
@@ -225,8 +236,8 @@ public class GameTestsExpressions {
             helper.assertTrue(operator instanceof ExpressionOperator, "Not an expression operator: " + operator);
             try {
                 assertValueEqual(ValueHelpers.evaluateOperator(operator, ValueTypeInteger.ValueInteger.of(4)), ValueTypeInteger.ValueInteger.of(5));
-                Tag tag = ValueHelpers.serializeRaw(org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext.of(helper.getLevel()), value);
-                IValue read = ValueHelpers.deserializeRaw(org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext.of(helper.getLevel()), ValueTypes.OPERATOR, tag);
+                Tag tag = ValueHelpers.serializeRaw(ValueDeseralizationContext.of(helper.getLevel()), value);
+                IValue read = ValueHelpers.deserializeRaw(ValueDeseralizationContext.of(helper.getLevel()), ValueTypes.OPERATOR, tag);
                 assertValueEqual(ValueHelpers.evaluateOperator(((ValueTypeOperator.ValueOperator) read).getRawValue(), ValueTypeInteger.ValueInteger.of(4)), ValueTypeInteger.ValueInteger.of(5));
             } catch (EvaluationException e) {
                 throw new RuntimeException(e);
@@ -331,11 +342,9 @@ public class GameTestsExpressions {
             // Nothing is displayed and nothing crashed
             helper.assertTrue(partAndState.getRight().getDisplayValue() == null, "Display value should be empty");
             IVariableFacade facadeSelf = getVariableFacade(helper.getLevel(), helper.<BlockEntityVariablestore>getBlockEntity(POS.north()).getInventory().getItem(3));
-            List<net.minecraft.network.chat.MutableComponent> errors = new java.util.ArrayList<>();
-            org.cyclops.integrateddynamics.api.network.INetwork network = org.cyclops.integrateddynamics.core.helper.NetworkHelpers
-                    .getNetworkChecked(helper.getLevel(), helper.absolutePos(POS), null);
-            org.cyclops.integrateddynamics.api.network.IPartNetwork partNetwork = org.cyclops.integrateddynamics.core.helper.NetworkHelpers
-                    .getPartNetwork(java.util.Optional.of(network)).orElseThrow();
+            List<MutableComponent> errors = new ArrayList<>();
+            INetwork network = NetworkHelpers.getNetworkChecked(helper.getLevel(), helper.absolutePos(POS), null);
+            IPartNetwork partNetwork = NetworkHelpers.getPartNetwork(Optional.of(network)).orElseThrow();
             facadeSelf.validate(network, partNetwork, errors::add, ValueTypes.INTEGER);
             helper.assertTrue(!errors.isEmpty(), "A self-reference should be a validation error");
             IVariableFacade facadeA = partNetwork.getVariableFacade(idA);
@@ -349,10 +358,10 @@ public class GameTestsExpressions {
 
     private static ItemStack rewriteExpression(GameTestHelper helper, ItemStack variable, Expression expression) {
         int id = getVariableFacade(helper.getLevel(), variable).getId();
-        net.minecraft.nbt.CompoundTag tag = new net.minecraft.nbt.CompoundTag();
-        IntegratedDynamics._instance.getRegistryManager().getRegistry(org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry.class)
-                .write(org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext.of(helper.getLevel()), tag,
-                        new ExpressionVariableFacade(id, expression), org.cyclops.integrateddynamics.core.evaluate.ExpressionVariableFacadeHandler.getInstance());
+        CompoundTag tag = new CompoundTag();
+        IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class)
+                .write(ValueDeseralizationContext.of(helper.getLevel()), tag,
+                        new ExpressionVariableFacade(id, expression), ExpressionVariableFacadeHandler.getInstance());
         ItemStack copy = variable.copy();
         copy.set(RegistryEntries.DATACOMPONENT_VARIABLE_FACADE, tag);
         return copy;
@@ -444,7 +453,7 @@ public class GameTestsExpressions {
     public void testLogicProgrammerLoadKeepsReferenceTypes(GameTestHelper helper) {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         ItemStack variableString = createVariableForValue(helper.getLevel(), ValueTypes.STRING,
-                org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeString.ValueString.of("abc"));
+                ValueTypeString.ValueString.of("abc"));
         int idString = getVariableFacade(helper.getLevel(), variableString).getId();
 
         // == with a String card and a constant: the == inputs are Any, so the type is only known from the card itself
@@ -488,7 +497,7 @@ public class GameTestsExpressions {
     public void testLogicProgrammerTypeError(GameTestHelper helper) {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         ItemStack variableString = createVariableForValue(helper.getLevel(), ValueTypes.STRING,
-                org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeString.ValueString.of("abc"));
+                ValueTypeString.ValueString.of("abc"));
 
         OperatorLPElement element = new OperatorLPElement(Operators.ARITHMETIC_ADDITION);
         element.activate();

@@ -40,6 +40,7 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -294,9 +295,9 @@ public class ExpressionVariableFacade extends VariableFacadeBase implements IExp
     public static class ExpressionOperatorVariable extends VariableAdapter<ValueTypeOperator.ValueOperator> {
 
         private final ValueTypeOperator.ValueOperator value;
-        private final java.util.Collection<IVariable<?>> refs;
+        private final Collection<IVariable<?>> refs;
 
-        public ExpressionOperatorVariable(ExpressionOperator operator, java.util.Collection<IVariable<?>> refs) {
+        public ExpressionOperatorVariable(ExpressionOperator operator, Collection<IVariable<?>> refs) {
             this.value = ValueTypeOperator.ValueOperator.of(operator);
             this.refs = refs;
         }

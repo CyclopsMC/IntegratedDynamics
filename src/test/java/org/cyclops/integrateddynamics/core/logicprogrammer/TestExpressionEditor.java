@@ -15,6 +15,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeOperator;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeString;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.junit.Test;
+import net.minecraft.nbt.CompoundTag;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -28,7 +29,7 @@ public class TestExpressionEditor {
 
     static { CyclopsCoreInstance.MOD = new ModBaseMocked(); }
 
-    private static ExpressionEditor.ActionResult apply(ExpressionEditor editor, net.minecraft.nbt.CompoundTag action) {
+    private static ExpressionEditor.ActionResult apply(ExpressionEditor editor, CompoundTag action) {
         return editor.apply(ValueDeseralizationContextMocked.get(), action);
     }
 
@@ -77,7 +78,7 @@ public class TestExpressionEditor {
     @Test
     public void testOperatorWithoutRenderPatternRejected() {
         ExpressionEditor editor = new ExpressionEditor(Operators.ARITHMETIC_ADDITION);
-        net.minecraft.nbt.CompoundTag action = ExpressionEditor.actionOperator(new int[0], 0, Operators.ARITHMETIC_INCREMENT);
+        CompoundTag action = ExpressionEditor.actionOperator(new int[0], 0, Operators.ARITHMETIC_INCREMENT);
         action.putString("operator", "integrateddynamics:does_not_exist");
         assertThat(apply(editor, action), is(ExpressionEditor.ActionResult.NONE));
     }
