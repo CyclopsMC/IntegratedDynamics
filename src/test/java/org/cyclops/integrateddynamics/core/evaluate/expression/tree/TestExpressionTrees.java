@@ -488,6 +488,19 @@ public class TestExpressionTrees {
     }
 
     @Test
+    public void testPartialApplicationAsInlineLambda() throws EvaluationException {
+        // l -> ((*) apply 2) map l, doubling without a second card
+        Expression expression = new Expression(op(Operators.OPERATOR_MAP,
+                op(Operators.OPERATOR_APPLY, opConst(Operators.ARITHMETIC_MULTIPLICATION), c(2)), p(0)),
+                List.of(param("l", ValueTypes.LIST)));
+        ExpressionTypeChecker.Result result = ExpressionTypeChecker.check(expression, id -> null);
+        assertThat(result.isValid(), is(true));
+        assertThat(result.outputType(), is((IValueType) ValueTypes.LIST));
+        assertThat(ExpressionPrinter.print(expression), is("l -> ((*) apply 2) map l"));
+        assertThat(eval(ExpressionOperator.of(expression), ints(1, 2, 3)), is((IValue) ints(2, 4, 6)));
+    }
+
+    @Test
     public void testExpressionOperatorsAsRefs() throws EvaluationException {
         // (l) -> reduce(#add, map(#double, l), 0), where both refs are expression operators
         ExpressionOperator add = ExpressionOperator.of(new Expression(op(Operators.ARITHMETIC_ADDITION, p(0), p(1)),
