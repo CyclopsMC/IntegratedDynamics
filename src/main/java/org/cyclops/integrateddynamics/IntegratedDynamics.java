@@ -58,6 +58,7 @@ import org.cyclops.integrateddynamics.core.block.cable.CableRayTraceHandlerRegis
 import org.cyclops.integrateddynamics.core.client.model.VariableModelProviderRegistry;
 import org.cyclops.integrateddynamics.core.client.model.VariableModelProviders;
 import org.cyclops.integrateddynamics.core.evaluate.DelayVariableFacadeHandler;
+import org.cyclops.integrateddynamics.core.evaluate.ExpressionVariableFacadeHandler;
 import org.cyclops.integrateddynamics.core.evaluate.ProxyVariableFacadeHandler;
 import org.cyclops.integrateddynamics.core.evaluate.operator.OperatorRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
@@ -123,6 +124,7 @@ public class IntegratedDynamics extends ModBaseVersionable<IntegratedDynamics> {
 
         getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).registerHandler(ProxyVariableFacadeHandler.getInstance());
         getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).registerHandler(DelayVariableFacadeHandler.getInstance());
+        getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class).registerHandler(ExpressionVariableFacadeHandler.getInstance());
         getRegistryManager().addRegistry(IInfoBookRegistry.class, new InfoBookRegistry());
         getRegistryManager().addRegistry(IIngredientComponentHandlerRegistry.class, IngredientComponentHandlerRegistry.getInstance());
         getRegistryManager().addRegistry(INetworkCraftingHandlerRegistry.class, NetworkCraftingHandlerRegistry.getInstance());

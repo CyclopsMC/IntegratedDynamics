@@ -101,6 +101,12 @@ public class L10NValues {
     public static final String VARIABLE_ERROR_PARTNOTINNETWORK = "variable." + NS + ".error.part_not_in_network";
     public static final String VARIABLE_ERROR_RECURSION = "variable." + NS + ".error.recursion";
 
+    public static final String OPERATOR_EXPRESSION_NAME = "operator." + NS + ".expression.name";
+    public static final String EXPRESSION_ERROR_NOVALUE = "expression." + NS + ".error.no_value";
+    public static final String EXPRESSION_ERROR_INCOMPLETE = "expression." + NS + ".error.incomplete";
+    public static final String EXPRESSION_TOOLTIP_EXPRESSION = "expression." + NS + ".tooltip.expression";
+    public static final String EXPRESSION_TOOLTIP_TYPE = "expression." + NS + ".tooltip.type";
+
     public static final String OPERATOR_APPLIED_OPERATORNAME = "operator." + NS + ".applied.operator_name";
     // 0: operator, 1: given-input, 2: position, 3: expected-input
     public static final String OPERATOR_APPLIED_TYPE = "operator." + NS + ".applied.type";
