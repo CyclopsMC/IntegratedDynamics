@@ -683,6 +683,14 @@
             <appendix_list factory="integrateddynamics:operators_output">*</appendix_list>
         </section>
 
+        <section name="info_book.integrateddynamics.manual.logic_programming.expressions">
+            <paragraph>info_book.integrateddynamics.manual.logic_programming.expressions.text1</paragraph>
+            <paragraph>info_book.integrateddynamics.manual.logic_programming.expressions.text2</paragraph>
+            <paragraph>info_book.integrateddynamics.manual.logic_programming.expressions.text3</paragraph>
+            <paragraph>info_book.integrateddynamics.manual.logic_programming.expressions.text4</paragraph>
+            <paragraph>info_book.integrateddynamics.manual.logic_programming.expressions.text5</paragraph>
+        </section>
+
         <section name="info_book.integrateddynamics.manual.diagnostics">
             <paragraph>info_book.integrateddynamics.manual.diagnostics.text1</paragraph>
             <paragraph>info_book.integrateddynamics.manual.diagnostics.text2</paragraph>
