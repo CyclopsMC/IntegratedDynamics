@@ -4,12 +4,15 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.gametest.framework.GameTest;
+import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ItemLore;
@@ -53,11 +56,13 @@ import org.cyclops.integrateddynamics.core.item.ExpressionVariableFacade;
 import org.cyclops.integrateddynamics.core.item.OperatorVariableFacade;
 import org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElement;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
+import org.cyclops.integrateddynamics.item.ItemWrench;
 import org.cyclops.integrateddynamics.part.PartTypePanelDisplay;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.cyclops.integrateddynamics.gametest.GameTestHelpersIntegratedDynamics.*;
@@ -508,6 +513,99 @@ public class GameTestsExpressions {
         helper.assertTrue(element.getEditor().check().getError(new int[0], 1) != null, "Error is not on slot 2");
 
         helper.succeed();
+    }
+
+    // --------------- Copying ---------------
+
+    // (#redstone + 3) * 2, with the type of #redstone stored on the card
+    private static ItemStack createRedstoneExpression(GameTestHelper helper, ItemStack variableRedstone) {
+        return createVariableForExpression(helper.getLevel(), new Expression(
+                op(Operators.ARITHMETIC_MULTIPLICATION, op(Operators.ARITHMETIC_ADDITION, ref(variableRedstone, helper), c(3)), c(2))),
+                Map.of(getVariableFacade(helper.getLevel(), variableRedstone).getId(), ValueTypes.INTEGER));
+    }
+
+    private static void assertCopiedExpression(GameTestHelper helper, ItemStack original, ItemStack copy) {
+        ExpressionVariableFacade originalFacade = (ExpressionVariableFacade) getVariableFacade(helper.getLevel(), original);
+        IVariableFacade copyFacade = getVariableFacade(helper.getLevel(), copy);
+        helper.assertTrue(copyFacade instanceof ExpressionVariableFacade, "The copy is not an expression card");
+        ExpressionVariableFacade copyExpressionFacade = (ExpressionVariableFacade) copyFacade;
+        helper.assertTrue(copyFacade.getId() != originalFacade.getId(), "The copy has the same id");
+        helper.assertTrue(originalFacade.getExpression().equals(copyExpressionFacade.getExpression()), "The copy has another expression");
+        helper.assertTrue(originalFacade.getReferenceTypes().equals(copyExpressionFacade.getReferenceTypes()),
+                "The copy has other reference types");
+    }
+
+    private static ItemStack craftCopy(GameTestHelper helper, ItemStack original) {
+        int originalId = getVariableFacade(helper.getLevel(), original).getId();
+        List<ItemStack> cards = new GameTestsVariableCopy().craftVariableCopy(helper, original.copy(),
+                new ItemStack(RegistryEntries.ITEM_VARIABLE.get()), ClickType.PICKUP);
+        helper.assertValueEqual(cards.size(), 2, "Number of variable cards after crafting");
+        return cards.stream()
+                .filter(card -> getVariableFacade(helper.getLevel(), card).getId() != originalId)
+                .findFirst()
+                .orElseThrow(() -> new GameTestAssertException("No card with a new id after crafting"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testExpressionCopyInCraftingGrid(GameTestHelper helper) {
+        ItemStack variableRedstone = setupRedstoneNetwork(helper);
+        ItemStack original = createRedstoneExpression(helper, variableRedstone);
+
+        ItemStack copy = craftCopy(helper, original);
+        assertCopiedExpression(helper, original, copy);
+
+        // The copy evaluates like the original
+        Pair<PartTypePanelDisplay, PartTypePanelDisplay.State> partAndState = display(helper, copy.copy());
+        helper.succeedWhen(() -> assertValueEqual(partAndState.getRight().getDisplayValue(), ValueTypeInteger.ValueInteger.of(36)));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testExpressionWithParametersCopyInCraftingGrid(GameTestHelper helper) {
+        ItemStack variableRedstone = setupRedstoneNetwork(helper);
+        // x -> x * 2
+        ItemStack original = createVariableForExpression(helper.getLevel(), new Expression(
+                op(Operators.ARITHMETIC_MULTIPLICATION, p(0), c(2)),
+                List.of(new ExpressionParameter("x", ValueTypes.INTEGER))));
+
+        ItemStack copy = store(helper, 1, craftCopy(helper, original));
+        assertCopiedExpression(helper, original, copy);
+
+        // apply(#copy, #redstone)
+        ItemStack variableResult = createVariableForExpression(helper.getLevel(), new Expression(
+                op(Operators.OPERATOR_APPLY, ref(copy, helper), ref(variableRedstone, helper))));
+        Pair<PartTypePanelDisplay, PartTypePanelDisplay.State> partAndState = display(helper, variableResult);
+        helper.succeedWhen(() -> assertValueEqual(partAndState.getRight().getDisplayValue(), ValueTypeInteger.ValueInteger.of(30)));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testExpressionCopyWithWrench(GameTestHelper helper) {
+        ItemStack variableRedstone = setupRedstoneNetwork(helper);
+        // A second display panel in the same network
+        helper.setBlock(POS.east().south(), RegistryEntries.BLOCK_CABLE.value());
+        PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS.east().south()), Direction.EAST, PartTypes.DISPLAY_PANEL,
+                new ItemStack(PartTypes.DISPLAY_PANEL.getItem()));
+        PartPos source = PartPos.of(helper.getLevel(), helper.absolutePos(POS.east()), Direction.EAST);
+        PartPos target = PartPos.of(helper.getLevel(), helper.absolutePos(POS.east().south()), Direction.EAST);
+        ItemStack original = createRedstoneExpression(helper, variableRedstone);
+        display(helper, original.copy());
+
+        // Copy the source panel and paste it onto the target panel
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        ItemStack wrench = GameTestsWrenchConfig.createWrench(ItemWrench.Mode.CONFIG);
+        // The wrench occupies the selected hotbar slot, so it must be given before the blank variable card
+        player.setItemInHand(InteractionHand.MAIN_HAND, wrench);
+        GameTestsWrenchConfig.giveBlankVariables(player, 1);
+        GameTestsWrenchConfig.clickPart(helper, player, wrench, source, true);
+        GameTestsWrenchConfig.clickPart(helper, player, wrench, target, false);
+
+        helper.succeedWhen(() -> {
+            ItemStack pasted = GameTestsWrenchConfig.getActiveVariable(target);
+            helper.assertTrue(pasted != null, "The expression card was not pasted");
+            assertCopiedExpression(helper, original, pasted);
+            helper.assertValueEqual(GameTestsWrenchConfig.countBlankVariables(player), 0, "The blank variable card was not consumed");
+            assertValueEqual(((PartTypePanelDisplay.State) PartHelpers.getPart(target).getState()).getDisplayValue(),
+                    ValueTypeInteger.ValueInteger.of(36));
+        });
     }
 
 }

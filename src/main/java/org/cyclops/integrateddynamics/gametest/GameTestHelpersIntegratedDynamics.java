@@ -52,6 +52,7 @@ import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -93,10 +94,14 @@ public class GameTestHelpersIntegratedDynamics {
     }
 
     public static ItemStack createVariableForExpression(Level level, Expression expression) {
+        return createVariableForExpression(level, expression, Map.of());
+    }
+
+    public static ItemStack createVariableForExpression(Level level, Expression expression, Map<Integer, IValueType<?>> referenceTypes) {
         IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
         ItemStack itemStack = new ItemStack(RegistryEntries.ITEM_VARIABLE);
         return registry.writeVariableFacadeItem(true, itemStack, ExpressionVariableFacadeHandler.getInstance(),
-                new OperatorLPElement.ExpressionVariableFacadeFactory(expression), level, null, RegistryEntries.BLOCK_LOGIC_PROGRAMMER.get().defaultBlockState());
+                new OperatorLPElement.ExpressionVariableFacadeFactory(expression, referenceTypes), level, null, RegistryEntries.BLOCK_LOGIC_PROGRAMMER.get().defaultBlockState());
     }
 
     public static IVariableFacade getVariableFacade(Level level, ItemStack itemStack) {
