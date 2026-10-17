@@ -1002,7 +1002,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
 
     /**
      * Draw the text of the expression, which can be edited in place.
-     * Without a draft, it is colored like the slots: the edited operator, errors, empty slots, and the part of a hovered slot.
+     * It is colored like the slots: the edited operator, errors, empty slots, and the part of a hovered slot.
      */
     protected void renderTextField(GuiGraphics guiGraphics, int guiLeft, int guiTop, ExpressionEditor editor,
                                    ExpressionTypeChecker.Result result, @Nullable int[] hoveredPath) {
@@ -1014,38 +1014,44 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
             drawOutline(guiGraphics, x, y, PANEL_WIDTH, guiTop + FOOTER_Y - y, COLOR_FOCUS);
         }
 
-        String text = field.getValue();
-        int[] colors = new int[text.length()];
-        int[] backgrounds = new int[text.length()];
+        // Errors are only marked without a draft, as the footer shows those of the draft
+        boolean draft = field.isDraft();
+        String printed = field.getPrinted();
+        int[] colors = new int[printed.length()];
+        int[] backgrounds = new int[printed.length()];
         Arrays.fill(colors, COLOR_TEXT_LIGHT);
-        int mark = -1;
-        if (!field.isDraft()) {
-            Expression expression = editor.getExpression();
-            int position = 0;
-            for (ExpressionPrinter.Token token : field.getTokens()) {
-                int length = token.text().length();
-                int[] path = token.path();
-                if (path != null && position + length <= text.length()) {
-                    int[] nodePath = ExpressionTrees.isOperatorPath(expression.root(), path) ? path : ExpressionTrees.parent(path);
-                    int color = COLOR_TEXT_LIGHT;
-                    if (Arrays.equals(nodePath, editor.getEditPath())) {
-                        color = COLOR_EDITED;
-                    }
-                    if (result.hasErrorAt(nodePath) && (path == nodePath || result.getError(nodePath, path[path.length - 1]) != null)) {
-                        color = COLOR_TEXT_ERROR;
-                    }
-                    if (token.text().equals(ExpressionPrinter.EMPTY)) {
-                        color = COLOR_EMPTY;
-                    }
-                    Arrays.fill(colors, position, position + length, color);
-                    if (hoveredPath != null && startsWith(path, hoveredPath)) {
-                        Arrays.fill(backgrounds, position, position + length, COLOR_STRIP_HOVER);
-                    }
+        Expression expression = editor.getExpression();
+        int position = 0;
+        for (ExpressionPrinter.Token token : field.getTokens()) {
+            int length = token.text().length();
+            int[] path = token.path();
+            if (path != null && position + length <= printed.length()) {
+                int[] nodePath = ExpressionTrees.isOperatorPath(expression.root(), path) ? path : ExpressionTrees.parent(path);
+                int color = COLOR_TEXT_LIGHT;
+                if (Arrays.equals(nodePath, editor.getEditPath())) {
+                    color = COLOR_EDITED;
                 }
-                position += length;
+                if (!draft && result.hasErrorAt(nodePath) && (path == nodePath || result.getError(nodePath, path[path.length - 1]) != null)) {
+                    color = COLOR_TEXT_ERROR;
+                }
+                if (token.text().equals(ExpressionPrinter.EMPTY)) {
+                    color = COLOR_EMPTY;
+                }
+                Arrays.fill(colors, position, position + length, color);
+                if (!draft && hoveredPath != null && startsWith(path, hoveredPath)) {
+                    Arrays.fill(backgrounds, position, position + length, COLOR_STRIP_HOVER);
+                }
             }
-        } else if (parseText() == null && textError != null) {
-            mark = Math.min(textError.getPosition(), text.length());
+            position += length;
+        }
+        int mark = -1;
+        if (draft) {
+            // The text around what was typed keeps its colors
+            colors = field.followDraft(colors, COLOR_TEXT_LIGHT);
+            backgrounds = new int[field.getValue().length()];
+            if (parseText() == null && textError != null) {
+                mark = Math.min(textError.getPosition(), field.getValue().length());
+            }
         }
         field.render(guiGraphics, x + 2, y + 2, PANEL_WIDTH - 3, guiTop + FOOTER_Y - y - 3, colors, backgrounds, mark, COLOR_TEXT_ERROR);
     }

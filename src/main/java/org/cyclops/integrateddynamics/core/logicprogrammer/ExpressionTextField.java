@@ -15,6 +15,7 @@ import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionPa
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionPrinter;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -73,6 +74,47 @@ public class ExpressionTextField {
      */
     public List<ExpressionPrinter.Token> getTokens() {
         return tokens;
+    }
+
+    /**
+     * @return The text of the expression, without a draft.
+     */
+    public String getPrinted() {
+        return printed;
+    }
+
+    /**
+     * @param values A value for each character of the printed text, such as its color.
+     * @param typed The value of the characters that were typed.
+     * @return A value for each character of the text, where the text before and after what was typed keeps its value.
+     */
+    public int[] followDraft(int[] values, int typed) {
+        return followChanges(printed, text.value(), values, typed);
+    }
+
+    /**
+     * @param from A text.
+     * @param to The text after a change.
+     * @param values A value for each character of the first text.
+     * @param changed The value of the characters that changed.
+     * @return A value for each character of the second text, which is the value of the same character in the first text
+     *         for the characters before and after the change.
+     */
+    public static int[] followChanges(String from, String to, int[] values, int changed) {
+        int length = Math.min(from.length(), to.length());
+        int prefix = 0;
+        while (prefix < length && from.charAt(prefix) == to.charAt(prefix)) {
+            prefix++;
+        }
+        int suffix = 0;
+        while (suffix < length - prefix && from.charAt(from.length() - 1 - suffix) == to.charAt(to.length() - 1 - suffix)) {
+            suffix++;
+        }
+        int[] result = new int[to.length()];
+        Arrays.fill(result, changed);
+        System.arraycopy(values, 0, result, 0, prefix);
+        System.arraycopy(values, from.length() - suffix, result, to.length() - suffix, suffix);
+        return result;
     }
 
     /**
