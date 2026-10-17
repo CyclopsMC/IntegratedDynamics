@@ -37,12 +37,15 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.inventory.container.slot.SlotVariable;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ExpressionEditor;
+import org.cyclops.integrateddynamics.core.logicprogrammer.ExpressionHistory;
+import org.cyclops.integrateddynamics.core.logicprogrammer.ExpressionTextField;
 import org.cyclops.integrateddynamics.core.logicprogrammer.LogicProgrammerElementTypes;
 import org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElement;
 import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * Base container for the logic programmer.
@@ -82,13 +85,12 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     private IValueType filterIn2 = null;
     private IValueType filterOut = null;
     private IValueType expressionSlotFilter = null;
-    // Client-side state of editing the expression as text, which outlives the config pattern
+    // Client-side state of the expression panel, which outlives the config pattern
+    @OnlyIn(Dist.CLIENT)
     @Nullable
-    private String expressionText = null;
-    @Nullable
-    private Expression expressionUndo = null;
-    @Nullable
-    private Expression expressionUndoOf = null;
+    private ExpressionTextField expressionTextField;
+    private final ExpressionHistory expressionHistory = new ExpressionHistory();
+    private boolean settingExpression = false;
 
     @OnlyIn(Dist.CLIENT)
     private ContainerScreenLogicProgrammerBase gui;
@@ -192,6 +194,13 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
 
         this.lastError = null;
         this.activeElement = activeElement;
+        // Another expression, unless a set action moves the expression to the element of its root
+        if (!settingExpression) {
+            expressionHistory.clear();
+            if (MinecraftHelpers.isClientSideThread()) {
+                resetExpressionTextField();
+            }
+        }
 
         this.setElementInventory(this.activeElement, baseX, baseY);
 
@@ -273,33 +282,29 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     }
 
     /**
-     * @return The text of the expression that is being edited as text, or null if it is not.
+     * @param factory Creates the text field the first time.
+     * @return The text of the expression, which is kept while the panel is recreated.
      */
-    @Nullable
-    public String getExpressionText() {
-        return expressionText;
-    }
-
-    public void setExpressionText(@Nullable String expressionText) {
-        this.expressionText = expressionText;
-    }
-
-    /**
-     * @param current The current expression.
-     * @return The expression from before the last text was applied, or null if the expression changed since.
-     */
-    @Nullable
-    public Expression getExpressionUndo(Expression current) {
-        return expressionUndo != null && current.equals(expressionUndoOf) ? expressionUndo : null;
+    @OnlyIn(Dist.CLIENT)
+    public ExpressionTextField getExpressionTextField(Supplier<ExpressionTextField> factory) {
+        if (expressionTextField == null) {
+            expressionTextField = factory.get();
+        }
+        return expressionTextField;
     }
 
     /**
-     * @param undo The expression to go back to.
-     * @param of The expression this undoes, the undo is dropped once the expression is changed otherwise.
+     * @return The changes to the expression in the active element, which are only recorded on the client.
      */
-    public void setExpressionUndo(@Nullable Expression undo, @Nullable Expression of) {
-        this.expressionUndo = undo;
-        this.expressionUndoOf = of;
+    public ExpressionHistory getExpressionHistory() {
+        return expressionHistory;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    protected void resetExpressionTextField() {
+        if (expressionTextField != null) {
+            expressionTextField.reset();
+        }
     }
 
     /**
@@ -335,14 +340,21 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
             }
             // Activating the target deactivates the current element, which forgets its references
             OperatorLPElement.References references = current.getReferences();
-            if (MinecraftHelpers.isClientSideThread()) {
-                getGui().handleElementActivation(target, false);
-            } else {
-                setActiveElement(target, 0, 0);
+            // The history and text continue in the other element
+            settingExpression = true;
+            try {
+                if (MinecraftHelpers.isClientSideThread()) {
+                    getGui().handleElementActivation(target, false);
+                } else {
+                    setActiveElement(target, 0, 0);
+                }
+            } finally {
+                settingExpression = false;
             }
             target.addReferences(references);
         }
-        target.setExpression(expression);
+        // Stay at the open operator if it is still there, such as after typing a change inside it
+        target.setExpression(expression, target == current ? current.getEditor().getEditPath() : new int[0]);
         target.findReferencedCards(player);
         if (MinecraftHelpers.isClientSideThread()) {
             getGui().onExpressionNavigated();

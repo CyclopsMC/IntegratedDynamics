@@ -78,32 +78,44 @@ public final class ExpressionPrinter {
      */
     public static String printExact(Expression expression, ValueDeseralizationContext values, IntFunction<String> labels,
                                     Function<String, IntList> labelIds, IntFunction<IValueType<?>> refTypes) {
-        StringBuilder sb = new StringBuilder();
+        return join(tokenizeExact(expression, values, labels, labelIds, ExpressionTypeChecker.check(expression, refTypes)));
+    }
+
+    /**
+     * The text of {@link #printExact} as tokens, which tell what node each part of the text belongs to.
+     * @param expression An expression.
+     * @param values For serializing values that are written with their type, such as items.
+     * @param labels Resolves the label of a variable id, may return null.
+     * @param labelIds Resolves the ids of the variables with a label.
+     * @param types The type checking result of the expression.
+     * @return The tokens.
+     */
+    public static List<Token> tokenizeExact(Expression expression, ValueDeseralizationContext values, IntFunction<String> labels,
+                                            Function<String, IntList> labelIds, ExpressionTypeChecker.Result types) {
+        List<Token> tokens = new ArrayList<>();
         List<ExpressionParameter> parameters = expression.parameters();
         if (!parameters.isEmpty()) {
             boolean typed = parameters.stream().anyMatch(parameter -> parameter.type() != ValueTypes.CATEGORY_ANY);
             if (parameters.size() == 1 && !typed) {
-                sb.append(parameters.get(0).name());
+                tokens.add(new Token(parameters.get(0).name(), null));
             } else {
-                sb.append("(");
+                tokens.add(new Token("(", null));
                 for (int i = 0; i < parameters.size(); i++) {
                     if (i > 0) {
-                        sb.append(", ");
+                        tokens.add(new Token(", ", null));
                     }
                     ExpressionParameter parameter = parameters.get(i);
-                    sb.append(parameter.name());
+                    tokens.add(new Token(parameter.name(), null));
                     if (parameter.type() != ValueTypes.CATEGORY_ANY) {
-                        sb.append(": ").append(ExpressionParser.getTypeName(parameter.type()));
+                        tokens.add(new Token(": " + ExpressionParser.getTypeName(parameter.type()), null));
                     }
                 }
-                sb.append(")");
+                tokens.add(new Token(")", null));
             }
-            sb.append(" -> ");
+            tokens.add(new Token(" -> ", null));
         }
-        List<Token> tokens = new ArrayList<>();
-        new Tokenizer(expression, labels, ExpressionTypeChecker.check(expression, refTypes), tokens, new Exact(values, labelIds))
-                .visit(expression.root(), new int[0], false);
-        return sb.append(join(tokens)).toString();
+        new Tokenizer(expression, labels, types, tokens, new Exact(values, labelIds)).visit(expression.root(), new int[0], false);
+        return tokens;
     }
 
     /**

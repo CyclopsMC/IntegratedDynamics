@@ -651,4 +651,31 @@ public class GameTestsExpressions {
         helper.succeedWhen(() -> assertValueEqual(partAndState.getRight().getDisplayValue(), ValueTypeInteger.ValueInteger.of(36)));
     }
 
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testLogicProgrammerSetExpressionKeepsOpenOperator(GameTestHelper helper) throws ExpressionParseException {
+        ValueDeseralizationContext values = ValueDeseralizationContext.of(helper.getLevel());
+        ExpressionParser.Context context = ExpressionEditor.getParserContext(values, id -> null, label -> IntLists.EMPTY_LIST);
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        try {
+            ContainerLogicProgrammer container = new ContainerLogicProgrammer(0, player.getInventory());
+            OperatorLPElement element = container.getOperatorElement(Operators.ARITHMETIC_MULTIPLICATION);
+            container.setActiveElement(element, 0, 0);
+            container.applyExpressionAction(ExpressionEditor.actionSet(values, ExpressionParser.parse("(1 + 2) * 3", context)));
+            container.applyExpressionAction(ExpressionEditor.actionNavigate(new int[]{0}));
+            helper.assertTrue(element.getEditor().getEditPath().length == 1, "The nested operator was not opened");
+
+            // Typing a change inside the open operator keeps it open
+            container.applyExpressionAction(ExpressionEditor.actionSet(values, ExpressionParser.parse("(1 + 5) * 3", context)));
+            helper.assertTrue(container.getActiveElement() == element && element.getEditor().getEditPath().length == 1
+                    && element.getEditor().getEditPath()[0] == 0, "The open operator was closed");
+
+            // When it is gone, the root is opened
+            container.applyExpressionAction(ExpressionEditor.actionSet(values, ExpressionParser.parse("4 * 3", context)));
+            helper.assertTrue(element.getEditor().getEditPath().length == 0, "The root was not opened");
+        } finally {
+            player.getServer().getPlayerList().remove(player);
+        }
+        helper.succeed();
+    }
+
 }

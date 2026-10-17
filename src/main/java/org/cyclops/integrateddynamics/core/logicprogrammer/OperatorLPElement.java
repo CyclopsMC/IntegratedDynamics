@@ -275,7 +275,17 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
      * @param expression An expression with this element's operator as root.
      */
     public void setExpression(Expression expression) {
+        setExpression(expression, new int[0]);
+    }
+
+    /**
+     * Replace the whole expression, and open the operator at the given path if it is one.
+     * @param expression An expression with this element's operator as root.
+     * @param editPath The path of the operator to open, such as the one that was open before.
+     */
+    public void setExpression(Expression expression, int[] editPath) {
         editor.setExpression(expression);
+        editor.navigate(editPath);
         editor.inferMissingRefTypes();
         selectedSlot = -1;
         armedParameter = -1;

@@ -8,7 +8,6 @@ import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.MultiLineEditBox;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
@@ -96,9 +95,14 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     private static final int FOOTER_LINES = 3;
     private static final int FOOTER_HEIGHT = FOOTER_LINES * LINE_HEIGHT + 3;
     private static final int FOOTER_Y = CONTENT_BOTTOM - FOOTER_HEIGHT;
-    private static final int TEXT_HEIGHT = FOOTER_Y - 2 - PARAMS_Y;
+    private static final int TEXT_WIDTH = PANEL_WIDTH - 7;
+    private static final int COLOR_EMPTY = 0xFFA0A0A0;
+    private static final int COLOR_EDITED = 0xFFFFFF60;
+    private static final int COLOR_TEXT_ERROR = 0xFFFF6060;
+    private static final int COLOR_FOCUS = 0xFFA0A0A0;
     private static final String ELLIPSIS = "\u2026";
     private static final int COPIED_MS = 1500;
+    private static final int TEXT_HINT_MS = 1000;
 
     // Editor layout, relative to the gui
     private static final int EDITOR_X = ContainerLogicProgrammerBase.BASE_X + 2;
@@ -123,17 +127,18 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     private double pressX;
     private double pressY;
     private boolean draggingParameter = false;
-    private ButtonText editButton;
-    private ButtonText copyButton;
     private ButtonText undoButton;
+    private ButtonText redoButton;
+    private ButtonText copyButton;
+    private ButtonText revertButton;
     private ButtonText applyButton;
-    private ButtonText cancelButton;
 
-    // Editing the expression as text
-    @Nullable
-    private MultiLineEditBox textBox = null;
+    // Editing the expression as text, in the box that shows it
     @Nullable
     private Int2ObjectMap<IValueType<?>> inventoryCardTypes = null;
+    private int textBoxY = FOOTER_Y;
+    @Nullable
+    private String parsedFor = null;
     @Nullable
     private Expression parsedText = null;
     @Nullable
@@ -141,6 +146,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     @Nullable
     private ExpressionParseException textError = null;
     private long copiedTime = 0;
+    private long textHoverTime = 0;
 
     public OperatorLPElementRenderPattern(OperatorLPElement element, int baseX, int baseY, int maxWidth, int maxHeight,
                                           ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
@@ -162,24 +168,17 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         this.valueField.setX(guiLeft + EDITOR_X);
         this.valueField.setY(guiTop + EDITOR_Y);
         updateEditor();
-        // The panel is recreated when navigating or resizing, the text being edited is kept in the container
-        if (textBox != null) {
-            textBox.setX(guiLeft + PANEL_X);
-            textBox.setY(guiTop + PARAMS_Y);
-        } else if (container.getExpressionText() != null && getEditor() != null) {
-            openTextBox(container.getExpressionText());
-        }
 
         buttonList.add(addParameterButton = new ButtonText(guiLeft + PANEL_X + PANEL_WIDTH - 12, guiTop + PARAMS_Y - 1, 12, 12,
                 Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_ADD), Component.literal("+"),
                 button -> sendAction(ExpressionEditor.actionAddParam()), true));
         addParameterButton.setTooltip(Tooltip.create(Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_ADD)));
         Component copied = Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_COPIED);
-        undoButton = addPanelButton(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_UNDO, this::undoText);
+        undoButton = addPanelButton(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_UNDO, this::undo);
+        redoButton = addPanelButton(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_REDO, this::redo);
         copyButton = addPanelButton(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_COPY, this::copyText,
                 copy -> Util.getMillis() - copiedTime < COPIED_MS ? copied : copy);
-        editButton = addPanelButton(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_EDIT, this::startEditingText);
-        cancelButton = addPanelButton(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_CANCEL, this::stopEditingText);
+        revertButton = addPanelButton(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_REVERT, this::revertText);
         applyButton = addPanelButton(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_APPLY, this::applyText);
         updateButtons();
     }
@@ -214,22 +213,24 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     protected void updateButtons() {
         ExpressionEditor editor = getEditor();
         boolean panel = editor != null && ContainerScreenLogicProgrammerBase.isExpressionPanelOpen();
-        boolean text = panel && isEditingText();
+        boolean draft = panel && isDraft();
         if (addParameterButton == null) {
             return;
         }
-        addParameterButton.visible = panel && !text && editor.getExpression().parameters().size() < ExpressionTrees.MAX_PARAMETERS;
-        editButton.visible = panel && !text;
-        copyButton.visible = panel && !text;
-        undoButton.visible = panel && !text && container.getExpressionUndo(editor.getExpression()) != null;
-        cancelButton.visible = text;
-        applyButton.visible = text;
-        applyButton.active = parsedText != null;
+        addParameterButton.visible = panel && !draft && editor.getExpression().parameters().size() < ExpressionTrees.MAX_PARAMETERS;
+        undoButton.visible = panel && !draft;
+        undoButton.active = container.getExpressionHistory().canUndo();
+        redoButton.visible = panel && !draft;
+        redoButton.active = container.getExpressionHistory().canRedo();
+        copyButton.visible = panel && !draft;
+        revertButton.visible = draft;
+        applyButton.visible = draft;
+        applyButton.active = draft && parseText() != null;
 
         // Right-aligned, with the main action on the right
         Font font = Minecraft.getInstance().font;
         int x = guiLeft + PANEL_X + PANEL_WIDTH;
-        for (ButtonText button : List.of(applyButton, cancelButton, editButton, copyButton, undoButton)) {
+        for (ButtonText button : List.of(applyButton, revertButton, copyButton, redoButton, undoButton)) {
             if (button.visible) {
                 button.setWidth(font.width(button.getText()) + 6);
                 x -= button.getWidth();
@@ -258,85 +259,130 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
 
     // --------------- Text ---------------
 
-    public boolean isEditingText() {
-        return textBox != null;
+    /**
+     * @return The text of the expression, which can be edited in place.
+     */
+    protected ExpressionTextField getTextField() {
+        return container.getExpressionTextField(() -> new ExpressionTextField(Minecraft.getInstance().font, TEXT_WIDTH));
     }
 
-    protected void startEditingText() {
-        openTextBox(printText());
+    /**
+     * @return If text was typed that is not applied yet. Slots, parameters and tabs wait until it is applied or reverted.
+     */
+    public boolean isDraft() {
+        return getTextField().isDraft();
     }
 
-    protected String printText() {
-        return ExpressionPrinter.printExact(getEditor().getExpression(), ValueDeseralizationContext.ofClient(), this::getLabel,
-                this::getLabelIds, this::getRefType);
+    protected List<ExpressionPrinter.Token> printTokens(Expression expression) {
+        return ExpressionPrinter.tokenizeExact(expression, ValueDeseralizationContext.ofClient(), this::getLabel, this::getLabelIds,
+                ExpressionTypeChecker.check(expression, this::getRefType));
     }
 
-    protected void openTextBox(String text) {
+    /**
+     * @return The expression in the draft, or null if it does not parse, as cached for the current text.
+     */
+    @Nullable
+    protected Expression parseText() {
+        String text = getTextField().getValue();
+        if (!text.equals(parsedFor)) {
+            parsedFor = text;
+            try {
+                parsedText = ExpressionParser.parse(text, ExpressionEditor.getParserContext(ValueDeseralizationContext.ofClient(),
+                        this::getRefType, this::getLabelIds));
+                parsedTextResult = ExpressionTypeChecker.check(parsedText, this::getRefType);
+                textError = null;
+            } catch (ExpressionParseException e) {
+                parsedText = null;
+                parsedTextResult = null;
+                textError = e;
+            }
+        }
+        return parsedText;
+    }
+
+    protected void focusText() {
+        ExpressionTextField field = getTextField();
+        if (!field.isFocused()) {
+            field.setFocused(true);
+            inventoryCardTypes = OperatorLPElement.getInventoryCardTypes(Minecraft.getInstance().player);
+        }
         selectSlot(-1);
         armParameter(-1);
-        inventoryCardTypes = OperatorLPElement.getInventoryCardTypes(Minecraft.getInstance().player);
-        textBox = new MultiLineEditBox(Minecraft.getInstance().font, guiLeft + PANEL_X, guiTop + PARAMS_Y, PANEL_WIDTH, TEXT_HEIGHT,
-                Component.empty(), Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TITLE));
-        textBox.setValue(text);
-        textBox.setValueListener(this::onTextChanged);
-        textBox.setFocused(true);
-        onTextChanged(text);
-    }
-
-    protected void onTextChanged(String text) {
-        container.setExpressionText(text);
-        try {
-            parsedText = ExpressionParser.parse(text, ExpressionEditor.getParserContext(ValueDeseralizationContext.ofClient(),
-                    this::getRefType, this::getLabelIds));
-            parsedTextResult = ExpressionTypeChecker.check(parsedText, this::getRefType);
-            textError = null;
-        } catch (ExpressionParseException e) {
-            parsedText = null;
-            parsedTextResult = null;
-            textError = e;
-        }
-    }
-
-    protected void stopEditingText() {
-        textBox = null;
-        parsedText = null;
-        parsedTextResult = null;
-        textError = null;
-        container.setExpressionText(null);
+        valueField.setFocused(false);
     }
 
     protected void applyText() {
-        if (parsedText == null) {
-            return;
+        Expression expression = parseText();
+        if (expression != null) {
+            getTextField().revert();
+            // This can make another element active, which replaces this panel
+            sendAction(ExpressionEditor.actionSet(ValueDeseralizationContext.ofClient(), expression));
         }
-        Expression expression = parsedText;
-        stopEditingText();
-        setExpressionWithUndo(expression);
     }
 
-    protected void undoText() {
-        Expression previous = container.getExpressionUndo(getEditor().getExpression());
-        if (previous != null) {
-            setExpressionWithUndo(previous);
+    protected void revertText() {
+        getTextField().revert();
+    }
+
+    protected void undo() {
+        Expression expression = container.getExpressionHistory().undo();
+        if (expression != null) {
+            setExpressionFromHistory(expression);
+        }
+    }
+
+    protected void redo() {
+        Expression expression = container.getExpressionHistory().redo();
+        if (expression != null) {
+            setExpressionFromHistory(expression);
         }
     }
 
     /**
-     * Replace the expression, so that it can be undone.
+     * Set an expression from the history without recording it as a change.
      * This can make another element active, which replaces this panel.
      */
-    protected void setExpressionWithUndo(Expression expression) {
-        Expression previous = getEditor().getExpression();
+    protected void setExpressionFromHistory(Expression expression) {
         sendAction(ExpressionEditor.actionSet(ValueDeseralizationContext.ofClient(), expression));
-        if (container.getActiveElement() instanceof OperatorLPElement active && active.getEditor() != null
-                && active.getEditor().getExpression() != previous) {
-            container.setExpressionUndo(previous, active.getEditor().getExpression());
+        if (container.getActiveElement() instanceof OperatorLPElement active && active.getEditor() != null) {
+            container.getExpressionHistory().moved(active.getEditor().getExpression());
         }
     }
 
     protected void copyText() {
-        Minecraft.getInstance().keyboardHandler.setClipboard(printText());
+        Minecraft.getInstance().keyboardHandler.setClipboard(getTextField().getValue());
         copiedTime = Util.getMillis();
+    }
+
+    /**
+     * Open the node of the character under the cursor in the slots, as when clicking a part of the expression.
+     */
+    protected void navigateToCursor() {
+        ExpressionTextField field = getTextField();
+        ExpressionEditor editor = getEditor();
+        int index = field.getCharAtCursor();
+        if (editor == null || field.isDraft() || index < 0) {
+            return;
+        }
+        int[] path = getTokenPathAt(field.getTokens(), index);
+        if (path != null) {
+            int[] nodePath = ExpressionTrees.isOperatorPath(editor.getExpression().root(), path) ? path : ExpressionTrees.parent(path);
+            if (!Arrays.equals(nodePath, editor.getEditPath())) {
+                sendAction(ExpressionEditor.actionNavigate(nodePath));
+            }
+        }
+    }
+
+    @Nullable
+    protected static int[] getTokenPathAt(List<ExpressionPrinter.Token> tokens, int index) {
+        int position = 0;
+        for (ExpressionPrinter.Token token : tokens) {
+            position += token.text().length();
+            if (index < position) {
+                return token.path();
+            }
+        }
+        return null;
     }
 
     @Nullable
@@ -350,10 +396,19 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         return LabelsWorldStorage.getInstance(IntegratedDynamics._instance).getVariableIds(label);
     }
 
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        return textBox != null && textBox.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+    protected boolean isInTextBox(double mouseX, double mouseY) {
+        return ContainerScreenLogicProgrammerBase.isExpressionPanelOpen() && getEditor() != null
+                && mouseX >= guiLeft + PANEL_X && mouseX < guiLeft + PANEL_X + PANEL_WIDTH
+                && mouseY >= guiTop + textBoxY && mouseY < guiTop + FOOTER_Y;
     }
 
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+        if (isInTextBox(mouseX, mouseY)) {
+            getTextField().scroll(scrollY);
+            return true;
+        }
+        return false;
+    }
 
     protected void selectSlot(int slot) {
         element.setSelectedSlot(slot);
@@ -371,8 +426,10 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
      * @return If something was selected.
      */
     public boolean cancelSelection() {
-        if (isEditingText()) {
-            stopEditingText();
+        ExpressionTextField field = getTextField();
+        if (field.isDraft() || field.isFocused()) {
+            field.revert();
+            field.setFocused(false);
             return true;
         }
         if (element.getSelectedSlot() >= 0 || element.getArmedParameter() >= 0) {
@@ -442,7 +499,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     public boolean onOperatorPicked(IOperator operator) {
         ExpressionEditor editor = getEditor();
         int slot = element.getSelectedSlot();
-        if (editor == null || slot < 0) {
+        if (editor == null || slot < 0 || isDraft()) {
             return false;
         }
         if (ExpressionEditor.isPickedAsValue(editor.getExpectedType(slot), operator, Screen.hasShiftDown())) {
@@ -484,22 +541,34 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         // A release can get lost, such as outside the window
         pressedParameter = -1;
         draggingParameter = false;
+        getTextField().setPressed(false);
         for (Button button : Lists.newArrayList(buttonList)) {
             if (button.mouseClicked(mouseX, mouseY, mouseButton)) {
                 return true;
             }
         }
+
+        // The text of the expression, where clicking a part also opens it in the slots
+        ExpressionTextField field = getTextField();
+        if (isInTextBox(mouseX, mouseY)) {
+            focusText();
+            field.mouseClicked(mouseX - guiLeft - PANEL_X - 2, mouseY - guiTop - textBoxY - 2);
+            field.setPressed(true);
+            navigateToCursor();
+            return true;
+        }
+        field.setFocused(false);
+        // Slots, parameters and tabs would be replaced when applying the text
+        if (field.isDraft()) {
+            return false;
+        }
+
         if (valueField.isVisible()) {
             if (valueField.mouseClicked(mouseX, mouseY, mouseButton)) {
                 valueField.setFocused(true);
                 return true;
             }
             valueField.setFocused(false);
-        }
-
-        if (textBox != null && textBox.mouseClicked(mouseX, mouseY, mouseButton)) {
-            textBox.setFocused(true);
-            return true;
         }
 
         // Clickable regions (breadcrumb, parameters, strip)
@@ -510,11 +579,6 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
                 region.action().onClick(mouseButton);
                 return true;
             }
-        }
-
-        // The slots would be replaced when applying the text
-        if (isEditingText()) {
-            return false;
         }
 
         int slot = getSlotAt(mouseX, mouseY);
@@ -557,8 +621,9 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     }
 
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        if (textBox != null) {
-            return textBox.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+        if (getTextField().isPressed()) {
+            getTextField().mouseDragged(mouseX - guiLeft - PANEL_X - 2, mouseY - guiTop - textBoxY - 2);
+            return true;
         }
         if (pressedParameter < 0 || button != GLFW.GLFW_MOUSE_BUTTON_LEFT) {
             return false;
@@ -573,8 +638,9 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
      * Drop a dragged parameter into the slot under the mouse, or cancel when it is not over a slot.
      */
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        if (textBox != null) {
-            return textBox.mouseReleased(mouseX, mouseY, button);
+        if (getTextField().isPressed()) {
+            getTextField().setPressed(false);
+            return true;
         }
         int index = pressedParameter;
         boolean dragged = draggingParameter;
@@ -595,8 +661,9 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
 
     @Override
     public boolean charTyped(char typedChar, int keyCode) {
-        if (textBox != null) {
-            textBox.charTyped(typedChar, keyCode);
+        ExpressionTextField field = getTextField();
+        if (field.isFocused()) {
+            field.charTyped(typedChar);
             return true;
         }
         if (valueField.isVisible() && valueField.isFocused()) {
@@ -609,11 +676,28 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
 
     @Override
     public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
-        if (textBox != null) {
-            if ((typedChar == GLFW.GLFW_KEY_ENTER || typedChar == GLFW.GLFW_KEY_KP_ENTER) && Screen.hasControlDown()) {
-                applyText();
+        ExpressionTextField field = getTextField();
+        boolean undoKey = typedChar == GLFW.GLFW_KEY_Z && Screen.hasControlDown() && !Screen.hasShiftDown();
+        boolean redoKey = Screen.hasControlDown() && (typedChar == GLFW.GLFW_KEY_Y || (typedChar == GLFW.GLFW_KEY_Z && Screen.hasShiftDown()));
+        if (field.isFocused()) {
+            if (typedChar == GLFW.GLFW_KEY_ENTER || typedChar == GLFW.GLFW_KEY_KP_ENTER) {
+                if (Screen.hasShiftDown()) {
+                    field.insert("\n");
+                } else if (field.isDraft()) {
+                    applyText();
+                }
+            } else if (undoKey) {
+                if (field.isDraft()) {
+                    revertText();
+                } else {
+                    undo();
+                }
+            } else if (redoKey) {
+                if (!field.isDraft()) {
+                    redo();
+                }
             } else {
-                textBox.keyPressed(typedChar, keyCode, modifiers);
+                field.keyPressed(typedChar);
             }
             // Keep keys such as the inventory key from closing the gui while typing
             return true;
@@ -625,6 +709,14 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
             }
             valueField.keyPressed(typedChar, keyCode, modifiers);
             editorError = null;
+            return true;
+        }
+        if ((undoKey || redoKey) && !isDraft()) {
+            if (undoKey) {
+                undo();
+            } else {
+                redo();
+            }
             return true;
         }
         return super.keyPressed(typedChar, keyCode, modifiers);
@@ -772,21 +864,29 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
             }
         }
 
-        if (ContainerScreenLogicProgrammerBase.isExpressionPanelOpen() && textBox != null) {
-            renderTitle(guiGraphics, guiLeft, guiTop, fontRenderer);
-            textBox.render(guiGraphics, mouseX, mouseY, partialTicks);
-            if (textError != null) {
-                renderTextError(guiGraphics, guiLeft, guiTop, fontRenderer, textError);
-            } else {
-                renderStatus(guiGraphics, guiLeft, guiTop, fontRenderer, parsedText, parsedTextResult);
-            }
-        } else if (ContainerScreenLogicProgrammerBase.isExpressionPanelOpen()) {
+        // Changes from slots, parameters and text alike can be undone
+        container.getExpressionHistory().observe(editor.getExpression());
+        ExpressionTextField field = getTextField();
+        field.sync(editor.getExpression(), () -> printTokens(editor.getExpression()));
+        if (ContainerScreenLogicProgrammerBase.isExpressionPanelOpen()) {
             renderTitle(guiGraphics, guiLeft, guiTop, fontRenderer);
             int hoveredSlot = getSlotAt(mouseX, mouseY);
             int[] hoveredPath = hoveredSlot >= 0 && hoveredSlot < editor.getSlotCount() ? ExpressionTrees.append(editPath, hoveredSlot) : null;
-            int stripY = renderParameters(guiGraphics, guiLeft, guiTop, fontRenderer, editor);
-            renderStrip(guiGraphics, guiLeft, guiTop, fontRenderer, editor, result, hoveredPath, stripY);
-            renderStatus(guiGraphics, guiLeft, guiTop, fontRenderer, editor.getExpression(), result);
+            textBoxY = renderParameters(guiGraphics, guiLeft, guiTop, fontRenderer, editor);
+            renderTextField(guiGraphics, guiLeft, guiTop, editor, result, hoveredPath);
+            if (!field.isDraft()) {
+                renderStatus(guiGraphics, guiLeft, guiTop, fontRenderer, editor.getExpression(), result);
+            } else if (parseText() != null) {
+                renderStatus(guiGraphics, guiLeft, guiTop, fontRenderer, parsedText, parsedTextResult);
+            } else {
+                renderTextError(guiGraphics, guiLeft, guiTop, fontRenderer, textError);
+            }
+        } else {
+            // Slots should not wait on a draft that cannot be seen
+            if (field.isDraft()) {
+                field.revert();
+            }
+            field.setFocused(false);
         }
     }
 
@@ -817,7 +917,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     }
 
     protected void renderTextError(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font, ExpressionParseException error) {
-        String text = container.getExpressionText() == null ? "" : container.getExpressionText();
+        String text = getTextField().getValue();
         int position = Math.min(error.getPosition(), text.length());
         int line = 1;
         int column = 1;
@@ -881,57 +981,54 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         return path.length >= prefix.length && Arrays.equals(Arrays.copyOf(path, prefix.length), prefix);
     }
 
-    protected void renderStrip(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font, ExpressionEditor editor,
-                               ExpressionTypeChecker.Result result, @Nullable int[] hoveredPath, int stripY) {
-        int x = PANEL_X;
-        int y = stripY;
-        int maxLines = (FOOTER_Y - stripY - 3) / LINE_HEIGHT;
-        guiGraphics.fill(guiLeft + x, guiTop + y, guiLeft + x + PANEL_WIDTH, guiTop + CONTENT_BOTTOM, COLOR_STRIP);
-        Expression expression = editor.getExpression();
-        List<ExpressionPrinter.Token> tokens = ExpressionPrinter.tokenize(expression, this::getLabel, result);
-        int lineWidth = PANEL_WIDTH - 4;
-        int tx = 0;
-        int line = 0;
-        for (ExpressionPrinter.Token token : tokens) {
-            String text = token.text();
-            int width = font.width(text);
-            if (tx > 0 && tx + width > lineWidth) {
-                line++;
-                tx = 0;
-                text = text.stripLeading();
-                width = font.width(text);
-            }
-            if (line >= maxLines) {
-                guiGraphics.drawString(font, ELLIPSIS, guiLeft + x + PANEL_WIDTH - 2 - font.width(ELLIPSIS),
-                        guiTop + y + 2 + (maxLines - 1) * LINE_HEIGHT, COLOR_TEXT_LIGHT, false);
-                break;
-            }
-            int[] path = token.path();
-            int color = COLOR_TEXT_LIGHT;
-            int tokenX = x + 2 + tx;
-            int tokenY = y + 2 + line * LINE_HEIGHT;
-            if (path != null) {
-                int[] nodePath = ExpressionTrees.isOperatorPath(expression.root(), path) ? path : ExpressionTrees.parent(path);
-                if (Arrays.equals(nodePath, editor.getEditPath())) {
-                    color = 0xFFFFFF60;
-                }
-                if (result.hasErrorAt(nodePath) && (path == nodePath || result.getError(nodePath, path[path.length - 1]) != null)) {
-                    color = 0xFFFF6060;
-                }
-                if (text.equals(ExpressionPrinter.EMPTY)) {
-                    color = 0xFFA0A0A0;
-                }
-                if (hoveredPath != null && startsWith(path, hoveredPath)) {
-                    guiGraphics.fill(guiLeft + tokenX, guiTop + tokenY - 1, guiLeft + tokenX + width, guiTop + tokenY + LINE_HEIGHT - 1, COLOR_STRIP_HOVER);
-                }
-                regions.add(new Region(tokenX, tokenY, width, LINE_HEIGHT, button -> {
-                    selectSlot(-1);
-                    sendAction(ExpressionEditor.actionNavigate(nodePath));
-                }, null));
-            }
-            guiGraphics.drawString(font, text, guiLeft + tokenX, guiTop + tokenY, color, false);
-            tx += width;
+    /**
+     * Draw the text of the expression, which can be edited in place.
+     * Without a draft, it is colored like the slots: the edited operator, errors, empty slots, and the part of a hovered slot.
+     */
+    protected void renderTextField(GuiGraphics guiGraphics, int guiLeft, int guiTop, ExpressionEditor editor,
+                                   ExpressionTypeChecker.Result result, @Nullable int[] hoveredPath) {
+        ExpressionTextField field = getTextField();
+        int x = guiLeft + PANEL_X;
+        int y = guiTop + textBoxY;
+        guiGraphics.fill(x, y, x + PANEL_WIDTH, guiTop + CONTENT_BOTTOM, COLOR_STRIP);
+        if (field.isFocused()) {
+            drawOutline(guiGraphics, x, y, PANEL_WIDTH, guiTop + FOOTER_Y - y, COLOR_FOCUS);
         }
+
+        String text = field.getValue();
+        int[] colors = new int[text.length()];
+        int[] backgrounds = new int[text.length()];
+        Arrays.fill(colors, COLOR_TEXT_LIGHT);
+        int mark = -1;
+        if (!field.isDraft()) {
+            Expression expression = editor.getExpression();
+            int position = 0;
+            for (ExpressionPrinter.Token token : field.getTokens()) {
+                int length = token.text().length();
+                int[] path = token.path();
+                if (path != null && position + length <= text.length()) {
+                    int[] nodePath = ExpressionTrees.isOperatorPath(expression.root(), path) ? path : ExpressionTrees.parent(path);
+                    int color = COLOR_TEXT_LIGHT;
+                    if (Arrays.equals(nodePath, editor.getEditPath())) {
+                        color = COLOR_EDITED;
+                    }
+                    if (result.hasErrorAt(nodePath) && (path == nodePath || result.getError(nodePath, path[path.length - 1]) != null)) {
+                        color = COLOR_TEXT_ERROR;
+                    }
+                    if (token.text().equals(ExpressionPrinter.EMPTY)) {
+                        color = COLOR_EMPTY;
+                    }
+                    Arrays.fill(colors, position, position + length, color);
+                    if (hoveredPath != null && startsWith(path, hoveredPath)) {
+                        Arrays.fill(backgrounds, position, position + length, COLOR_STRIP_HOVER);
+                    }
+                }
+                position += length;
+            }
+        } else if (parseText() == null && textError != null) {
+            mark = Math.min(textError.getPosition(), text.length());
+        }
+        field.render(guiGraphics, x + 2, y + 2, PANEL_WIDTH - 3, guiTop + FOOTER_Y - y - 3, colors, backgrounds, mark, COLOR_TEXT_ERROR);
     }
 
     /**
@@ -1030,6 +1127,18 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
             if (region.tooltip() != null && gui.isHovering(region.x(), region.y(), region.width(), region.height(), mouseX, mouseY)) {
                 gui.drawTooltip(wrapTooltip(Lists.newArrayList(region.tooltip())), guiGraphics.pose(), mouseX - guiLeft, mouseY - guiTop);
             }
+        }
+
+        // How to edit the text, after hovering it for a while, so it does not get in the way of reading it
+        if (isInTextBox(mouseX, mouseY) && !getTextField().isFocused()) {
+            if (textHoverTime == 0) {
+                textHoverTime = Util.getMillis();
+            } else if (Util.getMillis() - textHoverTime > TEXT_HINT_MS) {
+                gui.drawTooltip(wrapTooltip(Lists.newArrayList(Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_HINT))),
+                        guiGraphics.pose(), mouseX - guiLeft, mouseY - guiTop);
+            }
+        } else {
+            textHoverTime = 0;
         }
 
         // Output type tooltip
