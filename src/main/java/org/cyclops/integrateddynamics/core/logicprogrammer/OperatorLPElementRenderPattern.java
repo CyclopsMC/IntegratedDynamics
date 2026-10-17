@@ -118,6 +118,11 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     private final List<Region> regions = new ArrayList<>();
     @Nullable
     private Button addParameterButton = null;
+    // A parameter chip can also be dragged onto a slot, instead of clicking it and then the slot
+    private int pressedParameter = -1;
+    private double pressX;
+    private double pressY;
+    private boolean draggingParameter = false;
     private ButtonText editButton;
     private ButtonText copyButton;
     private ButtonText undoButton;
@@ -349,13 +354,6 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         return textBox != null && textBox.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
     }
 
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        return textBox != null && textBox.mouseDragged(mouseX, mouseY, button, dragX, dragY);
-    }
-
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        return textBox != null && textBox.mouseReleased(mouseX, mouseY, button);
-    }
 
     protected void selectSlot(int slot) {
         element.setSelectedSlot(slot);
@@ -483,6 +481,9 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         if (editor == null) {
             return super.mouseClicked(mouseX, mouseY, mouseButton);
         }
+        // A release can get lost, such as outside the window
+        pressedParameter = -1;
+        draggingParameter = false;
         for (Button button : Lists.newArrayList(buttonList)) {
             if (button.mouseClicked(mouseX, mouseY, mouseButton)) {
                 return true;
@@ -502,6 +503,8 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         }
 
         // Clickable regions (breadcrumb, parameters, strip)
+        pressX = mouseX;
+        pressY = mouseY;
         for (Region region : Lists.newArrayList(regions)) {
             if (region.contains(mouseX - guiLeft, mouseY - guiTop)) {
                 region.action().onClick(mouseButton);
@@ -551,6 +554,43 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
             return true;
         }
         return super.mouseClicked(mouseX, mouseY, mouseButton);
+    }
+
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        if (textBox != null) {
+            return textBox.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+        }
+        if (pressedParameter < 0 || button != GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+            return false;
+        }
+        if (!draggingParameter && Math.abs(mouseX - pressX) + Math.abs(mouseY - pressY) > 3) {
+            draggingParameter = true;
+        }
+        return true;
+    }
+
+    /**
+     * Drop a dragged parameter into the slot under the mouse, or cancel when it is not over a slot.
+     */
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        if (textBox != null) {
+            return textBox.mouseReleased(mouseX, mouseY, button);
+        }
+        int index = pressedParameter;
+        boolean dragged = draggingParameter;
+        pressedParameter = -1;
+        draggingParameter = false;
+        ExpressionEditor editor = getEditor();
+        if (!dragged || editor == null) {
+            return false;
+        }
+        int slot = getSlotAt(mouseX, mouseY);
+        if (slot >= 0 && slot < editor.getSlotCount() && index < editor.getExpression().parameters().size()) {
+            sendAction(ExpressionEditor.actionParam(editor.getEditPath(), slot, index));
+            selectSlot(-1);
+        }
+        armParameter(-1);
+        return true;
     }
 
     @Override
@@ -645,6 +685,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         }
         ExpressionTypeChecker.Result result = editor.check();
         int[] editPath = editor.getEditPath();
+        int dropSlot = draggingParameter ? getSlotAt(mouseX, mouseY) : -1;
 
         // Slot contents that are not backed by items
         Pair<Integer, Integer>[] slotPositions = element.getRenderPattern().getSlotPositions();
@@ -679,7 +720,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
             }
             if (result.getError(editPath, i) != null || result.hasErrorWithin(ExpressionTrees.append(editPath, i))) {
                 drawOutline(guiGraphics, x, y, 18, 18, COLOR_ERROR);
-            } else if (element.getSelectedSlot() == i) {
+            } else if (element.getSelectedSlot() == i || dropSlot == i) {
                 drawOutline(guiGraphics, x, y, 18, 18, COLOR_SELECTED);
             }
         }
@@ -827,6 +868,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
                 } else {
                     armParameter(element.getArmedParameter() == index ? -1 : index);
                     selectSlot(-1);
+                    pressedParameter = index;
                 }
             }, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_TOOLTIP, parameter.name(),
                     Component.translatable(parameter.type().getTranslationKey()))));
@@ -947,6 +989,10 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     @Override
     public void drawGuiContainerForegroundLayer(GuiGraphics guiGraphics, int guiLeft, int guiTop, TextureManager textureManager, Font fontRenderer, int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(guiGraphics, guiLeft, guiTop, textureManager, fontRenderer, mouseX, mouseY);
+        if (draggingParameter) {
+            renderDraggedParameter(guiGraphics, guiLeft, guiTop, fontRenderer, mouseX, mouseY);
+            return;
+        }
         IConfigRenderPattern configRenderPattern = element.getRenderPattern();
         IOperator operator = element.getCurrentOperator();
         ExpressionEditor editor = getEditor();
@@ -989,6 +1035,26 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         // Output type tooltip
         this.drawTooltipForeground(gui, guiGraphics, container, guiLeft, guiTop, mouseX, mouseY,
                 editor != null && editor.getExpression().hasParameters() ? ValueTypes.OPERATOR : editor != null ? editor.check().outputType() : operator.getOutputType());
+    }
+
+    /**
+     * Draw the chip of the parameter that is being dragged under the mouse, above the items.
+     */
+    protected void renderDraggedParameter(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font, int mouseX, int mouseY) {
+        ExpressionEditor editor = getEditor();
+        if (editor == null || pressedParameter >= editor.getExpression().parameters().size()) {
+            return;
+        }
+        String name = editor.getExpression().parameters().get(pressedParameter).name();
+        int width = font.width(name) + 4;
+        int x = mouseX - guiLeft - width / 2;
+        int y = mouseY - guiTop - CHIP_HEIGHT / 2;
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(0, 0, 350);
+        guiGraphics.fill(x, y, x + width, y + CHIP_HEIGHT, COLOR_PARAM_ARMED);
+        drawOutline(guiGraphics, x, y, width, CHIP_HEIGHT, COLOR_SELECTED);
+        guiGraphics.drawString(font, name, x + 2, y + 2, COLOR_TEXT, false);
+        guiGraphics.pose().popPose();
     }
 
     protected static List<Component> wrapTooltip(List<Component> lines) {

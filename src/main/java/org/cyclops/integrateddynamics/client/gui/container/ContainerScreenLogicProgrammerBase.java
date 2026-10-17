@@ -490,7 +490,8 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
-    // Sub guis only receive clicks, the text editor of an expression also scrolls and selects
+    // Sub guis only receive clicks, the text editor of an expression also scrolls and selects,
+    // and parameters of an expression are dragged onto slots
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
         if (operatorConfigPattern instanceof OperatorLPElementRenderPattern expressionPattern
