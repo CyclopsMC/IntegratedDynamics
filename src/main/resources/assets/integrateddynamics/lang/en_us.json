@@ -1032,7 +1032,6 @@
     "operator.integrateddynamics.expression.name": "Expression %s",
     "gui.integrateddynamics.logicprogrammer.expression.title": "Expression",
     "gui.integrateddynamics.logicprogrammer.expression.hint": "Pick an operator on the left to build an expression. Operator inputs can be variable cards, typed values, parameters or other operators.",
-    "gui.integrateddynamics.logicprogrammer.expression.type": "Type: %s",
     "gui.integrateddynamics.logicprogrammer.expression.param_add": "Add a parameter",
     "gui.integrateddynamics.logicprogrammer.expression.param_add.first": "+ Parameter",
     "gui.integrateddynamics.logicprogrammer.expression.value": "Value %s",

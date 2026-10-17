@@ -1073,8 +1073,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         Component type = expression.hasParameters()
                 ? ValueTypeOperator.getSignature(ExpressionTypeChecker.getInputTypes(expression), outputType)
                 : Component.translatable(outputType.getTranslationKey()).withStyle(outputType.getDisplayColorFormat());
-        // Recognizable as a type by its colors, so it is only named in the tooltip
-        renderFooter(guiGraphics, guiLeft, guiTop, font, type, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TYPE, type));
+        renderFooter(guiGraphics, guiLeft, guiTop, font, type, null);
     }
 
     /**
