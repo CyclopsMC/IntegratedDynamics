@@ -89,8 +89,9 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     private static final int CHIPS_Y = PARAMS_Y + 13;
     private static final int CHIP_HEIGHT = 11;
     private static final int LINE_HEIGHT = 9;
-    private static final int BUTTONS_Y = ContainerLogicProgrammerBase.EXPRESSION_PANEL_Y + ContainerLogicProgrammerBase.EXPRESSION_PANEL_HEIGHT - 18;
-    private static final int CONTENT_BOTTOM = BUTTONS_Y - 3;
+    // Buttons right of the title, with their icons in line with it
+    private static final int BUTTONS_Y = TITLE_Y - 2;
+    private static final int CONTENT_BOTTOM = ContainerLogicProgrammerBase.EXPRESSION_PANEL_Y + ContainerLogicProgrammerBase.EXPRESSION_PANEL_HEIGHT - 6;
     // The type, or an error instead, below the expression
     private static final int FOOTER_LINES = 3;
     private static final int FOOTER_HEIGHT = FOOTER_LINES * LINE_HEIGHT + 3;
@@ -129,8 +130,8 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     private ButtonIcon undoButton;
     private ButtonIcon redoButton;
     private ButtonIcon copyButton;
-    private ButtonText revertButton;
-    private ButtonText applyButton;
+    private ButtonIcon revertButton;
+    private ButtonIcon applyButton;
 
     // Editing the expression as text, in the box that shows it
     @Nullable
@@ -167,7 +168,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         this.valueField.setY(guiTop + EDITOR_Y);
         updateEditor();
 
-        buttonList.add(addParameterButton = new ButtonText(guiLeft + PANEL_X + PANEL_WIDTH - 12, guiTop + PARAMS_Y - 1, 12, 12,
+        buttonList.add(addParameterButton = new ButtonText(guiLeft + PANEL_X + PANEL_WIDTH - 12, guiTop + PARAMS_Y, 12, 12,
                 Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_ADD), Component.literal("+"),
                 button -> sendAction(ExpressionEditor.actionAddParam()), true));
         addParameterButton.setTooltip(Tooltip.create(Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_ADD)));
@@ -175,34 +176,20 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         redoButton = addPanelButton(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_REDO, this::redo, () -> ButtonIcon.Icon.REDO);
         copyButton = addPanelButton(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_COPY, this::copyText,
                 () -> Util.getMillis() - copiedTime < COPIED_MS ? ButtonIcon.Icon.CHECK : ButtonIcon.Icon.COPY);
-        revertButton = addPanelButton(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_REVERT, this::revertText);
-        applyButton = addPanelButton(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_APPLY, this::applyText);
+        revertButton = addPanelButton(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_REVERT, this::revertText, () -> ButtonIcon.Icon.CROSS);
+        applyButton = addPanelButton(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_APPLY, this::applyText, () -> ButtonIcon.Icon.CHECK);
         updateButtons();
     }
 
     /**
-     * Add a button with text to the row at the bottom of the panel, which is laid out by {@link #updateButtons()}.
-     * @param key The translation key of its text, and of its tooltip with ".tooltip" appended.
-     * @param action What it does.
-     * @return The button.
-     */
-    protected ButtonText addPanelButton(String key, Runnable action) {
-        Component label = Component.translatable(key);
-        return addPanelButton(new ButtonText(0, guiTop + BUTTONS_Y, 0, 12, label, label, b -> action.run(), true), key);
-    }
-
-    /**
-     * Add a button with an icon to the row at the bottom of the panel, which is laid out by {@link #updateButtons()}.
+     * Add a button with an icon right of the title, which is laid out by {@link #updateButtons()}.
      * @param key The translation key of its narration, and of its tooltip with ".tooltip" appended.
      * @param action What it does.
      * @param icon The icon, which can change depending on the state.
      * @return The button.
      */
     protected ButtonIcon addPanelButton(String key, Runnable action, Supplier<ButtonIcon.Icon> icon) {
-        return addPanelButton(new ButtonIcon(0, guiTop + BUTTONS_Y, Component.translatable(key), icon, b -> action.run()), key);
-    }
-
-    protected <T extends Button> T addPanelButton(T button, String key) {
+        ButtonIcon button = new ButtonIcon(0, guiTop + BUTTONS_Y, Component.translatable(key), icon, b -> action.run());
         button.setTooltip(Tooltip.create(Component.translatable(key + ".tooltip")));
         buttonList.add(button);
         return button;
@@ -229,13 +216,9 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         applyButton.active = draft && parseText() != null;
 
         // Right-aligned, with the main action on the right
-        Font font = Minecraft.getInstance().font;
         int x = guiLeft + PANEL_X + PANEL_WIDTH;
-        for (Button button : List.<Button>of(applyButton, revertButton, copyButton, redoButton, undoButton)) {
+        for (ButtonIcon button : List.of(applyButton, revertButton, copyButton, redoButton, undoButton)) {
             if (button.visible) {
-                if (button instanceof ButtonText buttonText) {
-                    button.setWidth(font.width(buttonText.getText()) + 6);
-                }
                 x -= button.getWidth();
                 button.setX(x);
                 x -= 2;
