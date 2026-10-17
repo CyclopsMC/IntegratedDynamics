@@ -57,6 +57,7 @@ public class ExpressionVariableFacade extends VariableFacadeBase implements IExp
     private IVariable<?> variable = null;
     private int lastNetworkHash = -1;
     private IValueType<?> outputType = null;
+    private IValueType<?> knownOutputType = null;
 
     // Flags to detect infinite recursion
     private boolean building = false;
@@ -216,6 +217,16 @@ public class ExpressionVariableFacade extends VariableFacadeBase implements IExp
         return outputType;
     }
 
+    /**
+     * @return The output type of the root, inferred with the types that referenced variables had when the card was written.
+     */
+    public IValueType<?> getKnownRootOutputType() {
+        if (knownOutputType == null) {
+            knownOutputType = expression == null ? ValueTypes.CATEGORY_ANY : ExpressionTypeChecker.check(expression, referenceTypes::get).outputType();
+        }
+        return knownOutputType;
+    }
+
     @Override
     public IValueType getOutputType() {
         if (expression == null) {
@@ -241,11 +252,12 @@ public class ExpressionVariableFacade extends VariableFacadeBase implements IExp
         if (expression != null) {
             list.add(Component.translatable(L10NValues.EXPRESSION_TOOLTIP_EXPRESSION,
                     Component.literal(printExpression()).withStyle(ChatFormatting.WHITE)));
+            // With the types of references, like the logic programmer shows it
             MutableComponent signature;
             if (expression.hasParameters()) {
-                signature = ValueTypeOperator.getSignature(ExpressionTypeChecker.getInputTypes(expression), getRootOutputType()).copy();
+                signature = ValueTypeOperator.getSignature(ExpressionTypeChecker.getInputTypes(expression), getKnownRootOutputType()).copy();
             } else {
-                IValueType<?> type = getRootOutputType();
+                IValueType<?> type = getKnownRootOutputType();
                 signature = Component.translatable(type.getTranslationKey()).withStyle(type.getDisplayColorFormat());
             }
             list.add(Component.translatable(L10NValues.EXPRESSION_TOOLTIP_TYPE, signature));

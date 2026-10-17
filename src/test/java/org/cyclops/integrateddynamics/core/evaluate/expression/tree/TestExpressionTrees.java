@@ -27,6 +27,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeOperator;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeString;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.evaluate.variable.Variable;
+import org.cyclops.integrateddynamics.core.item.ExpressionVariableFacade;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -34,6 +35,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -661,6 +663,17 @@ public class TestExpressionTrees {
         Expression expression = new Expression(op(Operators.GENERAL_CHOICE,
                 new ExpressionNode.Const(ValueTypeBoolean.ValueBoolean.of(true)), c("a"), c("b")));
         assertThat(ExpressionTypeChecker.check(expression, id -> null).outputType(), is((IValueType) ValueTypes.STRING));
+    }
+
+    @Test
+    public void testFacadeOutputTypeWithReferenceTypes() {
+        // a -> a + #5, written while #5 was an Integer card
+        Expression expression = new Expression(op(Operators.ARITHMETIC_ADDITION, p(0), ref(5)), List.of(param("a", ValueTypes.INTEGER)));
+        ExpressionVariableFacade facade = new ExpressionVariableFacade(1, expression, Map.of(5, ValueTypes.INTEGER));
+        assertThat(facade.getKnownRootOutputType(), is(ValueTypes.INTEGER));
+        // Networks check the actual variables against the type without references
+        assertThat(facade.getRootOutputType(), is(ValueTypes.CATEGORY_ANY));
+        assertThat(new ExpressionVariableFacade(1, expression, Map.of()).getKnownRootOutputType(), is(ValueTypes.CATEGORY_ANY));
     }
 
     // --------------- Printing ---------------
