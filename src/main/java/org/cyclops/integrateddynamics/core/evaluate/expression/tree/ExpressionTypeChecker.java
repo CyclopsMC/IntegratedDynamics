@@ -1,5 +1,7 @@
 package org.cyclops.integrateddynamics.core.evaluate.expression.tree;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -19,7 +21,9 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.IntFunction;
 
 /**
@@ -40,7 +44,8 @@ public final class ExpressionTypeChecker {
     public static Result check(Expression expression, IntFunction<IValueType<?>> refTypes) {
         Checker checker = new Checker(expression, refTypes);
         IVariable<?> root = checker.visit(expression.root(), new int[0]);
-        return new Result(root.getType(), Collections.unmodifiableList(checker.errors), checker.emptySlots);
+        return new Result(root.getType(), Collections.unmodifiableList(checker.errors), checker.emptySlots,
+                Collections.unmodifiableMap(checker.types));
     }
 
     /**
@@ -60,10 +65,21 @@ public final class ExpressionTypeChecker {
      * @param outputType The inferred output type of the root node.
      * @param errors All type errors.
      * @param emptySlots The number of empty slots.
+     * @param nodeTypes The inferred output type of each node, by path.
      */
-    public static record Result(IValueType<?> outputType, List<Error> errors, int emptySlots) {
+    public static record Result(IValueType<?> outputType, List<Error> errors, int emptySlots,
+                                Map<IntList, IValueType<?>> nodeTypes) {
         public boolean isValid() {
             return errors.isEmpty() && emptySlots == 0;
+        }
+
+        /**
+         * @param path A node path.
+         * @return The inferred output type of the node at this path, or null if there is no such node.
+         */
+        @Nullable
+        public IValueType<?> getType(int[] path) {
+            return nodeTypes.get(IntArrayList.wrap(path));
         }
 
         /**
@@ -145,6 +161,7 @@ public final class ExpressionTypeChecker {
         private final Expression expression;
         private final IntFunction<IValueType<?>> refTypes;
         private final List<Error> errors = new ArrayList<>();
+        private final Map<IntList, IValueType<?>> types = new HashMap<>();
         private int emptySlots = 0;
 
         private Checker(Expression expression, IntFunction<IValueType<?>> refTypes) {
@@ -153,6 +170,12 @@ public final class ExpressionTypeChecker {
         }
 
         private IVariable<?> visit(ExpressionNode node, int[] path) {
+            IVariable<?> variable = visitNode(node, path);
+            types.put(IntArrayList.wrap(path), variable.getType());
+            return variable;
+        }
+
+        private IVariable<?> visitNode(ExpressionNode node, int[] path) {
             return switch (node) {
                 case ExpressionNode.Empty empty -> {
                     emptySlots++;

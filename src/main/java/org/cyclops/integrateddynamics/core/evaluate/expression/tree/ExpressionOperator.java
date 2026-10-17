@@ -41,11 +41,18 @@ public class ExpressionOperator extends OperatorBase {
      * @param outputType The output type.
      */
     public ExpressionOperator(Expression expression, Int2ObjectMap<IVariable<?>> refs, IValueType<?> outputType) {
-        super(ExpressionPrinter.print(expression), "expression", "expression", null, false,
+        super(printSymbol(expression, refs), "expression", "expression", null, false,
                 ExpressionTypeChecker.getInputTypes(expression), outputType, new Function(), null);
         ((Function) getFunction()).operator = this;
         this.expression = expression;
         this.refs = refs;
+    }
+
+    private static String printSymbol(Expression expression, Int2ObjectMap<IVariable<?>> refs) {
+        return ExpressionPrinter.print(expression, id -> null, id -> {
+            IVariable<?> variable = refs.get(id);
+            return variable != null ? variable.getType() : null;
+        });
     }
 
     /**

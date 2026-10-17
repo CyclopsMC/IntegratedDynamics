@@ -137,14 +137,14 @@ public class TestExpressionEditor {
         assertThat(ExpressionEditor.isPickedAsValue(ValueTypes.CATEGORY_ANY, Operators.STRING_LENGTH, true), is(true));
         assertThat(ExpressionEditor.isPickedAsValue(ValueTypes.INTEGER, Operators.STRING_LENGTH, true), is(false));
 
-        // l -> (len) map l
+        // l -> map((stringLength), l)
         ExpressionEditor editor = new ExpressionEditor(Operators.OPERATOR_MAP);
         apply(editor, ExpressionEditor.actionAddParam());
         apply(editor, ExpressionEditor.actionRenameParam(0, "l"));
         assertThat(apply(editor, ExpressionEditor.actionConst(ValueDeseralizationContextMocked.get(), new int[0], 0,
                 ValueTypeOperator.ValueOperator.of(Operators.STRING_LENGTH))), is(ExpressionEditor.ActionResult.SLOT_CHANGED));
         apply(editor, ExpressionEditor.actionParam(new int[0], 1, 0));
-        assertThat(ExpressionPrinter.print(editor.getExpression()), is("l -> (len) map l"));
+        assertThat(ExpressionPrinter.print(editor.getExpression()), is("l -> map((stringLength), l)"));
         assertThat(editor.check().isValid(), is(true));
         assertThat(editor.getExpression().parameters().get(0).type(), is((IValueType) ValueTypes.LIST));
     }

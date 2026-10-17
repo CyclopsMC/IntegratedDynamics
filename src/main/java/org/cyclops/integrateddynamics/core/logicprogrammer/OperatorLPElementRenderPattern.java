@@ -32,6 +32,7 @@ import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicP
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionPrinter;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionTrees;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionTypeChecker;
+import org.cyclops.integrateddynamics.core.evaluate.expression.tree.OperatorNames;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeOperator;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
@@ -406,7 +407,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
                 case ExpressionNode.Operator op -> {
                     int background = 0xFF000000 | op.operator().getOutputType().getDisplayColor();
                     guiGraphics.fill(x + 1, y + 1, x + 17, y + 17, background);
-                    drawFitted(guiGraphics, fontRenderer, ExpressionPrinter.getShortName(op.operator()), x + 1, y + 1, 16, 16,
+                    drawFitted(guiGraphics, fontRenderer, OperatorNames.getNodeName(op, ExpressionTrees.append(editPath, i), result), x + 1, y + 1, 16, 16,
                             getContrastingTextColor(background));
                     if (ExpressionTrees.countEmpty(op) > 0) {
                         // Badge for unfilled inputs
@@ -440,21 +441,21 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
             int y = ContainerLogicProgrammerBase.BASE_Y + 2;
             List<IOperator> operators = editor.getOperatorsAlongPath(editPath);
             for (int i = 0; i < operators.size(); i++) {
+                int[] tabPath = Arrays.copyOf(editPath, i);
                 if (i > 0) {
                     guiGraphics.drawString(fontRenderer, "\u203a", guiLeft + x + 1, guiTop + y + 2, COLOR_TEXT, false);
                     x += 8;
                 }
-                String text = ExpressionPrinter.getShortName(operators.get(i));
+                String text = OperatorNames.getNodeName((ExpressionNode.Operator) ExpressionTrees.get(editor.getExpression().root(), tabPath), tabPath, result);
                 int width = fontRenderer.width(text) + 6;
                 boolean current = i == operators.size() - 1;
                 guiGraphics.fill(guiLeft + x, guiTop + y, guiLeft + x + width, guiTop + y + 12, current ? 0xFFFFFFFF : COLOR_TAB);
                 drawOutline(guiGraphics, guiLeft + x, guiTop + y, width, 12, current ? COLOR_TEXT : 0xFF8B8B8B);
                 guiGraphics.drawString(fontRenderer, text, guiLeft + x + 3, guiTop + y + 2, current ? COLOR_TEXT : COLOR_LINK, false);
                 if (!current) {
-                    int[] targetPath = Arrays.copyOf(editPath, i);
                     regions.add(new Region(x, y, width, 12, button -> {
                         selectSlot(-1);
-                        sendAction(ExpressionEditor.actionNavigate(targetPath));
+                        sendAction(ExpressionEditor.actionNavigate(tabPath));
                     }, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_BREADCRUMB)));
                 }
                 x += width;
@@ -520,7 +521,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         if (slot >= 0 && slot < editor.getSlotCount()) {
             if (editor.getChild(slot) instanceof ExpressionNode.Operator op) {
                 return Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_HINT_SELECTED_OPERATOR,
-                        ExpressionPrinter.getShortName(op.operator()));
+                        OperatorNames.getNodeName(op, ExpressionTrees.append(editor.getEditPath(), slot), result));
             }
             IValueType<?> expectedType = editor.getExpectedType(slot);
             Component typeName = Component.translatable(expectedType.getTranslationKey());
@@ -649,7 +650,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         int height = STRIP_LINES * STRIP_LINE_HEIGHT + 3;
         guiGraphics.fill(guiLeft + x, guiTop + y, guiLeft + x + PANEL_WIDTH, guiTop + y + height, 0xFF373737);
         Expression expression = editor.getExpression();
-        List<ExpressionPrinter.Token> tokens = ExpressionPrinter.tokenize(expression, this::getLabel);
+        List<ExpressionPrinter.Token> tokens = ExpressionPrinter.tokenize(expression, this::getLabel, result);
         int lineWidth = PANEL_WIDTH - 4;
         int tx = 0;
         int line = 0;
@@ -713,7 +714,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         if (!result.errors().isEmpty()) {
             ExpressionTypeChecker.Error error = result.errors().get(0);
             String operatorName = ExpressionTrees.get(expression.root(), error.path()) instanceof ExpressionNode.Operator op
-                    ? ExpressionPrinter.getShortName(op.operator()) : "?";
+                    ? OperatorNames.getNodeName(op, error.path(), result) : "?";
             status = error.slot() >= 0
                     ? Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_STATUS_ERRORS_SLOT, result.errors().size(), error.slot() + 1, operatorName)
                     : Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_STATUS_ERRORS, result.errors().size());
@@ -761,7 +762,8 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
                 if (editor != null) {
                     ExpressionNode child = editor.getChild(i);
                     if (!(child instanceof ExpressionNode.Empty) && !(child instanceof ExpressionNode.Ref) && !OperatorLPElement.isItemConstant(child)) {
-                        lines.add(Component.literal(ExpressionPrinter.printNode(editor.getExpression(), child, this::getLabel)));
+                        lines.add(Component.literal(ExpressionPrinter.printNode(editor.getExpression(),
+                                ExpressionTrees.append(editor.getEditPath(), i), this::getLabel, editor.check())));
                     }
                     ExpressionTypeChecker.Error error = editor.check().getError(editor.getEditPath(), i);
                     if (error != null) {

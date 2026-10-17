@@ -1,15 +1,12 @@
 package org.cyclops.integrateddynamics.core.evaluate.expression.tree;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.integrateddynamics.api.evaluate.expression.tree.Expression;
 import org.cyclops.integrateddynamics.api.evaluate.expression.tree.ExpressionNode;
 import org.cyclops.integrateddynamics.api.evaluate.expression.tree.ExpressionParameter;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.operator.GeneralChoiceOperator;
-import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeOperator;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeString;
 
@@ -17,17 +14,15 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.IntFunction;
-import java.util.regex.Pattern;
 
 /**
  * Pretty-prints expression trees, such as {@code item -> size(nbt(item)) > 3}.
- * Choices are printed as {@code c ? a : b}, operator values as {@code (+)}.
+ * Operators are named as described in {@link OperatorNames}.
+ * Choices are printed as {@code c ? a : b}, operator values as {@code (+)} or {@code (reduce)}.
  * @author rubensworks
  */
 public final class ExpressionPrinter {
 
-    private static final Pattern IDENTIFIER = Pattern.compile("[A-Za-z_][A-Za-z0-9_]*");
-    private static final Pattern SYMBOLIC = Pattern.compile("[^A-Za-z0-9]+");
     private static final int MAX_CONST_LENGTH = 24;
     public static final String EMPTY = "?";
 
@@ -37,30 +32,20 @@ public final class ExpressionPrinter {
     /**
      * @param expression An expression.
      * @param labels Resolves the label of a variable id, may return null.
+     * @param refTypes Resolves the type of a variable id, may return null when unknown.
      * @return The pretty-printed expression.
      */
-    public static String print(Expression expression, IntFunction<String> labels) {
-        StringBuilder sb = new StringBuilder();
-        for (Token token : tokenize(expression, labels)) {
-            sb.append(token.text());
-        }
-        return sb.toString();
+    public static String print(Expression expression, IntFunction<String> labels, IntFunction<IValueType<?>> refTypes) {
+        return join(tokenize(expression, labels, ExpressionTypeChecker.check(expression, refTypes)));
     }
 
     /**
-     * @param expression The expression that contains the node, for parameter names.
-     * @param node A node.
+     * @param expression An expression.
      * @param labels Resolves the label of a variable id, may return null.
-     * @return The pretty-printed node, without the parameter list.
+     * @return The pretty-printed expression, without known reference types.
      */
-    public static String printNode(Expression expression, ExpressionNode node, IntFunction<String> labels) {
-        List<Token> tokens = new ArrayList<>();
-        new Tokenizer(expression, labels, tokens).visit(node, new int[0], false);
-        StringBuilder sb = new StringBuilder();
-        for (Token token : tokens) {
-            sb.append(token.text());
-        }
-        return sb.toString();
+    public static String print(Expression expression, IntFunction<String> labels) {
+        return print(expression, labels, id -> null);
     }
 
     /**
@@ -72,12 +57,27 @@ public final class ExpressionPrinter {
     }
 
     /**
+     * @param expression The expression that contains the node.
+     * @param path The path of a node.
+     * @param labels Resolves the label of a variable id, may return null.
+     * @param types The type checking result of the expression.
+     * @return The pretty-printed node, without the parameter list.
+     */
+    public static String printNode(Expression expression, int[] path, IntFunction<String> labels,
+                                   ExpressionTypeChecker.Result types) {
+        List<Token> tokens = new ArrayList<>();
+        new Tokenizer(expression, labels, types, tokens).visit(ExpressionTrees.get(expression.root(), path), path, false);
+        return join(tokens);
+    }
+
+    /**
      * Pretty-print the given expression as a list of tokens.
      * @param expression An expression.
      * @param labels Resolves the label of a variable id, may return null.
+     * @param types The type checking result of the expression.
      * @return The tokens.
      */
-    public static List<Token> tokenize(Expression expression, IntFunction<String> labels) {
+    public static List<Token> tokenize(Expression expression, IntFunction<String> labels, ExpressionTypeChecker.Result types) {
         List<Token> tokens = new ArrayList<>();
         List<ExpressionParameter> parameters = expression.parameters();
         if (!parameters.isEmpty()) {
@@ -95,61 +95,8 @@ public final class ExpressionPrinter {
             }
             tokens.add(new Token(" -> ", null));
         }
-        new Tokenizer(expression, labels, tokens).visit(expression.root(), new int[0], false);
+        new Tokenizer(expression, labels, types, tokens).visit(expression.root(), new int[0], false);
         return tokens;
-    }
-
-    /**
-     * @param operator An operator.
-     * @return The name to use in prefix notation.
-     */
-    public static String getPrefixName(IOperator operator) {
-        String symbol = operator.getSymbol();
-        if (symbol != null && IDENTIFIER.matcher(symbol).matches()) {
-            return symbol;
-        }
-        return operator.getInteractName();
-    }
-
-    /**
-     * @param operator An operator.
-     * @return A short label for the operator, its symbol when that is short or symbolic, otherwise its name.
-     */
-    public static String getShortName(IOperator operator) {
-        String symbol = operator.getSymbol();
-        // "?" (choice) would read as an empty slot
-        if (symbol != null && !symbol.equals(EMPTY) && (symbol.length() <= 3 || SYMBOLIC.matcher(symbol).matches())) {
-            return symbol;
-        }
-        return getPrefixName(operator);
-    }
-
-    /**
-     * @param operator An operator.
-     * @return The notation in which this operator is printed.
-     */
-    public static Notation getNotation(IOperator operator) {
-        IConfigRenderPattern pattern = operator.getRenderPattern();
-        if (pattern == null || pattern.getSymbolPosition() == null) {
-            return Notation.PREFIX;
-        }
-        int symbolX = pattern.getSymbolPosition().getLeft();
-        int before = 0;
-        int after = 0;
-        for (Pair<Integer, Integer> slot : pattern.getSlotPositions()) {
-            if (slot.getLeft() < symbolX) {
-                before++;
-            } else {
-                after++;
-            }
-        }
-        if (before == 1 && after == 1) {
-            return Notation.INFIX;
-        }
-        if (before == 1 && after == 0 && SYMBOLIC.matcher(operator.getSymbol()).matches()) {
-            return Notation.SUFFIX;
-        }
-        return Notation.PREFIX;
     }
 
     /**
@@ -162,10 +109,7 @@ public final class ExpressionPrinter {
         if (value instanceof ValueTypeString.ValueString string) {
             text = "\"" + string.getRawValue() + "\"";
         } else if (value instanceof ValueTypeOperator.ValueOperator operatorValue) {
-            IOperator operator = operatorValue.getRawValue();
-            // Registered operators by name, others (curried, combined, expressions) by their full symbol
-            text = "(" + (Operators.REGISTRY.getOperator(operator.getUniqueName()) == operator
-                    ? getShortName(operator) : operator.getSymbol()) + ")";
+            text = "(" + OperatorNames.getValueName(operatorValue.getRawValue()) + ")";
         } else {
             text = type.toCompactString(value).getString();
         }
@@ -184,10 +128,12 @@ public final class ExpressionPrinter {
         return label != null && !label.isEmpty() ? "#" + label : "#" + variableId;
     }
 
-    public static enum Notation {
-        PREFIX,
-        INFIX,
-        SUFFIX
+    private static String join(List<Token> tokens) {
+        StringBuilder sb = new StringBuilder();
+        for (Token token : tokens) {
+            sb.append(token.text());
+        }
+        return sb.toString();
     }
 
     /**
@@ -200,11 +146,13 @@ public final class ExpressionPrinter {
     private static class Tokenizer {
         private final Expression expression;
         private final IntFunction<String> labels;
+        private final ExpressionTypeChecker.Result types;
         private final List<Token> tokens;
 
-        private Tokenizer(Expression expression, IntFunction<String> labels, List<Token> tokens) {
+        private Tokenizer(Expression expression, IntFunction<String> labels, ExpressionTypeChecker.Result types, List<Token> tokens) {
             this.expression = expression;
             this.labels = labels;
+            this.types = types;
             this.tokens = tokens;
         }
 
@@ -222,7 +170,8 @@ public final class ExpressionPrinter {
         private void visitOperator(ExpressionNode.Operator node, int[] path, boolean nested) {
             IOperator operator = node.operator();
             List<ExpressionNode> children = node.children();
-            Notation notation = getNotation(operator);
+            String infixSymbol = OperatorNames.getInfixSymbol(operator);
+            String prefixSymbol = OperatorNames.getPrefixSymbol(operator);
             if (isTernary(node)) {
                 if (nested) {
                     tokens.add(new Token("(", path));
@@ -235,21 +184,21 @@ public final class ExpressionPrinter {
                 if (nested) {
                     tokens.add(new Token(")", path));
                 }
-            } else if (notation == Notation.INFIX && children.size() == 2) {
+            } else if (infixSymbol != null && children.size() == 2) {
                 if (nested) {
                     tokens.add(new Token("(", path));
                 }
                 visit(children.get(0), ExpressionTrees.append(path, 0), true);
-                tokens.add(new Token(" " + operator.getSymbol() + " ", path));
+                tokens.add(new Token(" " + infixSymbol + " ", path));
                 visit(children.get(1), ExpressionTrees.append(path, 1), true);
                 if (nested) {
                     tokens.add(new Token(")", path));
                 }
-            } else if (notation == Notation.SUFFIX && children.size() == 1) {
+            } else if (prefixSymbol != null && children.size() == 1) {
+                tokens.add(new Token(prefixSymbol, path));
                 visit(children.get(0), ExpressionTrees.append(path, 0), true);
-                tokens.add(new Token(operator.getSymbol(), path));
             } else {
-                tokens.add(new Token(getPrefixName(operator) + "(", path));
+                tokens.add(new Token(OperatorNames.getNodeName(node, path, types) + "(", path));
                 for (int i = 0; i < children.size(); i++) {
                     if (i > 0) {
                         tokens.add(new Token(", ", path));

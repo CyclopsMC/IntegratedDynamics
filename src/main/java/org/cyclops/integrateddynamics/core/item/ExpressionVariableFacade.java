@@ -232,7 +232,7 @@ public class ExpressionVariableFacade extends VariableFacadeBase implements IExp
             return "";
         }
         LabelsWorldStorage labels = LabelsWorldStorage.getInstance(IntegratedDynamics._instance);
-        return ExpressionPrinter.print(expression, labels::getLabel);
+        return ExpressionPrinter.print(expression, labels::getLabel, referenceTypes::get);
     }
 
     @OnlyIn(Dist.CLIENT)
