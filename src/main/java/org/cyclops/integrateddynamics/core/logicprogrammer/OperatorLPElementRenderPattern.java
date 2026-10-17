@@ -80,9 +80,9 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     private static final int COLOR_STRIP_HOVER = 0xFF5A5A5A;
     private static final int DOUBLE_CLICK_MS = 350;
 
-    // Side panel layout, relative to the gui
-    private static final int PANEL_X = ContainerLogicProgrammerBase.EXPRESSION_PANEL_X + 6;
-    private static final int PANEL_WIDTH = ContainerLogicProgrammerBase.EXPRESSION_PANEL_WIDTH - 12;
+    // Side panel layout, relative to the gui, with the same margin left and right, as the main texture covers the left of the panel
+    private static final int PANEL_X = ContainerLogicProgrammerBase.EXPRESSION_PANEL_X + 7;
+    private static final int PANEL_WIDTH = ContainerLogicProgrammerBase.EXPRESSION_PANEL_WIDTH - 13;
     private static final int TITLE_Y = ContainerLogicProgrammerBase.EXPRESSION_PANEL_Y + 6;
     // Parameter chips wrap onto as many rows as needed, followed by the button to add one, the expression follows below them
     private static final int PARAMS_Y = TITLE_Y + 12;
@@ -1073,7 +1073,8 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         Component type = expression.hasParameters()
                 ? ValueTypeOperator.getSignature(ExpressionTypeChecker.getInputTypes(expression), outputType)
                 : Component.translatable(outputType.getTranslationKey()).withStyle(outputType.getDisplayColorFormat());
-        renderFooter(guiGraphics, guiLeft, guiTop, font, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TYPE, type), null);
+        // Recognizable as a type by its colors, so it is only named in the tooltip
+        renderFooter(guiGraphics, guiLeft, guiTop, font, type, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TYPE, type));
     }
 
     /**

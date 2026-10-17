@@ -272,9 +272,9 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
 
         // Draw expression panel hint
         if (isExpressionPanelOpen() && !(container.getActiveElement() instanceof OperatorLPElement)) {
-            int panelX = ContainerLogicProgrammerBase.EXPRESSION_PANEL_X + 6;
+            int panelX = ContainerLogicProgrammerBase.EXPRESSION_PANEL_X + 7;
             int panelY = ContainerLogicProgrammerBase.EXPRESSION_PANEL_Y + 6;
-            int panelWidth = ContainerLogicProgrammerBase.EXPRESSION_PANEL_WIDTH - 12;
+            int panelWidth = ContainerLogicProgrammerBase.EXPRESSION_PANEL_WIDTH - 13;
             guiGraphics.drawString(font, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TITLE),
                     offsetX + panelX, offsetY + panelY, Helpers.RGBToInt(64, 64, 64), false);
             guiGraphics.drawWordWrap(font, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_HINT),
