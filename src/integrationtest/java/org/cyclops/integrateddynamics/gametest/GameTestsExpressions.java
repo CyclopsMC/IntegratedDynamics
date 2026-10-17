@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.gametest;
 
+import it.unimi.dsi.fastutil.ints.IntLists;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
@@ -10,6 +11,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickType;
@@ -40,6 +42,8 @@ import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityVariablestore;
 import org.cyclops.integrateddynamics.core.evaluate.ExpressionVariableFacadeHandler;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionOperator;
+import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionParseException;
+import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionParser;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionTrees;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
@@ -54,8 +58,10 @@ import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.item.ExpressionVariableFacade;
 import org.cyclops.integrateddynamics.core.item.OperatorVariableFacade;
+import org.cyclops.integrateddynamics.core.logicprogrammer.ExpressionEditor;
 import org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElement;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
+import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammer;
 import org.cyclops.integrateddynamics.item.ItemWrench;
 import org.cyclops.integrateddynamics.part.PartTypePanelDisplay;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
@@ -606,6 +612,43 @@ public class GameTestsExpressions {
             assertValueEqual(((PartTypePanelDisplay.State) PartHelpers.getPart(target).getState()).getDisplayValue(),
                     ValueTypeInteger.ValueInteger.of(36));
         });
+    }
+
+    // --------------- Text ---------------
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testLogicProgrammerSetExpressionAsText(GameTestHelper helper) throws ExpressionParseException {
+        ItemStack variableRedstone = setupRedstoneNetwork(helper);
+        int redstoneId = getVariableFacade(helper.getLevel(), variableRedstone).getId();
+        ValueDeseralizationContext values = ValueDeseralizationContext.of(helper.getLevel());
+        ExpressionParser.Context context = ExpressionEditor.getParserContext(values, id -> null, label -> IntLists.EMPTY_LIST);
+
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        ItemStack written;
+        try {
+            ContainerLogicProgrammer container = new ContainerLogicProgrammer(0, player.getInventory());
+            container.setActiveElement(container.getOperatorElement(Operators.RELATIONAL_GT), 0, 0);
+
+            // Typed with another root operator, so the element of that operator becomes active
+            Expression expression = ExpressionParser.parse("(#" + redstoneId + " + 3) * 2", context);
+            container.applyExpressionAction(ExpressionEditor.actionSet(values, expression));
+            helper.assertTrue(container.getActiveElement() instanceof OperatorLPElement element
+                    && element.getOperator() == Operators.ARITHMETIC_MULTIPLICATION, "The element of the new root operator is not active");
+            OperatorLPElement element = (OperatorLPElement) container.getActiveElement();
+            helper.assertTrue(element.getEditor().getExpression().equals(expression), "The expression was not set");
+
+            // Something that can not be edited is ignored
+            container.applyExpressionAction(ExpressionEditor.actionSet(values, new Expression(c(1))));
+            helper.assertTrue(container.getActiveElement() == element && element.getEditor().getExpression().equals(expression),
+                    "An expression that can not be edited was set");
+
+            written = element.writeElement(player, new ItemStack(RegistryEntries.ITEM_VARIABLE.get()));
+        } finally {
+            player.getServer().getPlayerList().remove(player);
+        }
+
+        Pair<PartTypePanelDisplay, PartTypePanelDisplay.State> partAndState = display(helper, written);
+        helper.succeedWhen(() -> assertValueEqual(partAndState.getRight().getDisplayValue(), ValueTypeInteger.ValueInteger.of(36)));
     }
 
 }

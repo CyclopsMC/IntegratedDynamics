@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
@@ -15,6 +16,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeCategory;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
+import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionParser;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionTrees;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionTypeChecker;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
@@ -29,6 +31,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.IntFunction;
 
 /**
  * The editing state of an expression in the logic programmer,
@@ -46,6 +50,12 @@ public class ExpressionEditor {
     public static final String ACTION_REMOVE_PARAM = "rmparam";
     public static final String ACTION_RENAME_PARAM = "renameparam";
     public static final String ACTION_PARAM_TYPE = "paramtype";
+    public static final String ACTION_SET = "set";
+
+    /**
+     * The maximum number of nodes in an expression that is set as a whole.
+     */
+    public static final int MAX_NODES = 1024;
 
     /**
      * The types a parameter can be given in the logic programmer, in cycling order.
@@ -70,6 +80,13 @@ public class ExpressionEditor {
 
     public Expression getExpression() {
         return expression;
+    }
+
+    /**
+     * @return All known types of referenced variables, also of variables that are no longer referenced.
+     */
+    public Map<Integer, IValueType<?>> getKnownRefTypes() {
+        return new HashMap<>(refTypes);
     }
 
     public void setExpression(Expression expression) {
@@ -255,7 +272,8 @@ public class ExpressionEditor {
             return;
         }
         name = sanitizeParameterName(name);
-        if (name.isEmpty()) {
+        // Only names that can be written as text, so the expression can be edited as text
+        if (!ExpressionParser.isValidParameterName(name)) {
             return;
         }
         List<ExpressionParameter> parameters = new ArrayList<>(expression.parameters());
@@ -298,6 +316,63 @@ public class ExpressionEditor {
         // Operators that may return an operator are nested by default, as they are usually curried or combined
         return forceValue || (expectedType == ValueTypes.OPERATOR
                 && !ValueHelpers.correspondsTo(operator.getOutputType(), ValueTypes.OPERATOR));
+    }
+
+    /**
+     * @param operator An operator.
+     * @return If the operator can be edited in the logic programmer, which needs a slot for each input.
+     */
+    public static boolean isEditable(IOperator operator) {
+        IConfigRenderPattern pattern = operator.getRenderPattern();
+        return pattern != null && pattern != IConfigRenderPattern.NONE && pattern.getSlotPositions().length == operator.getRequiredInputLength();
+    }
+
+    /**
+     * @param expression An expression.
+     * @return If the expression can be edited in the logic programmer.
+     */
+    public static boolean isEditable(Expression expression) {
+        if (!(expression.root() instanceof ExpressionNode.Operator) || ExpressionTrees.countNodes(expression.root()) > MAX_NODES) {
+            return false;
+        }
+        List<ExpressionParameter> parameters = expression.parameters();
+        for (int i = 0; i < parameters.size(); i++) {
+            ExpressionParameter parameter = parameters.get(i);
+            if (!ExpressionParser.isValidParameterName(parameter.name()) || !PARAMETER_TYPES.contains(parameter.type())) {
+                return false;
+            }
+            for (int j = 0; j < i; j++) {
+                if (parameters.get(j).name().equals(parameter.name())) {
+                    return false;
+                }
+            }
+        }
+        return areOperatorsEditable(expression.root());
+    }
+
+    private static boolean areOperatorsEditable(ExpressionNode node) {
+        if (node instanceof ExpressionNode.Operator op) {
+            if (!isEditable(op.operator())) {
+                return false;
+            }
+            for (ExpressionNode child : op.children()) {
+                if (!areOperatorsEditable(child)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * @param values For deserializing values that are written with their type.
+     * @param refTypes Resolves the type of a variable id, may return null when unknown.
+     * @param labelIds Resolves the ids of the variables with a label.
+     * @return The context for parsing expressions that can be edited in the logic programmer.
+     */
+    public static ExpressionParser.Context getParserContext(ValueDeseralizationContext values, IntFunction<IValueType<?>> refTypes,
+                                                            Function<String, IntList> labelIds) {
+        return new ExpressionParser.Context(values, refTypes, labelIds, PARAMETER_TYPES::contains, ExpressionEditor::isEditable);
     }
 
     public static String sanitizeParameterName(String name) {
@@ -369,6 +444,36 @@ public class ExpressionEditor {
         return tag;
     }
 
+    /**
+     * An action that replaces the whole expression, which can have another root operator.
+     * @param context The serialization context.
+     * @param expression The new expression.
+     * @return The action.
+     */
+    public static CompoundTag actionSet(ValueDeseralizationContext context, Expression expression) {
+        CompoundTag tag = action(ACTION_SET, new int[0]);
+        tag.put("expression", ExpressionTrees.serialize(context, expression));
+        return tag;
+    }
+
+    /**
+     * @param context The deserialization context.
+     * @param action A set action.
+     * @return Its expression, or null if the action is malformed or the expression can not be edited.
+     */
+    @Nullable
+    public static Expression readSetAction(ValueDeseralizationContext context, CompoundTag action) {
+        if (!ACTION_SET.equals(action.getString("a")) || !action.contains("expression", Tag.TAG_COMPOUND)) {
+            return null;
+        }
+        try {
+            Expression expression = ExpressionTrees.deserialize(context, action.getCompound("expression"));
+            return isEditable(expression) ? expression : null;
+        } catch (EvaluationException | RuntimeException e) {
+            return null;
+        }
+    }
+
     public static CompoundTag actionParamType(int index, IValueType<?> type) {
         CompoundTag tag = action(ACTION_PARAM_TYPE, new int[0]);
         tag.putInt("index", index);
@@ -420,8 +525,7 @@ public class ExpressionEditor {
                     return ActionResult.NONE;
                 }
                 IOperator operator = Operators.REGISTRY.getOperator(ResourceLocation.parse(action.getString("operator")));
-                if (operator == null || operator.getRenderPattern() == null || operator.getRenderPattern() == IConfigRenderPattern.NONE
-                        || operator.getRenderPattern().getSlotPositions().length != operator.getRequiredInputLength()) {
+                if (operator == null || !isEditable(operator)) {
                     return ActionResult.NONE;
                 }
                 setChild(slot, ExpressionNode.Operator.ofEmpty(operator));

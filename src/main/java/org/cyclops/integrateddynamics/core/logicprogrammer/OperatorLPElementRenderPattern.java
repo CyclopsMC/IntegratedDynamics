@@ -1,11 +1,14 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import com.google.common.collect.Lists;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.MultiLineEditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.nbt.CompoundTag;
@@ -29,6 +32,8 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
+import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionParseException;
+import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionParser;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionPrinter;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionTrees;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionTypeChecker;
@@ -82,6 +87,9 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     private static final int STRIP_LINES = 6;
     private static final int STRIP_LINE_HEIGHT = 8;
     private static final int STATUS_Y = STRIP_Y + STRIP_LINES * STRIP_LINE_HEIGHT + 6;
+    private static final int TEXT_HEIGHT = 74;
+    private static final int TEXT_STATUS_Y = PARAMS_Y + TEXT_HEIGHT + 4;
+    private static final int COPIED_MS = 1500;
     private static final int PANEL_BOTTOM = ContainerLogicProgrammerBase.EXPRESSION_PANEL_Y + ContainerLogicProgrammerBase.EXPRESSION_PANEL_HEIGHT - 4;
     private static final float SMALL = 0.75F;
 
@@ -101,6 +109,19 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
 
     // Clickable regions, relative to the gui, recalculated while rendering
     private final List<Region> regions = new ArrayList<>();
+
+    // Editing the expression as text
+    @Nullable
+    private MultiLineEditBox textBox = null;
+    @Nullable
+    private Int2ObjectMap<IValueType<?>> inventoryCardTypes = null;
+    @Nullable
+    private Expression parsedText = null;
+    @Nullable
+    private ExpressionTypeChecker.Result parsedTextResult = null;
+    @Nullable
+    private ExpressionParseException textError = null;
+    private long copiedTime = 0;
 
     public OperatorLPElementRenderPattern(OperatorLPElement element, int baseX, int baseY, int maxWidth, int maxHeight,
                                           ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
@@ -122,6 +143,13 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         this.valueField.setX(guiLeft + EDITOR_X);
         this.valueField.setY(guiTop + EDITOR_Y);
         updateEditor();
+        // The panel is recreated when navigating or resizing, the text being edited is kept in the container
+        if (textBox != null) {
+            textBox.setX(guiLeft + PANEL_X);
+            textBox.setY(guiTop + PARAMS_Y);
+        } else if (container.getExpressionText() != null && getEditor() != null) {
+            openTextBox(container.getExpressionText());
+        }
     }
 
     @Override
@@ -141,6 +169,112 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         IntegratedDynamics._instance.getPacketHandler().sendToServer(new LogicProgrammerExpressionActionPacket(action));
     }
 
+    // --------------- Text ---------------
+
+    public boolean isEditingText() {
+        return textBox != null;
+    }
+
+    protected void startEditingText() {
+        openTextBox(printText());
+    }
+
+    protected String printText() {
+        return ExpressionPrinter.printExact(getEditor().getExpression(), ValueDeseralizationContext.ofClient(), this::getLabel,
+                this::getLabelIds, this::getRefType);
+    }
+
+    protected void openTextBox(String text) {
+        selectSlot(-1);
+        armParameter(-1);
+        inventoryCardTypes = OperatorLPElement.getInventoryCardTypes(Minecraft.getInstance().player);
+        textBox = new MultiLineEditBox(Minecraft.getInstance().font, guiLeft + PANEL_X, guiTop + PARAMS_Y, PANEL_WIDTH, TEXT_HEIGHT,
+                Component.empty(), Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TITLE));
+        textBox.setValue(text);
+        textBox.setValueListener(this::onTextChanged);
+        textBox.setFocused(true);
+        onTextChanged(text);
+    }
+
+    protected void onTextChanged(String text) {
+        container.setExpressionText(text);
+        try {
+            parsedText = ExpressionParser.parse(text, ExpressionEditor.getParserContext(ValueDeseralizationContext.ofClient(),
+                    this::getRefType, this::getLabelIds));
+            parsedTextResult = ExpressionTypeChecker.check(parsedText, this::getRefType);
+            textError = null;
+        } catch (ExpressionParseException e) {
+            parsedText = null;
+            parsedTextResult = null;
+            textError = e;
+        }
+    }
+
+    protected void stopEditingText() {
+        textBox = null;
+        parsedText = null;
+        parsedTextResult = null;
+        textError = null;
+        container.setExpressionText(null);
+    }
+
+    protected void applyText() {
+        if (parsedText == null) {
+            return;
+        }
+        Expression expression = parsedText;
+        stopEditingText();
+        setExpressionWithUndo(expression);
+    }
+
+    protected void undoText() {
+        Expression previous = container.getExpressionUndo(getEditor().getExpression());
+        if (previous != null) {
+            setExpressionWithUndo(previous);
+        }
+    }
+
+    /**
+     * Replace the expression, so that it can be undone.
+     * This can make another element active, which replaces this panel.
+     */
+    protected void setExpressionWithUndo(Expression expression) {
+        Expression previous = getEditor().getExpression();
+        sendAction(ExpressionEditor.actionSet(ValueDeseralizationContext.ofClient(), expression));
+        if (container.getActiveElement() instanceof OperatorLPElement active && active.getEditor() != null
+                && active.getEditor().getExpression() != previous) {
+            container.setExpressionUndo(previous, active.getEditor().getExpression());
+        }
+    }
+
+    protected void copyText() {
+        Minecraft.getInstance().keyboardHandler.setClipboard(printText());
+        copiedTime = Util.getMillis();
+    }
+
+    @Nullable
+    protected IValueType<?> getRefType(int variableId) {
+        ExpressionEditor editor = getEditor();
+        IValueType<?> type = editor != null ? editor.getRefType(variableId) : null;
+        return type != null || inventoryCardTypes == null ? type : inventoryCardTypes.get(variableId);
+    }
+
+    protected IntList getLabelIds(String label) {
+        return LabelsWorldStorage.getInstance(IntegratedDynamics._instance).getVariableIds(label);
+    }
+
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+        return textBox != null && textBox.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+    }
+
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        return textBox != null && textBox.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+    }
+
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        return textBox != null && textBox.mouseReleased(mouseX, mouseY, button);
+    }
+
     protected void selectSlot(int slot) {
         element.setSelectedSlot(slot);
         container.setExpressionSlotFilter(slot >= 0 && getEditor() != null ? getEditor().getExpectedType(slot) : null);
@@ -157,6 +291,10 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
      * @return If something was selected.
      */
     public boolean cancelSelection() {
+        if (isEditingText()) {
+            stopEditingText();
+            return true;
+        }
         if (element.getSelectedSlot() >= 0 || element.getArmedParameter() >= 0) {
             selectSlot(-1);
             armParameter(-1);
@@ -271,12 +409,22 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
             valueField.setFocused(false);
         }
 
+        if (textBox != null && textBox.mouseClicked(mouseX, mouseY, mouseButton)) {
+            textBox.setFocused(true);
+            return true;
+        }
+
         // Clickable regions (breadcrumb, parameters, strip)
         for (Region region : Lists.newArrayList(regions)) {
             if (region.contains(mouseX - guiLeft, mouseY - guiTop)) {
                 region.action().onClick(mouseButton);
                 return true;
             }
+        }
+
+        // The slots would be replaced when applying the text
+        if (isEditingText()) {
+            return false;
         }
 
         int slot = getSlotAt(mouseX, mouseY);
@@ -320,6 +468,10 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
 
     @Override
     public boolean charTyped(char typedChar, int keyCode) {
+        if (textBox != null) {
+            textBox.charTyped(typedChar, keyCode);
+            return true;
+        }
         if (valueField.isVisible() && valueField.isFocused()) {
             valueField.charTyped(typedChar, keyCode);
             editorError = null;
@@ -330,6 +482,15 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
 
     @Override
     public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
+        if (textBox != null) {
+            if ((typedChar == GLFW.GLFW_KEY_ENTER || typedChar == GLFW.GLFW_KEY_KP_ENTER) && Screen.hasControlDown()) {
+                applyText();
+            } else {
+                textBox.keyPressed(typedChar, keyCode, modifiers);
+            }
+            // Keep keys such as the inventory key from closing the gui while typing
+            return true;
+        }
         if (valueField.isVisible() && valueField.isFocused()) {
             if (typedChar == GLFW.GLFW_KEY_ENTER || typedChar == GLFW.GLFW_KEY_KP_ENTER) {
                 submitEditor();
@@ -482,12 +643,21 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
             }
         }
 
-        if (ContainerScreenLogicProgrammerBase.isExpressionPanelOpen()) {
+        if (ContainerScreenLogicProgrammerBase.isExpressionPanelOpen() && textBox != null) {
+            renderTitle(guiGraphics, guiLeft, guiTop, fontRenderer);
+            textBox.render(guiGraphics, mouseX, mouseY, partialTicks);
+            int statusEnd = textError != null
+                    ? renderTextError(guiGraphics, guiLeft, guiTop, fontRenderer, textError, TEXT_STATUS_Y)
+                    : renderStatus(guiGraphics, guiLeft, guiTop, fontRenderer, parsedText, parsedTextResult, TEXT_STATUS_Y);
+            renderHintText(guiGraphics, guiLeft, guiTop, fontRenderer,
+                    Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_HINT_TEXT), statusEnd + 6);
+        } else if (ContainerScreenLogicProgrammerBase.isExpressionPanelOpen()) {
+            renderTitle(guiGraphics, guiLeft, guiTop, fontRenderer);
             int hoveredSlot = getSlotAt(mouseX, mouseY);
             int[] hoveredPath = hoveredSlot >= 0 && hoveredSlot < editor.getSlotCount() ? ExpressionTrees.append(editPath, hoveredSlot) : null;
             renderParameters(guiGraphics, guiLeft, guiTop, fontRenderer, editor);
             renderStrip(guiGraphics, guiLeft, guiTop, fontRenderer, editor, result, hoveredPath);
-            int statusEnd = renderStatus(guiGraphics, guiLeft, guiTop, fontRenderer, editor, result);
+            int statusEnd = renderStatus(guiGraphics, guiLeft, guiTop, fontRenderer, editor.getExpression(), result, STATUS_Y);
             renderHint(guiGraphics, guiLeft, guiTop, fontRenderer, editor, result, statusEnd + 6);
         }
     }
@@ -559,10 +729,14 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
 
     protected void renderHint(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font, ExpressionEditor editor,
                               ExpressionTypeChecker.Result result, int hintY) {
+        renderHintText(guiGraphics, guiLeft, guiTop, font, getHint(editor, result), hintY);
+    }
+
+    protected void renderHintText(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font, Component hint, int hintY) {
         guiGraphics.fill(guiLeft + PANEL_X, guiTop + hintY - 4, guiLeft + PANEL_X + PANEL_WIDTH, guiTop + hintY - 3, 0xFF8B8B8B);
         int y = hintY;
         int maxLines = (PANEL_BOTTOM - 6 - hintY) / 8 + 1;
-        List<FormattedCharSequence> lines = font.split(getHint(editor, result), (int) (PANEL_WIDTH / SMALL));
+        List<FormattedCharSequence> lines = font.split(hint, (int) (PANEL_WIDTH / SMALL));
         for (int i = 0; i < lines.size() && i < maxLines; i++) {
             guiGraphics.pose().pushPose();
             guiGraphics.pose().translate(guiLeft + PANEL_X, guiTop + y, 300);
@@ -587,14 +761,89 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         guiGraphics.pose().popPose();
     }
 
+    /**
+     * Draw small text that wraps within the panel.
+     * @return The y position below the text.
+     */
+    protected static int drawWrapped(GuiGraphics guiGraphics, Font font, Component text, int x, int y, int color) {
+        for (FormattedCharSequence line : font.split(text, (int) (PANEL_WIDTH / SMALL))) {
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().translate(x, y, 300);
+            guiGraphics.pose().scale(SMALL, SMALL, 1F);
+            guiGraphics.drawString(font, line, 0, 0, color, false);
+            guiGraphics.pose().popPose();
+            y += 8;
+        }
+        return y;
+    }
+
     protected static int scaledWidth(Font font, String text) {
         return (int) Math.ceil(font.width(text) * SMALL);
     }
 
-    protected void renderParameters(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font, ExpressionEditor editor) {
+    /**
+     * Draw the title of the panel, with buttons for editing the expression as text on the right.
+     */
+    protected void renderTitle(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font) {
         guiGraphics.drawString(font, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TITLE),
                 guiLeft + PANEL_X, guiTop + TITLE_Y, COLOR_TEXT, false);
+        int x = PANEL_X + PANEL_WIDTH;
+        if (isEditingText()) {
+            x = renderTitleButton(guiGraphics, guiLeft, guiTop, font, x, L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_APPLY,
+                    parsedText != null, this::applyText);
+            renderTitleButton(guiGraphics, guiLeft, guiTop, font, x, L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_CANCEL,
+                    true, this::stopEditingText);
+        } else {
+            x = renderTitleButton(guiGraphics, guiLeft, guiTop, font, x, L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_EDIT,
+                    true, this::startEditingText);
+            boolean copied = Util.getMillis() - copiedTime < COPIED_MS;
+            x = renderTitleButton(guiGraphics, guiLeft, guiTop, font, x, copied
+                    ? L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_COPIED : L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_COPY, true, this::copyText);
+            if (container.getExpressionUndo(getEditor().getExpression()) != null) {
+                renderTitleButton(guiGraphics, guiLeft, guiTop, font, x, L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_UNDO,
+                        true, this::undoText);
+            }
+        }
+    }
 
+    /**
+     * Draw a small button that ends at the given x position.
+     * @return The x position left of the button.
+     */
+    protected int renderTitleButton(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font, int right, String key,
+                                    boolean enabled, Runnable action) {
+        Component text = Component.translatable(key);
+        int width = scaledWidth(font, text.getString()) + 6;
+        int x = right - width;
+        int y = TITLE_Y - 1;
+        guiGraphics.fill(guiLeft + x, guiTop + y, guiLeft + x + width, guiTop + y + 10, enabled ? 0xFF8B8B8B : 0xFFA8A8A8);
+        drawOutline(guiGraphics, guiLeft + x, guiTop + y, width, 10, 0xFF373737);
+        drawScaled(guiGraphics, font, text, guiLeft + x + 3, guiTop + y + 3, enabled ? COLOR_TEXT_LIGHT : 0xFF6B6B6B);
+        if (enabled) {
+            regions.add(new Region(x, y, width, 10, button -> action.run(), Component.translatable(key + ".tooltip")));
+        }
+        return x - 2;
+    }
+
+    protected int renderTextError(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font, ExpressionParseException error,
+                                  int statusY) {
+        String text = container.getExpressionText() == null ? "" : container.getExpressionText();
+        int position = Math.min(error.getPosition(), text.length());
+        int line = 1;
+        int column = 1;
+        for (int i = 0; i < position; i++) {
+            if (text.charAt(i) == '\n') {
+                line++;
+                column = 1;
+            } else {
+                column++;
+            }
+        }
+        Component message = Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_ERROR, line, column, error.getComponent());
+        return drawWrapped(guiGraphics, font, message, guiLeft + PANEL_X, guiTop + statusY, COLOR_ERROR) - guiTop;
+    }
+
+    protected void renderParameters(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font, ExpressionEditor editor) {
         drawScaled(guiGraphics, font, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_PARAMS),
                 guiLeft + PANEL_X, guiTop + PARAMS_Y + 2, COLOR_TEXT);
         List<ExpressionParameter> parameters = editor.getExpression().parameters();
@@ -699,9 +948,8 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     /**
      * @return The y position below the status, relative to the gui.
      */
-    protected int renderStatus(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font, ExpressionEditor editor,
-                               ExpressionTypeChecker.Result result) {
-        Expression expression = editor.getExpression();
+    protected int renderStatus(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font, Expression expression,
+                               ExpressionTypeChecker.Result result, int statusY) {
         MutableComponent type;
         if (expression.hasParameters()) {
             type = ValueTypeOperator.getSignature(
@@ -730,18 +978,9 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         if (depth > MAX_DEPTH_WARNING) {
             status = status.append(" ").append(Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_STATUS_DEEP, depth));
         }
-        drawScaled(guiGraphics, font, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TYPE, type.getString()),
-                guiLeft + PANEL_X, guiTop + STATUS_Y, COLOR_TEXT);
-        int y = STATUS_Y + 9;
-        for (FormattedCharSequence line : font.split(status, (int) (PANEL_WIDTH / SMALL))) {
-            guiGraphics.pose().pushPose();
-            guiGraphics.pose().translate(guiLeft + PANEL_X, guiTop + y, 300);
-            guiGraphics.pose().scale(SMALL, SMALL, 1F);
-            guiGraphics.drawString(font, line, 0, 0, color, false);
-            guiGraphics.pose().popPose();
-            y += 8;
-        }
-        return y;
+        int y = drawWrapped(guiGraphics, font, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TYPE, type.getString()),
+                guiLeft + PANEL_X, guiTop + statusY, COLOR_TEXT) + 1;
+        return drawWrapped(guiGraphics, font, status, guiLeft + PANEL_X, y, color) - guiTop;
     }
 
     @Override

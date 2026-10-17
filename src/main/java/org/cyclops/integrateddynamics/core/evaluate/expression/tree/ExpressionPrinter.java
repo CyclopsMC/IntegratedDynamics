@@ -1,18 +1,27 @@
 package org.cyclops.integrateddynamics.core.evaluate.expression.tree;
 
+import it.unimi.dsi.fastutil.ints.IntList;
 import org.cyclops.integrateddynamics.api.evaluate.expression.tree.Expression;
 import org.cyclops.integrateddynamics.api.evaluate.expression.tree.ExpressionNode;
 import org.cyclops.integrateddynamics.api.evaluate.expression.tree.ExpressionParameter;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.core.evaluate.operator.GeneralChoiceOperator;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeDouble;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeLong;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeOperator;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeString;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.IntFunction;
 
 /**
@@ -57,6 +66,100 @@ public final class ExpressionPrinter {
     }
 
     /**
+     * Print the given expression in the text form that {@link ExpressionParser} reads back into the same expression.
+     * In contrast to {@link #print}, values are not shortened, parameters are written with their types,
+     * and references only use a label if that label leads back to them.
+     * @param expression An expression.
+     * @param values For serializing values that are written with their type, such as items.
+     * @param labels Resolves the label of a variable id, may return null.
+     * @param labelIds Resolves the ids of the variables with a label.
+     * @param refTypes Resolves the type of a variable id, may return null when unknown.
+     * @return The text.
+     */
+    public static String printExact(Expression expression, ValueDeseralizationContext values, IntFunction<String> labels,
+                                    Function<String, IntList> labelIds, IntFunction<IValueType<?>> refTypes) {
+        StringBuilder sb = new StringBuilder();
+        List<ExpressionParameter> parameters = expression.parameters();
+        if (!parameters.isEmpty()) {
+            boolean typed = parameters.stream().anyMatch(parameter -> parameter.type() != ValueTypes.CATEGORY_ANY);
+            if (parameters.size() == 1 && !typed) {
+                sb.append(parameters.get(0).name());
+            } else {
+                sb.append("(");
+                for (int i = 0; i < parameters.size(); i++) {
+                    if (i > 0) {
+                        sb.append(", ");
+                    }
+                    ExpressionParameter parameter = parameters.get(i);
+                    sb.append(parameter.name());
+                    if (parameter.type() != ValueTypes.CATEGORY_ANY) {
+                        sb.append(": ").append(ExpressionParser.getTypeName(parameter.type()));
+                    }
+                }
+                sb.append(")");
+            }
+            sb.append(" -> ");
+        }
+        List<Token> tokens = new ArrayList<>();
+        new Tokenizer(expression, labels, ExpressionTypeChecker.check(expression, refTypes), tokens, new Exact(values, labelIds))
+                .visit(expression.root(), new int[0], false);
+        return sb.append(join(tokens)).toString();
+    }
+
+    /**
+     * @param value A value.
+     * @param values For serializing values that are written with their type.
+     * @return The value in the text form, which {@link ExpressionParser} reads back into the same value.
+     */
+    public static String printLiteral(IValue value, ValueDeseralizationContext values) {
+        return switch (value) {
+            case ValueTypeBoolean.ValueBoolean bool -> Boolean.toString(bool.getRawValue());
+            case ValueTypeInteger.ValueInteger integer -> Integer.toString(integer.getRawValue());
+            case ValueTypeLong.ValueLong longValue -> longValue.getRawValue() + "L";
+            case ValueTypeDouble.ValueDouble doubleValue -> printDouble(doubleValue.getRawValue());
+            case ValueTypeString.ValueString string -> quote(string.getRawValue());
+            case ValueTypeOperator.ValueOperator operator when OperatorNames.isRegistered(operator.getRawValue()) ->
+                    "(" + OperatorNames.getValueName(operator.getRawValue()) + ")";
+            default -> "@" + ExpressionParser.getTypeName(value.getType()) + ValueHelpers.serializeRaw(values, value);
+        };
+    }
+
+    /**
+     * @param text A text.
+     * @return The text between quotes, with quotes, backslashes and control characters escaped.
+     */
+    public static String quote(String text) {
+        StringBuilder sb = new StringBuilder("\"");
+        for (char c : text.toCharArray()) {
+            switch (c) {
+                case '"' -> sb.append("\\\"");
+                case '\\' -> sb.append("\\\\");
+                case '\n' -> sb.append("\\n");
+                case '\t' -> sb.append("\\t");
+                case '\r' -> sb.append("\\r");
+                default -> {
+                    if (c < 0x20) {
+                        sb.append(String.format("\\u%04x", (int) c));
+                    } else {
+                        sb.append(c);
+                    }
+                }
+            }
+        }
+        return sb.append('"').toString();
+    }
+
+    private static String printDouble(double value) {
+        if (Double.isNaN(value)) {
+            return "NaN";
+        }
+        if (Double.isInfinite(value)) {
+            return value > 0 ? "Infinity" : "-Infinity";
+        }
+        return Double.toString(value);
+    }
+
+    /**
      * @param expression The expression that contains the node.
      * @param path The path of a node.
      * @param labels Resolves the label of a variable id, may return null.
@@ -66,7 +169,7 @@ public final class ExpressionPrinter {
     public static String printNode(Expression expression, int[] path, IntFunction<String> labels,
                                    ExpressionTypeChecker.Result types) {
         List<Token> tokens = new ArrayList<>();
-        new Tokenizer(expression, labels, types, tokens).visit(ExpressionTrees.get(expression.root(), path), path, false);
+        new Tokenizer(expression, labels, types, tokens, null).visit(ExpressionTrees.get(expression.root(), path), path, false);
         return join(tokens);
     }
 
@@ -95,7 +198,7 @@ public final class ExpressionPrinter {
             }
             tokens.add(new Token(" -> ", null));
         }
-        new Tokenizer(expression, labels, types, tokens).visit(expression.root(), new int[0], false);
+        new Tokenizer(expression, labels, types, tokens, null).visit(expression.root(), new int[0], false);
         return tokens;
     }
 
@@ -143,24 +246,30 @@ public final class ExpressionPrinter {
      */
     public static record Token(String text, @Nullable int[] path) {}
 
+    private static record Exact(ValueDeseralizationContext values, Function<String, IntList> labelIds) {}
+
     private static class Tokenizer {
         private final Expression expression;
         private final IntFunction<String> labels;
         private final ExpressionTypeChecker.Result types;
         private final List<Token> tokens;
+        @Nullable
+        private final Exact exact;
 
-        private Tokenizer(Expression expression, IntFunction<String> labels, ExpressionTypeChecker.Result types, List<Token> tokens) {
+        private Tokenizer(Expression expression, IntFunction<String> labels, ExpressionTypeChecker.Result types, List<Token> tokens,
+                          @Nullable Exact exact) {
             this.expression = expression;
             this.labels = labels;
             this.types = types;
             this.tokens = tokens;
+            this.exact = exact;
         }
 
         private void visit(ExpressionNode node, int[] path, boolean nested) {
             switch (node) {
                 case ExpressionNode.Empty empty -> tokens.add(new Token(EMPTY, path));
-                case ExpressionNode.Const constant -> tokens.add(new Token(printValue(constant.value()), path));
-                case ExpressionNode.Ref ref -> tokens.add(new Token(printRef(ref.variableId(), labels.apply(ref.variableId())), path));
+                case ExpressionNode.Const constant -> tokens.add(new Token(printConst(constant.value()), path));
+                case ExpressionNode.Ref ref -> tokens.add(new Token(printReference(ref.variableId()), path));
                 case ExpressionNode.Param param -> tokens.add(new Token(param.index() < expression.parameters().size()
                         ? expression.parameters().get(param.index()).name() : EMPTY, path));
                 case ExpressionNode.Operator op -> visitOperator(op, path, nested);
@@ -207,6 +316,30 @@ public final class ExpressionPrinter {
                 }
                 tokens.add(new Token(")", path));
             }
+        }
+
+        private String printConst(IValue value) {
+            // An operator value with the name of a parameter would read as that parameter
+            if (value instanceof ValueTypeOperator.ValueOperator operatorValue && OperatorNames.isRegistered(operatorValue.getRawValue())) {
+                IOperator operator = operatorValue.getRawValue();
+                String name = OperatorNames.getValueName(operator);
+                if (expression.parameters().stream().anyMatch(parameter -> parameter.name().equals(name))) {
+                    return "(" + operator.getGlobalInteractName() + ")";
+                }
+            }
+            return exact != null ? printLiteral(value, exact.values()) : printValue(value);
+        }
+
+        private String printReference(int variableId) {
+            String label = labels.apply(variableId);
+            if (exact == null) {
+                return printRef(variableId, label);
+            }
+            // Labels are not unique, so only use one that leads back to this variable
+            if (label != null && !label.isEmpty() && exact.labelIds().apply(label).equals(IntList.of(variableId))) {
+                return "#" + (ExpressionParser.isIdentifier(label) ? label : quote(label));
+            }
+            return "#" + variableId;
         }
 
         // Incomplete choices stay in prefix notation, as "? > ? ? a : b" is unreadable

@@ -2,7 +2,9 @@ package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import org.cyclops.cyclopscore.helper.CyclopsCoreInstance;
 import org.cyclops.integrateddynamics.ModBaseMocked;
+import org.cyclops.integrateddynamics.api.evaluate.expression.tree.Expression;
 import org.cyclops.integrateddynamics.api.evaluate.expression.tree.ExpressionNode;
+import org.cyclops.integrateddynamics.api.evaluate.expression.tree.ExpressionParameter;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionPrinter;
@@ -16,6 +18,8 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeString;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.junit.Test;
 import net.minecraft.nbt.CompoundTag;
+
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -150,12 +154,53 @@ public class TestExpressionEditor {
     }
 
     @Test
+    public void testSetAction() {
+        Expression expression = new Expression(new ExpressionNode.Operator(Operators.STRING_LENGTH, List.of(new ExpressionNode.Param(0))),
+                List.of(new ExpressionParameter("s", ValueTypes.STRING)));
+        CompoundTag action = ExpressionEditor.actionSet(ValueDeseralizationContextMocked.get(), expression);
+        assertThat(ExpressionEditor.readSetAction(ValueDeseralizationContextMocked.get(), action), is(expression));
+        // Not a set action
+        assertThat(ExpressionEditor.readSetAction(ValueDeseralizationContextMocked.get(), ExpressionEditor.actionAddParam()), nullValue());
+    }
+
+    @Test
+    public void testSetActionRejectsWhatCannotBeEdited() {
+        // The root must be an operator
+        assertThat(readBack(new Expression(new ExpressionNode.Const(ValueTypeInteger.ValueInteger.of(1)))), nullValue());
+        // Parameters need a name that can be written as text, and a type that can be chosen
+        assertThat(readBack(new Expression(ExpressionNode.Operator.ofEmpty(Operators.STRING_LENGTH),
+                List.of(new ExpressionParameter("true", ValueTypes.STRING)))), nullValue());
+        assertThat(readBack(new Expression(ExpressionNode.Operator.ofEmpty(Operators.STRING_LENGTH),
+                List.of(new ExpressionParameter("x", ValueTypes.CATEGORY_NAMED)))), nullValue());
+        assertThat(readBack(new Expression(ExpressionNode.Operator.ofEmpty(Operators.STRING_LENGTH),
+                List.of(new ExpressionParameter("x", ValueTypes.STRING), new ExpressionParameter("x", ValueTypes.STRING)))), nullValue());
+        // Every operator needs a slot for each input
+        Operators.REGISTRY.getOperators().stream().filter(operator -> !ExpressionEditor.isEditable(operator)).findFirst()
+                .ifPresent(operator -> assertThat(readBack(new Expression(ExpressionNode.Operator.ofEmpty(operator))), nullValue()));
+        // Not too many nodes
+        ExpressionNode node = ExpressionNode.EMPTY;
+        for (int i = 0; i < 7; i++) {
+            node = new ExpressionNode.Operator(Operators.GENERAL_CHOICE, List.of(node, node, node));
+        }
+        assertThat(readBack(new Expression(node)), nullValue());
+    }
+
+    private static Expression readBack(Expression expression) {
+        return ExpressionEditor.readSetAction(ValueDeseralizationContextMocked.get(),
+                ExpressionEditor.actionSet(ValueDeseralizationContextMocked.get(), expression));
+    }
+
+    @Test
     public void testParameterNames() {
         assertThat(ExpressionEditor.sanitizeParameterName("my item!"), is("myitem"));
         assertThat(ExpressionEditor.sanitizeParameterName("abcdefghijklmnopqrstuvwxyz").length(), is(16));
         ExpressionEditor editor = new ExpressionEditor(Operators.ARITHMETIC_ADDITION);
         apply(editor, ExpressionEditor.actionAddParam());
         apply(editor, ExpressionEditor.actionRenameParam(0, "!!!"));
+        assertThat(editor.getExpression().parameters().get(0).name(), is("x"));
+        // Names that would not read back as a parameter from the text form
+        apply(editor, ExpressionEditor.actionRenameParam(0, "true"));
+        apply(editor, ExpressionEditor.actionRenameParam(0, "1x"));
         assertThat(editor.getExpression().parameters().get(0).name(), is("x"));
     }
 

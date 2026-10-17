@@ -23,6 +23,9 @@ import org.cyclops.cyclopscore.inventory.slot.SlotSingleItem;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
+import org.cyclops.integrateddynamics.api.evaluate.expression.tree.Expression;
+import org.cyclops.integrateddynamics.api.evaluate.expression.tree.ExpressionNode;
+import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
@@ -79,6 +82,13 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     private IValueType filterIn2 = null;
     private IValueType filterOut = null;
     private IValueType expressionSlotFilter = null;
+    // Client-side state of editing the expression as text, which outlives the config pattern
+    @Nullable
+    private String expressionText = null;
+    @Nullable
+    private Expression expressionUndo = null;
+    @Nullable
+    private Expression expressionUndoOf = null;
 
     @OnlyIn(Dist.CLIENT)
     private ContainerScreenLogicProgrammerBase gui;
@@ -242,6 +252,10 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
      * @param action The action.
      */
     public void applyExpressionAction(CompoundTag action) {
+        if (ExpressionEditor.ACTION_SET.equals(action.getString("a"))) {
+            applySetExpressionAction(action);
+            return;
+        }
         if (activeElement instanceof OperatorLPElement operatorElement) {
             ExpressionEditor.ActionResult result = operatorElement.applyExpressionAction(this,
                     ValueDeseralizationContext.of(player.level()), action);
@@ -256,6 +270,86 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
                 onDirty();
             }
         }
+    }
+
+    /**
+     * @return The text of the expression that is being edited as text, or null if it is not.
+     */
+    @Nullable
+    public String getExpressionText() {
+        return expressionText;
+    }
+
+    public void setExpressionText(@Nullable String expressionText) {
+        this.expressionText = expressionText;
+    }
+
+    /**
+     * @param current The current expression.
+     * @return The expression from before the last text was applied, or null if the expression changed since.
+     */
+    @Nullable
+    public Expression getExpressionUndo(Expression current) {
+        return expressionUndo != null && current.equals(expressionUndoOf) ? expressionUndo : null;
+    }
+
+    /**
+     * @param undo The expression to go back to.
+     * @param of The expression this undoes, the undo is dropped once the expression is changed otherwise.
+     */
+    public void setExpressionUndo(@Nullable Expression undo, @Nullable Expression of) {
+        this.expressionUndo = undo;
+        this.expressionUndoOf = of;
+    }
+
+    /**
+     * @param operator An operator.
+     * @return The element for building expressions with this operator as root, or null if there is none.
+     */
+    @Nullable
+    public OperatorLPElement getOperatorElement(IOperator operator) {
+        for (ILogicProgrammerElement element : getUnfilteredItems()) {
+            if (element instanceof OperatorLPElement operatorElement && operatorElement.getOperator() == operator) {
+                return operatorElement;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Replace the whole expression of the active element.
+     * If the root operator changes, the element of that operator becomes active, as when loading a card.
+     * @param action A set action.
+     */
+    protected void applySetExpressionAction(CompoundTag action) {
+        Expression expression = ExpressionEditor.readSetAction(ValueDeseralizationContext.of(player.level()), action);
+        if (expression == null || !(activeElement instanceof OperatorLPElement current) || current.getEditor() == null) {
+            return;
+        }
+        IOperator root = ((ExpressionNode.Operator) expression.root()).operator();
+        OperatorLPElement target = current;
+        if (current.getOperator() != root) {
+            target = getOperatorElement(root);
+            if (target == null) {
+                return;
+            }
+            // Activating the target deactivates the current element, which forgets its references
+            OperatorLPElement.References references = current.getReferences();
+            if (MinecraftHelpers.isClientSideThread()) {
+                getGui().handleElementActivation(target, false);
+            } else {
+                setActiveElement(target, 0, 0);
+            }
+            target.addReferences(references);
+        }
+        target.setExpression(expression);
+        target.findReferencedCards(player);
+        if (MinecraftHelpers.isClientSideThread()) {
+            getGui().onExpressionNavigated();
+        } else {
+            refreshElementInventory(target, 0, 0);
+        }
+        onDirty();
     }
 
     public boolean canWriteActiveElementPre() {

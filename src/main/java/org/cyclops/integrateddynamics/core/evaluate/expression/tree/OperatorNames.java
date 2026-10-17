@@ -41,6 +41,8 @@ public final class OperatorNames {
             Map.entry(Operators.LOGICAL_AND, "&&"),
             Map.entry(Operators.LOGICAL_OR, "||"));
     private static final Map<IOperator, String> PREFIX_SYMBOLS = Map.of(Operators.LOGICAL_NOT, "!");
+    private static final Map<String, IOperator> INFIX_OPERATORS = invert(INFIX_SYMBOLS);
+    private static final Map<String, IOperator> PREFIX_OPERATORS = invert(PREFIX_SYMBOLS);
 
     // Read from both the client and server thread
     private static volatile ScopedNames scopedNames = null;
@@ -64,6 +66,32 @@ public final class OperatorNames {
     @Nullable
     public static String getPrefixSymbol(IOperator operator) {
         return PREFIX_SYMBOLS.get(operator);
+    }
+
+    /**
+     * @param symbol A symbol.
+     * @return The operator written with this symbol between its two inputs, or null.
+     */
+    @Nullable
+    public static IOperator getInfixOperator(String symbol) {
+        return INFIX_OPERATORS.get(symbol);
+    }
+
+    /**
+     * @param symbol A symbol.
+     * @return The operator written with this symbol in front of its single input, or null.
+     */
+    @Nullable
+    public static IOperator getPrefixOperator(String symbol) {
+        return PREFIX_OPERATORS.get(symbol);
+    }
+
+    /**
+     * @param name A scoped name.
+     * @return All operators with this scoped name.
+     */
+    public static List<IOperator> getScopedNameOperators(String name) {
+        return getScopedNameOwners().getOrDefault(name, List.of());
     }
 
     /**
@@ -134,14 +162,24 @@ public final class OperatorNames {
         return owners.size() == 1 ? owners.get(0) : null;
     }
 
+    private static Map<String, IOperator> invert(Map<IOperator, String> symbols) {
+        Map<String, IOperator> operators = new HashMap<>();
+        symbols.forEach((operator, symbol) -> operators.put(symbol, operator));
+        return Map.copyOf(operators);
+    }
+
     @Nullable
     private static String getSymbol(IOperator operator) {
         String symbol = getInfixSymbol(operator);
         return symbol != null ? symbol : getPrefixSymbol(operator);
     }
 
-    // Global names are unique by registration, unique names are not guaranteed to be
-    private static boolean isRegistered(IOperator operator) {
+    /**
+     * @param operator An operator.
+     * @return If the operator is registered, so it can be named, in contrast to curried or combined operators.
+     */
+    public static boolean isRegistered(IOperator operator) {
+        // Global names are unique by registration, unique names are not guaranteed to be
         return Operators.REGISTRY.getGlobalInteractOperators().get(operator.getGlobalInteractName()) == operator;
     }
 

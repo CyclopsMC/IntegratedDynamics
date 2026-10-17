@@ -253,6 +253,58 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
     }
 
     /**
+     * @param player The player.
+     * @return The output types of the variable cards in the player's inventory, by variable id.
+     */
+    public static Int2ObjectMap<IValueType<?>> getInventoryCardTypes(Player player) {
+        Int2ObjectMap<IValueType<?>> types = new Int2ObjectOpenHashMap<>();
+        IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
+        for (ItemStack itemStack : player.getInventory().items) {
+            if (itemStack.getItem() == RegistryEntries.ITEM_VARIABLE.get()) {
+                IVariableFacade variableFacade = registry.handle(ValueDeseralizationContext.of(player.level()), itemStack);
+                if (variableFacade.isValid() && !(variableFacade instanceof ReferencePlaceholderVariableFacade)) {
+                    types.put(variableFacade.getId(), variableFacade.getOutputType());
+                }
+            }
+        }
+        return types;
+    }
+
+    /**
+     * Replace the whole expression, such as one that was typed as text.
+     * @param expression An expression with this element's operator as root.
+     */
+    public void setExpression(Expression expression) {
+        editor.setExpression(expression);
+        editor.inferMissingRefTypes();
+        selectedSlot = -1;
+        armedParameter = -1;
+        inputVariables = new IVariableFacade[editor.getSlotCount()];
+    }
+
+    /**
+     * @return What this element knows about referenced variables, to take over in another element.
+     */
+    public References getReferences() {
+        Int2ObjectMap<ItemStack> cards = new Int2ObjectOpenHashMap<>();
+        refCards.forEach((variableId, card) -> cards.put((int) variableId, card.copy()));
+        return new References(editor == null ? Map.of() : editor.getKnownRefTypes(), cards);
+    }
+
+    /**
+     * Take over what another element knew about referenced variables,
+     * for when an expression moves to the element of another root operator.
+     * @param references The references of the other element.
+     */
+    public void addReferences(References references) {
+        if (editor == null) {
+            return;
+        }
+        references.types().forEach(editor::setRefType);
+        references.cards().forEach((variableId, card) -> refCards.putIfAbsent((int) variableId, card));
+    }
+
+    /**
      * @param variableId A referenced variable id.
      * @return The item to show in a slot for the given reference, the actual card if it is known, otherwise a placeholder.
      */
@@ -457,5 +509,12 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
             return new ExpressionVariableFacade(id, expression, referenceTypes);
         }
     }
+
+    /**
+     * What an element knows about referenced variables.
+     * @param types The known output types, by variable id.
+     * @param cards The actual cards that were placed in slots, by variable id.
+     */
+    public static record References(Map<Integer, IValueType<?>> types, Int2ObjectMap<ItemStack> cards) {}
 
 }
