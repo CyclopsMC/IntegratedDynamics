@@ -31,8 +31,8 @@ public class L10NValues {
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_TITLE = "gui." + NS + ".logicprogrammer.expression.title";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_HINT = "gui." + NS + ".logicprogrammer.expression.hint";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_TYPE = "gui." + NS + ".logicprogrammer.expression.type";
-    public static final String GUI_LOGICPROGRAMMER_EXPRESSION_PARAMS = "gui." + NS + ".logicprogrammer.expression.params";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_ADD = "gui." + NS + ".logicprogrammer.expression.param_add";
+    public static final String GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_ADD_FIRST = "gui." + NS + ".logicprogrammer.expression.param_add.first";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_TOOLTIP = "gui." + NS + ".logicprogrammer.expression.param_tooltip";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_VALUE = "gui." + NS + ".logicprogrammer.expression.value";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_VALUE_INVALID = "gui." + NS + ".logicprogrammer.expression.value_invalid";
