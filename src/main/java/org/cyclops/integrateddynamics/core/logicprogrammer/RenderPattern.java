@@ -78,12 +78,19 @@ public class RenderPattern<E extends IGuiInputElement, G extends Screen, C exten
             }
 
             if (configRenderPattern.getSymbolPosition() != null) {
-                RenderHelpers.drawScaledCenteredString(guiGraphics.pose(), guiGraphics.bufferSource(), fontRenderer, element.getSymbol(),
+                RenderHelpers.drawScaledCenteredString(guiGraphics.pose(), guiGraphics.bufferSource(), fontRenderer, getRenderSymbol(),
                         baseX + configRenderPattern.getSymbolPosition().getLeft(),
                         baseY + configRenderPattern.getSymbolPosition().getRight() + 8,
                         0, 1, 0, false, Font.DisplayMode.NORMAL);
             }
         }
+    }
+
+    /**
+     * @return The symbol to render in the pattern.
+     */
+    protected String getRenderSymbol() {
+        return element.getSymbol();
     }
 
     @Override
