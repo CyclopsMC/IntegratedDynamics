@@ -1,8 +1,15 @@
 # Changelog for Minecraft 1.21.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.21.1-1.38.1"></a>
+## [1.21.1-1.38.1](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.38.0...1.21.1-1.38.1) - 2026-10-17 08:41:11
+
+
+### Added
+* Add Menril Berries to c:foods/berry tag (#1762), Closes #1761
+
 <a name="1.21.1-1.38.0"></a>
-## [1.21.1-1.38.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.37.1...1.21.1-1.38.0) - 2026-10-03 14:25:17
+## [1.21.1-1.38.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.37.1...1.21.1-1.38.0) - 2026-10-03 14:25:17 +0200
 
 
 ### Added
