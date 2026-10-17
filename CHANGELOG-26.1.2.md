@@ -1,8 +1,15 @@
 # Changelog for Minecraft 26.1.2
 All notable changes to this project will be documented in this file.
 
+<a name="26.1.2-1.36.2"></a>
+## [26.1.2-1.36.2](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.36.1...26.1.2-1.36.2) - 2026-10-17 08:44:10
+
+
+### Added
+* Add Menril Berries to c:foods/berry tag (#1762), Closes #1761
+
 <a name="26.1.2-1.36.1"></a>
-## [26.1.2-1.36.1](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.36.0...26.1.2-1.36.1) - 2026-10-11 16:20:26
+## [26.1.2-1.36.1](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.36.0...26.1.2-1.36.1) - 2026-10-11 16:20:26 +0200
 
 
 ### Fixed
