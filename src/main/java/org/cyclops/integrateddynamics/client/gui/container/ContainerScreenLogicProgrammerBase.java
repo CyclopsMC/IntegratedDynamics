@@ -490,6 +490,24 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
+    // Sub guis only receive clicks, parameters of an expression are also dragged onto slots
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        if (operatorConfigPattern instanceof OperatorLPElementRenderPattern expressionPattern
+                && expressionPattern.mouseDragged(mouseX, mouseY, button, dragX, dragY)) {
+            return true;
+        }
+        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        if (operatorConfigPattern instanceof OperatorLPElementRenderPattern expressionPattern) {
+            expressionPattern.mouseReleased(mouseX, mouseY, button);
+        }
+        return super.mouseReleased(mouseX, mouseY, button);
+    }
+
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
         if (subGuiHolder.mouseClicked(mouseX, mouseY, mouseButton)) {
