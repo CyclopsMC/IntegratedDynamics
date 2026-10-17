@@ -43,13 +43,11 @@ public class L10NValues {
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_TYPE = "gui." + NS + ".logicprogrammer.expression.param_type";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_STATUS_ERRORS_SLOT = "gui." + NS + ".logicprogrammer.expression.status.errors_slot";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_COPY = "gui." + NS + ".logicprogrammer.expression.text.copy";
-    public static final String GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_COPIED = "gui." + NS + ".logicprogrammer.expression.text.copied";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_UNDO = "gui." + NS + ".logicprogrammer.expression.text.undo";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_REDO = "gui." + NS + ".logicprogrammer.expression.text.redo";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_APPLY = "gui." + NS + ".logicprogrammer.expression.text.apply";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_REVERT = "gui." + NS + ".logicprogrammer.expression.text.revert";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_ERROR = "gui." + NS + ".logicprogrammer.expression.text.error";
-    public static final String GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_HINT = "gui." + NS + ".logicprogrammer.expression.text.hint";
     public static final String GUI_LOGICPROGRAMMER_FILTER = "gui." + NS + ".logicprogrammer.filter";
     public static final String GUI_LOGICPROGRAMMER_RESET = "gui." + NS + ".logicprogrammer.reset";
     public static final String GUI_LOGICPROGRAMMER_INFO_CREATE = "gui." + NS + ".logicprogrammer.info.create";

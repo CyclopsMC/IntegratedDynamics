@@ -55,7 +55,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.List;
-import java.util.function.UnaryOperator;
+import java.util.function.Supplier;
 
 /**
  * Render pattern for operator elements, which supports editing nested expressions.
@@ -102,7 +102,6 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     private static final int COLOR_FOCUS = 0xFFA0A0A0;
     private static final String ELLIPSIS = "\u2026";
     private static final int COPIED_MS = 1500;
-    private static final int TEXT_HINT_MS = 1000;
 
     // Editor layout, relative to the gui
     private static final int EDITOR_X = ContainerLogicProgrammerBase.BASE_X + 2;
@@ -127,9 +126,9 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     private double pressX;
     private double pressY;
     private boolean draggingParameter = false;
-    private ButtonText undoButton;
-    private ButtonText redoButton;
-    private ButtonText copyButton;
+    private ButtonIcon undoButton;
+    private ButtonIcon redoButton;
+    private ButtonIcon copyButton;
     private ButtonText revertButton;
     private ButtonText applyButton;
 
@@ -146,7 +145,6 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     @Nullable
     private ExpressionParseException textError = null;
     private long copiedTime = 0;
-    private long textHoverTime = 0;
 
     public OperatorLPElementRenderPattern(OperatorLPElement element, int baseX, int baseY, int maxWidth, int maxHeight,
                                           ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
@@ -173,35 +171,38 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
                 Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_ADD), Component.literal("+"),
                 button -> sendAction(ExpressionEditor.actionAddParam()), true));
         addParameterButton.setTooltip(Tooltip.create(Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_ADD)));
-        Component copied = Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_COPIED);
-        undoButton = addPanelButton(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_UNDO, this::undo);
-        redoButton = addPanelButton(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_REDO, this::redo);
+        undoButton = addPanelButton(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_UNDO, this::undo, () -> ButtonIcon.Icon.UNDO);
+        redoButton = addPanelButton(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_REDO, this::redo, () -> ButtonIcon.Icon.REDO);
         copyButton = addPanelButton(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_COPY, this::copyText,
-                copy -> Util.getMillis() - copiedTime < COPIED_MS ? copied : copy);
+                () -> Util.getMillis() - copiedTime < COPIED_MS ? ButtonIcon.Icon.CHECK : ButtonIcon.Icon.COPY);
         revertButton = addPanelButton(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_REVERT, this::revertText);
         applyButton = addPanelButton(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_APPLY, this::applyText);
         updateButtons();
     }
 
+    /**
+     * Add a button with text to the row at the bottom of the panel, which is laid out by {@link #updateButtons()}.
+     * @param key The translation key of its text, and of its tooltip with ".tooltip" appended.
+     * @param action What it does.
+     * @return The button.
+     */
     protected ButtonText addPanelButton(String key, Runnable action) {
-        return addPanelButton(key, action, UnaryOperator.identity());
+        Component label = Component.translatable(key);
+        return addPanelButton(new ButtonText(0, guiTop + BUTTONS_Y, 0, 12, label, label, b -> action.run(), true), key);
     }
 
     /**
-     * Add a button to the row at the bottom of the panel, which is laid out by {@link #updateButtons()}.
-     * @param key The translation key of its text, and of its tooltip with ".tooltip" appended.
+     * Add a button with an icon to the row at the bottom of the panel, which is laid out by {@link #updateButtons()}.
+     * @param key The translation key of its narration, and of its tooltip with ".tooltip" appended.
      * @param action What it does.
-     * @param text Changes the text depending on the state.
+     * @param icon The icon, which can change depending on the state.
      * @return The button.
      */
-    protected ButtonText addPanelButton(String key, Runnable action, UnaryOperator<Component> text) {
-        Component label = Component.translatable(key);
-        ButtonText button = new ButtonText(0, guiTop + BUTTONS_Y, 0, 12, label, label, b -> action.run(), true) {
-            @Override
-            public Component getText() {
-                return text.apply(label);
-            }
-        };
+    protected ButtonIcon addPanelButton(String key, Runnable action, Supplier<ButtonIcon.Icon> icon) {
+        return addPanelButton(new ButtonIcon(0, guiTop + BUTTONS_Y, Component.translatable(key), icon, b -> action.run()), key);
+    }
+
+    protected <T extends Button> T addPanelButton(T button, String key) {
         button.setTooltip(Tooltip.create(Component.translatable(key + ".tooltip")));
         buttonList.add(button);
         return button;
@@ -230,9 +231,11 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         // Right-aligned, with the main action on the right
         Font font = Minecraft.getInstance().font;
         int x = guiLeft + PANEL_X + PANEL_WIDTH;
-        for (ButtonText button : List.of(applyButton, revertButton, copyButton, redoButton, undoButton)) {
+        for (Button button : List.<Button>of(applyButton, revertButton, copyButton, redoButton, undoButton)) {
             if (button.visible) {
-                button.setWidth(font.width(button.getText()) + 6);
+                if (button instanceof ButtonText buttonText) {
+                    button.setWidth(font.width(buttonText.getText()) + 6);
+                }
                 x -= button.getWidth();
                 button.setX(x);
                 x -= 2;
@@ -1127,18 +1130,6 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
             if (region.tooltip() != null && gui.isHovering(region.x(), region.y(), region.width(), region.height(), mouseX, mouseY)) {
                 gui.drawTooltip(wrapTooltip(Lists.newArrayList(region.tooltip())), guiGraphics.pose(), mouseX - guiLeft, mouseY - guiTop);
             }
-        }
-
-        // How to edit the text, after hovering it for a while, so it does not get in the way of reading it
-        if (isInTextBox(mouseX, mouseY) && !getTextField().isFocused()) {
-            if (textHoverTime == 0) {
-                textHoverTime = Util.getMillis();
-            } else if (Util.getMillis() - textHoverTime > TEXT_HINT_MS) {
-                gui.drawTooltip(wrapTooltip(Lists.newArrayList(Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_HINT))),
-                        guiGraphics.pose(), mouseX - guiLeft, mouseY - guiTop);
-            }
-        } else {
-            textHoverTime = 0;
         }
 
         // Output type tooltip
