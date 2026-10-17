@@ -41,9 +41,7 @@ public class L10NValues {
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_TOGGLE_SHOW = "gui." + NS + ".logicprogrammer.expression.toggle.show";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_TOGGLE_HIDE = "gui." + NS + ".logicprogrammer.expression.toggle.hide";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_TYPE = "gui." + NS + ".logicprogrammer.expression.param_type";
-    public static final String GUI_LOGICPROGRAMMER_EXPRESSION_STATUS_EMPTY = "gui." + NS + ".logicprogrammer.expression.status.empty";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_STATUS_ERRORS_SLOT = "gui." + NS + ".logicprogrammer.expression.status.errors_slot";
-    public static final String GUI_LOGICPROGRAMMER_EXPRESSION_STATUS_DEEP = "gui." + NS + ".logicprogrammer.expression.status.deep";
     public static final String GUI_LOGICPROGRAMMER_FILTER = "gui." + NS + ".logicprogrammer.filter";
     public static final String GUI_LOGICPROGRAMMER_RESET = "gui." + NS + ".logicprogrammer.reset";
     public static final String GUI_LOGICPROGRAMMER_INFO_CREATE = "gui." + NS + ".logicprogrammer.info.create";
