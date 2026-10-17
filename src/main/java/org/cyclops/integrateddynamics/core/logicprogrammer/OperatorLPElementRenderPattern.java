@@ -15,8 +15,9 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.locale.Language;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.Style;
 import net.minecraft.world.Container;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -79,7 +80,6 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     private static final int COLOR_STRIP_LINE = 0xFF555555;
     private static final int COLOR_STRIP_HOVER = 0xFF5A5A5A;
     private static final int DOUBLE_CLICK_MS = 350;
-    private static final int MAX_DEPTH_WARNING = 4;
 
     // Side panel layout, relative to the gui
     private static final int PANEL_X = ContainerLogicProgrammerBase.EXPRESSION_PANEL_X + 6;
@@ -88,12 +88,16 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     private static final int PARAMS_Y = TITLE_Y + 12;
     private static final int PARAMS_ROWS = 2;
     private static final int STRIP_Y = PARAMS_Y + 12 + PARAMS_ROWS * 11 + 2;
-    private static final int STRIP_LINES = 6;
-    private static final int STRIP_LINE_HEIGHT = 8;
-    private static final int STRIP_HEIGHT = STRIP_LINES * STRIP_LINE_HEIGHT + 3;
-    private static final int TEXT_HEIGHT = 80;
-    private static final int TEXT_STATUS_Y = PARAMS_Y + TEXT_HEIGHT + 2;
+    private static final int LINE_HEIGHT = 9;
     private static final int BUTTONS_Y = ContainerLogicProgrammerBase.EXPRESSION_PANEL_Y + ContainerLogicProgrammerBase.EXPRESSION_PANEL_HEIGHT - 18;
+    private static final int CONTENT_BOTTOM = BUTTONS_Y - 3;
+    // The type, or an error instead, below the expression
+    private static final int FOOTER_LINES = 3;
+    private static final int FOOTER_HEIGHT = FOOTER_LINES * LINE_HEIGHT + 3;
+    private static final int FOOTER_Y = CONTENT_BOTTOM - FOOTER_HEIGHT;
+    private static final int STRIP_LINES = (FOOTER_Y - STRIP_Y - 3) / LINE_HEIGHT;
+    private static final int TEXT_HEIGHT = FOOTER_Y - 2 - PARAMS_Y;
+    private static final String ELLIPSIS = "\u2026";
     private static final int COPIED_MS = 1500;
     private static final float SMALL = 0.75F;
 
@@ -732,9 +736,9 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
             renderTitle(guiGraphics, guiLeft, guiTop, fontRenderer);
             textBox.render(guiGraphics, mouseX, mouseY, partialTicks);
             if (textError != null) {
-                renderTextError(guiGraphics, guiLeft, guiTop, fontRenderer, textError, TEXT_STATUS_Y);
+                renderTextError(guiGraphics, guiLeft, guiTop, fontRenderer, textError);
             } else {
-                renderStatus(guiGraphics, guiLeft, guiTop, fontRenderer, parsedText, parsedTextResult, TEXT_STATUS_Y);
+                renderStatus(guiGraphics, guiLeft, guiTop, fontRenderer, parsedText, parsedTextResult);
             }
         } else if (ContainerScreenLogicProgrammerBase.isExpressionPanelOpen()) {
             renderTitle(guiGraphics, guiLeft, guiTop, fontRenderer);
@@ -742,7 +746,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
             int[] hoveredPath = hoveredSlot >= 0 && hoveredSlot < editor.getSlotCount() ? ExpressionTrees.append(editPath, hoveredSlot) : null;
             renderParameters(guiGraphics, guiLeft, guiTop, fontRenderer, editor);
             renderStrip(guiGraphics, guiLeft, guiTop, fontRenderer, editor, result, hoveredPath);
-            renderStatus(guiGraphics, guiLeft, guiTop, fontRenderer, editor.getExpression(), result, STRIP_Y + STRIP_HEIGHT);
+            renderStatus(guiGraphics, guiLeft, guiTop, fontRenderer, editor.getExpression(), result);
         }
     }
 
@@ -775,22 +779,6 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         guiGraphics.pose().popPose();
     }
 
-    /**
-     * Draw small text that wraps within the given width.
-     * @return The y position below the text.
-     */
-    protected static int drawWrapped(GuiGraphics guiGraphics, Font font, Component text, int x, int y, int width, int color) {
-        for (FormattedCharSequence line : font.split(text, (int) (width / SMALL))) {
-            guiGraphics.pose().pushPose();
-            guiGraphics.pose().translate(x, y, 300);
-            guiGraphics.pose().scale(SMALL, SMALL, 1F);
-            guiGraphics.drawString(font, line, 0, 0, color, false);
-            guiGraphics.pose().popPose();
-            y += 8;
-        }
-        return y;
-    }
-
     protected static int scaledWidth(Font font, String text) {
         return (int) Math.ceil(font.width(text) * SMALL);
     }
@@ -800,8 +788,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
                 guiLeft + PANEL_X, guiTop + TITLE_Y, COLOR_TEXT, false);
     }
 
-    protected int renderTextError(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font, ExpressionParseException error,
-                                  int statusY) {
+    protected void renderTextError(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font, ExpressionParseException error) {
         String text = container.getExpressionText() == null ? "" : container.getExpressionText();
         int position = Math.min(error.getPosition(), text.length());
         int line = 1;
@@ -815,7 +802,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
             }
         }
         Component message = Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_ERROR, line, column, error.getComponent());
-        return drawWrapped(guiGraphics, font, message, guiLeft + PANEL_X, guiTop + statusY, PANEL_WIDTH, COLOR_ERROR) - guiTop;
+        renderFooter(guiGraphics, guiLeft, guiTop, font, message.copy().withStyle(ChatFormatting.RED), null);
     }
 
     protected void renderParameters(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font, ExpressionEditor editor) {
@@ -863,7 +850,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
                                ExpressionTypeChecker.Result result, @Nullable int[] hoveredPath) {
         int x = PANEL_X;
         int y = STRIP_Y;
-        guiGraphics.fill(guiLeft + x, guiTop + y, guiLeft + x + PANEL_WIDTH, guiTop + y + STRIP_HEIGHT, COLOR_STRIP);
+        guiGraphics.fill(guiLeft + x, guiTop + y, guiLeft + x + PANEL_WIDTH, guiTop + CONTENT_BOTTOM, COLOR_STRIP);
         Expression expression = editor.getExpression();
         List<ExpressionPrinter.Token> tokens = ExpressionPrinter.tokenize(expression, this::getLabel, result);
         int lineWidth = PANEL_WIDTH - 4;
@@ -871,22 +858,22 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         int line = 0;
         for (ExpressionPrinter.Token token : tokens) {
             String text = token.text();
-            int width = scaledWidth(font, text);
+            int width = font.width(text);
             if (tx > 0 && tx + width > lineWidth) {
                 line++;
                 tx = 0;
                 text = text.stripLeading();
-                width = scaledWidth(font, text);
+                width = font.width(text);
             }
             if (line >= STRIP_LINES) {
-                drawScaled(guiGraphics, font, Component.literal("…"), guiLeft + x + PANEL_WIDTH - 8,
-                        guiTop + y + 2 + (STRIP_LINES - 1) * STRIP_LINE_HEIGHT, COLOR_TEXT_LIGHT);
+                guiGraphics.drawString(font, ELLIPSIS, guiLeft + x + PANEL_WIDTH - 2 - font.width(ELLIPSIS),
+                        guiTop + y + 2 + (STRIP_LINES - 1) * LINE_HEIGHT, COLOR_TEXT_LIGHT, false);
                 break;
             }
             int[] path = token.path();
             int color = COLOR_TEXT_LIGHT;
             int tokenX = x + 2 + tx;
-            int tokenY = y + 2 + line * STRIP_LINE_HEIGHT;
+            int tokenY = y + 2 + line * LINE_HEIGHT;
             if (path != null) {
                 int[] nodePath = ExpressionTrees.isOperatorPath(expression.root(), path) ? path : ExpressionTrees.parent(path);
                 if (Arrays.equals(nodePath, editor.getEditPath())) {
@@ -899,62 +886,68 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
                     color = 0xFFA0A0A0;
                 }
                 if (hoveredPath != null && startsWith(path, hoveredPath)) {
-                    guiGraphics.fill(guiLeft + tokenX, guiTop + tokenY - 1, guiLeft + tokenX + width, guiTop + tokenY + STRIP_LINE_HEIGHT - 1, COLOR_STRIP_HOVER);
+                    guiGraphics.fill(guiLeft + tokenX, guiTop + tokenY - 1, guiLeft + tokenX + width, guiTop + tokenY + LINE_HEIGHT - 1, COLOR_STRIP_HOVER);
                 }
-                regions.add(new Region(tokenX, tokenY, width, STRIP_LINE_HEIGHT, button -> {
+                regions.add(new Region(tokenX, tokenY, width, LINE_HEIGHT, button -> {
                     selectSlot(-1);
                     sendAction(ExpressionEditor.actionNavigate(nodePath));
                 }, null));
             }
-            drawScaled(guiGraphics, font, Component.literal(text), guiLeft + tokenX, guiTop + tokenY, color);
+            guiGraphics.drawString(font, text, guiLeft + tokenX, guiTop + tokenY, color, false);
             tx += width;
         }
     }
 
     /**
-     * Draw the type below the expression, in the colors of its types as in tooltips, followed by what keeps it from being written.
+     * Draw the type of the expression in the footer, in the colors of its types as in tooltips,
+     * or the first error instead, which keeps it from being written.
      * The check mark next to the operator name already tells when it can be written.
-     * @return The y position below the status, relative to the gui.
      */
-    protected int renderStatus(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font, Expression expression,
-                               ExpressionTypeChecker.Result result, int typeY) {
-        IValueType<?> outputType = result.outputType();
-        Component type = expression.hasParameters()
-                ? ValueTypeOperator.getSignature(ExpressionTypeChecker.getInputTypes(expression), outputType)
-                : Component.translatable(outputType.getTranslationKey()).withStyle(outputType.getDisplayColorFormat());
-        Component typeLine = Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TYPE, type);
-        // On the dark background of the expression, where the colors of the types are readable
-        int typeHeight = font.split(typeLine, (int) ((PANEL_WIDTH - 4) / SMALL)).size() * STRIP_LINE_HEIGHT + 3;
-        guiGraphics.fill(guiLeft + PANEL_X, guiTop + typeY, guiLeft + PANEL_X + PANEL_WIDTH, guiTop + typeY + typeHeight, COLOR_STRIP);
-        guiGraphics.fill(guiLeft + PANEL_X + 2, guiTop + typeY, guiLeft + PANEL_X + PANEL_WIDTH - 2, guiTop + typeY + 1, COLOR_STRIP_LINE);
-        drawWrapped(guiGraphics, font, typeLine, guiLeft + PANEL_X + 2, guiTop + typeY + 2, PANEL_WIDTH - 4, COLOR_TEXT_LIGHT);
-        int y = typeY + typeHeight + 3;
-
-        MutableComponent status = null;
-        int color = COLOR_TEXT;
+    protected void renderStatus(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font, Expression expression,
+                                ExpressionTypeChecker.Result result) {
         if (!result.errors().isEmpty()) {
             ExpressionTypeChecker.Error error = result.errors().get(0);
+            Component status = error.message();
             if (error.slot() >= 0) {
                 String operatorName = ExpressionTrees.get(expression.root(), error.path()) instanceof ExpressionNode.Operator op
                         ? OperatorNames.getNodeName(op, error.path(), result) : "?";
                 status = Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_STATUS_ERRORS_SLOT, result.errors().size(), error.slot() + 1, operatorName);
-            } else {
-                // Errors of an operator as a whole have no slot to hover
-                status = error.message().copy();
             }
-            color = COLOR_ERROR;
-        } else if (result.emptySlots() > 0) {
-            status = Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_STATUS_EMPTY, result.emptySlots());
+            renderFooter(guiGraphics, guiLeft, guiTop, font, status.copy().withStyle(ChatFormatting.RED),
+                    error.message().copy().withStyle(ChatFormatting.RED));
+            return;
         }
-        int depth = ExpressionTrees.depth(expression.root());
-        if (depth > MAX_DEPTH_WARNING) {
-            Component deep = Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_STATUS_DEEP, depth);
-            status = status == null ? deep.copy() : status.append(" ").append(deep);
+        IValueType<?> outputType = result.outputType();
+        Component type = expression.hasParameters()
+                ? ValueTypeOperator.getSignature(ExpressionTypeChecker.getInputTypes(expression), outputType)
+                : Component.translatable(outputType.getTranslationKey()).withStyle(outputType.getDisplayColorFormat());
+        renderFooter(guiGraphics, guiLeft, guiTop, font, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TYPE, type), null);
+    }
+
+    /**
+     * Draw text centered in the footer, on the dark background of the expression where the colors of types are readable.
+     * Text that does not fit ends in an ellipsis.
+     * @param tooltip Shown when hovering the footer, defaults to the text if it does not fit.
+     */
+    protected void renderFooter(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font, Component text, @Nullable Component tooltip) {
+        guiGraphics.fill(guiLeft + PANEL_X, guiTop + FOOTER_Y, guiLeft + PANEL_X + PANEL_WIDTH, guiTop + CONTENT_BOTTOM, COLOR_STRIP);
+        guiGraphics.fill(guiLeft + PANEL_X + 2, guiTop + FOOTER_Y, guiLeft + PANEL_X + PANEL_WIDTH - 2, guiTop + FOOTER_Y + 1, COLOR_STRIP_LINE);
+        int width = PANEL_WIDTH - 4;
+        List<FormattedText> lines = font.getSplitter().splitLines(text, width, Style.EMPTY);
+        boolean truncated = lines.size() > FOOTER_LINES;
+        int count = Math.min(lines.size(), FOOTER_LINES);
+        int y = FOOTER_Y + 2 + (FOOTER_LINES - count) * LINE_HEIGHT / 2;
+        for (int i = 0; i < count; i++) {
+            FormattedText line = lines.get(i);
+            if (truncated && i == count - 1) {
+                line = FormattedText.composite(font.substrByWidth(line, width - font.width(ELLIPSIS)), FormattedText.of(ELLIPSIS));
+            }
+            guiGraphics.drawString(font, Language.getInstance().getVisualOrder(line), guiLeft + PANEL_X + 2, guiTop + y, COLOR_TEXT_LIGHT, false);
+            y += LINE_HEIGHT;
         }
-        if (status != null) {
-            y = drawWrapped(guiGraphics, font, status, guiLeft + PANEL_X, guiTop + y, PANEL_WIDTH, color) - guiTop;
+        if (tooltip != null || truncated) {
+            regions.add(new Region(PANEL_X, FOOTER_Y, PANEL_WIDTH, FOOTER_HEIGHT, button -> {}, tooltip != null ? tooltip : text));
         }
-        return y;
     }
 
     @Override
