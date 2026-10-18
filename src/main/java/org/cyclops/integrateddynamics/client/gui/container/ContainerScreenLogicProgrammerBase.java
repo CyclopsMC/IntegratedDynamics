@@ -63,9 +63,9 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     private ButtonText expressionPanelButton;
 
     /**
-     * If the expression side panel is shown, remembered for the rest of the game session.
+     * If the expression side panel is shown, hidden at first and remembered for the rest of the game session.
      */
-    private static boolean expressionPanelOpen = true;
+    private static boolean expressionPanelOpen = false;
 
     public ContainerScreenLogicProgrammerBase(C container, Inventory playerInventory, Component title) {
         super(container, playerInventory, title);
