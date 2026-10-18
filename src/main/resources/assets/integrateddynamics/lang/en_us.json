@@ -1037,7 +1037,7 @@
     "gui.integrateddynamics.logicprogrammer.expression.value": "Value %s",
     "gui.integrateddynamics.logicprogrammer.expression.value_invalid": "Not a valid %s",
     "gui.integrateddynamics.logicprogrammer.expression.breadcrumb": "Go back to this operator",
-    "gui.integrateddynamics.logicprogrammer.expression.param_tooltip": "%s : %s\nDrag it onto a slot, or click it and then a slot, to use it there. Right-click to remove it.",
+    "gui.integrateddynamics.logicprogrammer.expression.param_tooltip": "%s: %s",
     "gui.integrateddynamics.logicprogrammer.expression.param_type": "Click to change the type of this parameter",
     "gui.integrateddynamics.logicprogrammer.expression.toggle": "Expression panel",
     "gui.integrateddynamics.logicprogrammer.expression.toggle.show": "Show the expression panel",

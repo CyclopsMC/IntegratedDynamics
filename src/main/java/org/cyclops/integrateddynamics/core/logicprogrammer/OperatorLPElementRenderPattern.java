@@ -991,7 +991,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
                     pressedParameter = index;
                 }
             }, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_TOOLTIP, parameter.name(),
-                    Component.translatable(parameter.type().getTranslationKey()))));
+                    Component.translatable(parameter.type().getTranslationKey()).withStyle(parameter.type().getDisplayColorFormat()))));
         }
         return chips.get(chips.size() - 1)[1] + CHIP_HEIGHT + 2;
     }
