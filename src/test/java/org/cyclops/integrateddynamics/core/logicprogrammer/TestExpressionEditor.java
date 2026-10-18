@@ -59,7 +59,7 @@ public class TestExpressionEditor {
         assertThat(editor.getCurrentOperator(), is(Operators.OBJECT_ITEMSTACK_DATA));
         apply(editor, ExpressionEditor.actionParam(new int[]{0, 0}, 0, 0));
 
-        assertThat(ExpressionPrinter.print(editor.getExpression()), is("item -> size(nbt(item)) > 3"));
+        assertThat(ExpressionPrinter.print(editor.getExpression()), is("item => size(nbt(item)) > 3"));
         // The parameter type was inferred from the slot it was dropped in
         assertThat(editor.getExpression().parameters().get(0).type(), is((IValueType) ValueTypes.OBJECT_ITEMSTACK));
         assertThat(editor.check().isValid(), is(true));
@@ -101,9 +101,9 @@ public class TestExpressionEditor {
         apply(editor, ExpressionEditor.actionAddParam());
         apply(editor, ExpressionEditor.actionParam(new int[0], 0, 0));
         apply(editor, ExpressionEditor.actionParam(new int[0], 1, 1));
-        assertThat(ExpressionPrinter.print(editor.getExpression()), is("(x, y) -> x + y"));
+        assertThat(ExpressionPrinter.print(editor.getExpression()), is("(x, y) => x + y"));
         apply(editor, ExpressionEditor.actionRemoveParam(0));
-        assertThat(ExpressionPrinter.print(editor.getExpression()), is("y -> ? + y"));
+        assertThat(ExpressionPrinter.print(editor.getExpression()), is("y => ? + y"));
     }
 
     @Test
@@ -152,7 +152,7 @@ public class TestExpressionEditor {
         assertThat(apply(editor, ExpressionEditor.actionConst(ValueDeseralizationContextMocked.get(), new int[0], 0,
                 ValueTypeOperator.ValueOperator.of(Operators.STRING_LENGTH))), is(ExpressionEditor.ActionResult.SLOT_CHANGED));
         apply(editor, ExpressionEditor.actionParam(new int[0], 1, 0));
-        assertThat(ExpressionPrinter.print(editor.getExpression()), is("l -> map((stringLength), l)"));
+        assertThat(ExpressionPrinter.print(editor.getExpression()), is("l => map((stringLength), l)"));
         assertThat(editor.check().isValid(), is(true));
         assertThat(editor.getExpression().parameters().get(0).type(), is((IValueType) ValueTypes.LIST));
     }
@@ -230,10 +230,10 @@ public class TestExpressionEditor {
         ExpressionParser.Context context = ExpressionEditor.getParserContext(ValueDeseralizationContextMocked.get(),
                 id -> null, label -> IntLists.EMPTY_LIST);
         // Balanced, as long chains are rejected for their depth
-        Expression expression = ExpressionEditor.parse("x -> " + balancedSum(9), context);
+        Expression expression = ExpressionEditor.parse("x => " + balancedSum(9), context);
         assertThat(ExpressionTrees.countNodes(expression.root()), is(1023));
         try {
-            ExpressionEditor.parse("x -> " + balancedSum(10), context);
+            ExpressionEditor.parse("x => " + balancedSum(10), context);
             fail("Expected an error for an expression that is too large");
         } catch (ExpressionParseException e) {
             assertThat(((TranslatableContents) e.getComponent().getContents()).getKey(), is(L10NValues.EXPRESSION_PARSE_TOO_LARGE));

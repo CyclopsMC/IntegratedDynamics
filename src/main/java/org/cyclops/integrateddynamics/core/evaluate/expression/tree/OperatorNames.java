@@ -5,6 +5,7 @@ import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeCategory;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -20,7 +21,8 @@ import java.util.Map;
  * Some scoped names are shared by operators with different first input types,
  * so a scoped name is only used when the type of the first argument tells which operator it is.
  * Otherwise, the globally unique interact name is used, such as {@code stringLength}.
- * A few common operators are written as symbols instead, such as {@code a + b} and {@code !a}.
+ * A few common operators are written as symbols instead, such as {@code a + b} and {@code !a},
+ * where + joins strings as well.
  *
  * @author rubensworks
  */
@@ -53,10 +55,43 @@ public final class OperatorNames {
     /**
      * @param operator An operator.
      * @return The symbol to write this operator with between its two inputs, or null.
+     *         Concat of strings shares + with addition.
      */
     @Nullable
     public static String getInfixSymbol(IOperator operator) {
-        return INFIX_SYMBOLS.get(operator);
+        return operator == Operators.STRING_CONCAT ? "+" : INFIX_SYMBOLS.get(operator);
+    }
+
+    /**
+     * @param node An operator node.
+     * @param path The path of the node.
+     * @param types The type checking result of the expression that contains the node.
+     * @return The symbol to write the node with between its two inputs, or null if the symbol would be read
+     *         as another operator, such as + for addition of strings, or if the operator has no symbol.
+     */
+    @Nullable
+    public static String getInfixSymbol(ExpressionNode.Operator node, int[] path, ExpressionTypeChecker.Result types) {
+        String symbol = getInfixSymbol(node.operator());
+        if (symbol == null || node.children().size() != 2) {
+            return null;
+        }
+        IOperator read = getInfixOperator(symbol, getChildType(types, path, 0), getChildType(types, path, 1));
+        return read == node.operator() ? symbol : null;
+    }
+
+    /**
+     * @param symbol A symbol.
+     * @param leftType The type of the first input.
+     * @param rightType The type of the second input.
+     * @return The operator written with this symbol between inputs of these types, or null.
+     *         + is concat as soon as one of the inputs is a string, as in Integrated Scripting.
+     */
+    @Nullable
+    public static IOperator getInfixOperator(String symbol, IValueType<?> leftType, IValueType<?> rightType) {
+        if (symbol.equals("+") && (leftType == ValueTypes.STRING || rightType == ValueTypes.STRING)) {
+            return Operators.STRING_CONCAT;
+        }
+        return getInfixOperator(symbol);
     }
 
     /**
@@ -71,6 +106,7 @@ public final class OperatorNames {
     /**
      * @param symbol A symbol.
      * @return The operator written with this symbol between its two inputs, or null.
+     *         + is addition here, see {@link #getInfixOperator(String, IValueType, IValueType)}.
      */
     @Nullable
     public static IOperator getInfixOperator(String symbol) {
@@ -113,7 +149,8 @@ public final class OperatorNames {
      */
     public static String getValueName(IOperator operator) {
         String symbol = getSymbol(operator);
-        return symbol != null ? symbol : getName(operator, null);
+        // (+) is read as addition
+        return symbol != null && operator != Operators.STRING_CONCAT ? symbol : getName(operator, null);
     }
 
     /**
@@ -123,12 +160,21 @@ public final class OperatorNames {
      * @return The name of the node's operator, as it is printed.
      */
     public static String getNodeName(ExpressionNode.Operator node, int[] path, ExpressionTypeChecker.Result types) {
-        String symbol = getSymbol(node.operator());
-        if (symbol != null) {
-            return symbol;
+        String symbol = getInfixSymbol(node, path, types);
+        if (symbol == null) {
+            symbol = getPrefixSymbol(node.operator());
         }
-        IValueType<?> firstArgumentType = node.children().isEmpty() ? null : types.getType(ExpressionTrees.append(path, 0));
-        return getName(node.operator(), firstArgumentType);
+        return symbol != null ? symbol : getCallName(node, path, types);
+    }
+
+    /**
+     * @param node An operator node.
+     * @param path The path of the node.
+     * @param types The type checking result of the expression that contains the node.
+     * @return The name of the node's operator, as it is printed when the node is written as a call.
+     */
+    public static String getCallName(ExpressionNode.Operator node, int[] path, ExpressionTypeChecker.Result types) {
+        return getName(node.operator(), node.children().isEmpty() ? null : getChildType(types, path, 0));
     }
 
     /**
@@ -172,6 +218,11 @@ public final class OperatorNames {
     private static String getSymbol(IOperator operator) {
         String symbol = getInfixSymbol(operator);
         return symbol != null ? symbol : getPrefixSymbol(operator);
+    }
+
+    private static IValueType<?> getChildType(ExpressionTypeChecker.Result types, int[] path, int child) {
+        IValueType<?> type = types.getType(ExpressionTrees.append(path, child));
+        return type != null ? type : ValueTypes.CATEGORY_ANY;
     }
 
     /**

@@ -28,7 +28,7 @@ import java.util.function.Function;
 import java.util.function.IntFunction;
 
 /**
- * Pretty-prints expression trees, such as {@code item -> size(nbt(item)) > 3}.
+ * Pretty-prints expression trees, such as {@code item => size(nbt(item)) > 3}.
  * Operators are named as described in {@link OperatorNames}.
  * Choices are printed as {@code c ? a : b}, operator values as {@code (+)} or {@code (reduce)}.
  * @author rubensworks
@@ -115,7 +115,7 @@ public final class ExpressionPrinter {
                 }
                 tokens.add(new Token(")", null));
             }
-            tokens.add(new Token(" -> ", null));
+            tokens.add(new Token(" => ", null));
         }
         new Tokenizer(expression, labels, types, tokens, new Exact(values, labelIds)).visit(expression.root(), new int[0], false);
         return tokens;
@@ -248,7 +248,7 @@ public final class ExpressionPrinter {
             if (parameters.size() > 1) {
                 tokens.add(new Token(")", null));
             }
-            tokens.add(new Token(" -> ", null));
+            tokens.add(new Token(" => ", null));
         }
         new Tokenizer(expression, labels, types, tokens, null).visit(expression.root(), new int[0], false);
         return tokens;
@@ -331,7 +331,7 @@ public final class ExpressionPrinter {
         private void visitOperator(ExpressionNode.Operator node, int[] path, boolean nested) {
             IOperator operator = node.operator();
             List<ExpressionNode> children = node.children();
-            String infixSymbol = OperatorNames.getInfixSymbol(operator);
+            String infixSymbol = OperatorNames.getInfixSymbol(node, path, types);
             String prefixSymbol = OperatorNames.getPrefixSymbol(operator);
             if (isTernary(node)) {
                 if (nested) {
@@ -359,7 +359,7 @@ public final class ExpressionPrinter {
                 tokens.add(new Token(prefixSymbol, path));
                 visit(children.get(0), ExpressionTrees.append(path, 0), true);
             } else {
-                tokens.add(new Token(OperatorNames.getNodeName(node, path, types) + "(", path));
+                tokens.add(new Token(OperatorNames.getCallName(node, path, types) + "(", path));
                 for (int i = 0; i < children.size(); i++) {
                     if (i > 0) {
                         tokens.add(new Token(", ", path));

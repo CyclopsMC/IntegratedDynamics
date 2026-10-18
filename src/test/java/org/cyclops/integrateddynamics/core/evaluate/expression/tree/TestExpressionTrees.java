@@ -431,7 +431,7 @@ public class TestExpressionTrees {
                 op(Operators.ARITHMETIC_MULTIPLICATION, p(0), p(2)),
                 op(Operators.ARITHMETIC_SUBTRACTION, p(1), p(2))),
                 List.of(param("a", ValueTypes.INTEGER), param("b", ValueTypes.INTEGER), param("c", ValueTypes.INTEGER))));
-        assertThat(ExpressionPrinter.print(operator.getExpression()), is("(a, b, c) -> a > b ? a * c : b - c"));
+        assertThat(ExpressionPrinter.print(operator.getExpression()), is("(a, b, c) => a > b ? a * c : b - c"));
         assertThat(operator.getRequiredInputLength(), is(3));
         assertThat(operator.getOutputType(), is((IValueType) ValueTypes.INTEGER));
         assertThat(integer(eval(operator, i(5), i(2), i(10))), is(50));
@@ -498,7 +498,7 @@ public class TestExpressionTrees {
         ExpressionTypeChecker.Result result = ExpressionTypeChecker.check(expression, id -> null);
         assertThat(result.isValid(), is(true));
         assertThat(result.outputType(), is((IValueType) ValueTypes.LIST));
-        assertThat(ExpressionPrinter.print(expression), is("l -> map(apply((*), 2), l)"));
+        assertThat(ExpressionPrinter.print(expression), is("l => map(apply((*), 2), l)"));
         assertThat(eval(ExpressionOperator.of(expression), ints(1, 2, 3)), is((IValue) ints(2, 4, 6)));
     }
 
@@ -514,7 +514,7 @@ public class TestExpressionTrees {
                 op(Operators.OPERATOR_REDUCE, ref(1), op(Operators.OPERATOR_MAP, ref(2), p(0)), c(0)),
                 List.of(param("l", ValueTypes.LIST))), refs);
         assertThat(integer(eval(operator, ints(1, 2, 3))), is(12));
-        assertThat(ExpressionPrinter.print(operator.getExpression()), is("l -> reduce(#1, map(#2, l), 0)"));
+        assertThat(ExpressionPrinter.print(operator.getExpression()), is("l => reduce(#1, map(#2, l), 0)"));
 
         // Materializing keeps working when the refs are themselves expression operators
         IOperator materialized = operator.materialize();
@@ -563,7 +563,7 @@ public class TestExpressionTrees {
                 List.of(param("s", ValueTypes.STRING), param("n", ValueTypes.INTEGER))));
         assertThat(bool(eval(operator, ValueTypeString.ValueString.of("abcd"), i(3))), is(true));
         assertThat(bool(eval(operator, ValueTypeString.ValueString.of("ab"), i(3))), is(false));
-        assertThat(ExpressionPrinter.print(operator.getExpression()), is("(s, n) -> ((length(s) * n) == (n * length(s))) && (length(s) > n)"));
+        assertThat(ExpressionPrinter.print(operator.getExpression()), is("(s, n) => ((length(s) * n) == (n * length(s))) && (length(s) > n)"));
     }
 
     @Test
@@ -680,7 +680,7 @@ public class TestExpressionTrees {
 
     @Test
     public void testPrint() {
-        assertThat(ExpressionPrinter.print(longString()), is("s -> length(s) > 3"));
+        assertThat(ExpressionPrinter.print(longString()), is("s => length(s) > 3"));
     }
 
     @Test
@@ -696,7 +696,7 @@ public class TestExpressionTrees {
         Expression expression = new Expression(op(Operators.ARITHMETIC_MULTIPLICATION,
                 op(Operators.ARITHMETIC_ADDITION, p(0), c(1)), p(1)),
                 List.of(param("a", ValueTypes.INTEGER), param("b", ValueTypes.INTEGER)));
-        assertThat(ExpressionPrinter.print(expression), is("(a, b) -> (a + 1) * b"));
+        assertThat(ExpressionPrinter.print(expression), is("(a, b) => (a + 1) * b"));
     }
 
     @Test
@@ -710,7 +710,7 @@ public class TestExpressionTrees {
         // size is shared by item stacks and NBT, the parameter type tells them apart
         Expression expression = new Expression(op(Operators.RELATIONAL_GT, op(Operators.NBT_COMPOUND_SIZE, p(0)), c(3)),
                 List.of(param("tag", ValueTypes.NBT)));
-        assertThat(ExpressionPrinter.print(expression), is("tag -> size(tag) > 3"));
+        assertThat(ExpressionPrinter.print(expression), is("tag => size(tag) > 3"));
     }
 
     @Test
@@ -720,17 +720,17 @@ public class TestExpressionTrees {
                 op(Operators.ARITHMETIC_MULTIPLICATION, p(0), p(2)),
                 op(Operators.GENERAL_CHOICE, op(Operators.RELATIONAL_LT, p(1), p(2)), p(1), p(2))),
                 List.of(param("a", ValueTypes.INTEGER), param("b", ValueTypes.INTEGER), param("c", ValueTypes.INTEGER)));
-        assertThat(ExpressionPrinter.print(expression), is("(a, b, c) -> a > b ? a * c : (b < c ? b : c)"));
+        assertThat(ExpressionPrinter.print(expression), is("(a, b, c) => a > b ? a * c : (b < c ? b : c)"));
 
         // Parenthesized inside other operators
         Expression inInfix = new Expression(op(Operators.ARITHMETIC_ADDITION, op(Operators.GENERAL_CHOICE, p(0), c(1), c(2)), c(3)),
                 List.of(param("x", ValueTypes.BOOLEAN)));
-        assertThat(ExpressionPrinter.print(inInfix), is("x -> (x ? 1 : 2) + 3"));
+        assertThat(ExpressionPrinter.print(inInfix), is("x => (x ? 1 : 2) + 3"));
 
         // Incomplete choices are printed in prefix notation
         Expression incomplete = new Expression(op(Operators.GENERAL_CHOICE, p(0), ExpressionNode.EMPTY, c(2)),
                 List.of(param("x", ValueTypes.BOOLEAN)));
-        assertThat(ExpressionPrinter.print(incomplete), is("x -> choice(x, ?, 2)"));
+        assertThat(ExpressionPrinter.print(incomplete), is("x => choice(x, ?, 2)"));
         Expression incompleteCondition = new Expression(op(Operators.GENERAL_CHOICE,
                 op(Operators.RELATIONAL_GT, ExpressionNode.EMPTY, c(1)), c(1), c(2)));
         assertThat(ExpressionPrinter.print(incompleteCondition), is("choice(? > 1, 1, 2)"));
@@ -742,9 +742,9 @@ public class TestExpressionTrees {
                 op(Operators.OPERATOR_MAP, opConst(Operators.STRING_LENGTH), p(0)), c(0)),
                 List.of(param("l", ValueTypes.LIST)));
         // Operator values have no argument to tell shared names apart
-        assertThat(ExpressionPrinter.print(expression), is("l -> reduce((+), map((stringLength), l), 0)"));
+        assertThat(ExpressionPrinter.print(expression), is("l => reduce((+), map((stringLength), l), 0)"));
         // Unregistered operators are printed by their full symbol
-        assertThat(ExpressionPrinter.printValue(ValueTypeOperator.ValueOperator.of(doubler())), is("(x -> x * 2)"));
+        assertThat(ExpressionPrinter.printValue(ValueTypeOperator.ValueOperator.of(doubler())), is("(x => x * 2)"));
     }
 
     @Test
@@ -754,16 +754,18 @@ public class TestExpressionTrees {
                 op(Operators.OBJECT_ITEMSTACK_ISDATAEQUAL, p(0), p(0)),
                 op(Operators.RELATIONAL_EQUALS, op(Operators.NBT_COMPOUND_VALUE_INTEGER, op(Operators.OBJECT_ITEMSTACK_DATA, p(0)), c("k")), c(1))),
                 List.of(param("item", ValueTypes.OBJECT_ITEMSTACK)));
-        assertThat(ExpressionPrinter.print(items), is("item -> isNbtEqual(item, item) && (getInteger(nbt(item), \"k\") == 1)"));
-        // String + is not number addition
-        assertThat(ExpressionPrinter.print(new Expression(op(Operators.STRING_CONCAT, c("a"), c("b")))), is("concat(\"a\", \"b\")"));
+        assertThat(ExpressionPrinter.print(items), is("item => isNbtEqual(item, item) && (getInteger(nbt(item), \"k\") == 1)"));
+        // String + only when it is read as concat
+        assertThat(ExpressionPrinter.print(new Expression(op(Operators.STRING_CONCAT, c("a"), c("b")))), is("\"a\" + \"b\""));
+        assertThat(ExpressionPrinter.print(new Expression(op(Operators.STRING_CONCAT, p(0), p(0)), List.of(param("x", ValueTypes.CATEGORY_ANY)))),
+                is("x => stringConcat(x, x)"));
         // ∩
         Expression lists = new Expression(op(Operators.LIST_INTERSECTION, p(0), p(0)), List.of(param("l", ValueTypes.LIST)));
-        assertThat(ExpressionPrinter.print(lists), is("l -> intersection(l, l)"));
+        assertThat(ExpressionPrinter.print(lists), is("l => intersection(l, l)"));
         // !
         Expression not = new Expression(op(Operators.LOGICAL_NOT, op(Operators.LOGICAL_AND, p(0), op(Operators.LOGICAL_NOT, p(0)))),
                 List.of(param("x", ValueTypes.BOOLEAN)));
-        assertThat(ExpressionPrinter.print(not), is("x -> !(x && !x)"));
+        assertThat(ExpressionPrinter.print(not), is("x => !(x && !x)"));
     }
 
     @Test

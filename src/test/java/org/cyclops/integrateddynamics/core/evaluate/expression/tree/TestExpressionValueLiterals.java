@@ -286,13 +286,13 @@ public class TestExpressionValueLiterals {
         assertSameValue("trailing comma", read("[1, 2,]"), list(ValueTypes.INTEGER, i(1), i(2)));
         assertSameValue("spread over lines", read("[\n  \"a\",\n  \"b\"\n]"), list(ValueTypes.STRING, s("a"), s("b")));
         // A list as the input of an operator
-        assertThat(parse("l -> l == [1]").root(), is(new ExpressionNode.Operator(Operators.RELATIONAL_EQUALS,
+        assertThat(parse("l => l == [1]").root(), is(new ExpressionNode.Operator(Operators.RELATIONAL_EQUALS,
                 List.of(new ExpressionNode.Param(0), new ExpressionNode.Const(list(ValueTypes.INTEGER, i(1)))))));
     }
 
     @Test
     public void testReadListErrors() {
-        assertError("x -> [x] == ?", L10NValues.EXPRESSION_PARSE_LIST_ELEMENT, 6);
+        assertError("x => [x] == ?", L10NValues.EXPRESSION_PARSE_LIST_ELEMENT, 6);
         assertError("[1, 1 + 2] == ?", L10NValues.EXPRESSION_PARSE_LIST_ELEMENT, 4);
         assertError("[?] == ?", L10NValues.EXPRESSION_PARSE_LIST_ELEMENT, 1);
         assertError("[#3] == ?", L10NValues.EXPRESSION_PARSE_LIST_ELEMENT, 1);

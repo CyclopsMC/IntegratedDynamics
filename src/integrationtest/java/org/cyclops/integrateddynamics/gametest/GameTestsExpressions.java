@@ -662,7 +662,7 @@ public class GameTestsExpressions {
             ContainerLogicProgrammer container = new ContainerLogicProgrammer(0, player.getInventory());
 
             // Typed in the empty panel, which makes the element of its root operator active
-            Expression expression = ExpressionParser.parse("(x: integer) -> x * 2", context);
+            Expression expression = ExpressionParser.parse("(x: integer) => x * 2", context);
             container.applyExpressionAction(ExpressionEditor.actionSet(values, expression));
             helper.assertTrue(container.getActiveElement() instanceof OperatorLPElement element
                     && element.getOperator() == Operators.ARITHMETIC_MULTIPLICATION

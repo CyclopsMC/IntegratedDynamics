@@ -36,6 +36,7 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.IntFunction;
@@ -46,7 +47,7 @@ import java.util.stream.Collectors;
  * Parses the text form of expressions, as written by {@link ExpressionPrinter#printExact}.
  *
  * <pre>
- * expression     := [parameters "->"] ternary
+ * expression     := [parameters "=&gt;"] ternary
  * parameters     := NAME | "(" parameter ("," parameter)* ")"
  * parameter      := NAME [":" TYPE]
  * ternary        := or ["?" ternary ":" ternary]
@@ -56,13 +57,17 @@ import java.util.stream.Collectors;
  * relational     := additive (("&lt;" | "&lt;=" | "&gt;" | "&gt;=") additive)*
  * additive       := multiplicative (("+" | "-") multiplicative)*
  * multiplicative := unary (("*" | "/" | "%") unary)*
- * unary          := "!" unary | "-" NUMBER | primary
+ * unary          := "!" unary | ("-" NUMBER | primary) ("." NAME arguments)*
  * primary        := NUMBER | STRING | "true" | "false" | "@" TYPE SNBT | "#" (ID | NAME | STRING) | "?"
- *                 | NAME "(" [ternary ("," ternary)*] ")" | NAME | "(" (NAME | SYMBOL) ")" | "(" ternary ")"
+ *                 | "[" [ternary ("," ternary)* [","]] "]" | NAME arguments | NAME | "(" (NAME | SYMBOL) ")" | "(" ternary ")"
+ * arguments      := "(" [ternary ("," ternary)*] ")"
  * </pre>
  *
  * Operator names are resolved by {@link OperatorNames}, using the type of the first argument.
  * A {@code ?} is an empty slot, and {@code (name)} an operator used as a value.
+ * As in Integrated Scripting, {@code a.f(b)} is {@code f(a, b)}, calling a parameter as in {@code f(a)} is {@code apply(f, a)},
+ * + joins strings, strings can be in single quotes, and {@code ->}, {@code ===} and {@code !==}
+ * can be written for {@code =>}, {@code ==} and {@code !=}.
  *
  * @author rubensworks
  */
@@ -73,7 +78,11 @@ public final class ExpressionParser {
     private static final List<List<String>> BINARY_LEVELS = List.of(
             List.of("||"), List.of("&&"), List.of("==", "!="), List.of("<", "<=", ">", ">="), List.of("+", "-"), List.of("*", "/", "%"));
     private static final List<String> SYMBOLS = List.of(
-            "->", "==", "!=", "<=", ">=", "&&", "||", "(", ")", "[", "]", ",", "?", ":", "+", "-", "*", "/", "%", "<", ">", "!");
+            "===", "!==", "=>", "->", "==", "!=", "<=", ">=", "&&", "||", "(", ")", "[", "]", ",", "?", ":", ".",
+            "+", "-", "*", "/", "%", "<", ">", "!");
+    private static final Map<String, String> SYMBOL_ALIASES = Map.of("->", "=>", "===", "==", "!==", "!=");
+    private static final List<IOperator> APPLY_OPERATORS = List.of(
+            Operators.OPERATOR_APPLY_0, Operators.OPERATOR_APPLY, Operators.OPERATOR_APPLY_2, Operators.OPERATOR_APPLY_3);
     private static final Set<String> RESERVED_NAMES = Set.of("true", "false", "NaN", "Infinity");
 
     private final Context context;
@@ -81,6 +90,7 @@ public final class ExpressionParser {
     private int index = 0;
     private int nesting = 0;
     private List<ExpressionParameter> parameters = List.of();
+    private ExpressionTypeChecker.Inference types;
 
     private ExpressionParser(Context context, List<Token> tokens) {
         this.context = context;
@@ -156,8 +166,9 @@ public final class ExpressionParser {
     private Expression parseExpression() throws ExpressionParseException {
         if (isParameterHeader()) {
             parameters = parseParameters();
-            expect("->");
+            expect("=>");
         }
+        types = new ExpressionTypeChecker.Inference(parameters, context.refTypes());
         Token start = peek(0);
         ExpressionNode root = parseTernary();
         Token trailing = peek(0);
@@ -174,7 +185,7 @@ public final class ExpressionParser {
     }
 
     private boolean isParameterHeader() {
-        if (peek(0).kind() == Kind.NAME && isSymbol(peek(1), "->")) {
+        if (peek(0).kind() == Kind.NAME && isSymbol(peek(1), "=>")) {
             return true;
         }
         if (!isSymbol(peek(0), "(")) {
@@ -193,7 +204,7 @@ public final class ExpressionParser {
                 i += 2;
             }
             if (!isSymbol(peek(i), ",")) {
-                return isSymbol(peek(i), ")") && isSymbol(peek(i + 1), "->");
+                return isSymbol(peek(i), ")") && isSymbol(peek(i + 1), "=>");
             }
             i++;
         }
@@ -257,10 +268,11 @@ public final class ExpressionParser {
             return parseUnary();
         }
         ExpressionNode left = parseBinary(level + 1);
-        while (peek(0).kind() == Kind.SYMBOL && BINARY_LEVELS.get(level).contains(peek(0).text())) {
+        while (peek(0).kind() == Kind.SYMBOL && BINARY_LEVELS.get(level).contains(symbol(peek(0)))) {
             Token symbol = next();
             ExpressionNode right = parseBinary(level + 1);
-            left = operator(OperatorNames.getInfixOperator(symbol.text()), List.of(left, right), symbol);
+            IOperator operator = OperatorNames.getInfixOperator(symbol(symbol), types.getType(left), types.getType(right));
+            left = operator(operator, List.of(left, right), symbol);
         }
         return left;
     }
@@ -275,9 +287,32 @@ public final class ExpressionParser {
         }
         if (isSymbol(token, "-") && isNumber(peek(1))) {
             next();
-            return new ExpressionNode.Const(parseNumber(next(), true));
+            return parseMethodCalls(new ExpressionNode.Const(parseNumber(next(), true)));
         }
-        return parsePrimary();
+        return parseMethodCalls(parsePrimary());
+    }
+
+    /**
+     * Read the method calls after a value, where a.f(b) is f(a, b).
+     */
+    private ExpressionNode parseMethodCalls(ExpressionNode receiver) throws ExpressionParseException {
+        int outerNesting = nesting;
+        while (isSymbol(peek(0), ".")) {
+            Token dot = next();
+            Token name = peek(0);
+            if (name.kind() != Kind.NAME || !isSymbol(peek(1), "(")) {
+                throw error(dot, L10NValues.EXPRESSION_PARSE_METHOD);
+            }
+            next();
+            // Each call is a level deeper
+            enter(dot);
+            List<ExpressionNode> arguments = new ArrayList<>();
+            arguments.add(receiver);
+            arguments.addAll(parseArguments());
+            receiver = resolveCall(name, arguments);
+        }
+        nesting = outerNesting;
+        return receiver;
     }
 
     private ExpressionNode parsePrimary() throws ExpressionParseException {
@@ -302,13 +337,13 @@ public final class ExpressionParser {
                 return parseName(token);
             }
             case SYMBOL -> {
-                if (token.text().equals("?")) {
+                if (isSymbol(token, "?")) {
                     return ExpressionNode.EMPTY;
                 }
-                if (token.text().equals("[")) {
+                if (isSymbol(token, "[")) {
                     return new ExpressionNode.Const(parseList(token));
                 }
-                if (token.text().equals("(")) {
+                if (isSymbol(token, "(")) {
                     if (isOperatorValue(peek(0)) && isSymbol(peek(1), ")")) {
                         Token name = next();
                         next();
@@ -379,6 +414,14 @@ public final class ExpressionParser {
     }
 
     /**
+     * @param c A character.
+     * @return If it starts or ends a string in single quotes, also curly ones.
+     */
+    static boolean isSingleQuote(char c) {
+        return c == '\'' || (c >= '\u2018' && c <= '\u201B');
+    }
+
+    /**
      * @param typed A tag as it was typed.
      * @param written The tag of the value that was read from it.
      * @return If everything that was typed is kept, where the written tag can add defaults.
@@ -432,6 +475,22 @@ public final class ExpressionParser {
     }
 
     private ExpressionNode parseCall(Token name) throws ExpressionParseException {
+        List<ExpressionNode> arguments = parseArguments();
+        int parameter = getParameterIndex(name.text());
+        if (parameter < 0) {
+            return resolveCall(name, arguments);
+        }
+        // A parameter that holds an operator is called with apply, where f(a) is apply(f, a)
+        if (arguments.size() >= APPLY_OPERATORS.size()) {
+            throw error(name, L10NValues.EXPRESSION_PARSE_PARAMETER_CALL, name.text(), APPLY_OPERATORS.size() - 1);
+        }
+        List<ExpressionNode> children = new ArrayList<>();
+        children.add(new ExpressionNode.Param(parameter));
+        children.addAll(arguments);
+        return operator(APPLY_OPERATORS.get(arguments.size()), children, name);
+    }
+
+    private List<ExpressionNode> parseArguments() throws ExpressionParseException {
         Token open = next();
         enter(open);
         List<ExpressionNode> arguments = new ArrayList<>();
@@ -442,10 +501,11 @@ public final class ExpressionParser {
             expect(")");
         }
         nesting--;
-        if (getParameterIndex(name.text()) >= 0) {
-            throw error(name, L10NValues.EXPRESSION_PARSE_PARAMETER_CALL, name.text(), name.text());
-        }
-        IValueType<?> firstArgumentType = arguments.isEmpty() ? null : getType(arguments.get(0));
+        return arguments;
+    }
+
+    private ExpressionNode resolveCall(Token name, List<ExpressionNode> arguments) throws ExpressionParseException {
+        IValueType<?> firstArgumentType = arguments.isEmpty() ? null : types.getType(arguments.get(0));
         IOperator operator = OperatorNames.resolve(name.text(), firstArgumentType);
         if (operator == null) {
             throw unknownOperator(name);
@@ -516,15 +576,15 @@ public final class ExpressionParser {
 
     private boolean isOperatorValue(Token token) {
         if (token.kind() == Kind.SYMBOL) {
-            return OperatorNames.getInfixOperator(token.text()) != null || OperatorNames.getPrefixOperator(token.text()) != null;
+            return OperatorNames.getInfixOperator(symbol(token)) != null || OperatorNames.getPrefixOperator(symbol(token)) != null;
         }
         return token.kind() == Kind.NAME && getParameterIndex(token.text()) < 0 && !RESERVED_NAMES.contains(token.text());
     }
 
     private IOperator resolveOperatorValue(Token token) throws ExpressionParseException {
         if (token.kind() == Kind.SYMBOL) {
-            IOperator infix = OperatorNames.getInfixOperator(token.text());
-            return infix != null ? infix : OperatorNames.getPrefixOperator(token.text());
+            IOperator infix = OperatorNames.getInfixOperator(symbol(token));
+            return infix != null ? infix : OperatorNames.getPrefixOperator(symbol(token));
         }
         IOperator operator = OperatorNames.resolve(token.text(), null);
         if (operator == null) {
@@ -540,10 +600,6 @@ public final class ExpressionParser {
                     candidates.stream().map(IOperator::getGlobalInteractName).sorted().collect(Collectors.joining(", ")));
         }
         return error(name, L10NValues.EXPRESSION_PARSE_UNKNOWN_OPERATOR, name.text());
-    }
-
-    private IValueType<?> getType(ExpressionNode node) {
-        return ExpressionTypeChecker.check(new Expression(node, parameters), context.refTypes()).outputType();
     }
 
     private int getParameterIndex(String name) {
@@ -594,7 +650,12 @@ public final class ExpressionParser {
     }
 
     private static boolean isSymbol(Token token, String symbol) {
-        return token.kind() == Kind.SYMBOL && token.text().equals(symbol);
+        return token.kind() == Kind.SYMBOL && symbol(token).equals(symbol);
+    }
+
+    // The symbol of a symbol token, where other ways to write it are replaced, such as -> by =>
+    private static String symbol(Token token) {
+        return SYMBOL_ALIASES.getOrDefault(token.text(), token.text());
     }
 
     private static boolean isNumber(Token token) {
@@ -660,7 +721,7 @@ public final class ExpressionParser {
                     tokens.add(new Token(Kind.NAME, readName(), start, null));
                 } else if (Character.isDigit(c)) {
                     tokens.add(new Token(Kind.NUMBER, readNumber(), start, null));
-                } else if (isQuote(c)) {
+                } else if (isQuote(c) || isSingleQuote(c)) {
                     String string = readString();
                     tokens.add(new Token(Kind.STRING, string, start, string));
                 } else if (c == '#') {
@@ -719,11 +780,11 @@ public final class ExpressionParser {
 
         private String readString() throws ExpressionParseException {
             int start = position;
-            position++;
+            boolean single = isSingleQuote(text.charAt(position++));
             StringBuilder sb = new StringBuilder();
             while (position < text.length()) {
                 char c = text.charAt(position++);
-                if (isQuote(c)) {
+                if (single ? isSingleQuote(c) : isQuote(c)) {
                     return sb.toString();
                 }
                 if (c != '\\') {
@@ -735,7 +796,7 @@ public final class ExpressionParser {
                 }
                 char escaped = text.charAt(position++);
                 switch (escaped) {
-                    case '\\', '"' -> sb.append(escaped);
+                    case '\\', '"', '\'' -> sb.append(escaped);
                     case 'n' -> sb.append('\n');
                     case 't' -> sb.append('\t');
                     case 'r' -> sb.append('\r');
@@ -774,7 +835,7 @@ public final class ExpressionParser {
                 String label = readName();
                 return new Token(Kind.REF, "#" + label, start, label);
             }
-            if (position < text.length() && isQuote(text.charAt(position))) {
+            if (position < text.length() && (isQuote(text.charAt(position)) || isSingleQuote(text.charAt(position)))) {
                 String label = readString();
                 return new Token(Kind.REF, text.substring(start, position), start, label);
             }

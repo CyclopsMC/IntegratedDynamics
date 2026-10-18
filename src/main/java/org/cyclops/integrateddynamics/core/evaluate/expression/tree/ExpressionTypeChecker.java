@@ -8,6 +8,7 @@ import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.expression.VariableAdapter;
 import org.cyclops.integrateddynamics.api.evaluate.expression.tree.Expression;
 import org.cyclops.integrateddynamics.api.evaluate.expression.tree.ExpressionNode;
+import org.cyclops.integrateddynamics.api.evaluate.expression.tree.ExpressionParameter;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.IntFunction;
@@ -176,20 +178,13 @@ public final class ExpressionTypeChecker {
         }
 
         private IVariable<?> visitNode(ExpressionNode node, int[] path) {
-            return switch (node) {
-                case ExpressionNode.Empty empty -> {
-                    emptySlots++;
-                    yield new TypedVariable<>(ValueTypes.CATEGORY_ANY);
-                }
-                case ExpressionNode.Const constant -> new Variable<>(constant.value());
-                case ExpressionNode.Ref ref -> {
-                    IValueType<?> type = refTypes.apply(ref.variableId());
-                    yield new TypedVariable(type != null ? type : ValueTypes.CATEGORY_ANY);
-                }
-                case ExpressionNode.Param param -> new TypedVariable((IValueType) (param.index() < expression.parameters().size()
-                        ? expression.parameters().get(param.index()).type() : ValueTypes.CATEGORY_ANY));
-                case ExpressionNode.Operator op -> visitOperator(op, path);
-            };
+            if (node instanceof ExpressionNode.Operator op) {
+                return visitOperator(op, path);
+            }
+            if (node instanceof ExpressionNode.Empty) {
+                emptySlots++;
+            }
+            return getLeafVariable(node, expression.parameters(), refTypes);
         }
 
         private IVariable<?> visitOperator(ExpressionNode.Operator node, int[] path) {
@@ -221,16 +216,78 @@ public final class ExpressionTypeChecker {
                     errors.add(new Error(path, -1, null, null, error));
                 }
             }
-            IValueType<?> outputType;
-            try {
-                outputType = operator.getConditionalOutputType(inputs);
-            } catch (RuntimeException e) {
-                outputType = null;
+            return getOutputVariable(operator, inputs);
+        }
+    }
+
+    private static IVariable<?> getLeafVariable(ExpressionNode node, List<ExpressionParameter> parameters,
+                                                IntFunction<IValueType<?>> refTypes) {
+        return switch (node) {
+            case ExpressionNode.Const constant -> new Variable<>(constant.value());
+            case ExpressionNode.Ref ref -> {
+                IValueType<?> type = refTypes.apply(ref.variableId());
+                yield new TypedVariable(type != null ? type : ValueTypes.CATEGORY_ANY);
             }
-            if (outputType == null) {
-                outputType = operator.getOutputType();
+            case ExpressionNode.Param param -> new TypedVariable((IValueType) (param.index() < parameters.size()
+                    ? parameters.get(param.index()).type() : ValueTypes.CATEGORY_ANY));
+            default -> new TypedVariable<>(ValueTypes.CATEGORY_ANY);
+        };
+    }
+
+    private static IVariable<?> getOutputVariable(IOperator operator, IVariable[] inputs) {
+        IValueType<?> outputType;
+        try {
+            outputType = operator.getConditionalOutputType(inputs);
+        } catch (RuntimeException e) {
+            outputType = null;
+        }
+        if (outputType == null) {
+            outputType = operator.getOutputType();
+        }
+        return new TypedVariable(outputType);
+    }
+
+    /**
+     * Infers the output types of nodes that are built bottom-up, such as while parsing.
+     * Types are remembered per node, so long chains such as a + b + c are not checked again for each operator.
+     */
+    public static class Inference {
+        private final List<ExpressionParameter> parameters;
+        private final IntFunction<IValueType<?>> refTypes;
+        private final Map<ExpressionNode, IVariable<?>> variables = new IdentityHashMap<>();
+
+        /**
+         * @param parameters The parameters of the expression the nodes belong to.
+         * @param refTypes Resolves the output type of a referenced variable id, may return null when unknown.
+         */
+        public Inference(List<ExpressionParameter> parameters, IntFunction<IValueType<?>> refTypes) {
+            this.parameters = parameters;
+            this.refTypes = refTypes;
+        }
+
+        /**
+         * @param node A node.
+         * @return Its inferred output type, as {@link #check} gives it.
+         */
+        public IValueType<?> getType(ExpressionNode node) {
+            return getVariable(node).getType();
+        }
+
+        private IVariable<?> getVariable(ExpressionNode node) {
+            IVariable<?> variable = variables.get(node);
+            if (variable == null) {
+                if (node instanceof ExpressionNode.Operator op) {
+                    IVariable[] inputs = new IVariable[op.children().size()];
+                    for (int i = 0; i < inputs.length; i++) {
+                        inputs[i] = getVariable(op.children().get(i));
+                    }
+                    variable = getOutputVariable(op.operator(), inputs);
+                } else {
+                    variable = getLeafVariable(node, parameters, refTypes);
+                }
+                variables.put(node, variable);
             }
-            return new TypedVariable(outputType);
+            return variable;
         }
     }
 

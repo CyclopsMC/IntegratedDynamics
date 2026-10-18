@@ -53,9 +53,13 @@ public class TestOperatorNames {
     @Test
     public void testSymbols() {
         assertThat(OperatorNames.getInfixSymbol(Operators.ARITHMETIC_ADDITION), is("+"));
-        assertThat(OperatorNames.getInfixSymbol(Operators.STRING_CONCAT), nullValue());
+        assertThat(OperatorNames.getInfixSymbol(Operators.STRING_CONCAT), is("+"));
+        assertThat(OperatorNames.getInfixOperator("+", ValueTypes.STRING, ValueTypes.CATEGORY_ANY), is(Operators.STRING_CONCAT));
+        assertThat(OperatorNames.getInfixOperator("+", ValueTypes.INTEGER, ValueTypes.CATEGORY_ANY), is(Operators.ARITHMETIC_ADDITION));
         assertThat(OperatorNames.getPrefixSymbol(Operators.LOGICAL_NOT), is("!"));
         assertThat(OperatorNames.getValueName(Operators.ARITHMETIC_ADDITION), is("+"));
+        // (+) is read as addition
+        assertThat(OperatorNames.getValueName(Operators.STRING_CONCAT), is("stringConcat"));
         assertThat(OperatorNames.getValueName(Operators.STRING_LENGTH), is("stringLength"));
         assertThat(OperatorNames.getValueName(Operators.OPERATOR_REDUCE), is("reduce"));
     }

@@ -146,6 +146,7 @@ public class L10NValues {
     public static final String EXPRESSION_PARSE_BAD_VALUE = "expression." + NS + ".parse.bad_value";
     public static final String EXPRESSION_PARSE_VALUE_CHANGED = "expression." + NS + ".parse.value_changed";
     public static final String EXPRESSION_PARSE_LIST_ELEMENT = "expression." + NS + ".parse.list_element";
+    public static final String EXPRESSION_PARSE_METHOD = "expression." + NS + ".parse.method";
     public static final String EXPRESSION_PARSE_UNKNOWN_LABEL = "expression." + NS + ".parse.unknown_label";
     public static final String EXPRESSION_PARSE_AMBIGUOUS_LABEL = "expression." + NS + ".parse.ambiguous_label";
     public static final String EXPRESSION_PARSE_TOO_DEEP = "expression." + NS + ".parse.too_deep";

@@ -211,28 +211,28 @@ public class TestExpressionParser {
                 op(Operators.ARITHMETIC_ADDITION, i(1), op(Operators.ARITHMETIC_MULTIPLICATION, i(2), i(3))), i(7))));
         assertThat(parse("(1 + 2) * 3").root(), is(op(Operators.ARITHMETIC_MULTIPLICATION, op(Operators.ARITHMETIC_ADDITION, i(1), i(2)), i(3))));
         assertThat(parse("10 - 2 - 3").root(), is(op(Operators.ARITHMETIC_SUBTRACTION, op(Operators.ARITHMETIC_SUBTRACTION, i(10), i(2)), i(3))));
-        assertThat(parse("x -> !x && x || x").root(), is(op(Operators.LOGICAL_OR,
+        assertThat(parse("x => !x && x || x").root(), is(op(Operators.LOGICAL_OR,
                 op(Operators.LOGICAL_AND, op(Operators.LOGICAL_NOT, p(0)), p(0)), p(0))));
         // Choices are right associative and bind weakest
-        assertThat(parse("x -> x ? 1 : x ? 2 : 3 + 1").root(), is(op(Operators.GENERAL_CHOICE, p(0), i(1),
+        assertThat(parse("x => x ? 1 : x ? 2 : 3 + 1").root(), is(op(Operators.GENERAL_CHOICE, p(0), i(1),
                 op(Operators.GENERAL_CHOICE, p(0), i(2), op(Operators.ARITHMETIC_ADDITION, i(3), i(1))))));
     }
 
     @Test
     public void testParameters() throws ExpressionParseException {
-        assertThat(parse("x -> x + 1").parameters(), is(List.of(param("x", ValueTypes.CATEGORY_ANY))));
-        assertThat(parse("(x) -> x + 1").parameters(), is(List.of(param("x", ValueTypes.CATEGORY_ANY))));
-        assertThat(parse("(item: itemstack, n: number) -> n + 1").parameters(),
+        assertThat(parse("x => x + 1").parameters(), is(List.of(param("x", ValueTypes.CATEGORY_ANY))));
+        assertThat(parse("(x) => x + 1").parameters(), is(List.of(param("x", ValueTypes.CATEGORY_ANY))));
+        assertThat(parse("(item: itemstack, n: number) => n + 1").parameters(),
                 is(List.of(param("item", ValueTypes.OBJECT_ITEMSTACK), param("n", ValueTypes.CATEGORY_NUMBER))));
         // A parenthesized parameter is not an operator value
-        assertThat(parse("(length) -> (length) + 1").root(), is(op(Operators.ARITHMETIC_ADDITION, p(0), i(1))));
+        assertThat(parse("(length) => (length) + 1").root(), is(op(Operators.ARITHMETIC_ADDITION, p(0), i(1))));
     }
 
     @Test
     public void testNamesTellApartByType() throws ExpressionParseException {
-        assertThat(parse("(s: string) -> length(s)").root(), is(op(Operators.STRING_LENGTH, p(0))));
-        assertThat(parse("(l: list) -> length(l)").root(), is(op(Operators.LIST_LENGTH, p(0))));
-        assertThat(parse("x -> listLength(x)").root(), is(op(Operators.LIST_LENGTH, p(0))));
+        assertThat(parse("(s: string) => length(s)").root(), is(op(Operators.STRING_LENGTH, p(0))));
+        assertThat(parse("(l: list) => length(l)").root(), is(op(Operators.LIST_LENGTH, p(0))));
+        assertThat(parse("x => listLength(x)").root(), is(op(Operators.LIST_LENGTH, p(0))));
         assertThat(parse("length(\"abc\")").root(), is(op(Operators.STRING_LENGTH, c(ValueTypeString.ValueString.of("abc")))));
     }
 
@@ -252,22 +252,131 @@ public class TestExpressionParser {
                 && constant.value() instanceof ValueTypeNbt.ValueNbt);
     }
 
+    // --------------- Integrated Scripting syntax ---------------
+
+    @Test
+    public void testArrows() throws ExpressionParseException {
+        Expression expression = parse("(x: integer) => x * 2");
+        assertThat(parse("(x: integer) -> x * 2"), is(expression));
+        assertThat(parse("x -> x + 1"), is(parse("x => x + 1")));
+        assertThat(printExact(expression), is("(x: integer) => x * 2"));
+    }
+
+    @Test
+    public void testMethodCalls() throws ExpressionParseException {
+        assertThat(parse("(s: string) => s.length()").root(), is(op(Operators.STRING_LENGTH, p(0))));
+        // The receiver tells shared names apart
+        assertThat(parse("(l: list) => l.length()").root(), is(op(Operators.LIST_LENGTH, p(0))));
+        // Arguments follow the receiver, calls chain, and they bind tighter than ! and infix operators
+        assertThat(parse("(s: string, t: string) => s.concat(t).length() > 2"),
+                is(parse("(s: string, t: string) => length(concat(s, t)) > 2")));
+        assertThat(parse("(s: string) => !s.contains(\"a\")"), is(parse("(s: string) => !contains(s, \"a\")")));
+        // On literals, references, parenthesized values and global names
+        assertThat(parse("\"abc\".length() + #5.length() + (#5).stringLength()"),
+                is(parse("length(\"abc\") + length(#5) + length(#5)")));
+        // Printed as calls
+        assertThat(printExact(parse("(s: string) => s.length()")), is("(s: string) => length(s)"));
+        // Examples of the Integrated Scripting book
+        assertThat(parse("(item: itemstack) => item.isStackable() && item.size() >= 16"),
+                is(parse("(item: itemstack) => isStackable(item) && size(item) >= 16")));
+        assertThat(parse("(item: itemstack, block: block) => item.strength(block) > 10"),
+                is(parse("(item: itemstack, block: block) => strength(item, block) > 10")));
+    }
+
+    @Test
+    public void testMethodCallErrors() {
+        assertError("(s: string) => s.length", L10NValues.EXPRESSION_PARSE_METHOD, 16);
+        assertError("(s: string) => s.", L10NValues.EXPRESSION_PARSE_METHOD, 16);
+        assertError("(s: string) => s.(1)", L10NValues.EXPRESSION_PARSE_METHOD, 16);
+        assertError("(s: string) => s.lenght()", L10NValues.EXPRESSION_PARSE_UNKNOWN_OPERATOR, 17);
+        assertError("(s: string) => s.length(1)", L10NValues.EXPRESSION_PARSE_INPUT_COUNT, 17);
+    }
+
+    @Test
+    public void testParameterCalls() throws ExpressionParseException {
+        assertThat(parse("(f: operator, x: integer) => f(x)").root(), is(op(Operators.OPERATOR_APPLY, p(0), p(1))));
+        assertThat(parse("(f: operator) => f()").root(), is(op(Operators.OPERATOR_APPLY_0, p(0))));
+        assertThat(parse("(f: operator) => f(1, 2)").root(), is(op(Operators.OPERATOR_APPLY_2, p(0), i(1), i(2))));
+        assertThat(parse("(f: operator) => f(1, 2, 3)").root(), is(op(Operators.OPERATOR_APPLY_3, p(0), i(1), i(2), i(3))));
+        assertThat(parse("f => f.apply(1)"), is(parse("f => f(1)")));
+        // Printed with apply
+        assertThat(printExact(parse("f => f(1)")), is("f => apply(f, 1)"));
+        assertError("f => f(1, 2, 3, 4)", L10NValues.EXPRESSION_PARSE_PARAMETER_CALL, 5);
+    }
+
+    @Test
+    public void testStrictEquality() throws ExpressionParseException {
+        assertThat(parse("1 === 2"), is(parse("1 == 2")));
+        assertThat(parse("1 !== 2"), is(parse("1 != 2")));
+        assertThat(parse("(value: integer) => value % 2 !== 0"), is(parse("(value: integer) => value % 2 != 0")));
+        assertThat(parse("reduce((===), ?, ?)"), is(parse("reduce((==), ?, ?)")));
+        assertThat(printExact(parse("1 === 2")), is("1 == 2"));
+    }
+
+    @Test
+    public void testSingleQuotes() throws ExpressionParseException {
+        assertThat(parse("'it\\'s \"quoted\"' == ?").root(), is(op(Operators.RELATIONAL_EQUALS,
+                c(ValueTypeString.ValueString.of("it's \"quoted\"")), ExpressionNode.EMPTY)));
+        assertThat(parse("\"it's\" == ?").root(), is(op(Operators.RELATIONAL_EQUALS,
+                c(ValueTypeString.ValueString.of("it's")), ExpressionNode.EMPTY)));
+        // Curly ones, as text editors write them
+        assertThat(parse("\u2018a\u2019 == ?"), is(parse("'a' == ?")));
+        assertThat(parse("#'My Card' == 1").root(), is(op(Operators.RELATIONAL_EQUALS, new ExpressionNode.Ref(2), i(1))));
+        assertThat(printExact(parse("'a' == ?")), is("\"a\" == ?"));
+        assertError("'abc\" == ?", L10NValues.EXPRESSION_PARSE_UNTERMINATED_STRING, 0);
+    }
+
+    @Test
+    public void testStringConcat() throws ExpressionParseException {
+        ExpressionNode a = c(ValueTypeString.ValueString.of("a"));
+        ExpressionNode b = c(ValueTypeString.ValueString.of("b"));
+        assertThat(parse("\"a\" + \"b\"").root(), is(op(Operators.STRING_CONCAT, a, b)));
+        assertThat(parse("(s: string) => s + \"a\" + s").root(), is(op(Operators.STRING_CONCAT, op(Operators.STRING_CONCAT, p(0), a), p(0))));
+        assertThat(parse("(s: string) => s.length() + 1").root(), is(op(Operators.ARITHMETIC_ADDITION, op(Operators.STRING_LENGTH, p(0)), i(1))));
+        // One string is enough, where the other input then has the wrong type
+        assertThat(parse("(s: string) => 1 + s").root(), is(op(Operators.STRING_CONCAT, i(1), p(0))));
+        // Unknown types stay addition
+        assertThat(parse("x => x + #9").root(), is(op(Operators.ARITHMETIC_ADDITION, p(0), new ExpressionNode.Ref(9))));
+        assertThat(parse("reduce((+), ?, ?)").root(), is(op(Operators.OPERATOR_REDUCE,
+                c(ValueTypeOperator.ValueOperator.of(Operators.ARITHMETIC_ADDITION)), ExpressionNode.EMPTY, ExpressionNode.EMPTY)));
+    }
+
+    @Test
+    public void testRoundTripStringConcat() throws ExpressionParseException {
+        Expression concat = new Expression(op(Operators.STRING_CONCAT, p(0), c(ValueTypeString.ValueString.of("!"))),
+                List.of(param("s", ValueTypes.STRING)));
+        assertThat(printExact(concat), is("(s: string) => s + \"!\""));
+        assertRoundTrip(concat);
+        // Not with + when it would be read as addition, or the other way around
+        assertRoundTrip(new Expression(op(Operators.STRING_CONCAT, p(0), p(1)),
+                List.of(param("a", ValueTypes.CATEGORY_ANY), param("b", ValueTypes.CATEGORY_ANY))));
+        assertRoundTrip(new Expression(op(Operators.ARITHMETIC_ADDITION, p(0), i(1)), List.of(param("s", ValueTypes.STRING))));
+        assertRoundTrip(new Expression(op(Operators.OPERATOR_REDUCE, c(ValueTypeOperator.ValueOperator.of(Operators.STRING_CONCAT)),
+                p(0), c(ValueTypeString.ValueString.of(""))), List.of(param("l", ValueTypes.LIST))));
+    }
+
+    @Test(timeout = 10000)
+    public void testLongChains() {
+        // Types are not inferred again for each operator of a chain
+        assertError("1" + " + 1".repeat(2000), L10NValues.EXPRESSION_PARSE_TOO_DEEP, 0);
+        assertError("(s: string) => s" + ".concat(s)".repeat(400), L10NValues.EXPRESSION_PARSE_TOO_DEEP, 16 + 10 * 127 + 7);
+    }
+
     // --------------- Errors ---------------
 
     @Test
     public void testErrors() {
-        assertError("x -> lenght(x)", L10NValues.EXPRESSION_PARSE_UNKNOWN_OPERATOR, 5);
-        assertError("x -> length(x)", L10NValues.EXPRESSION_PARSE_AMBIGUOUS_OPERATOR, 5);
+        assertError("x => lenght(x)", L10NValues.EXPRESSION_PARSE_UNKNOWN_OPERATOR, 5);
+        assertError("x => length(x)", L10NValues.EXPRESSION_PARSE_AMBIGUOUS_OPERATOR, 5);
         assertError("length(\"a\", \"b\")", L10NValues.EXPRESSION_PARSE_INPUT_COUNT, 0);
         assertError("length(\"abc)", L10NValues.EXPRESSION_PARSE_UNTERMINATED_STRING, 7);
         assertError("1 + 2 3", L10NValues.EXPRESSION_PARSE_TRAILING, 6);
         assertError("y + 1", L10NValues.EXPRESSION_PARSE_UNKNOWN_NAME, 0);
-        assertError("f -> f(1)", L10NValues.EXPRESSION_PARSE_PARAMETER_CALL, 5);
         assertError("3000000000 + 1", L10NValues.EXPRESSION_PARSE_INTEGER_TOO_LARGE, 0);
-        assertError("x -> x", L10NValues.EXPRESSION_PARSE_ROOT, 5);
-        assertError("(x, x) -> x + x", L10NValues.EXPRESSION_PARSE_DUPLICATE_PARAMETER, 4);
-        assertError("true -> 1 + 1", L10NValues.EXPRESSION_PARSE_PARAMETER_NAME, 0);
-        assertError("(x: thing) -> x + 1", L10NValues.EXPRESSION_PARSE_UNKNOWN_TYPE, 4);
+        assertError("x => x", L10NValues.EXPRESSION_PARSE_ROOT, 5);
+        assertError("(x, x) => x + x", L10NValues.EXPRESSION_PARSE_DUPLICATE_PARAMETER, 4);
+        assertError("true => 1 + 1", L10NValues.EXPRESSION_PARSE_PARAMETER_NAME, 0);
+        assertError("(x: thing) => x + 1", L10NValues.EXPRESSION_PARSE_UNKNOWN_TYPE, 4);
         assertError("@thing{} == 1", L10NValues.EXPRESSION_PARSE_UNKNOWN_TYPE, 0);
         assertError("@nbt {a: } == 1", L10NValues.EXPRESSION_PARSE_BAD_VALUE, 9);
         assertError("1 + ", L10NValues.EXPRESSION_PARSE_EXPECTED_VALUE_END, 4);
@@ -275,7 +384,7 @@ public class TestExpressionParser {
         assertError("1 + $", L10NValues.EXPRESSION_PARSE_UNKNOWN_CHARACTER, 4);
         assertError("#nothing + 1", L10NValues.EXPRESSION_PARSE_UNKNOWN_LABEL, 0);
         assertError("#twice + 1", L10NValues.EXPRESSION_PARSE_AMBIGUOUS_LABEL, 0);
-        assertError("x -> -x", L10NValues.EXPRESSION_PARSE_EXPECTED_VALUE, 5);
+        assertError("x => -x", L10NValues.EXPRESSION_PARSE_EXPECTED_VALUE, 5);
     }
 
     @Test
@@ -290,7 +399,7 @@ public class TestExpressionParser {
             assertThat(e.getPosition(), is(7));
         }
         try {
-            ExpressionParser.parse("(b: block) -> b == b", context);
+            ExpressionParser.parse("(b: block) => b == b", context);
             fail("Expected an error");
         } catch (ExpressionParseException e) {
             assertThat(((TranslatableContents) e.getComponent().getContents()).getKey(), is(L10NValues.EXPRESSION_PARSE_PARAMETER_TYPE));
