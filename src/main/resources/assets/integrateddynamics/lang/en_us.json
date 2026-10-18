@@ -1031,7 +1031,7 @@
     "operator.integrateddynamics.tooltip.variable_ids": "§eVariable IDs: §r§o%s",
     "operator.integrateddynamics.expression.name": "Expression %s",
     "gui.integrateddynamics.logicprogrammer.expression.title": "Expression",
-    "gui.integrateddynamics.logicprogrammer.expression.hint": "Pick an operator on the left to build an expression. Operator inputs can be variable cards, typed values, parameters or other operators.",
+    "gui.integrateddynamics.logicprogrammer.expression.hint": "Start creating expressions by selecting an operator on the left. You can insert variable cards, but also type in raw values, specify parameters, or nest other operators.",
     "gui.integrateddynamics.logicprogrammer.expression.param_add": "Add a parameter",
     "gui.integrateddynamics.logicprogrammer.expression.param_add.first": "+ Parameter",
     "gui.integrateddynamics.logicprogrammer.expression.value": "Value %s",
