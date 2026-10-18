@@ -36,7 +36,6 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationC
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionParseException;
-import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionParser;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionPrinter;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionTrees;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionTypeChecker;
@@ -65,8 +64,8 @@ import java.util.function.Supplier;
 public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElement, ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase>
         implements IRenderPatternValueTypeTooltip {
 
-    private static final int COLOR_TEXT = 0xFF404040;
-    private static final int COLOR_TEXT_LIGHT = 0xFFE0E0E0;
+    static final int COLOR_TEXT = 0xFF404040;
+    static final int COLOR_TEXT_LIGHT = 0xFFE0E0E0;
     private static final int COLOR_ERROR = 0xFFE03030;
     private static final int COLOR_SELECTED = 0xFF3070FF;
     private static final int COLOR_PARAM = 0xFFE8C840;
@@ -75,35 +74,35 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     private static final int COLOR_PARAM_ARMED = 0xFFFFF0A0;
     private static final int COLOR_TAB = 0xFFD8DCE0;
     private static final int COLOR_LINK = 0xFF2050A0;
-    private static final int COLOR_STRIP = 0xFF373737;
-    private static final int COLOR_STRIP_LINE = 0xFF555555;
+    static final int COLOR_STRIP = 0xFF373737;
+    static final int COLOR_STRIP_LINE = 0xFF555555;
     private static final int COLOR_STRIP_HOVER = 0xFF5A5A5A;
     private static final int DOUBLE_CLICK_MS = 350;
 
     // Side panel layout, relative to the gui, with the same margin left and right, as the main texture covers the left of the panel
-    private static final int PANEL_X = ContainerLogicProgrammerBase.EXPRESSION_PANEL_X + 7;
-    private static final int PANEL_WIDTH = ContainerLogicProgrammerBase.EXPRESSION_PANEL_WIDTH - 13;
-    private static final int TITLE_Y = ContainerLogicProgrammerBase.EXPRESSION_PANEL_Y + 6;
+    static final int PANEL_X = ContainerLogicProgrammerBase.EXPRESSION_PANEL_X + 7;
+    static final int PANEL_WIDTH = ContainerLogicProgrammerBase.EXPRESSION_PANEL_WIDTH - 13;
+    static final int TITLE_Y = ContainerLogicProgrammerBase.EXPRESSION_PANEL_Y + 6;
     // Parameter chips wrap onto as many rows as needed, followed by the button to add one, the expression follows below them
     private static final int PARAMS_Y = TITLE_Y + 12;
     private static final int CHIP_HEIGHT = 12;
-    private static final int LINE_HEIGHT = 9;
+    static final int LINE_HEIGHT = 9;
     // Buttons right of the title, with their icons in line with it
     private static final int BUTTONS_Y = TITLE_Y - 2;
-    private static final int CONTENT_BOTTOM = ContainerLogicProgrammerBase.EXPRESSION_PANEL_Y + ContainerLogicProgrammerBase.EXPRESSION_PANEL_HEIGHT - 6;
+    static final int CONTENT_BOTTOM = ContainerLogicProgrammerBase.EXPRESSION_PANEL_Y + ContainerLogicProgrammerBase.EXPRESSION_PANEL_HEIGHT - 6;
     // The type, or an error instead, below the expression
-    private static final int FOOTER_LINES = 3;
-    private static final int FOOTER_HEIGHT = FOOTER_LINES * LINE_HEIGHT + 3;
-    private static final int FOOTER_Y = CONTENT_BOTTOM - FOOTER_HEIGHT;
-    private static final int TEXT_WIDTH = PANEL_WIDTH - 7;
-    private static final int COLOR_EMPTY = 0xFFA0A0A0;
+    static final int FOOTER_LINES = 3;
+    static final int FOOTER_HEIGHT = FOOTER_LINES * LINE_HEIGHT + 3;
+    static final int FOOTER_Y = CONTENT_BOTTOM - FOOTER_HEIGHT;
+    static final int TEXT_WIDTH = PANEL_WIDTH - 7;
+    static final int COLOR_EMPTY = 0xFFA0A0A0;
     private static final int COLOR_EDITED = 0xFFFFFF60;
-    private static final int COLOR_TEXT_ERROR = 0xFFFF6060;
-    private static final int COLOR_FOCUS = 0xFFA0A0A0;
-    private static final String ELLIPSIS = "\u2026";
+    static final int COLOR_TEXT_ERROR = 0xFFFF6060;
+    static final int COLOR_FOCUS = 0xFFA0A0A0;
+    static final String ELLIPSIS = "\u2026";
     private static final int COPIED_MS = 1500;
     // How long typing pauses before valid text is applied
-    private static final int APPLY_DELAY_MS = 750;
+    static final int APPLY_DELAY_MS = 750;
 
     // Editor layout, relative to the gui
     private static final int EDITOR_X = ContainerLogicProgrammerBase.BASE_X + 2;
@@ -285,6 +284,14 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
      * @return The text of the expression, which can be edited in place.
      */
     protected ExpressionTextField getTextField() {
+        return getTextField(container);
+    }
+
+    /**
+     * @param container The container.
+     * @return The text of the expression, which is kept while the panel is recreated.
+     */
+    static ExpressionTextField getTextField(ContainerLogicProgrammerBase container) {
         return container.getExpressionTextField(() -> new ExpressionTextField(Minecraft.getInstance().font, TEXT_WIDTH));
     }
 
@@ -309,7 +316,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         if (!text.equals(parsedFor)) {
             parsedFor = text;
             try {
-                parsedText = ExpressionParser.parse(text, ExpressionEditor.getParserContext(ValueDeseralizationContext.ofClient(),
+                parsedText = ExpressionEditor.parse(text, ExpressionEditor.getParserContext(ValueDeseralizationContext.ofClient(),
                         this::getRefType, this::getLabelIds));
                 parsedTextResult = ExpressionTypeChecker.check(parsedText, this::getRefType);
                 textError = null;
@@ -464,7 +471,14 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     protected IValueType<?> getRefType(int variableId) {
         ExpressionEditor editor = getEditor();
         IValueType<?> type = editor != null ? editor.getRefType(variableId) : null;
-        return type != null || inventoryCardTypes == null ? type : inventoryCardTypes.get(variableId);
+        if (type != null) {
+            return type;
+        }
+        // Also when the panel was recreated while typing, such as for another root operator
+        if (inventoryCardTypes == null) {
+            inventoryCardTypes = OperatorLPElement.getInventoryCardTypes(Minecraft.getInstance().player);
+        }
+        return inventoryCardTypes.get(variableId);
     }
 
     protected IntList getLabelIds(String label) {
@@ -503,7 +517,12 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     public boolean cancelSelection() {
         ExpressionTextField field = getTextField();
         if (field.isDraft() || field.isFocused()) {
-            field.revert();
+            // Valid text is kept, as it would be after a pause, so this does not depend on how fast it is pressed
+            if (field.isDraft() && parseText() != null) {
+                applyText();
+            } else {
+                field.revert();
+            }
             field.setFocused(false);
             return true;
         }
@@ -948,11 +967,11 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
             textBoxY = renderParameters(guiGraphics, guiLeft, guiTop, fontRenderer, editor);
             renderTextField(guiGraphics, guiLeft, guiTop, editor, result, hoveredPath);
             if (!field.isDraft()) {
-                renderStatus(guiGraphics, guiLeft, guiTop, fontRenderer, editor.getExpression(), result);
+                renderStatus(guiGraphics, guiLeft, guiTop, fontRenderer, editor.getExpression(), result, regions);
             } else if (parseText() != null) {
-                renderStatus(guiGraphics, guiLeft, guiTop, fontRenderer, parsedText, parsedTextResult);
+                renderStatus(guiGraphics, guiLeft, guiTop, fontRenderer, parsedText, parsedTextResult, regions);
             } else {
-                renderTextError(guiGraphics, guiLeft, guiTop, fontRenderer, textError);
+                renderTextError(guiGraphics, guiLeft, guiTop, fontRenderer, field.getValue(), textError, regions);
             }
         }
     }
@@ -960,11 +979,17 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     protected void renderParameterTypeCycler(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font, ExpressionEditor editor,
                                              int index, int x, int y) {
         IValueType<?> type = editor.getExpression().parameters().get(index).type();
-        Component typeName = Component.translatable(type.getTranslationKey());
+        // The name gets the width of the widest one, so the arrows stay in place while cycling
+        int nameWidth = 0;
+        for (IValueType<?> parameterType : ExpressionEditor.PARAMETER_TYPES) {
+            nameWidth = Math.max(nameWidth, font.width(Component.translatable(parameterType.getTranslationKey())));
+        }
+        int available = ContainerLogicProgrammerBase.BASE_X + ContainerLogicProgrammerBase.MAX_WIDTH - 2 - x;
+        nameWidth = Math.min(nameWidth, available - 2 * (font.width("<") + 3));
         guiGraphics.drawString(font, "<", guiLeft + x, guiTop + y, COLOR_LINK, false);
         int nameX = x + font.width("<") + 3;
-        guiGraphics.drawString(font, typeName, guiLeft + nameX, guiTop + y, COLOR_TEXT, false);
-        int nextX = nameX + font.width(typeName) + 3;
+        drawFitted(guiGraphics, font, Component.translatable(type.getTranslationKey()).getString(), guiLeft + nameX, guiTop + y, nameWidth, 7, COLOR_TEXT);
+        int nextX = nameX + nameWidth + 3;
         guiGraphics.drawString(font, ">", guiLeft + nextX, guiTop + y, COLOR_LINK, false);
         Component tooltip = Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_TYPE);
         regions.add(new Region(x - 1, y - 1, font.width("<") + 2, 10,
@@ -978,13 +1003,13 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         return Component.translatable(expectedType.getTranslationKey());
     }
 
-    protected void renderTitle(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font) {
+    static void renderTitle(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font) {
         guiGraphics.drawString(font, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TITLE),
                 guiLeft + PANEL_X, guiTop + TITLE_Y, COLOR_TEXT, false);
     }
 
-    protected void renderTextError(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font, ExpressionParseException error) {
-        String text = getTextField().getValue();
+    static void renderTextError(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font, String text, ExpressionParseException error,
+                                List<Region> regions) {
         int position = Math.min(error.getPosition(), text.length());
         int line = 1;
         int column = 1;
@@ -997,7 +1022,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
             }
         }
         Component message = Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_ERROR, line, column, error.getComponent());
-        renderFooter(guiGraphics, guiLeft, guiTop, font, message.copy().withStyle(ChatFormatting.RED), null);
+        renderFooter(guiGraphics, guiLeft, guiTop, font, message.copy().withStyle(ChatFormatting.RED), null, regions);
     }
 
     /**
@@ -1102,8 +1127,8 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
      * or the first error instead, which keeps it from being written.
      * The check mark next to the operator name already tells when it can be written.
      */
-    protected void renderStatus(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font, Expression expression,
-                                ExpressionTypeChecker.Result result) {
+    static void renderStatus(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font, Expression expression,
+                             ExpressionTypeChecker.Result result, List<Region> regions) {
         if (!result.errors().isEmpty()) {
             ExpressionTypeChecker.Error error = result.errors().get(0);
             Component status = error.message();
@@ -1113,22 +1138,24 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
                 status = Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_STATUS_ERRORS_SLOT, result.errors().size(), error.slot() + 1, operatorName);
             }
             renderFooter(guiGraphics, guiLeft, guiTop, font, status.copy().withStyle(ChatFormatting.RED),
-                    error.message().copy().withStyle(ChatFormatting.RED));
+                    error.message().copy().withStyle(ChatFormatting.RED), regions);
             return;
         }
         IValueType<?> outputType = result.outputType();
         Component type = expression.hasParameters()
                 ? ValueTypeOperator.getSignature(ExpressionTypeChecker.getInputTypes(expression), outputType)
                 : Component.translatable(outputType.getTranslationKey()).withStyle(outputType.getDisplayColorFormat());
-        renderFooter(guiGraphics, guiLeft, guiTop, font, type, null);
+        renderFooter(guiGraphics, guiLeft, guiTop, font, type, null, regions);
     }
 
     /**
      * Draw text centered in the footer, on the dark background of the expression where the colors of types are readable.
      * Text that does not fit ends in an ellipsis.
      * @param tooltip Shown when hovering the footer, defaults to the text if it does not fit.
+     * @param regions Where the region for the tooltip is added.
      */
-    protected void renderFooter(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font, Component text, @Nullable Component tooltip) {
+    static void renderFooter(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font, Component text, @Nullable Component tooltip,
+                             List<Region> regions) {
         guiGraphics.fill(guiLeft + PANEL_X, guiTop + FOOTER_Y, guiLeft + PANEL_X + PANEL_WIDTH, guiTop + CONTENT_BOTTOM, COLOR_STRIP);
         guiGraphics.fill(guiLeft + PANEL_X + 2, guiTop + FOOTER_Y, guiLeft + PANEL_X + PANEL_WIDTH - 2, guiTop + FOOTER_Y + 1, COLOR_STRIP_LINE);
         int width = PANEL_WIDTH - 4;

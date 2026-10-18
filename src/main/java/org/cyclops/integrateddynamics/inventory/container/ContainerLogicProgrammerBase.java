@@ -324,22 +324,25 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     /**
      * Replace the whole expression of the active element.
      * If the root operator changes, the element of that operator becomes active, as when loading a card.
+     * This also happens if no operator element is active, such as for an expression that was typed in the empty panel.
      * @param action A set action.
      */
     protected void applySetExpressionAction(CompoundTag action) {
         Expression expression = ExpressionEditor.readSetAction(ValueDeseralizationContext.of(player.level()), action);
-        if (expression == null || !(activeElement instanceof OperatorLPElement current) || current.getEditor() == null) {
+        if (expression == null) {
             return;
         }
+        OperatorLPElement current = activeElement instanceof OperatorLPElement operatorElement && operatorElement.getEditor() != null
+                ? operatorElement : null;
         IOperator root = ((ExpressionNode.Operator) expression.root()).operator();
         OperatorLPElement target = current;
-        if (current.getOperator() != root) {
+        if (current == null || current.getOperator() != root) {
             target = getOperatorElement(root);
             if (target == null) {
                 return;
             }
             // Activating the target deactivates the current element, which forgets its references
-            OperatorLPElement.References references = current.getReferences();
+            OperatorLPElement.References references = current != null ? current.getReferences() : null;
             // The history and text continue in the other element
             settingExpression = true;
             try {
@@ -351,7 +354,9 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
             } finally {
                 settingExpression = false;
             }
-            target.addReferences(references);
+            if (references != null) {
+                target.addReferences(references);
+            }
         }
         // Stay at the open operator if it is still there, such as after typing a change inside it
         target.setExpression(expression, target == current ? current.getEditor().getEditPath() : new int[0]);

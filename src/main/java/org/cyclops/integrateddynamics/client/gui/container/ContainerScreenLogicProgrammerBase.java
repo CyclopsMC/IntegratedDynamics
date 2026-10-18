@@ -29,6 +29,7 @@ import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElemen
 import org.cyclops.integrateddynamics.core.client.gui.subgui.SubGuiHolder;
 import org.cyclops.integrateddynamics.core.evaluate.variable.gui.GuiElementValueTypeString;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
+import org.cyclops.integrateddynamics.core.logicprogrammer.ExpressionStartPanel;
 import org.cyclops.integrateddynamics.core.logicprogrammer.LogicProgrammerElementTypes;
 import org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElement;
 import org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern;
@@ -53,6 +54,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     private static final Rectangle ITEM_POSITION = new Rectangle(19, 18, 56, BOX_HEIGHT - 1);
 
     protected final SubGuiHolder subGuiHolder = new SubGuiHolder();
+    protected final ExpressionStartPanel expressionStartPanel;
     private final boolean hasLabeller;
     protected RenderPattern operatorConfigPattern = null;
     protected SubGuiOperatorInfo operatorInfoPattern = null;
@@ -71,6 +73,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         super(container, playerInventory, title);
         container.setGui(this);
         this.titleLabelX = 87;
+        this.expressionStartPanel = new ExpressionStartPanel(this, container);
 
         this.hasLabeller = playerInventory.contains(new ItemStack(RegistryEntries.ITEM_LABELLER));
     }
@@ -119,6 +122,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         if (operatorConfigPattern instanceof OperatorLPElementRenderPattern expressionPattern) {
             expressionPattern.tickText();
         }
+        expressionStartPanel.tick();
     }
 
     @Override
@@ -127,6 +131,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         if (operatorConfigPattern instanceof OperatorLPElementRenderPattern expressionPattern) {
             expressionPattern.applyPendingText();
         }
+        expressionStartPanel.applyPendingText();
         super.onClose();
     }
 
@@ -185,6 +190,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         }
         getScrollbar().renderWidget(guiGraphics, mouseX, mouseY, partialTicks);
         subGuiHolder.renderBg(guiGraphics, this.leftPos, this.topPos, getMinecraft().getTextureManager(), font, partialTicks, mouseX, mouseY);
+        expressionStartPanel.render(guiGraphics, font);
 
         // Draw container name
         font.drawInBatch(Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_FILTER),
@@ -283,16 +289,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
         subGuiHolder.drawGuiContainerForegroundLayer(guiGraphics, this.leftPos, this.topPos, getMinecraft().getTextureManager(), font, mouseX, mouseY);
 
-        // Draw expression panel hint
-        if (isExpressionPanelOpen() && !(container.getActiveElement() instanceof OperatorLPElement)) {
-            int panelX = ContainerLogicProgrammerBase.EXPRESSION_PANEL_X + 7;
-            int panelY = ContainerLogicProgrammerBase.EXPRESSION_PANEL_Y + 6;
-            int panelWidth = ContainerLogicProgrammerBase.EXPRESSION_PANEL_WIDTH - 13;
-            guiGraphics.drawString(font, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TITLE),
-                    offsetX + panelX, offsetY + panelY, Helpers.RGBToInt(64, 64, 64), false);
-            guiGraphics.drawWordWrap(font, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_HINT),
-                    offsetX + panelX, offsetY + panelY + 14, panelWidth, Helpers.RGBToInt(100, 100, 100));
-        }
+        expressionStartPanel.renderTooltips(guiGraphics, mouseX, mouseY);
 
         // Tooltip on the expression panel button
         if (expressionPanelButton.isHovered()) {
@@ -496,18 +493,20 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
             return true;
         }
 
-        return subGuiHolder.charTyped(keyCode, scanCode) || handleKeyCode(keyCode, scanCode) || super.charTyped(keyCode, scanCode);
+        return expressionStartPanel.charTyped(keyCode) || subGuiHolder.charTyped(keyCode, scanCode) || handleKeyCode(keyCode, scanCode)
+                || super.charTyped(keyCode, scanCode);
     }
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         // Escape first cancels an expression slot or parameter selection, before closing the gui
-        if (keyCode == GLFW.GLFW_KEY_ESCAPE && operatorConfigPattern instanceof OperatorLPElementRenderPattern expressionPattern
-                && expressionPattern.cancelSelection()) {
+        if (keyCode == GLFW.GLFW_KEY_ESCAPE && ((operatorConfigPattern instanceof OperatorLPElementRenderPattern expressionPattern
+                && expressionPattern.cancelSelection()) || expressionStartPanel.cancel())) {
             return true;
         }
         if (keyCode != GLFW.GLFW_KEY_ESCAPE) {
-            if (this.subGuiHolder.keyPressed(keyCode, scanCode, modifiers) || handleKeyCode(keyCode, scanCode)) {
+            if (expressionStartPanel.keyPressed(keyCode) || this.subGuiHolder.keyPressed(keyCode, scanCode, modifiers)
+                    || handleKeyCode(keyCode, scanCode)) {
                 return true;
             }
         }
@@ -518,8 +517,9 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     // and parameters of an expression are dragged onto slots
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        if (operatorConfigPattern instanceof OperatorLPElementRenderPattern expressionPattern
-                && expressionPattern.mouseScrolled(mouseX, mouseY, scrollX, scrollY)) {
+        if ((operatorConfigPattern instanceof OperatorLPElementRenderPattern expressionPattern
+                && expressionPattern.mouseScrolled(mouseX, mouseY, scrollX, scrollY))
+                || expressionStartPanel.mouseScrolled(mouseX, mouseY, scrollY)) {
             return true;
         }
         return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
@@ -527,8 +527,9 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        if (operatorConfigPattern instanceof OperatorLPElementRenderPattern expressionPattern
-                && expressionPattern.mouseDragged(mouseX, mouseY, button, dragX, dragY)) {
+        if ((operatorConfigPattern instanceof OperatorLPElementRenderPattern expressionPattern
+                && expressionPattern.mouseDragged(mouseX, mouseY, button, dragX, dragY))
+                || expressionStartPanel.mouseDragged(mouseX, mouseY)) {
             return true;
         }
         return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
@@ -539,12 +540,13 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         if (operatorConfigPattern instanceof OperatorLPElementRenderPattern expressionPattern) {
             expressionPattern.mouseReleased(mouseX, mouseY, button);
         }
+        expressionStartPanel.mouseReleased();
         return super.mouseReleased(mouseX, mouseY, button);
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-        if (subGuiHolder.mouseClicked(mouseX, mouseY, mouseButton)) {
+        if (expressionStartPanel.mouseClicked(mouseX, mouseY) || subGuiHolder.mouseClicked(mouseX, mouseY, mouseButton)) {
             if (isSearchFieldFocussed()) {
                 setSearchFieldFocussed(false);
             }

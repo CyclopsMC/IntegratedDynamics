@@ -36,6 +36,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
+import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
 import org.cyclops.integrateddynamics.api.network.INetwork;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
 import org.cyclops.integrateddynamics.api.part.PartPos;
@@ -59,6 +60,7 @@ import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.item.ExpressionVariableFacade;
 import org.cyclops.integrateddynamics.core.item.OperatorVariableFacade;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ExpressionEditor;
+import org.cyclops.integrateddynamics.core.logicprogrammer.LogicProgrammerElementTypes;
 import org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElement;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammer;
@@ -649,6 +651,36 @@ public class GameTestsExpressions {
 
         Pair<PartTypePanelDisplay, PartTypePanelDisplay.State> partAndState = display(helper, written);
         helper.succeedWhen(() -> assertValueEqual(partAndState.getRight().getDisplayValue(), ValueTypeInteger.ValueInteger.of(36)));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testLogicProgrammerSetExpressionWithoutOperator(GameTestHelper helper) throws ExpressionParseException {
+        ValueDeseralizationContext values = ValueDeseralizationContext.of(helper.getLevel());
+        ExpressionParser.Context context = ExpressionEditor.getParserContext(values, id -> null, label -> IntLists.EMPTY_LIST);
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        try {
+            ContainerLogicProgrammer container = new ContainerLogicProgrammer(0, player.getInventory());
+
+            // Typed in the empty panel, which makes the element of its root operator active
+            Expression expression = ExpressionParser.parse("(x: integer) -> x * 2", context);
+            container.applyExpressionAction(ExpressionEditor.actionSet(values, expression));
+            helper.assertTrue(container.getActiveElement() instanceof OperatorLPElement element
+                    && element.getOperator() == Operators.ARITHMETIC_MULTIPLICATION
+                    && element.getEditor().getExpression().equals(expression), "The expression was not set without an active element");
+
+            // Also while another kind of element is active
+            ILogicProgrammerElement other = LogicProgrammerElementTypes.VALUETYPE.getByName(ValueTypes.INTEGER.getUniqueName());
+            helper.assertTrue(other != null, "The integer element does not exist");
+            container.setActiveElement(other, 0, 0);
+            Expression addition = ExpressionParser.parse("1 + 2", context);
+            container.applyExpressionAction(ExpressionEditor.actionSet(values, addition));
+            helper.assertTrue(container.getActiveElement() instanceof OperatorLPElement element
+                    && element.getOperator() == Operators.ARITHMETIC_ADDITION
+                    && element.getEditor().getExpression().equals(addition), "The expression was not set while a value element was active");
+        } finally {
+            player.getServer().getPlayerList().remove(player);
+        }
+        helper.succeed();
     }
 
     @GameTest(template = TEMPLATE_EMPTY)

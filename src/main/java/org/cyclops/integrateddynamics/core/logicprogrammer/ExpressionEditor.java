@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.expression.tree.Expression;
@@ -16,6 +17,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeCategory;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
+import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionParseException;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionParser;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionTrees;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionTypeChecker;
@@ -23,6 +25,7 @@ import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeString;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -373,6 +376,21 @@ public class ExpressionEditor {
     public static ExpressionParser.Context getParserContext(ValueDeseralizationContext values, IntFunction<IValueType<?>> refTypes,
                                                             Function<String, IntList> labelIds) {
         return new ExpressionParser.Context(values, refTypes, labelIds, PARAMETER_TYPES::contains, ExpressionEditor::isEditable);
+    }
+
+    /**
+     * Parse the text of an expression that can be edited in the logic programmer.
+     * @param text The text.
+     * @param context The context, see {@link #getParserContext(ValueDeseralizationContext, IntFunction, Function)}.
+     * @return The expression.
+     * @throws ExpressionParseException If the text is not a valid expression, or one that is too large to edit.
+     */
+    public static Expression parse(String text, ExpressionParser.Context context) throws ExpressionParseException {
+        Expression expression = ExpressionParser.parse(text, context);
+        if (ExpressionTrees.countNodes(expression.root()) > MAX_NODES) {
+            throw new ExpressionParseException(0, Component.translatable(L10NValues.EXPRESSION_PARSE_TOO_LARGE, MAX_NODES));
+        }
+        return expression;
     }
 
     public static String sanitizeParameterName(String name) {

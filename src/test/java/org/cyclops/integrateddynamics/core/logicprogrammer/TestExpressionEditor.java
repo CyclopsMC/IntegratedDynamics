@@ -1,5 +1,7 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
+import it.unimi.dsi.fastutil.ints.IntLists;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import org.cyclops.cyclopscore.helper.CyclopsCoreInstance;
 import org.cyclops.integrateddynamics.ModBaseMocked;
 import org.cyclops.integrateddynamics.api.evaluate.expression.tree.Expression;
@@ -7,7 +9,10 @@ import org.cyclops.integrateddynamics.api.evaluate.expression.tree.ExpressionNod
 import org.cyclops.integrateddynamics.api.evaluate.expression.tree.ExpressionParameter;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionParseException;
+import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionParser;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionPrinter;
+import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionTrees;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueDeseralizationContextMocked;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
@@ -16,6 +21,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeOperator;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeString;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
+import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.junit.Test;
 import net.minecraft.nbt.CompoundTag;
 
@@ -24,6 +30,7 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 /**
  * Tests for the logic programmer expression editor.
@@ -215,6 +222,25 @@ public class TestExpressionEditor {
         assertThat(ExpressionEditor.parseValue(ValueTypes.BOOLEAN, "yes"), nullValue());
         assertThat(ExpressionEditor.parseValue(ValueTypes.STRING, ""), is((IValue) ValueTypeString.ValueString.of("")));
         assertThat(ExpressionEditor.parseValue(ValueTypes.INTEGER, ""), nullValue());
+    }
+
+    private static String balancedSum(int depth) {
+        return depth == 0 ? "x" : "(" + balancedSum(depth - 1) + " + " + balancedSum(depth - 1) + ")";
+    }
+
+    @Test
+    public void testParseSizeLimit() throws ExpressionParseException {
+        ExpressionParser.Context context = ExpressionEditor.getParserContext(ValueDeseralizationContextMocked.get(),
+                id -> null, label -> IntLists.EMPTY_LIST);
+        // Balanced, as long chains are rejected for their depth
+        Expression expression = ExpressionEditor.parse("x -> " + balancedSum(9), context);
+        assertThat(ExpressionTrees.countNodes(expression.root()), is(1023));
+        try {
+            ExpressionEditor.parse("x -> " + balancedSum(10), context);
+            fail("Expected an error for an expression that is too large");
+        } catch (ExpressionParseException e) {
+            assertThat(((TranslatableContents) e.getComponent().getContents()).getKey(), is(L10NValues.EXPRESSION_PARSE_TOO_LARGE));
+        }
     }
 
 }

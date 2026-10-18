@@ -30,6 +30,7 @@ public class L10NValues {
     public static final String GUI_RENAME = "gui." + NS + ".button.rename";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_TITLE = "gui." + NS + ".logicprogrammer.expression.title";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_HINT = "gui." + NS + ".logicprogrammer.expression.hint";
+    public static final String GUI_LOGICPROGRAMMER_EXPRESSION_PLACEHOLDER = "gui." + NS + ".logicprogrammer.expression.placeholder";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_ADD = "gui." + NS + ".logicprogrammer.expression.param_add";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_ADD_FIRST = "gui." + NS + ".logicprogrammer.expression.param_add.first";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_TOOLTIP = "gui." + NS + ".logicprogrammer.expression.param_tooltip";
@@ -148,6 +149,7 @@ public class L10NValues {
     public static final String EXPRESSION_PARSE_AMBIGUOUS_LABEL = "expression." + NS + ".parse.ambiguous_label";
     public static final String EXPRESSION_PARSE_TOO_DEEP = "expression." + NS + ".parse.too_deep";
     public static final String EXPRESSION_PARSE_TOO_LONG = "expression." + NS + ".parse.too_long";
+    public static final String EXPRESSION_PARSE_TOO_LARGE = "expression." + NS + ".parse.too_large";
     public static final String EXPRESSION_PARSE_TRAILING = "expression." + NS + ".parse.trailing";
     public static final String EXPRESSION_PARSE_EXPECTED_VALUE = "expression." + NS + ".parse.expected_value";
     public static final String EXPRESSION_PARSE_EXPECTED_VALUE_END = "expression." + NS + ".parse.expected_value_end";
