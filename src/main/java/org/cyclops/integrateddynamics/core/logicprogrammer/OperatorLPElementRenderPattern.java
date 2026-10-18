@@ -183,7 +183,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         int typeX = EDITOR_X + valueField.getWidth() + 3;
         this.typeSelector = new WidgetArrowedListField<>(Minecraft.getInstance().font, guiLeft + typeX, guiTop + EDITOR_Y + 1,
                 EDITOR_RIGHT - typeX, EDITOR_HEIGHT, true, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_TYPE),
-                true, ExpressionEditor.PARAMETER_TYPES);
+                true, ExpressionEditor.getParameterTypes());
         this.typeSelector.setListener(this::onTypeSelected);
         updateEditor();
 
@@ -213,7 +213,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
      */
     protected static int getValueFieldWidth(Font font) {
         int nameWidth = 0;
-        for (IValueType<?> type : ExpressionEditor.PARAMETER_TYPES) {
+        for (IValueType<?> type : ExpressionEditor.getParameterTypes()) {
             nameWidth = Math.max(nameWidth, font.width(Component.translatable(type.getTranslationKey())));
         }
         return Math.max(EDITOR_MIN_WIDTH, EDITOR_RIGHT - EDITOR_X - 3 - nameWidth - TYPE_SELECTOR_PADDING);
@@ -926,7 +926,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
                     }
                 }
                 case ExpressionNode.Const constant -> {
-                    if (!OperatorLPElement.isItemConstant(constant)) {
+                    if (OperatorLPElement.getConstantItem(constant).isEmpty()) {
                         guiGraphics.fill(x + 1, y + 1, x + 17, y + 17, COLOR_CONST);
                         drawFitted(guiGraphics, fontRenderer, ExpressionPrinter.printValue(constant.value()), x + 1, y + 1, 16, 16, COLOR_TEXT);
                     }
@@ -1238,7 +1238,8 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
                 List<Component> lines = Lists.newArrayList();
                 if (editor != null) {
                     ExpressionNode child = editor.getChild(i);
-                    if (!(child instanceof ExpressionNode.Empty) && !(child instanceof ExpressionNode.Ref) && !OperatorLPElement.isItemConstant(child)) {
+                    // The tooltip of an item in the slot says what it is
+                    if (!(child instanceof ExpressionNode.Empty) && !(child instanceof ExpressionNode.Ref) && temporaryInputSlots.getItem(i).isEmpty()) {
                         lines.add(Component.literal(ExpressionPrinter.printNode(editor.getExpression(),
                                 ExpressionTrees.append(editor.getEditPath(), i), this::getLabel, editor.check())));
                     }

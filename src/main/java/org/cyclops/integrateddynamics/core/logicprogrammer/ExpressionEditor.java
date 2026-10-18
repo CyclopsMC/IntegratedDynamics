@@ -31,6 +31,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,9 +62,9 @@ public class ExpressionEditor {
     public static final int MAX_NODES = 1024;
 
     /**
-     * The types a parameter can be given in the logic programmer, in cycling order.
+     * The types of Integrated Dynamics that a parameter can be given, in cycling order, before those of add-ons.
      */
-    public static final List<IValueType<?>> PARAMETER_TYPES = List.of(
+    private static final List<IValueType<?>> PREFERRED_PARAMETER_TYPES = List.of(
             ValueTypes.CATEGORY_ANY, ValueTypes.BOOLEAN, ValueTypes.INTEGER, ValueTypes.LONG, ValueTypes.DOUBLE,
             ValueTypes.CATEGORY_NUMBER, ValueTypes.STRING, ValueTypes.LIST, ValueTypes.OPERATOR, ValueTypes.NBT,
             ValueTypes.OBJECT_ITEMSTACK, ValueTypes.OBJECT_BLOCK, ValueTypes.OBJECT_FLUIDSTACK, ValueTypes.OBJECT_ENTITY,
@@ -223,8 +224,7 @@ public class ExpressionEditor {
         if (node instanceof ExpressionNode.Param param && param.index() < expression.parameters().size()) {
             ExpressionParameter parameter = expression.parameters().get(param.index());
             IValueType<?> expectedType = getExpectedType(slot);
-            if (parameter.type() == ValueTypes.CATEGORY_ANY && expectedType != ValueTypes.CATEGORY_ANY
-                    && (!(expectedType instanceof IValueTypeCategory<?>) || PARAMETER_TYPES.contains(expectedType))) {
+            if (parameter.type() == ValueTypes.CATEGORY_ANY && expectedType != ValueTypes.CATEGORY_ANY && isParameterType(expectedType)) {
                 List<ExpressionParameter> parameters = new ArrayList<>(expression.parameters());
                 parameters.set(param.index(), parameter.withType(expectedType));
                 expression = expression.withParameters(parameters);
@@ -286,7 +286,7 @@ public class ExpressionEditor {
     }
 
     public void setParameterType(int index, IValueType<?> type) {
-        if (index < 0 || index >= expression.parameters().size() || !PARAMETER_TYPES.contains(type)) {
+        if (index < 0 || index >= expression.parameters().size() || !isParameterType(type)) {
             return;
         }
         List<ExpressionParameter> parameters = new ArrayList<>(expression.parameters());
@@ -311,6 +311,29 @@ public class ExpressionEditor {
     }
 
     /**
+     * @param type A value type.
+     * @return If parameters can have this type: Any, Number, or any registered type that is not a category, also of add-ons.
+     */
+    public static boolean isParameterType(IValueType<?> type) {
+        if (type == ValueTypes.CATEGORY_ANY || type == ValueTypes.CATEGORY_NUMBER) {
+            return true;
+        }
+        return !type.isCategory() && ValueTypes.REGISTRY.getValueType(type.getUniqueName()) == type;
+    }
+
+    /**
+     * @return The types parameters can have, in cycling order: those of Integrated Dynamics, then those of add-ons by name.
+     */
+    public static List<IValueType<?>> getParameterTypes() {
+        List<IValueType<?>> types = new ArrayList<>(PREFERRED_PARAMETER_TYPES);
+        ValueTypes.REGISTRY.getValueTypes().stream()
+                .filter(type -> !types.contains(type) && isParameterType(type))
+                .sorted(Comparator.comparing(type -> type.getUniqueName().toString()))
+                .forEach(types::add);
+        return types;
+    }
+
+    /**
      * @param operator An operator.
      * @return If the operator can be edited in the logic programmer, which needs a slot for each input.
      */
@@ -330,7 +353,7 @@ public class ExpressionEditor {
         List<ExpressionParameter> parameters = expression.parameters();
         for (int i = 0; i < parameters.size(); i++) {
             ExpressionParameter parameter = parameters.get(i);
-            if (!ExpressionParser.isValidParameterName(parameter.name()) || !PARAMETER_TYPES.contains(parameter.type())) {
+            if (!ExpressionParser.isValidParameterName(parameter.name()) || !isParameterType(parameter.type())) {
                 return false;
             }
             for (int j = 0; j < i; j++) {
@@ -364,7 +387,7 @@ public class ExpressionEditor {
      */
     public static ExpressionParser.Context getParserContext(ValueDeseralizationContext values, IntFunction<IValueType<?>> refTypes,
                                                             Function<String, IntList> labelIds) {
-        return new ExpressionParser.Context(values, refTypes, labelIds, PARAMETER_TYPES::contains, ExpressionEditor::isEditable);
+        return new ExpressionParser.Context(values, refTypes, labelIds, ExpressionEditor::isParameterType, ExpressionEditor::isEditable);
     }
 
     /**

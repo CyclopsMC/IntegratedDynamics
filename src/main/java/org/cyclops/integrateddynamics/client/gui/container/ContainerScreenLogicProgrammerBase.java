@@ -3,6 +3,7 @@ package org.cyclops.integrateddynamics.client.gui.container;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -24,9 +25,11 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElement;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
 import org.cyclops.integrateddynamics.core.client.gui.subgui.SubGuiHolder;
+import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionPrinter;
 import org.cyclops.integrateddynamics.core.evaluate.variable.gui.GuiElementValueTypeString;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ExpressionStartPanel;
@@ -282,6 +285,21 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
                 ITEM_POSITION.y + BOX_HEIGHT * i + offsetY + (absolute ? this.topPos : 0),
                 ITEM_POSITION.width, ITEM_POSITION.height
         );
+    }
+
+    @Override
+    protected List<Component> getTooltipFromContainerItem(ItemStack itemStack) {
+        List<Component> lines = super.getTooltipFromContainerItem(itemStack);
+        // A constant that its item does not show exactly, such as the amount of a fluid in a bucket
+        if (hoveredSlot != null && hoveredSlot.container == getMenu().getTemporaryInputSlots()
+                && getMenu().getActiveElement() instanceof OperatorLPElement element) {
+            IValue value = element.getInexactItemConstant(hoveredSlot.getContainerSlot());
+            if (value != null) {
+                lines = Lists.newArrayList(lines);
+                lines.add(Math.min(1, lines.size()), Component.literal(ExpressionPrinter.printValue(value)).withStyle(ChatFormatting.GRAY));
+            }
+        }
+        return lines;
     }
 
     @Override

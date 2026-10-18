@@ -329,8 +329,28 @@ public class TestExpressionValueLiterals {
         assertThat(ExpressionParser.isKept(typed, parseTag("{id: \"minecraft:diamond\", tag: {a: [1]}}")), is(false));
         assertThat(ExpressionParser.isKept(typed, parseTag("{id: \"minecraft:air\", tag: {a: [1, 2]}}")), is(false));
         assertThat(ExpressionParser.isKept(typed, parseTag("{tag: {a: [1, 2]}}")), is(false));
-        assertThat(ExpressionParser.isKept(parseTag("1b"), parseTag("1")), is(false));
         assertThat(ExpressionParser.isKept(parseTag("{}"), parseTag("{a: 1}")), is(true));
+    }
+
+    @Test
+    public void testIsKeptNumbers() throws Exception {
+        // Another number type with the same value, as for amounts that are longs
+        assertThat(ExpressionParser.isKept(parseTag("1000"), parseTag("1000L")), is(true));
+        assertThat(ExpressionParser.isKept(parseTag("1b"), parseTag("1")), is(true));
+        assertThat(ExpressionParser.isKept(parseTag("2"), parseTag("2.0d")), is(true));
+        assertThat(ExpressionParser.isKept(parseTag("1.1f"), parseTag(Double.toString((double) 1.1f) + "d")), is(true));
+        assertThat(ExpressionParser.isKept(parseTag("{amount: 5}"), parseTag("{amount: 5L, id: \"a\"}")), is(true));
+        // But not another value
+        assertThat(ExpressionParser.isKept(parseTag("1.5"), parseTag("1")), is(false));
+        assertThat(ExpressionParser.isKept(parseTag("300"), parseTag("44b")), is(false));
+        assertThat(ExpressionParser.isKept(parseTag("1.1d"), parseTag("1.1f")), is(false));
+        assertThat(ExpressionParser.isKept(parseTag("5000000000L"), parseTag("705032704")), is(false));
+        assertThat(ExpressionParser.isKept(parseTag("\"1\""), parseTag("1")), is(false));
+        // Lists and arrays of the same numbers
+        assertThat(ExpressionParser.isKept(parseTag("[1, 2]"), parseTag("[I; 1, 2]")), is(true));
+        assertThat(ExpressionParser.isKept(parseTag("[1, 2]"), parseTag("[L; 1L, 2L]")), is(true));
+        assertThat(ExpressionParser.isKept(parseTag("[1, 2]"), parseTag("[I; 1, 3]")), is(false));
+        assertThat(ExpressionParser.isKept(parseTag("[I; 1, 2]"), parseTag("[1, 2, 3]")), is(false));
     }
 
     private static Tag parseTag(String text) throws Exception {

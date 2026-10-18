@@ -21,6 +21,8 @@ import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.material.Fluids;
+import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import org.apache.commons.lang3.tuple.Pair;
@@ -48,6 +50,8 @@ import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionPa
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionTrees;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeBlock;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeFluidStack;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueObjectTypeItemStack;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
@@ -413,6 +417,40 @@ public class GameTestsExpressions {
         helper.succeedWhen(() -> {
             helper.assertTrue(partAndState.getRight().getDisplayValue() == null, "Display value should be empty");
         });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testLogicProgrammerSlotItemsOfOtherTypes(GameTestHelper helper) {
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+
+        // A bucket in a fluid slot gives its fluid, as in the element of fluids
+        OperatorLPElement fluidElement = new OperatorLPElement(Operators.OBJECT_FLUIDSTACK_AMOUNT);
+        fluidElement.activate();
+        helper.assertTrue(fluidElement.isItemValidForSlot(0, new ItemStack(Items.WATER_BUCKET)), "Bucket is not accepted");
+        helper.assertTrue(!fluidElement.isItemValidForSlot(0, new ItemStack(Items.DIAMOND)), "Item without fluid is accepted");
+        fluidElement.onInputSlotUpdated(player, 0, new ItemStack(Items.WATER_BUCKET));
+        helper.assertValueEqual(fluidElement.getEditor().getChild(0),
+                new ExpressionNode.Const(ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(Fluids.WATER, 1000))), "Bucket constant");
+
+        // The bucket that shows a typed amount keeps that amount
+        ExpressionNode.Const lava = new ExpressionNode.Const(ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(Fluids.LAVA, 250)));
+        fluidElement.getEditor().setChild(0, lava);
+        fluidElement.onInputSlotUpdated(player, 0, new ItemStack(Items.LAVA_BUCKET));
+        helper.assertValueEqual(fluidElement.getEditor().getChild(0), lava, "Typed amount");
+
+        // Taking the bucket out clears the slot
+        fluidElement.onInputSlotUpdated(player, 0, ItemStack.EMPTY);
+        helper.assertValueEqual(fluidElement.getEditor().getChild(0), ExpressionNode.EMPTY, "Slot after taking the bucket");
+
+        // A block item in a block slot gives its block
+        OperatorLPElement blockElement = new OperatorLPElement(Operators.OBJECT_BLOCK_OPAQUE);
+        blockElement.activate();
+        helper.assertTrue(!blockElement.isItemValidForSlot(0, new ItemStack(Items.DIAMOND)), "Item without block is accepted");
+        blockElement.onInputSlotUpdated(player, 0, new ItemStack(Items.STONE));
+        helper.assertValueEqual(blockElement.getEditor().getChild(0),
+                new ExpressionNode.Const(ValueObjectTypeBlock.ValueBlock.of(Blocks.STONE.defaultBlockState())), "Block constant");
+
+        helper.succeed();
     }
 
     @GameTest(template = TEMPLATE_EMPTY)

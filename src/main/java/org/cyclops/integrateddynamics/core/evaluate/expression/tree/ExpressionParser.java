@@ -4,8 +4,9 @@ import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.ints.IntLists;
+import net.minecraft.nbt.CollectionTag;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NumericTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.TagParser;
@@ -49,7 +50,7 @@ import java.util.stream.Collectors;
  * <pre>
  * expression     := [parameters "=&gt;"] ternary
  * parameters     := NAME | "(" parameter ("," parameter)* ")"
- * parameter      := NAME [":" TYPE]
+ * parameter      := NAME [":" [NAME ":"] NAME]
  * ternary        := or ["?" ternary ":" ternary]
  * or             := and ("||" and)*
  * and            := equality ("&amp;&amp;" equality)*
@@ -144,13 +145,26 @@ public final class ExpressionParser {
     }
 
     /**
-     * @param name The name of a type in the text form.
-     * @return The type, or null if unknown.
+     * @param name The name of a type in the text form, which types of add-ons can also leave their namespace out of
+     *             when no other type has that name, as in {@code chemicalstack}.
+     * @return The type, or null if unknown or ambiguous.
      */
     @Nullable
     public static IValueType<?> getValueType(String name) {
         ResourceLocation id = ResourceLocation.tryParse(name.contains(":") ? name : Reference.MOD_ID + ":" + name);
-        return id == null ? null : ValueTypes.REGISTRY.getValueType(id);
+        IValueType<?> type = id == null ? null : ValueTypes.REGISTRY.getValueType(id);
+        if (type != null || name.contains(":")) {
+            return type;
+        }
+        for (IValueType<?> candidate : ValueTypes.REGISTRY.getValueTypes()) {
+            if (candidate.getUniqueName().getPath().equals(name)) {
+                if (type != null) {
+                    return null;
+                }
+                type = candidate;
+            }
+        }
+        return type;
     }
 
     private static boolean isNameStart(char c) {
@@ -202,6 +216,10 @@ public final class ExpressionParser {
                     return false;
                 }
                 i += 2;
+                // With the namespace of an add-on, as in mod:type
+                if (isSymbol(peek(i), ":") && peek(i + 1).kind() == Kind.NAME) {
+                    i += 2;
+                }
             }
             if (!isSymbol(peek(i), ",")) {
                 return isSymbol(peek(i), ")") && isSymbol(peek(i + 1), "=>");
@@ -238,12 +256,17 @@ public final class ExpressionParser {
         IValueType<?> type = ValueTypes.CATEGORY_ANY;
         if (accept(":")) {
             Token typeName = next();
-            type = getValueType(typeName.text());
+            String typeText = typeName.text();
+            if (typeName.kind() == Kind.NAME && isSymbol(peek(0), ":") && peek(1).kind() == Kind.NAME) {
+                next();
+                typeText += ":" + next().text();
+            }
+            type = getValueType(typeText);
             if (type == null) {
-                throw error(typeName, L10NValues.EXPRESSION_PARSE_UNKNOWN_TYPE, typeName.text());
+                throw error(typeName, L10NValues.EXPRESSION_PARSE_UNKNOWN_TYPE, typeText);
             }
             if (!context.parameterTypes().test(type)) {
-                throw error(typeName, L10NValues.EXPRESSION_PARSE_PARAMETER_TYPE, typeName.text());
+                throw error(typeName, L10NValues.EXPRESSION_PARSE_PARAMETER_TYPE, typeText);
             }
         }
         return new ExpressionParameter(name.text(), type);
@@ -438,8 +461,9 @@ public final class ExpressionParser {
             }
             return true;
         }
-        if (typed instanceof ListTag typedList) {
-            if (!(written instanceof ListTag writtenList) || typedList.size() != writtenList.size()) {
+        // Lists and arrays, which can be written as each other, as in [1, 2] for [I; 1, 2]
+        if (typed instanceof CollectionTag<?> typedList) {
+            if (!(written instanceof CollectionTag<?> writtenList) || typedList.size() != writtenList.size()) {
                 return false;
             }
             for (int i = 0; i < typedList.size(); i++) {
@@ -449,6 +473,10 @@ public final class ExpressionParser {
             }
             return true;
         }
+        // Numbers of another type with the same value, as in 1000 for 1000L
+        if (typed instanceof NumericTag typedNumber && written instanceof NumericTag writtenNumber) {
+            return isSameNumber(typedNumber.getAsNumber(), writtenNumber.getAsNumber());
+        }
         // Ids can be written without the minecraft namespace, as in commands
         if (typed instanceof StringTag && written instanceof StringTag) {
             ResourceLocation typedId = ResourceLocation.tryParse(typed.getAsString());
@@ -457,6 +485,17 @@ public final class ExpressionParser {
             }
         }
         return typed.equals(written);
+    }
+
+    private static boolean isSameNumber(Number a, Number b) {
+        if (isIntegral(a) && isIntegral(b)) {
+            return a.longValue() == b.longValue();
+        }
+        return Double.compare(a.doubleValue(), b.doubleValue()) == 0;
+    }
+
+    private static boolean isIntegral(Number number) {
+        return number instanceof Byte || number instanceof Short || number instanceof Integer || number instanceof Long;
     }
 
     private ExpressionNode parseName(Token token) throws ExpressionParseException {
