@@ -29,7 +29,6 @@ public class L10NValues {
 
     public static final String GUI_RENAME = "gui." + NS + ".button.rename";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_TITLE = "gui." + NS + ".logicprogrammer.expression.title";
-    public static final String GUI_LOGICPROGRAMMER_EXPRESSION_HINT = "gui." + NS + ".logicprogrammer.expression.hint";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_PLACEHOLDER = "gui." + NS + ".logicprogrammer.expression.placeholder";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_ADD = "gui." + NS + ".logicprogrammer.expression.param_add";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_ADD_FIRST = "gui." + NS + ".logicprogrammer.expression.param_add.first";

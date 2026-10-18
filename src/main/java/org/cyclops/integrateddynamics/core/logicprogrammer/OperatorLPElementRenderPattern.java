@@ -85,7 +85,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     static final int PANEL_WIDTH = ContainerLogicProgrammerBase.EXPRESSION_PANEL_WIDTH - 13;
     static final int TITLE_Y = ContainerLogicProgrammerBase.EXPRESSION_PANEL_Y + 6;
     // Parameter chips wrap onto as many rows as needed, followed by the button to add one, the expression follows below them
-    private static final int PARAMS_Y = TITLE_Y + 12;
+    static final int PARAMS_Y = TITLE_Y + 12;
     private static final int CHIP_HEIGHT = 12;
     static final int LINE_HEIGHT = 9;
     // Buttons right of the title, with their icons in line with it

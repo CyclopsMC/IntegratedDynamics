@@ -39,10 +39,9 @@ import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElem
 import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.COLOR_TEXT_LIGHT;
 import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.CONTENT_BOTTOM;
 import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.FOOTER_Y;
-import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.LINE_HEIGHT;
 import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.PANEL_WIDTH;
 import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.PANEL_X;
-import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.TITLE_Y;
+import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.PARAMS_Y;
 import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.drawOutline;
 import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.renderFooter;
 import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.renderStatus;
@@ -58,13 +57,12 @@ import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElem
 @OnlyIn(Dist.CLIENT)
 public class ExpressionStartPanel {
 
-    private static final int HINT_Y = TITLE_Y + 14;
-    private static final int COLOR_HINT = 0xFF646464;
+    // Where the parameters start once an operator is selected
+    private static final int TEXT_BOX_Y = PARAMS_Y;
 
     private final ContainerScreenLogicProgrammerBase<?> gui;
     private final ContainerLogicProgrammerBase container;
     private final List<Region> regions = new ArrayList<>();
-    private int textBoxY = FOOTER_Y;
     @Nullable
     private Int2ObjectMap<IValueType<?>> inventoryCardTypes = null;
     @Nullable
@@ -198,7 +196,7 @@ public class ExpressionStartPanel {
     protected boolean isInTextBox(double mouseX, double mouseY) {
         int x = (int) mouseX - gui.getGuiLeft();
         int y = (int) mouseY - gui.getGuiTop();
-        return x >= PANEL_X && x < PANEL_X + PANEL_WIDTH && y >= textBoxY && y < FOOTER_Y;
+        return x >= PANEL_X && x < PANEL_X + PANEL_WIDTH && y >= TEXT_BOX_Y && y < FOOTER_Y;
     }
 
     public boolean mouseClicked(double mouseX, double mouseY) {
@@ -213,7 +211,7 @@ public class ExpressionStartPanel {
                 // Cards may have been added to the inventory since
                 inventoryCardTypes = null;
             }
-            field.mouseClicked(mouseX - gui.getGuiLeft() - PANEL_X - 2, mouseY - gui.getGuiTop() - textBoxY - 2);
+            field.mouseClicked(mouseX - gui.getGuiLeft() - PANEL_X - 2, mouseY - gui.getGuiTop() - TEXT_BOX_Y - 2);
             field.setPressed(true);
             return true;
         }
@@ -229,7 +227,7 @@ public class ExpressionStartPanel {
     public boolean mouseDragged(double mouseX, double mouseY) {
         ExpressionTextField field = getTextField();
         if (isShown() && field.isPressed()) {
-            field.mouseDragged(mouseX - gui.getGuiLeft() - PANEL_X - 2, mouseY - gui.getGuiTop() - textBoxY - 2);
+            field.mouseDragged(mouseX - gui.getGuiLeft() - PANEL_X - 2, mouseY - gui.getGuiTop() - TEXT_BOX_Y - 2);
             return true;
         }
         return false;
@@ -289,14 +287,11 @@ public class ExpressionStartPanel {
         int guiLeft = gui.getGuiLeft();
         int guiTop = gui.getGuiTop();
         renderTitle(guiGraphics, guiLeft, guiTop, font);
-        Component hint = Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_HINT);
-        guiGraphics.drawWordWrap(font, hint, guiLeft + PANEL_X, guiTop + HINT_Y, PANEL_WIDTH, COLOR_HINT);
-        textBoxY = Math.min(HINT_Y + font.split(hint, PANEL_WIDTH).size() * LINE_HEIGHT + 4, FOOTER_Y - 2 * LINE_HEIGHT);
 
         // The text box, as in the panel of an expression
         ExpressionTextField field = getTextField();
         int x = guiLeft + PANEL_X;
-        int y = guiTop + textBoxY;
+        int y = guiTop + TEXT_BOX_Y;
         guiGraphics.fill(x, y, x + PANEL_WIDTH, guiTop + CONTENT_BOTTOM, COLOR_STRIP);
         if (field.isFocused()) {
             drawOutline(guiGraphics, x, y, PANEL_WIDTH, guiTop + FOOTER_Y - y, COLOR_FOCUS);
