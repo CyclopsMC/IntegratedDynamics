@@ -32,7 +32,8 @@ public class CommandTest implements Command<CommandSourceStack> {
             P + "TestEntityOperators",
             P + "TestFluidStackOperators",
             P + "TestIngredientsOperators",
-            P + "TestRecipeOperators"
+            P + "TestRecipeOperators",
+            P + "TestExpressionValueLiteralsInGame"
     );
 
     @Override

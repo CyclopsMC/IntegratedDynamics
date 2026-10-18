@@ -13,7 +13,10 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeDouble;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeList;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeListProxyMaterialized;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeLong;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeNbt;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeOperator;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeString;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
@@ -132,13 +135,49 @@ public final class ExpressionPrinter {
             case ValueTypeString.ValueString string -> quote(string.getRawValue());
             case ValueTypeOperator.ValueOperator operator when OperatorNames.isRegistered(operator.getRawValue()) ->
                     "(" + OperatorNames.getValueName(operator.getRawValue()) + ")";
-            default -> "@" + ExpressionParser.getTypeName(value.getType()) + ValueHelpers.serializeRaw(values, value);
+            case ValueTypeList.ValueList list when isListLiteral(list) -> printList(list, values);
+            // NBT is written as the tag itself, as in commands, and () for none
+            case ValueTypeNbt.ValueNbt nbt -> printTyped(value, nbt.getRawValue().map(Object::toString).orElse("()"));
+            default -> printTyped(value, ValueHelpers.serializeRaw(values, value).toString());
         };
     }
 
     /**
+     * @param value A value.
+     * @param serialized Its serialized form.
+     * @return The value written with its type, separated by a space when the type name would otherwise continue into it.
+     */
+    private static String printTyped(IValue value, String serialized) {
+        char first = serialized.isEmpty() ? ' ' : serialized.charAt(0);
+        boolean separate = Character.isLetterOrDigit(first) || "_.:/-+".indexOf(first) >= 0;
+        return "@" + ExpressionParser.getTypeName(value.getType()) + (separate ? " " : "") + serialized;
+    }
+
+    /**
+     * @param list A list.
+     * @return If it can be written as [a, b], which {@link ExpressionParser} reads back into the same list,
+     *         so if it is not lazy and its type is the one its values give it.
+     */
+    private static boolean isListLiteral(ValueTypeList.ValueList<?, ?> list) {
+        if (!(list.getRawValue() instanceof ValueTypeListProxyMaterialized<?, ?> proxy)) {
+            return false;
+        }
+        List<IValue> elements = new ArrayList<>();
+        proxy.forEach(elements::add);
+        return ExpressionParser.getListType(elements) == proxy.getValueType();
+    }
+
+    private static String printList(ValueTypeList.ValueList<?, ?> list, ValueDeseralizationContext values) {
+        List<String> elements = new ArrayList<>();
+        for (IValue element : list.getRawValue()) {
+            elements.add(printLiteral(element, values));
+        }
+        return "[" + String.join(", ", elements) + "]";
+    }
+
+    /**
      * @param text A text.
-     * @return The text between quotes, with quotes, backslashes and control characters escaped.
+     * @return The text between quotes, with quotes, backslashes and characters that pasting drops escaped.
      */
     public static String quote(String text) {
         StringBuilder sb = new StringBuilder("\"");
@@ -150,7 +189,8 @@ public final class ExpressionPrinter {
                 case '\t' -> sb.append("\\t");
                 case '\r' -> sb.append("\\r");
                 default -> {
-                    if (c < 0x20) {
+                    // Also characters that pasting drops, and curly quotes, which end a string
+                    if (c < 0x20 || c == 0x7F || c == '\u00A7' || ExpressionParser.isQuote(c)) {
                         sb.append(String.format("\\u%04x", (int) c));
                     } else {
                         sb.append(c);

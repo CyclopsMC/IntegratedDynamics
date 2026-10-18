@@ -4,6 +4,9 @@ import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.ints.IntLists;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
@@ -22,7 +25,9 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeBoolean;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeDouble;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeInteger;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeList;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeLong;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeNbt;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeOperator;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeString;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
@@ -68,7 +73,7 @@ public final class ExpressionParser {
     private static final List<List<String>> BINARY_LEVELS = List.of(
             List.of("||"), List.of("&&"), List.of("==", "!="), List.of("<", "<=", ">", ">="), List.of("+", "-"), List.of("*", "/", "%"));
     private static final List<String> SYMBOLS = List.of(
-            "->", "==", "!=", "<=", ">=", "&&", "||", "(", ")", ",", "?", ":", "+", "-", "*", "/", "%", "<", ">", "!");
+            "->", "==", "!=", "<=", ">=", "&&", "||", "(", ")", "[", "]", ",", "?", ":", "+", "-", "*", "/", "%", "<", ">", "!");
     private static final Set<String> RESERVED_NAMES = Set.of("true", "false", "NaN", "Infinity");
 
     private final Context context;
@@ -90,7 +95,7 @@ public final class ExpressionParser {
      */
     public static Expression parse(String text, Context context) throws ExpressionParseException {
         if (text.length() > MAX_LENGTH) {
-            throw new ExpressionParseException(MAX_LENGTH, Component.translatable(L10NValues.EXPRESSION_PARSE_TOO_LONG));
+            throw new ExpressionParseException(MAX_LENGTH, Component.translatable(L10NValues.EXPRESSION_PARSE_TOO_LONG, MAX_LENGTH));
         }
         return new ExpressionParser(context, new Lexer(text, context).tokenize()).parseExpression();
     }
@@ -300,6 +305,9 @@ public final class ExpressionParser {
                 if (token.text().equals("?")) {
                     return ExpressionNode.EMPTY;
                 }
+                if (token.text().equals("[")) {
+                    return new ExpressionNode.Const(parseList(token));
+                }
                 if (token.text().equals("(")) {
                     if (isOperatorValue(peek(0)) && isSymbol(peek(1), ")")) {
                         Token name = next();
@@ -316,6 +324,96 @@ public final class ExpressionParser {
             }
             default -> throw error(token, L10NValues.EXPRESSION_PARSE_EXPECTED_VALUE_END);
         }
+    }
+
+    /**
+     * Read a list of values after its opening bracket, such as ["a", "b"].
+     * A comma after the last value is allowed, as in text that is copied from elsewhere.
+     */
+    private IValue parseList(Token open) throws ExpressionParseException {
+        enter(open);
+        List<IValue> values = new ArrayList<>();
+        while (!accept("]")) {
+            Token start = peek(0);
+            if (!(parseTernary() instanceof ExpressionNode.Const constant)) {
+                throw error(start, L10NValues.EXPRESSION_PARSE_LIST_ELEMENT);
+            }
+            values.add(constant.value());
+            if (!accept(",")) {
+                expect("]");
+                break;
+            }
+        }
+        nesting--;
+        return ValueTypeList.ValueList.ofList((IValueType) getListType(values), values);
+    }
+
+    /**
+     * @param values The values of a list.
+     * @return The type of a list literal with these values: the type they share, or Any if they differ or there are none.
+     */
+    public static IValueType<?> getListType(List<? extends IValue> values) {
+        IValueType<?> type = values.isEmpty() ? ValueTypes.CATEGORY_ANY : values.get(0).getType();
+        for (IValue value : values) {
+            if (value.getType() != type) {
+                return ValueTypes.CATEGORY_ANY;
+            }
+        }
+        return type;
+    }
+
+    /**
+     * @param c A character.
+     * @return If it separates tokens, also spaces that text copied from elsewhere can contain, such as non-breaking ones.
+     */
+    static boolean isWhitespace(char c) {
+        return Character.isWhitespace(c) || Character.isSpaceChar(c) || c == '\u200B' || c == '\uFEFF';
+    }
+
+    /**
+     * @param c A character.
+     * @return If it starts or ends a string, also curly quotes that text copied from elsewhere can contain.
+     */
+    static boolean isQuote(char c) {
+        return c == '"' || (c >= '\u201C' && c <= '\u201F');
+    }
+
+    /**
+     * @param typed A tag as it was typed.
+     * @param written The tag of the value that was read from it.
+     * @return If everything that was typed is kept, where the written tag can add defaults.
+     */
+    static boolean isKept(Tag typed, Tag written) {
+        if (typed instanceof CompoundTag typedCompound) {
+            if (!(written instanceof CompoundTag writtenCompound)) {
+                return false;
+            }
+            for (String key : typedCompound.getAllKeys()) {
+                if (!writtenCompound.contains(key) || !isKept(typedCompound.get(key), writtenCompound.get(key))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        if (typed instanceof ListTag typedList) {
+            if (!(written instanceof ListTag writtenList) || typedList.size() != writtenList.size()) {
+                return false;
+            }
+            for (int i = 0; i < typedList.size(); i++) {
+                if (!isKept(typedList.get(i), writtenList.get(i))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        // Ids can be written without the minecraft namespace, as in commands
+        if (typed instanceof StringTag && written instanceof StringTag) {
+            ResourceLocation typedId = ResourceLocation.tryParse(typed.getAsString());
+            if (typedId != null && typedId.equals(ResourceLocation.tryParse(written.getAsString()))) {
+                return true;
+            }
+        }
+        return typed.equals(written);
     }
 
     private ExpressionNode parseName(Token token) throws ExpressionParseException {
@@ -556,13 +654,13 @@ public final class ExpressionParser {
             while (position < text.length()) {
                 char c = text.charAt(position);
                 int start = position;
-                if (Character.isWhitespace(c)) {
+                if (isWhitespace(c)) {
                     position++;
                 } else if (isNameStart(c)) {
                     tokens.add(new Token(Kind.NAME, readName(), start, null));
                 } else if (Character.isDigit(c)) {
                     tokens.add(new Token(Kind.NUMBER, readNumber(), start, null));
-                } else if (c == '"') {
+                } else if (isQuote(c)) {
                     String string = readString();
                     tokens.add(new Token(Kind.STRING, string, start, string));
                 } else if (c == '#') {
@@ -625,7 +723,7 @@ public final class ExpressionParser {
             StringBuilder sb = new StringBuilder();
             while (position < text.length()) {
                 char c = text.charAt(position++);
-                if (c == '"') {
+                if (isQuote(c)) {
                     return sb.toString();
                 }
                 if (c != '\\') {
@@ -676,7 +774,7 @@ public final class ExpressionParser {
                 String label = readName();
                 return new Token(Kind.REF, "#" + label, start, label);
             }
-            if (position < text.length() && text.charAt(position) == '"') {
+            if (position < text.length() && isQuote(text.charAt(position))) {
                 String label = readString();
                 return new Token(Kind.REF, text.substring(start, position), start, label);
             }
@@ -699,6 +797,11 @@ public final class ExpressionParser {
             reader.setCursor(position);
             reader.skipWhitespace();
             int valueStart = reader.getCursor();
+            // No NBT at all, as an empty NBT value field gives
+            if (valueType == ValueTypes.NBT && text.startsWith("()", valueStart)) {
+                position = valueStart + 2;
+                return new Token(Kind.TYPED, text.substring(start, position), start, ValueTypeNbt.ValueNbt.of());
+            }
             Tag tag;
             try {
                 tag = new TagParser(reader).readValue();
@@ -707,14 +810,28 @@ public final class ExpressionParser {
                         badValue(typeName, e.getRawMessage().getString()));
             }
             position = reader.getCursor();
+            // NBT is written as the tag itself, as in commands
+            if (valueType == ValueTypes.NBT) {
+                return new Token(Kind.TYPED, text.substring(start, position), start, ValueTypeNbt.ValueNbt.of(tag));
+            }
+            // An item without a count is a single one
+            if (valueType == ValueTypes.OBJECT_ITEMSTACK && tag instanceof CompoundTag compound && !compound.isEmpty() && !compound.contains("count")) {
+                compound.putInt("count", 1);
+            }
             IValue value;
+            Tag written;
             try {
                 value = ValueHelpers.deserializeRaw(context.values(), valueType, tag);
+                written = value == null ? null : ValueHelpers.serializeRaw(context.values(), value);
             } catch (RuntimeException e) {
                 throw new ExpressionParseException(valueStart, badValue(typeName, String.valueOf(e.getMessage())));
             }
             if (value == null) {
                 throw new ExpressionParseException(valueStart, badValue(typeName, tag.toString()));
+            }
+            // Values fall back to a default for what they cannot read, such as an unknown item, which must not go unnoticed
+            if (!isKept(tag, written)) {
+                throw new ExpressionParseException(valueStart, Component.translatable(L10NValues.EXPRESSION_PARSE_VALUE_CHANGED, typeName, written.toString()));
             }
             return new Token(Kind.TYPED, text.substring(start, position), start, value);
         }
