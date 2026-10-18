@@ -186,7 +186,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
                 ILogicProgrammerElement element = container.getVisibleElement(i);
 
                 Triple<Float, Float, Float> rgb = Helpers.intToRGB(element.getColor());
-                boolean hover = LogicProgrammerElementTypes.areEqual(container.getActiveElement(), element)
+                boolean hover = isElementShown(element)
                         || isPointInRegion(getElementPosition(container, i, false), new Point(mouseX, mouseY));
                 RenderSystem.setShaderColor(colorSmoothener(rgb.getLeft(), hover), colorSmoothener(rgb.getMiddle(), hover),
                         colorSmoothener(rgb.getRight(), hover), 1);
@@ -330,6 +330,17 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         operatorInfoPattern.init(leftPos, topPos);
         subGuiHolder.addSubGui(operatorConfigPattern = element.createSubGui(ContainerLogicProgrammerBase.BASE_X, ContainerLogicProgrammerBase.BASE_Y, ContainerLogicProgrammerBase.MAX_WIDTH, ContainerLogicProgrammerBase.MAX_HEIGHT, this, (ContainerLogicProgrammerBase) getMenu()));
         operatorConfigPattern.init(leftPos, topPos);
+    }
+
+    /**
+     * @return If the element is shown as selected: the active element, or the operator that is open in the slots of an expression.
+     */
+    protected boolean isElementShown(ILogicProgrammerElement element) {
+        ILogicProgrammerElement active = getMenu().getActiveElement();
+        if (active instanceof OperatorLPElement activeOperator && element instanceof OperatorLPElement operatorElement) {
+            return operatorElement.getOperator() == activeOperator.getCurrentOperator();
+        }
+        return LogicProgrammerElementTypes.areEqual(active, element);
     }
 
     protected void onDeactivateElement(ILogicProgrammerElement element) {
@@ -536,6 +547,10 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
                     if (element instanceof OperatorLPElement operatorElement
                             && operatorConfigPattern instanceof OperatorLPElementRenderPattern expressionPattern
                             && expressionPattern.onOperatorPicked(operatorElement.getOperator())) {
+                        return true;
+                    }
+                    // Activating the operator that is open in the slots would replace the whole expression
+                    if (!LogicProgrammerElementTypes.areEqual(container.getActiveElement(), element) && isElementShown(element)) {
                         return true;
                     }
                     boolean activated = handleElementActivation(element, true);
