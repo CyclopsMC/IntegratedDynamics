@@ -115,9 +115,6 @@ public class TestExpressionEditor {
         // Types outside the list are ignored
         apply(editor, ExpressionEditor.actionParamType(0, ValueTypes.CATEGORY_NAMED));
         assertThat(editor.getExpression().parameters().get(0).type(), is((IValueType) ValueTypes.INTEGER));
-        // Cycling wraps around
-        assertThat(ExpressionEditor.cycleParameterType(ValueTypes.CATEGORY_ANY, -1), is((IValueType) ExpressionEditor.PARAMETER_TYPES.get(ExpressionEditor.PARAMETER_TYPES.size() - 1)));
-        assertThat(ExpressionEditor.cycleParameterType(ValueTypes.CATEGORY_ANY, 1), is((IValueType) ValueTypes.BOOLEAN));
     }
 
     @Test

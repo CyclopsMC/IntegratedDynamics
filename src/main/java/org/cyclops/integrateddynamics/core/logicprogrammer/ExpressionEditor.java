@@ -296,17 +296,6 @@ public class ExpressionEditor {
     }
 
     /**
-     * @param type A parameter type.
-     * @param direction 1 for the next type, -1 for the previous one.
-     * @return The next or previous parameter type, wrapping around.
-     */
-    public static IValueType<?> cycleParameterType(IValueType<?> type, int direction) {
-        int index = PARAMETER_TYPES.indexOf(type);
-        int size = PARAMETER_TYPES.size();
-        return PARAMETER_TYPES.get(((index < 0 ? 0 : index + direction) % size + size) % size);
-    }
-
-    /**
      * @param expectedType The type of the slot the operator is picked for.
      * @param operator The picked operator.
      * @param forceValue If the player asked to insert the operator as a value.

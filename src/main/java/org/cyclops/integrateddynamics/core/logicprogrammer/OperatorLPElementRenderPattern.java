@@ -22,6 +22,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonText;
+import org.cyclops.cyclopscore.client.gui.component.input.WidgetArrowedListField;
 import org.cyclops.cyclopscore.client.gui.component.input.WidgetTextFieldExtended;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.cyclopscore.helper.StringHelpers;
@@ -106,12 +107,18 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
 
     // Editor layout, relative to the gui
     private static final int EDITOR_X = ContainerLogicProgrammerBase.BASE_X + 2;
-    private static final int EDITOR_Y = ContainerLogicProgrammerBase.BASE_Y + ContainerLogicProgrammerBase.MAX_HEIGHT - 14;
+    private static final int EDITOR_Y = ContainerLogicProgrammerBase.BASE_Y + ContainerLogicProgrammerBase.MAX_HEIGHT - 18;
+    // As high as the type selector, which is the one of the list element
+    private static final int EDITOR_HEIGHT = 15;
     private static final int EDITOR_RIGHT = ContainerLogicProgrammerBase.BASE_X + ContainerLogicProgrammerBase.MAX_WIDTH - 2;
-    private static final int EDITOR_MIN_WIDTH = 70;
+    private static final int EDITOR_MIN_WIDTH = 60;
+    // The arrow buttons of the type selector and the inset of its text
+    private static final int TYPE_SELECTOR_PADDING = 28;
 
     private boolean renderTooltip = true;
     private final WidgetTextFieldExtended valueField;
+    @Nullable
+    private WidgetArrowedListField<IValueType<?>> typeSelector = null;
     private int guiLeft;
     private int guiTop;
     private long lastClickTime = 0;
@@ -149,8 +156,14 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     public OperatorLPElementRenderPattern(OperatorLPElement element, int baseX, int baseY, int maxWidth, int maxHeight,
                                           ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
         super(element, baseX, baseY, maxWidth, maxHeight, gui, container);
-        this.valueField = new WidgetTextFieldExtended(Minecraft.getInstance().font, 0, 0, getValueFieldWidth(Minecraft.getInstance().font), 11,
-                Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_VALUE, ""));
+        this.valueField = new WidgetTextFieldExtended(Minecraft.getInstance().font, 0, 0, getValueFieldWidth(Minecraft.getInstance().font), EDITOR_HEIGHT,
+                Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_VALUE, ""), true) {
+            // Drawn like the type selector next to it, without the vanilla box, but with the text inset as in that box
+            @Override
+            public boolean isBordered() {
+                return false;
+            }
+        };
         this.valueField.setMaxLength(256);
         this.valueField.setBordered(true);
         this.valueField.setVisible(false);
@@ -163,8 +176,15 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         super.init(guiLeft, guiTop);
         this.guiLeft = guiLeft;
         this.guiTop = guiTop;
-        this.valueField.setX(guiLeft + EDITOR_X);
-        this.valueField.setY(guiTop + EDITOR_Y);
+        // Their backgrounds and arrow buttons are drawn a pixel above and left of their position
+        this.valueField.setX(guiLeft + EDITOR_X + 1);
+        this.valueField.setY(guiTop + EDITOR_Y + 1);
+        // The arrow buttons are placed when it is created
+        int typeX = EDITOR_X + valueField.getWidth() + 3;
+        this.typeSelector = new WidgetArrowedListField<>(Minecraft.getInstance().font, guiLeft + typeX, guiTop + EDITOR_Y + 1,
+                EDITOR_RIGHT - typeX, EDITOR_HEIGHT, true, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_TYPE),
+                true, ExpressionEditor.PARAMETER_TYPES);
+        this.typeSelector.setListener(this::onTypeSelected);
         updateEditor();
 
         // Says what it adds while there are no parameters, as it is not next to any then
@@ -196,8 +216,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         for (IValueType<?> type : ExpressionEditor.PARAMETER_TYPES) {
             nameWidth = Math.max(nameWidth, font.width(Component.translatable(type.getTranslationKey())));
         }
-        int typeWidth = nameWidth + 2 * (font.width("<") + 3);
-        return Math.max(EDITOR_MIN_WIDTH, EDITOR_RIGHT - EDITOR_X - 3 - typeWidth);
+        return Math.max(EDITOR_MIN_WIDTH, EDITOR_RIGHT - EDITOR_X - 3 - nameWidth - TYPE_SELECTOR_PADDING);
     }
 
     /**
@@ -675,6 +694,9 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
             return false;
         }
 
+        if (isTypeSelectorShown() && typeSelector.mouseClicked(mouseX, mouseY, mouseButton)) {
+            return true;
+        }
         if (valueField.isVisible()) {
             if (valueField.mouseClicked(mouseX, mouseY, mouseButton)) {
                 valueField.setFocused(true);
@@ -954,10 +976,10 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         if (valueField.isVisible()) {
             valueField.render(guiGraphics, mouseX, mouseY, partialTicks);
             int x = EDITOR_X + valueField.getWidth() + 3;
-            int y = EDITOR_Y + 2;
-            int armed = element.getArmedParameter();
-            if (armed >= 0 && armed < editor.getExpression().parameters().size()) {
-                renderParameterTypeCycler(guiGraphics, guiLeft, guiTop, fontRenderer, editor, armed, x, y);
+            // In line with the text in the field
+            int y = EDITOR_Y + 1 + (EDITOR_HEIGHT - 8) / 2;
+            if (isTypeSelectorShown()) {
+                renderTypeSelector(guiGraphics, editor, mouseX, mouseY, partialTicks);
             } else {
                 Component hint = editorError != null ? editorError : getEditorHint(editor);
                 int available = EDITOR_RIGHT - x;
@@ -990,21 +1012,31 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         }
     }
 
-    protected void renderParameterTypeCycler(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font, ExpressionEditor editor,
-                                             int index, int x, int y) {
-        IValueType<?> type = editor.getExpression().parameters().get(index).type();
-        // Up to the right edge, with the name centered, so the arrows stay in place while cycling
-        guiGraphics.drawString(font, "<", guiLeft + x, guiTop + y, COLOR_LINK, false);
-        int nameX = x + font.width("<") + 3;
-        // Its width includes a pixel of spacing after it, which is left out to match the margin of the value field
-        int nextX = EDITOR_RIGHT + 1 - font.width(">");
-        drawFitted(guiGraphics, font, Component.translatable(type.getTranslationKey()).getString(), guiLeft + nameX, guiTop + y, nextX - 3 - nameX, 7, COLOR_TEXT);
-        guiGraphics.drawString(font, ">", guiLeft + nextX, guiTop + y, COLOR_LINK, false);
-        Component tooltip = Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_TYPE);
-        regions.add(new Region(x - 1, y - 1, font.width("<") + 2, 10,
-                button -> sendAction(ExpressionEditor.actionParamType(index, ExpressionEditor.cycleParameterType(type, -1))), tooltip));
-        regions.add(new Region(nameX, y - 1, nextX + font.width(">") + 1 - nameX, 10,
-                button -> sendAction(ExpressionEditor.actionParamType(index, ExpressionEditor.cycleParameterType(type, 1))), tooltip));
+    /**
+     * @return If the type of the selected parameter is shown right of its name.
+     */
+    protected boolean isTypeSelectorShown() {
+        ExpressionEditor editor = getEditor();
+        int armed = element.getArmedParameter();
+        return typeSelector != null && valueField.isVisible() && editor != null && armed >= 0 && armed < editor.getExpression().parameters().size();
+    }
+
+    protected void onTypeSelected() {
+        IValueType<?> type = typeSelector.getActiveElement();
+        if (isTypeSelectorShown() && type != null) {
+            sendAction(ExpressionEditor.actionParamType(element.getArmedParameter(), type));
+        }
+    }
+
+    protected void renderTypeSelector(GuiGraphics guiGraphics, ExpressionEditor editor, int mouseX, int mouseY, float partialTicks) {
+        // Follow the type, which also changes when the parameter is first dropped in a slot
+        IValueType<?> type = editor.getExpression().parameters().get(element.getArmedParameter()).type();
+        if (typeSelector.getActiveElement() != type) {
+            typeSelector.setListener(null);
+            typeSelector.setActiveElement(type);
+            typeSelector.setListener(this::onTypeSelected);
+        }
+        typeSelector.render(guiGraphics, mouseX, mouseY, partialTicks);
     }
 
     protected Component getEditorHint(ExpressionEditor editor) {
