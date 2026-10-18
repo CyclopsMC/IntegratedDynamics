@@ -107,7 +107,8 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     // Editor layout, relative to the gui
     private static final int EDITOR_X = ContainerLogicProgrammerBase.BASE_X + 2;
     private static final int EDITOR_Y = ContainerLogicProgrammerBase.BASE_Y + ContainerLogicProgrammerBase.MAX_HEIGHT - 14;
-    private static final int EDITOR_WIDTH = 70;
+    private static final int EDITOR_RIGHT = ContainerLogicProgrammerBase.BASE_X + ContainerLogicProgrammerBase.MAX_WIDTH - 2;
+    private static final int EDITOR_MIN_WIDTH = 70;
 
     private boolean renderTooltip = true;
     private final WidgetTextFieldExtended valueField;
@@ -148,7 +149,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     public OperatorLPElementRenderPattern(OperatorLPElement element, int baseX, int baseY, int maxWidth, int maxHeight,
                                           ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
         super(element, baseX, baseY, maxWidth, maxHeight, gui, container);
-        this.valueField = new WidgetTextFieldExtended(Minecraft.getInstance().font, 0, 0, EDITOR_WIDTH, 11,
+        this.valueField = new WidgetTextFieldExtended(Minecraft.getInstance().font, 0, 0, getValueFieldWidth(Minecraft.getInstance().font), 11,
                 Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_VALUE, ""));
         this.valueField.setMaxLength(256);
         this.valueField.setBordered(true);
@@ -184,6 +185,19 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         copyButton = addPanelButton(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_COPY, this::copyText,
                 () -> Util.getMillis() - copiedTime < COPIED_MS ? ButtonIcon.Icon.CHECK : ButtonIcon.Icon.COPY);
         updateButtons();
+    }
+
+    /**
+     * @param font The font.
+     * @return The width of the value field, which fills the row up to the type of a parameter, as wide as the widest type name.
+     */
+    protected static int getValueFieldWidth(Font font) {
+        int nameWidth = 0;
+        for (IValueType<?> type : ExpressionEditor.PARAMETER_TYPES) {
+            nameWidth = Math.max(nameWidth, font.width(Component.translatable(type.getTranslationKey())));
+        }
+        int typeWidth = nameWidth + 2 * (font.width("<") + 3);
+        return Math.max(EDITOR_MIN_WIDTH, EDITOR_RIGHT - EDITOR_X - 3 - typeWidth);
     }
 
     /**
@@ -939,14 +953,14 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         // Value editor
         if (valueField.isVisible()) {
             valueField.render(guiGraphics, mouseX, mouseY, partialTicks);
-            int x = EDITOR_X + EDITOR_WIDTH + 3;
+            int x = EDITOR_X + valueField.getWidth() + 3;
             int y = EDITOR_Y + 2;
             int armed = element.getArmedParameter();
             if (armed >= 0 && armed < editor.getExpression().parameters().size()) {
                 renderParameterTypeCycler(guiGraphics, guiLeft, guiTop, fontRenderer, editor, armed, x, y);
             } else {
                 Component hint = editorError != null ? editorError : getEditorHint(editor);
-                int available = ContainerLogicProgrammerBase.BASE_X + ContainerLogicProgrammerBase.MAX_WIDTH - 2 - x;
+                int available = EDITOR_RIGHT - x;
                 float scale = Math.min(1F, (float) available / fontRenderer.width(hint));
                 guiGraphics.pose().pushPose();
                 guiGraphics.pose().translate(guiLeft + x, guiTop + y + (1 - scale) * 4, 300);
@@ -979,17 +993,12 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     protected void renderParameterTypeCycler(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font, ExpressionEditor editor,
                                              int index, int x, int y) {
         IValueType<?> type = editor.getExpression().parameters().get(index).type();
-        // The name gets the width of the widest one, so the arrows stay in place while cycling
-        int nameWidth = 0;
-        for (IValueType<?> parameterType : ExpressionEditor.PARAMETER_TYPES) {
-            nameWidth = Math.max(nameWidth, font.width(Component.translatable(parameterType.getTranslationKey())));
-        }
-        int available = ContainerLogicProgrammerBase.BASE_X + ContainerLogicProgrammerBase.MAX_WIDTH - 2 - x;
-        nameWidth = Math.min(nameWidth, available - 2 * (font.width("<") + 3));
+        // Up to the right edge, with the name centered, so the arrows stay in place while cycling
         guiGraphics.drawString(font, "<", guiLeft + x, guiTop + y, COLOR_LINK, false);
         int nameX = x + font.width("<") + 3;
-        drawFitted(guiGraphics, font, Component.translatable(type.getTranslationKey()).getString(), guiLeft + nameX, guiTop + y, nameWidth, 7, COLOR_TEXT);
-        int nextX = nameX + nameWidth + 3;
+        // Its width includes a pixel of spacing after it, which is left out to match the margin of the value field
+        int nextX = EDITOR_RIGHT + 1 - font.width(">");
+        drawFitted(guiGraphics, font, Component.translatable(type.getTranslationKey()).getString(), guiLeft + nameX, guiTop + y, nextX - 3 - nameX, 7, COLOR_TEXT);
         guiGraphics.drawString(font, ">", guiLeft + nextX, guiTop + y, COLOR_LINK, false);
         Component tooltip = Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_TYPE);
         regions.add(new Region(x - 1, y - 1, font.width("<") + 2, 10,
