@@ -115,6 +115,19 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     public void containerTick() {
         super.containerTick();
         subGuiHolder.tick();
+        // After ticking the sub guis, as applying text can replace them
+        if (operatorConfigPattern instanceof OperatorLPElementRenderPattern expressionPattern) {
+            expressionPattern.tickText();
+        }
+    }
+
+    @Override
+    public void onClose() {
+        // Typed text is applied without confirming it, so also when closing right after typing, before the server closes
+        if (operatorConfigPattern instanceof OperatorLPElementRenderPattern expressionPattern) {
+            expressionPattern.applyPendingText();
+        }
+        super.onClose();
     }
 
     protected int getScrollX() {

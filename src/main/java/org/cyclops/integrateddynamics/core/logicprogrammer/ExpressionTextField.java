@@ -21,7 +21,8 @@ import java.util.function.Supplier;
 
 /**
  * The text of an expression in the logic programmer, which can be edited in place.
- * The text is either the printed expression, or a draft that the player typed and did not apply yet.
+ * The text is either the printed expression, text that was applied as typed and is printed once it loses focus,
+ * or a draft that the player typed and that is not applied yet.
  * It is drawn with a color for each character, which vanilla text boxes cannot do.
  * It is kept in the container, so it survives the panel being recreated, such as when navigating.
  * @author rubensworks
@@ -40,12 +41,19 @@ public class ExpressionTextField {
     private String printed = "";
     @Nullable
     private Expression printedExpression = null;
+    // The text that the expression was applied from, kept as typed while it has focus
+    @Nullable
+    private String applied = null;
+    // The applied expression, until it is followed
+    @Nullable
+    private Expression appliedExpression = null;
     private boolean focused = false;
     // Pressed in the text, so dragging selects, also after the panel was recreated by the press
     private boolean pressed = false;
     private int scroll = 0;
     private int visibleLines = 1;
     private long lastInput = 0;
+    private long lastEdit = 0;
 
     /**
      * @param font The font.
@@ -63,14 +71,46 @@ public class ExpressionTextField {
     }
 
     /**
-     * @return If the text was typed and differs from the expression.
+     * @return If the text was typed, differs from the expression and is not applied yet.
      */
     public boolean isDraft() {
-        return !text.value().equals(printed);
+        return !isPrinted() && !text.value().equals(applied);
     }
 
     /**
-     * @return The tokens of the printed expression, which tell the node of each character while there is no draft.
+     * @return If the text is the printed expression, so the tokens tell the node of each character.
+     */
+    public boolean isPrinted() {
+        return text.value().equals(printed);
+    }
+
+    /**
+     * Mark the text as applied, which is no draft anymore and keeps it as typed while it has focus.
+     * @param expression The expression it is applied as, or null if it is the current one.
+     */
+    public void markApplied(@Nullable Expression expression) {
+        applied = text.value();
+        appliedExpression = expression;
+    }
+
+    /**
+     * Print the expression in place of applied text, unless the applied expression is not followed yet.
+     */
+    public void format() {
+        if (!isDraft() && !isPrinted() && appliedExpression == null) {
+            revert();
+        }
+    }
+
+    /**
+     * @return The time since the text was last changed by typing.
+     */
+    public long getMillisSinceEdit() {
+        return Util.getMillis() - lastEdit;
+    }
+
+    /**
+     * @return The tokens of the printed expression, which tell the node of each character while it is printed.
      */
     public List<ExpressionPrinter.Token> getTokens() {
         return tokens;
@@ -119,6 +159,7 @@ public class ExpressionTextField {
 
     /**
      * Follow the given expression. A draft is kept, and is compared to the new expression from now on.
+     * Applied text is kept if this is the expression it was applied as, and is printed otherwise.
      * @param expression The current expression.
      * @param printer Prints the expression as tokens, only called when the expression changed.
      */
@@ -132,15 +173,19 @@ public class ExpressionTextField {
         StringBuilder sb = new StringBuilder();
         tokens.forEach(token -> sb.append(token.text()));
         printed = sb.toString();
-        if (!draft) {
-            setValueKeepCursor(printed);
+        if (appliedExpression != null && appliedExpression.equals(expression)) {
+            appliedExpression = null;
+        } else if (!draft) {
+            revert();
         }
     }
 
     /**
-     * Throw away the draft.
+     * Throw away the draft or the applied text, so the text is the printed expression.
      */
     public void revert() {
+        applied = null;
+        appliedExpression = null;
         setValueKeepCursor(printed);
     }
 
@@ -151,6 +196,8 @@ public class ExpressionTextField {
         printedExpression = null;
         tokens = List.of();
         printed = "";
+        applied = null;
+        appliedExpression = null;
         text.setValue("");
         focused = false;
         pressed = false;
@@ -232,7 +279,12 @@ public class ExpressionTextField {
      */
     public boolean keyPressed(int keyCode) {
         lastInput = Util.getMillis();
-        return text.keyPressed(keyCode);
+        String value = text.value();
+        boolean handled = text.keyPressed(keyCode);
+        if (!value.equals(text.value())) {
+            lastEdit = lastInput;
+        }
+        return handled;
     }
 
     public void charTyped(char character) {
@@ -243,6 +295,7 @@ public class ExpressionTextField {
 
     public void insert(String value) {
         lastInput = Util.getMillis();
+        lastEdit = lastInput;
         text.insertText(value);
     }
 

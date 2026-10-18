@@ -102,6 +102,8 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     private static final int COLOR_FOCUS = 0xFFA0A0A0;
     private static final String ELLIPSIS = "\u2026";
     private static final int COPIED_MS = 1500;
+    // How long typing pauses before valid text is applied
+    private static final int APPLY_DELAY_MS = 750;
 
     // Editor layout, relative to the gui
     private static final int EDITOR_X = ContainerLogicProgrammerBase.BASE_X + 2;
@@ -129,8 +131,6 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     private ButtonIcon undoButton;
     private ButtonIcon redoButton;
     private ButtonIcon copyButton;
-    private ButtonIcon revertButton;
-    private ButtonIcon applyButton;
 
     // Editing the expression as text, in the box that shows it
     @Nullable
@@ -184,8 +184,6 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         redoButton = addPanelButton(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_REDO, this::redo, () -> ButtonIcon.Icon.REDO);
         copyButton = addPanelButton(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_COPY, this::copyText,
                 () -> Util.getMillis() - copiedTime < COPIED_MS ? ButtonIcon.Icon.CHECK : ButtonIcon.Icon.COPY);
-        revertButton = addPanelButton(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_REVERT, this::revertText, () -> ButtonIcon.Icon.CROSS);
-        applyButton = addPanelButton(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_APPLY, this::applyText, () -> ButtonIcon.Icon.CHECK);
         updateButtons();
     }
 
@@ -214,18 +212,16 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
             return;
         }
         addParameterButton.visible = panel && !draft && editor.getExpression().parameters().size() < ExpressionTrees.MAX_PARAMETERS;
-        undoButton.visible = panel && !draft;
-        undoButton.active = container.getExpressionHistory().canUndo();
-        redoButton.visible = panel && !draft;
-        redoButton.active = container.getExpressionHistory().canRedo();
-        copyButton.visible = panel && !draft;
-        revertButton.visible = draft;
-        applyButton.visible = draft;
-        applyButton.active = draft && parseText() != null;
+        // Undo also reverts typed text that is not applied yet
+        undoButton.visible = panel;
+        undoButton.active = draft || container.getExpressionHistory().canUndo();
+        redoButton.visible = panel;
+        redoButton.active = !draft && container.getExpressionHistory().canRedo();
+        copyButton.visible = panel;
 
-        // Right-aligned, with the main action on the right
+        // Right-aligned
         int x = guiLeft + PANEL_X + PANEL_WIDTH;
-        for (ButtonIcon button : List.of(applyButton, revertButton, copyButton, redoButton, undoButton)) {
+        for (ButtonIcon button : List.of(copyButton, redoButton, undoButton)) {
             if (button.visible) {
                 x -= button.getWidth();
                 button.setX(x);
@@ -337,11 +333,20 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         valueField.setFocused(false);
     }
 
+    /**
+     * Apply the typed text if it parses. It stays as typed while it has focus.
+     * This can make another element active, which replaces this panel, so it is not done while rendering.
+     */
     protected void applyText() {
         Expression expression = parseText();
-        if (expression != null) {
-            getTextField().revert();
-            // This can make another element active, which replaces this panel
+        ExpressionEditor editor = getEditor();
+        if (expression == null || editor == null) {
+            return;
+        }
+        if (expression.equals(editor.getExpression())) {
+            getTextField().markApplied(null);
+        } else {
+            getTextField().markApplied(expression);
             sendAction(ExpressionEditor.actionSet(ValueDeseralizationContext.ofClient(), expression));
         }
     }
@@ -350,7 +355,48 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         getTextField().revert();
     }
 
+    /**
+     * Apply typed text once typing pauses, or when the panel is hidden, and print applied text once it loses focus.
+     * Called each tick, outside of rendering.
+     */
+    public void tickText() {
+        ExpressionTextField field = getTextField();
+        if (getEditor() == null) {
+            return;
+        }
+        boolean panel = ContainerScreenLogicProgrammerBase.isExpressionPanelOpen();
+        if (field.isDraft() && (!panel || field.getMillisSinceEdit() >= APPLY_DELAY_MS)) {
+            applyText();
+        }
+        if (!panel) {
+            // Slots should not wait on a draft that cannot be seen
+            if (field.isDraft()) {
+                field.revert();
+            }
+            field.setFocused(false);
+        }
+        if (!field.isFocused()) {
+            field.format();
+        }
+    }
+
+    /**
+     * Apply typed text that is not applied yet, such as when the gui closes.
+     */
+    public void applyPendingText() {
+        if (getTextField().isDraft()) {
+            applyText();
+        }
+    }
+
+    /**
+     * Revert typed text that is not applied yet, or otherwise go back one change.
+     */
     protected void undo() {
+        if (isDraft()) {
+            revertText();
+            return;
+        }
         Expression expression = container.getExpressionHistory().undo();
         if (expression != null) {
             setExpressionFromHistory(expression);
@@ -358,6 +404,9 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     }
 
     protected void redo() {
+        if (isDraft()) {
+            return;
+        }
         Expression expression = container.getExpressionHistory().redo();
         if (expression != null) {
             setExpressionFromHistory(expression);
@@ -387,7 +436,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         ExpressionTextField field = getTextField();
         ExpressionEditor editor = getEditor();
         int index = field.getCharAtCursor();
-        if (editor == null || field.isDraft() || index < 0) {
+        if (editor == null || !field.isPrinted() || index < 0) {
             return;
         }
         int[] path = getTokenPathAt(field.getTokens(), index);
@@ -584,8 +633,12 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
             return true;
         }
         field.setFocused(false);
-        // Slots, parameters and tabs would be replaced when applying the text
+        // Slots, parameters and tabs would be replaced when applying the text, so valid text is applied first
         if (field.isDraft()) {
+            if (parseText() != null) {
+                applyText();
+                return true;
+            }
             return false;
         }
 
@@ -713,15 +766,9 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
                     applyText();
                 }
             } else if (undoKey) {
-                if (field.isDraft()) {
-                    revertText();
-                } else {
-                    undo();
-                }
+                undo();
             } else if (redoKey) {
-                if (!field.isDraft()) {
-                    redo();
-                }
+                redo();
             } else {
                 field.keyPressed(typedChar);
             }
@@ -737,7 +784,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
             editorError = null;
             return true;
         }
-        if ((undoKey || redoKey) && !isDraft()) {
+        if (undoKey || redoKey) {
             if (undoKey) {
                 undo();
             } else {
@@ -907,12 +954,6 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
             } else {
                 renderTextError(guiGraphics, guiLeft, guiTop, fontRenderer, textError);
             }
-        } else {
-            // Slots should not wait on a draft that cannot be seen
-            if (field.isDraft()) {
-                field.revert();
-            }
-            field.setFocused(false);
         }
     }
 
@@ -1044,14 +1085,14 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
             }
             position += length;
         }
-        int mark = -1;
-        if (draft) {
+        if (!field.isPrinted()) {
             // The text around what was typed keeps its colors
             colors = field.followDraft(colors, COLOR_TEXT_LIGHT);
-            backgrounds = new int[field.getValue().length()];
-            if (parseText() == null && textError != null) {
-                mark = Math.min(textError.getPosition(), field.getValue().length());
-            }
+            backgrounds = field.followDraft(backgrounds, 0);
+        }
+        int mark = -1;
+        if (draft && parseText() == null && textError != null) {
+            mark = Math.min(textError.getPosition(), field.getValue().length());
         }
         field.render(guiGraphics, x + 2, y + 2, PANEL_WIDTH - 3, guiTop + FOOTER_Y - y - 3, colors, backgrounds, mark, COLOR_TEXT_ERROR);
     }
