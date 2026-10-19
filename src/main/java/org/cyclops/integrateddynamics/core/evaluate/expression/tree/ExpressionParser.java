@@ -35,7 +35,9 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 import javax.annotation.Nullable;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -92,10 +94,16 @@ public final class ExpressionParser {
     private int nesting = 0;
     private List<ExpressionParameter> parameters = List.of();
     private ExpressionTypeChecker.Inference types;
+    // While completing, the calls whose brackets are open, innermost first, and the methods at the end of the text
+    @Nullable
+    private final Deque<OpenCall> openCalls;
+    @Nullable
+    private Methods methods = null;
 
-    private ExpressionParser(Context context, List<Token> tokens) {
+    private ExpressionParser(Context context, List<Token> tokens, boolean completing) {
         this.context = context;
         this.tokens = tokens;
+        this.openCalls = completing ? new ArrayDeque<>() : null;
     }
 
     /**
@@ -108,7 +116,36 @@ public final class ExpressionParser {
         if (text.length() > MAX_LENGTH) {
             throw new ExpressionParseException(MAX_LENGTH, Component.translatable(L10NValues.EXPRESSION_PARSE_TOO_LONG, MAX_LENGTH));
         }
-        return new ExpressionParser(context, new Lexer(text, context).tokenize()).parseExpression();
+        return new ExpressionParser(context, new Lexer(text, context).tokenize(), false).parseExpression();
+    }
+
+    /**
+     * Find what can be completed at a cursor, as far as the text before it tells.
+     * @param text The text of an expression.
+     * @param cursor The position of the cursor.
+     * @param context What the parser needs to know about the world.
+     * @return What can be completed.
+     */
+    public static Completion complete(String text, int cursor, Context context) {
+        if (cursor < 0 || cursor > Math.min(text.length(), MAX_LENGTH)) {
+            return Completion.NONE;
+        }
+        List<Token> tokens;
+        try {
+            tokens = new Lexer(text.substring(0, cursor), context).tokenize();
+        } catch (ExpressionParseException e) {
+            // Such as within a string
+            return Completion.NONE;
+        }
+        ExpressionParser parser = new ExpressionParser(context, tokens, true);
+        try {
+            parser.parseExpression();
+            return Completion.NONE;
+        } catch (ExpressionParseException e) {
+            // Calls are only open at the cursor if the text before it ends within them, and not at an error
+            boolean atCursor = parser.methods != null || e.getPosition() == cursor;
+            return new Completion(parser.methods, atCursor ? parser.getOpenCall() : null);
+        }
     }
 
     /**
@@ -324,6 +361,9 @@ public final class ExpressionParser {
             Token dot = next();
             Token name = peek(0);
             if (name.kind() != Kind.NAME || !isSymbol(peek(1), "(")) {
+                if (openCalls != null && isTypingMethodName(dot, name)) {
+                    methods = new Methods(types.getType(receiver), name.start(), name.text());
+                }
                 throw error(dot, L10NValues.EXPRESSION_PARSE_METHOD);
             }
             next();
@@ -331,11 +371,26 @@ public final class ExpressionParser {
             enter(dot);
             List<ExpressionNode> arguments = new ArrayList<>();
             arguments.add(receiver);
-            arguments.addAll(parseArguments());
+            arguments.addAll(parseArguments(name, receiver));
             receiver = resolveCall(name, arguments);
         }
         nesting = outerNesting;
         return receiver;
+    }
+
+    /**
+     * @param dot The point after a value.
+     * @param name The token after it.
+     * @return If the name of a method is being typed at the end of the text, which is not the point of a decimal number.
+     */
+    private boolean isTypingMethodName(Token dot, Token name) {
+        Token previous = tokens.get(index - 2);
+        if (previous.kind() == Kind.NUMBER && previous.start() + previous.text().length() == dot.start()) {
+            return false;
+        }
+        Token end = tokens.get(tokens.size() - 1);
+        return name.kind() == Kind.END
+                || (name.kind() == Kind.NAME && peek(1).kind() == Kind.END && name.start() + name.text().length() == end.start());
     }
 
     private ExpressionNode parsePrimary() throws ExpressionParseException {
@@ -514,7 +569,7 @@ public final class ExpressionParser {
     }
 
     private ExpressionNode parseCall(Token name) throws ExpressionParseException {
-        List<ExpressionNode> arguments = parseArguments();
+        List<ExpressionNode> arguments = parseArguments(name, null);
         int parameter = getParameterIndex(name.text());
         if (parameter < 0) {
             return resolveCall(name, arguments);
@@ -529,18 +584,53 @@ public final class ExpressionParser {
         return operator(APPLY_OPERATORS.get(arguments.size()), children, name);
     }
 
-    private List<ExpressionNode> parseArguments() throws ExpressionParseException {
+    /**
+     * Read the arguments of a call.
+     * @param name The name of what is called.
+     * @param receiver The value a method is called on, or null.
+     */
+    private List<ExpressionNode> parseArguments(Token name, @Nullable ExpressionNode receiver) throws ExpressionParseException {
         Token open = next();
         enter(open);
         List<ExpressionNode> arguments = new ArrayList<>();
+        OpenCall call = openCalls != null ? new OpenCall(name, receiver, arguments) : null;
+        if (call != null) {
+            openCalls.push(call);
+        }
         if (!accept(")")) {
-            do {
+            arguments.add(parseTernary());
+            while (accept(",")) {
+                if (call != null) {
+                    call.argument++;
+                }
                 arguments.add(parseTernary());
-            } while (accept(","));
+            }
             expect(")");
+        }
+        if (call != null) {
+            openCalls.pop();
         }
         nesting--;
         return arguments;
+    }
+
+    /**
+     * @return The innermost call whose brackets are open, or null if there is none or it has no known operator,
+     *         such as when calling a parameter.
+     */
+    @Nullable
+    private Call getOpenCall() {
+        OpenCall open = openCalls.peek();
+        if (open == null || types == null || (open.receiver == null && getParameterIndex(open.name.text()) >= 0)) {
+            return null;
+        }
+        ExpressionNode first = open.receiver != null ? open.receiver : open.arguments.isEmpty() ? null : open.arguments.get(0);
+        IOperator operator = OperatorNames.resolve(open.name.text(), first == null ? null : types.getType(first));
+        if (operator == null || !context.operators().test(operator)) {
+            return null;
+        }
+        boolean method = open.receiver != null;
+        return new Call(operator, open.name.text(), method, open.argument + (method ? 1 : 0));
     }
 
     private ExpressionNode resolveCall(Token name, List<ExpressionNode> arguments) throws ExpressionParseException {
@@ -718,6 +808,45 @@ public final class ExpressionParser {
                                  Predicate<IOperator> operators) {
         public static Context of(ValueDeseralizationContext values) {
             return new Context(values, id -> null, label -> IntLists.EMPTY_LIST, type -> true, operator -> true);
+        }
+    }
+
+    /**
+     * What can be completed at a cursor.
+     * @param methods The methods that can be called on the value before a point right before the cursor, or null.
+     * @param call The innermost call whose brackets are open at the cursor, or null.
+     */
+    public static record Completion(@Nullable Methods methods, @Nullable Call call) {
+        public static final Completion NONE = new Completion(null, null);
+    }
+
+    /**
+     * @param receiverType The type of the value that the methods are called on.
+     * @param start Where the name of the method starts.
+     * @param prefix What is typed of the name, up to the cursor.
+     */
+    public static record Methods(IValueType<?> receiverType, int start, String prefix) {}
+
+    /**
+     * @param operator The operator that is called.
+     * @param name The name it is called with.
+     * @param method If it is called as a method, where its first input is the value before the point.
+     * @param input The index of the operator's input at the cursor, which can be beyond its inputs.
+     */
+    public static record Call(IOperator operator, String name, boolean method, int input) {}
+
+    private static final class OpenCall {
+        private final Token name;
+        @Nullable
+        private final ExpressionNode receiver;
+        private final List<ExpressionNode> arguments;
+        // The argument at the cursor, among those in the brackets
+        private int argument = 0;
+
+        private OpenCall(Token name, @Nullable ExpressionNode receiver, List<ExpressionNode> arguments) {
+            this.name = name;
+            this.receiver = receiver;
+            this.arguments = arguments;
         }
     }
 

@@ -11,15 +11,24 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.StringUtil;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.expression.tree.Expression;
+import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionParser;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionPrinter;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionTextNavigation;
+import org.cyclops.integrateddynamics.core.evaluate.expression.tree.OperatorNames;
+import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * The text of an expression in the logic programmer, which can be edited in place.
@@ -38,6 +47,10 @@ public class ExpressionTextField {
     private static final int COLOR_SCROLLBAR = 0xFF808080;
     private static final int COLOR_BRACKET = 0xFF2F6B60;
     private static final long MULTI_CLICK_MS = 250;
+    private static final int COMPLETION_ROWS = 6;
+    private static final int COLOR_POPUP = 0xFF202020;
+    private static final int COLOR_POPUP_BORDER = 0xFFA0A0A0;
+    private static final int COLOR_DETAIL = 0xFF909090;
 
     private final Font font;
     private final TextModel text;
@@ -62,6 +75,28 @@ public class ExpressionTextField {
     private int lastClickIndex = -1;
     // Selected by a double or triple click, which a drag that stays on the clicked character keeps
     private boolean selectedByClicks = false;
+    @Nullable
+    private Supplier<ExpressionParser.Context> parserContext = null;
+    // What can be completed at the cursor, for the text and cursor it was found for
+    private ExpressionParser.Completion completion = ExpressionParser.Completion.NONE;
+    @Nullable
+    private String completionText = null;
+    private int completionCursor = -1;
+    // The methods shown while typing their name, for the text and cursor they were found for
+    private List<Completion> completions = List.of();
+    @Nullable
+    private String completionsText = null;
+    private int completionsCursor = -1;
+    private int completionsStart = 0;
+    private int completionIndex = 0;
+    // Where the methods are drawn, relative to the text, the first one drawn, and where the text is drawn
+    @Nullable
+    private int[] completionsBox = null;
+    private int completionsFirst = 0;
+    private int textX = 0;
+    private int textY = 0;
+    // If the text was drawn since the methods were last drawn, as they are drawn after everything else
+    private boolean completionsPlaced = false;
 
     /**
      * @param font The font.
@@ -226,6 +261,9 @@ public class ExpressionTextField {
     public void setFocused(boolean focused) {
         this.focused = focused;
         this.lastInput = Util.getMillis();
+        if (!focused) {
+            closeCompletions();
+        }
     }
 
     public boolean isPressed() {
@@ -258,6 +296,7 @@ public class ExpressionTextField {
      * @param y The y position, relative to the text.
      */
     public void mouseClicked(double x, double y) {
+        closeCompletions();
         long now = Util.getMillis();
         int index = getIndexAtPoint(x, y);
         boolean repeated = now - lastClick < MULTI_CLICK_MS && index == lastClickIndex && !Screen.hasShiftDown();
@@ -341,6 +380,10 @@ public class ExpressionTextField {
         boolean handled = keyPressedNavigation(keyCode) || text.keyPressed(keyCode);
         if (!value.equals(text.value())) {
             lastEdit = lastInput;
+            // Such as backspace while typing a method name
+            updateCompletions();
+        } else {
+            closeCompletions();
         }
         return handled;
     }
@@ -367,6 +410,7 @@ public class ExpressionTextField {
     public void charTyped(char character) {
         if (StringUtil.isAllowedChatCharacter(character)) {
             insert(Character.toString(character));
+            updateCompletions();
         }
     }
 
@@ -374,6 +418,175 @@ public class ExpressionTextField {
         lastInput = Util.getMillis();
         lastEdit = lastInput;
         text.insertText(value);
+    }
+
+    // --------------- Completion ---------------
+
+    /**
+     * @param parserContext What the parser needs to know about the world, to find what can be completed.
+     */
+    public void setParserContext(Supplier<ExpressionParser.Context> parserContext) {
+        this.parserContext = parserContext;
+    }
+
+    private ExpressionParser.Completion getCompletion() {
+        String value = text.value();
+        int cursor = text.cursor();
+        if (cursor != completionCursor || !value.equals(completionText)) {
+            completionText = value;
+            completionCursor = cursor;
+            completion = parserContext == null || text.hasSelection() ? ExpressionParser.Completion.NONE
+                    : ExpressionParser.complete(value, cursor, parserContext.get());
+        }
+        return completion;
+    }
+
+    /**
+     * @return The call that the cursor is in while the text has focus, or null.
+     */
+    @Nullable
+    public ExpressionParser.Call getCallAtCursor() {
+        return focused ? getCompletion().call() : null;
+    }
+
+    /**
+     * Show the methods whose name starts with what is typed after a point, as the text was just typed.
+     */
+    private void updateCompletions() {
+        ExpressionParser.Methods methods = focused ? getCompletion().methods() : null;
+        List<Completion> items = new ArrayList<>();
+        if (methods != null) {
+            Predicate<IOperator> usable = parserContext.get().operators();
+            String prefix = methods.prefix().toLowerCase(Locale.ROOT);
+            OperatorNames.getMethods(methods.receiverType()).forEach((name, operator) -> {
+                if (name.toLowerCase(Locale.ROOT).startsWith(prefix) && usable.test(operator)) {
+                    items.add(new Completion(name, operator, getSignature(operator, true)));
+                }
+            });
+            completionsStart = methods.start();
+        }
+        if (!items.equals(completions)) {
+            completionIndex = 0;
+        }
+        completions = items;
+        completionsText = text.value();
+        completionsCursor = text.cursor();
+    }
+
+    /**
+     * @return The methods that are shown, which are hidden once the text or cursor changes in any other way than typing.
+     */
+    private List<Completion> getShownCompletions() {
+        return text.cursor() == completionsCursor && text.value().equals(completionsText) ? completions : List.of();
+    }
+
+    /**
+     * @return If methods were shown, which are closed now, such as by Escape.
+     */
+    public boolean closeCompletions() {
+        boolean shown = !getShownCompletions().isEmpty();
+        completions = List.of();
+        return shown;
+    }
+
+    /**
+     * Handle a key for the shown methods: Up and Down to choose one, and Tab or Enter to insert it.
+     * @param keyCode The key.
+     * @return If it was handled.
+     */
+    public boolean keyPressedCompletion(int keyCode) {
+        List<Completion> shown = getShownCompletions();
+        if (shown.isEmpty()) {
+            return false;
+        }
+        switch (keyCode) {
+            case GLFW.GLFW_KEY_DOWN -> completionIndex = (completionIndex + 1) % shown.size();
+            case GLFW.GLFW_KEY_UP -> completionIndex = (completionIndex + shown.size() - 1) % shown.size();
+            case GLFW.GLFW_KEY_TAB, GLFW.GLFW_KEY_ENTER, GLFW.GLFW_KEY_KP_ENTER -> acceptCompletion(completionIndex);
+            default -> {
+                return false;
+            }
+        }
+        lastInput = Util.getMillis();
+        return true;
+    }
+
+    /**
+     * Insert the clicked method, if the methods are shown there.
+     * @param x The x position, relative to the text.
+     * @param y The y position, relative to the text.
+     * @return If the methods were clicked.
+     */
+    public boolean mouseClickedCompletion(double x, double y) {
+        if (!isInCompletions(x, y)) {
+            return false;
+        }
+        int row = Mth.clamp(Mth.floor((y - completionsBox[1] - 1) / LINE_HEIGHT), 0, COMPLETION_ROWS - 1);
+        acceptCompletion(Math.min(completionsFirst + row, completions.size() - 1));
+        return true;
+    }
+
+    /**
+     * Move through the shown methods, if the mouse is over them.
+     * @param x The x position, relative to the text.
+     * @param y The y position, relative to the text.
+     * @param amount The amount scrolled.
+     * @return If the methods were scrolled.
+     */
+    public boolean mouseScrolledCompletion(double x, double y, double amount) {
+        if (!isInCompletions(x, y)) {
+            return false;
+        }
+        completionIndex = Mth.clamp(completionIndex - (int) Math.signum(amount), 0, completions.size() - 1);
+        return true;
+    }
+
+    /**
+     * @param mouseX The x position on the screen.
+     * @param mouseY The y position on the screen.
+     * @return If the shown methods are drawn there.
+     */
+    public boolean isOverCompletions(double mouseX, double mouseY) {
+        return isInCompletions(mouseX - textX, mouseY - textY);
+    }
+
+    private boolean isInCompletions(double x, double y) {
+        return !getShownCompletions().isEmpty() && completionsBox != null && x >= completionsBox[0] && x < completionsBox[0] + completionsBox[2]
+                && y >= completionsBox[1] && y < completionsBox[1] + completionsBox[3];
+    }
+
+    /**
+     * Replace the typed name with that of a method, and the rest of the name after the cursor too.
+     * Brackets are added if there are none yet, closed if the method takes no other inputs.
+     */
+    private void acceptCompletion(int index) {
+        Completion completion = completions.get(index);
+        completions = List.of();
+        String value = text.value();
+        int end = text.cursor();
+        while (end < value.length() && (Character.isLetterOrDigit(value.charAt(end)) || value.charAt(end) == '_')) {
+            end++;
+        }
+        boolean bracket = end < value.length() && value.charAt(end) == '(';
+        String brackets = bracket ? "" : completion.operator().getRequiredInputLength() > 1 ? "(" : "()";
+        select(completionsStart, end);
+        insert(completion.name() + brackets);
+        if (bracket) {
+            text.seekCursor(Whence.RELATIVE, 1);
+        }
+    }
+
+    /**
+     * @param operator An operator.
+     * @param method If it is called as a method, so its first input is left out.
+     * @return Its inputs and output, as in {@code (Integer, String): Boolean}.
+     */
+    public static String getSignature(IOperator operator, boolean method) {
+        IValueType<?>[] inputs = operator.getInputTypes();
+        return Arrays.stream(inputs, method ? Math.min(1, inputs.length) : 0, inputs.length)
+                .map(type -> L10NHelpers.localize(type.getTranslationKey()))
+                .collect(Collectors.joining(", ", "(", "): "))
+                + L10NHelpers.localize(operator.getOutputType().getTranslationKey());
     }
 
     private int getMaxScroll() {
@@ -464,7 +677,109 @@ public class ExpressionTextField {
             int barY = y + (height - barHeight) * scroll / getMaxScroll();
             guiGraphics.fill(x + width - 2, barY, x + width, barY + barHeight, COLOR_SCROLLBAR);
         }
+
+        textX = x;
+        textY = y;
+        completionsBox = focused && !getShownCompletions().isEmpty() ? placeCompletions(x, y, lines) : null;
+        completionsPlaced = true;
     }
+
+    /**
+     * Place the methods below the line of the typed name, starting at the name.
+     * They move to stay on the screen, and above the line if there is no room below it.
+     * @return Where they are, relative to the text, or null if the name is scrolled out of view.
+     */
+    @Nullable
+    private int[] placeCompletions(int x, int y, int[] lines) {
+        String value = text.value();
+        int line = 0;
+        while (line < lines.length / 2 - 1 && completionsStart >= lines[line * 2 + 2]) {
+            line++;
+        }
+        if (line < scroll || line >= scroll + visibleLines) {
+            return null;
+        }
+        int lineBegin = lines[line * 2];
+        int lineY = y + (line - scroll) * LINE_HEIGHT;
+        int nameX = x + font.width(value.substring(lineBegin, Mth.clamp(completionsStart, lineBegin, lines[line * 2 + 1])));
+
+        int rows = Math.min(COMPLETION_ROWS, completions.size());
+        completionsFirst = Mth.clamp(completionIndex - rows / 2, 0, completions.size() - rows);
+        int width = 0;
+        for (Completion completion : completions) {
+            width = Math.max(width, font.width(completion.name()) + 6 + font.width(completion.detail()));
+        }
+        int screenWidth = Minecraft.getInstance().getWindow().getGuiScaledWidth();
+        int screenHeight = Minecraft.getInstance().getWindow().getGuiScaledHeight();
+        width = Math.min(width + 4, screenWidth - 4);
+        int height = rows * LINE_HEIGHT + 2;
+        int boxX = Math.max(2, Math.min(nameX - 2, screenWidth - 2 - width));
+        int boxY = lineY + LINE_HEIGHT;
+        if (boxY + height > screenHeight - 2) {
+            boxY = lineY - 2 - height;
+        }
+        return new int[]{boxX - x, boxY - y, width, height};
+    }
+
+    /**
+     * Draw the methods shown while typing, if the text was drawn since.
+     * This is done after everything else, as slots and labels are drawn without depth, so they would cover them.
+     * @param guiGraphics The graphics, without translation.
+     */
+    public void renderCompletions(GuiGraphics guiGraphics) {
+        if (!completionsPlaced) {
+            completionsBox = null;
+        }
+        completionsPlaced = false;
+        if (completionsBox == null || getShownCompletions().isEmpty()) {
+            return;
+        }
+        int boxX = textX + completionsBox[0];
+        int boxY = textY + completionsBox[1];
+        int width = completionsBox[2];
+        int height = completionsBox[3];
+        int rows = Math.min(COMPLETION_ROWS, completions.size());
+        // Below tooltips
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(0, 0, 300);
+        guiGraphics.fill(boxX - 1, boxY - 1, boxX + width + 1, boxY + height + 1, COLOR_POPUP_BORDER);
+        guiGraphics.fill(boxX, boxY, boxX + width, boxY + height, COLOR_POPUP);
+        for (int row = 0; row < rows; row++) {
+            int index = completionsFirst + row;
+            Completion completion = completions.get(index);
+            int rowY = boxY + 1 + row * LINE_HEIGHT;
+            if (index == completionIndex) {
+                guiGraphics.fill(boxX, rowY, boxX + width, rowY + LINE_HEIGHT, COLOR_SELECTION);
+            }
+            String name = font.plainSubstrByWidth(completion.name(), width - 4);
+            guiGraphics.drawString(font, name, boxX + 2, rowY + 1, COLOR_CARET, false);
+            int detailX = boxX + 2 + font.width(name) + 6;
+            int detailWidth = boxX + width - 2 - detailX;
+            String detail = completion.detail();
+            if (font.width(detail) > detailWidth) {
+                detail = font.plainSubstrByWidth(detail, Math.max(0, detailWidth - font.width(OperatorLPElementRenderPattern.ELLIPSIS)))
+                        + OperatorLPElementRenderPattern.ELLIPSIS;
+            }
+            if (detailWidth > font.width(OperatorLPElementRenderPattern.ELLIPSIS)) {
+                guiGraphics.drawString(font, detail, detailX, rowY + 1, COLOR_DETAIL, false);
+            }
+        }
+        // How far down the list the shown methods are
+        if (completions.size() > rows) {
+            int barHeight = Math.max(3, (height - 2) * rows / completions.size());
+            int barY = boxY + 1 + (height - 2 - barHeight) * completionsFirst / (completions.size() - rows);
+            guiGraphics.fill(boxX + width - 1, barY, boxX + width, barY + barHeight, COLOR_SCROLLBAR);
+        }
+        guiGraphics.pose().popPose();
+    }
+
+    /**
+     * A method that can be called on the value before a point.
+     * @param name The name to call it with.
+     * @param operator Its operator.
+     * @param detail Its other inputs and output.
+     */
+    private static record Completion(String name, IOperator operator, String detail) {}
 
     /**
      * Vanilla's text model, with its lines as plain indexes, since its line type is not visible here.

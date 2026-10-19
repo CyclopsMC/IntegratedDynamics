@@ -9,9 +9,12 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * Names of operators in printed expressions.
@@ -206,6 +209,24 @@ public final class OperatorNames {
             }
         }
         return owners.size() == 1 ? owners.get(0) : null;
+    }
+
+    /**
+     * @param receiverType The type of a value.
+     * @return The operators that can be called as a method on values of this type, by the name to call them with,
+     *         ordered by name. These are the operators whose first input takes the type,
+     *         as for the methods of values in Integrated Scripting.
+     */
+    public static SortedMap<String, IOperator> getMethods(IValueType<?> receiverType) {
+        SortedMap<String, IOperator> methods = new TreeMap<>(String.CASE_INSENSITIVE_ORDER.thenComparing(Comparator.naturalOrder()));
+        Operators.REGISTRY.getScopedInteractOperators().forEach((firstInputType, operators) -> {
+            if (firstInputType.correspondsTo(receiverType)) {
+                for (IOperator operator : operators.values()) {
+                    methods.put(getName(operator, receiverType), operator);
+                }
+            }
+        });
+        return methods;
     }
 
     private static Map<String, IOperator> invert(Map<IOperator, String> symbols) {

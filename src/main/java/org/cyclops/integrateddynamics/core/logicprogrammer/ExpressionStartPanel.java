@@ -18,6 +18,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionParseException;
+import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionParser;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionTypeChecker;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.Region;
@@ -43,6 +44,7 @@ import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElem
 import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.PANEL_X;
 import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.PARAMS_Y;
 import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.drawOutline;
+import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.getCallSignature;
 import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.renderFooter;
 import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.renderStatus;
 import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.renderTextError;
@@ -108,6 +110,10 @@ public class ExpressionStartPanel {
         return LabelsWorldStorage.getInstance(IntegratedDynamics._instance).getVariableIds(label);
     }
 
+    protected ExpressionParser.Context getParserContext() {
+        return ExpressionEditor.getParserContext(ValueDeseralizationContext.ofClient(), this::getRefType, this::getLabelIds);
+    }
+
     /**
      * @return The typed expression, or null if it does not parse, as cached for the current text.
      */
@@ -117,8 +123,7 @@ public class ExpressionStartPanel {
         if (!text.equals(parsedFor)) {
             parsedFor = text;
             try {
-                parsedText = ExpressionEditor.parse(text, ExpressionEditor.getParserContext(ValueDeseralizationContext.ofClient(),
-                        this::getRefType, this::getLabelIds));
+                parsedText = ExpressionEditor.parse(text, getParserContext());
                 parsedTextResult = ExpressionTypeChecker.check(parsedText, this::getRefType);
                 textError = null;
             } catch (ExpressionParseException e) {
@@ -182,6 +187,9 @@ public class ExpressionStartPanel {
         if (!isShown() || (!field.isDraft() && !field.isFocused())) {
             return false;
         }
+        if (field.closeCompletions()) {
+            return true;
+        }
         if (field.isDraft() && parseText() != null) {
             applyText();
         } else {
@@ -205,6 +213,9 @@ public class ExpressionStartPanel {
         }
         ExpressionTextField field = getTextField();
         field.setPressed(false);
+        if (field.mouseClickedCompletion(mouseX - gui.getGuiLeft() - PANEL_X - 2, mouseY - gui.getGuiTop() - TEXT_BOX_Y - 2)) {
+            return true;
+        }
         if (isInTextBox(mouseX, mouseY)) {
             if (!field.isFocused()) {
                 field.setFocused(true);
@@ -240,6 +251,10 @@ public class ExpressionStartPanel {
     }
 
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollY) {
+        if (isShown() && getTextField().mouseScrolledCompletion(mouseX - gui.getGuiLeft() - PANEL_X - 2,
+                mouseY - gui.getGuiTop() - TEXT_BOX_Y - 2, scrollY)) {
+            return true;
+        }
         if (isShown() && isInTextBox(mouseX, mouseY)) {
             getTextField().scroll(scrollY);
             return true;
@@ -260,6 +275,9 @@ public class ExpressionStartPanel {
         ExpressionTextField field = getTextField();
         if (!isShown() || !field.isFocused()) {
             return false;
+        }
+        if (field.keyPressedCompletion(keyCode)) {
+            return true;
         }
         if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
             if (Screen.hasShiftDown()) {
@@ -290,6 +308,7 @@ public class ExpressionStartPanel {
 
         // The text box, as in the panel of an expression
         ExpressionTextField field = getTextField();
+        field.setParserContext(this::getParserContext);
         int x = guiLeft + PANEL_X;
         int y = guiTop + TEXT_BOX_Y;
         guiGraphics.fill(x, y, x + PANEL_WIDTH, guiTop + CONTENT_BOTTOM, COLOR_STRIP);
@@ -307,8 +326,11 @@ public class ExpressionStartPanel {
         int mark = expression == null && textError != null && !text.isEmpty() ? Math.min(textError.getPosition(), text.length()) : -1;
         field.render(guiGraphics, x + 2, y + 2, PANEL_WIDTH - 3, guiTop + FOOTER_Y - y - 3, colors, new int[text.length()], mark, COLOR_TEXT_ERROR);
 
-        // The type of what was typed, or why it can not be used
-        if (text.isBlank()) {
+        // The call at the cursor, the type of what was typed, or why it can not be used
+        ExpressionParser.Call call = field.getCallAtCursor();
+        if (call != null) {
+            renderFooter(guiGraphics, guiLeft, guiTop, font, getCallSignature(call), null, regions);
+        } else if (text.isBlank()) {
             renderFooter(guiGraphics, guiLeft, guiTop, font, Component.empty(), null, regions);
         } else if (expression != null) {
             renderStatus(guiGraphics, guiLeft, guiTop, font, expression, parsedTextResult, regions);

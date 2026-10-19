@@ -16,6 +16,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.Container;
 import net.neoforged.api.distmarker.Dist;
@@ -37,6 +38,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationC
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionParseException;
+import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionParser;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionPrinter;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionTrees;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionTypeChecker;
@@ -324,7 +326,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
      * @param container The container.
      * @return The text of the expression, which is kept while the panel is recreated.
      */
-    static ExpressionTextField getTextField(ContainerLogicProgrammerBase container) {
+    public static ExpressionTextField getTextField(ContainerLogicProgrammerBase container) {
         return container.getExpressionTextField(() -> new ExpressionTextField(Minecraft.getInstance().font, TEXT_WIDTH));
     }
 
@@ -349,8 +351,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         if (!text.equals(parsedFor)) {
             parsedFor = text;
             try {
-                parsedText = ExpressionEditor.parse(text, ExpressionEditor.getParserContext(ValueDeseralizationContext.ofClient(),
-                        this::getRefType, this::getLabelIds));
+                parsedText = ExpressionEditor.parse(text, getParserContext());
                 parsedTextResult = ExpressionTypeChecker.check(parsedText, this::getRefType);
                 textError = null;
             } catch (ExpressionParseException e) {
@@ -360,6 +361,10 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
             }
         }
         return parsedText;
+    }
+
+    protected ExpressionParser.Context getParserContext() {
+        return ExpressionEditor.getParserContext(ValueDeseralizationContext.ofClient(), this::getRefType, this::getLabelIds);
     }
 
     protected void focusText() {
@@ -525,6 +530,9 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     }
 
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+        if (getTextField().mouseScrolledCompletion(mouseX - guiLeft - PANEL_X - 2, mouseY - guiTop - textBoxY - 2, scrollY)) {
+            return true;
+        }
         if (isInTextBox(mouseX, mouseY)) {
             getTextField().scroll(scrollY);
             return true;
@@ -549,6 +557,9 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
      */
     public boolean cancelSelection() {
         ExpressionTextField field = getTextField();
+        if (field.closeCompletions()) {
+            return true;
+        }
         if (field.isDraft() || field.isFocused()) {
             // Valid text is kept, as it would be after a pause, so this does not depend on how fast it is pressed
             if (field.isDraft() && parseText() != null) {
@@ -669,6 +680,10 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         pressedParameter = -1;
         draggingParameter = false;
         getTextField().setPressed(false);
+        // The methods shown while typing, which can cover the rest of the panel
+        if (getTextField().mouseClickedCompletion(mouseX - guiLeft - PANEL_X - 2, mouseY - guiTop - textBoxY - 2)) {
+            return true;
+        }
         for (Button button : Lists.newArrayList(buttonList)) {
             if (button.mouseClicked(mouseX, mouseY, mouseButton)) {
                 return true;
@@ -814,6 +829,9 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         boolean undoKey = typedChar == GLFW.GLFW_KEY_Z && Screen.hasControlDown() && !Screen.hasShiftDown();
         boolean redoKey = Screen.hasControlDown() && (typedChar == GLFW.GLFW_KEY_Y || (typedChar == GLFW.GLFW_KEY_Z && Screen.hasShiftDown()));
         if (field.isFocused()) {
+            if (field.keyPressedCompletion(typedChar)) {
+                return true;
+            }
             if (typedChar == GLFW.GLFW_KEY_ENTER || typedChar == GLFW.GLFW_KEY_KP_ENTER) {
                 if (Screen.hasShiftDown()) {
                     field.insert("\n");
@@ -1002,7 +1020,10 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
             int[] hoveredPath = hoveredSlot >= 0 && hoveredSlot < editor.getSlotCount() ? ExpressionTrees.append(editPath, hoveredSlot) : null;
             textBoxY = renderParameters(guiGraphics, guiLeft, guiTop, fontRenderer, editor);
             renderTextField(guiGraphics, guiLeft, guiTop, editor, result, hoveredPath);
-            if (!field.isDraft()) {
+            ExpressionParser.Call call = field.getCallAtCursor();
+            if (call != null) {
+                renderFooter(guiGraphics, guiLeft, guiTop, fontRenderer, getCallSignature(call), null, regions);
+            } else if (!field.isDraft()) {
                 renderStatus(guiGraphics, guiLeft, guiTop, fontRenderer, editor.getExpression(), result, regions);
             } else if (parseText() != null) {
                 renderStatus(guiGraphics, guiLeft, guiTop, fontRenderer, parsedText, parsedTextResult, regions);
@@ -1114,6 +1135,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     protected void renderTextField(GuiGraphics guiGraphics, int guiLeft, int guiTop, ExpressionEditor editor,
                                    ExpressionTypeChecker.Result result, @Nullable int[] hoveredPath) {
         ExpressionTextField field = getTextField();
+        field.setParserContext(this::getParserContext);
         int x = guiLeft + PANEL_X;
         int y = guiTop + textBoxY;
         guiGraphics.fill(x, y, x + PANEL_WIDTH, guiTop + CONTENT_BOTTOM, COLOR_STRIP);
@@ -1187,6 +1209,34 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
                 ? ValueTypeOperator.getSignature(ExpressionTypeChecker.getInputTypes(expression), outputType)
                 : Component.translatable(outputType.getTranslationKey()).withStyle(outputType.getDisplayColorFormat());
         renderFooter(guiGraphics, guiLeft, guiTop, font, type, null, regions);
+    }
+
+    /**
+     * @param call A call that the cursor is in.
+     * @return Its signature in the colors of its types, with the input at the cursor underlined,
+     *         as in {@code Item.strength(Block): Double} for a method, where the first input is before the point.
+     */
+    static Component getCallSignature(ExpressionParser.Call call) {
+        IOperator operator = call.operator();
+        IValueType<?>[] inputs = operator.getInputTypes();
+        int first = call.method() ? Math.min(1, inputs.length) : 0;
+        MutableComponent signature = Component.empty();
+        if (first > 0) {
+            signature.append(getTypeName(inputs[0], false)).append(".");
+        }
+        signature.append(call.name()).append("(");
+        for (int i = first; i < inputs.length; i++) {
+            if (i > first) {
+                signature.append(", ");
+            }
+            signature.append(getTypeName(inputs[i], i == call.input()));
+        }
+        return signature.append("): ").append(getTypeName(operator.getOutputType(), false));
+    }
+
+    private static Component getTypeName(IValueType<?> type, boolean underlined) {
+        MutableComponent name = Component.translatable(type.getTranslationKey()).withStyle(type.getDisplayColorFormat());
+        return underlined ? name.withStyle(ChatFormatting.UNDERLINE) : name;
     }
 
     /**
