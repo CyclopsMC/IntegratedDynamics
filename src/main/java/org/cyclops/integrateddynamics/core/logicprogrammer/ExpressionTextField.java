@@ -82,20 +82,20 @@ public class ExpressionTextField {
     @Nullable
     private String completionText = null;
     private int completionCursor = -1;
-    // The methods shown while typing their name, for the text and cursor they were found for
+    // The methods or types shown while typing their name, for the text and cursor they were found for
     private List<Completion> completions = List.of();
     @Nullable
     private String completionsText = null;
     private int completionsCursor = -1;
     private int completionsStart = 0;
     private int completionIndex = 0;
-    // Where the methods are drawn, relative to the text, the first one drawn, and where the text is drawn
+    // Where the list is drawn, relative to the text, the first entry drawn, and where the text is drawn
     @Nullable
     private int[] completionsBox = null;
     private int completionsFirst = 0;
     private int textX = 0;
     private int textY = 0;
-    // If the text was drawn since the methods were last drawn, as they are drawn after everything else
+    // If the text was drawn since the list was last drawn, as it is drawn after everything else
     private boolean completionsPlaced = false;
 
     /**
@@ -450,20 +450,27 @@ public class ExpressionTextField {
     }
 
     /**
-     * Show the methods whose name starts with what is typed after a point, as the text was just typed.
+     * Show the methods whose name starts with what is typed after a point,
+     * or the types whose name starts with what is typed after the colon of a parameter or an @, as the text was just typed.
      */
     private void updateCompletions() {
-        ExpressionParser.Methods methods = focused ? getCompletion().methods() : null;
+        ExpressionParser.Completion completion = focused ? getCompletion() : ExpressionParser.Completion.NONE;
         List<Completion> items = new ArrayList<>();
-        if (methods != null) {
+        if (completion.methods() != null) {
+            ExpressionParser.Methods methods = completion.methods();
             Predicate<IOperator> usable = parserContext.get().operators();
             String prefix = methods.prefix().toLowerCase(Locale.ROOT);
             OperatorNames.getMethods(methods.receiverType()).forEach((name, operator) -> {
                 if (name.toLowerCase(Locale.ROOT).startsWith(prefix) && usable.test(operator)) {
-                    items.add(new Completion(name, operator, getSignature(operator, true)));
+                    items.add(new Completion(name, getSignature(operator, true), operator));
                 }
             });
             completionsStart = methods.start();
+        } else if (completion.types() != null) {
+            for (IValueType<?> type : ExpressionParser.getTypes(completion.types(), parserContext.get())) {
+                items.add(new Completion(ExpressionParser.getTypeName(type), L10NHelpers.localize(type.getTranslationKey()), null));
+            }
+            completionsStart = completion.types().start();
         }
         if (!items.equals(completions)) {
             completionIndex = 0;
@@ -474,14 +481,14 @@ public class ExpressionTextField {
     }
 
     /**
-     * @return The methods that are shown, which are hidden once the text or cursor changes in any other way than typing.
+     * @return The entries that are shown, which are hidden once the text or cursor changes in any other way than typing.
      */
     private List<Completion> getShownCompletions() {
         return text.cursor() == completionsCursor && text.value().equals(completionsText) ? completions : List.of();
     }
 
     /**
-     * @return If methods were shown, which are closed now, such as by Escape.
+     * @return If a list was shown, which is closed now, such as by Escape.
      */
     public boolean closeCompletions() {
         boolean shown = !getShownCompletions().isEmpty();
@@ -490,7 +497,7 @@ public class ExpressionTextField {
     }
 
     /**
-     * Handle a key for the shown methods: Up and Down to choose one, and Tab or Enter to insert it.
+     * Handle a key for the shown list: Up and Down to choose an entry, and Tab or Enter to insert it.
      * @param keyCode The key.
      * @return If it was handled.
      */
@@ -512,10 +519,10 @@ public class ExpressionTextField {
     }
 
     /**
-     * Insert the clicked method, if the methods are shown there.
+     * Insert the clicked entry, if the list is shown there.
      * @param x The x position, relative to the text.
      * @param y The y position, relative to the text.
-     * @return If the methods were clicked.
+     * @return If the list was clicked.
      */
     public boolean mouseClickedCompletion(double x, double y) {
         if (!isInCompletions(x, y)) {
@@ -527,11 +534,11 @@ public class ExpressionTextField {
     }
 
     /**
-     * Move through the shown methods, if the mouse is over them.
+     * Move through the shown list, if the mouse is over it.
      * @param x The x position, relative to the text.
      * @param y The y position, relative to the text.
      * @param amount The amount scrolled.
-     * @return If the methods were scrolled.
+     * @return If the list was scrolled.
      */
     public boolean mouseScrolledCompletion(double x, double y, double amount) {
         if (!isInCompletions(x, y)) {
@@ -544,7 +551,7 @@ public class ExpressionTextField {
     /**
      * @param mouseX The x position on the screen.
      * @param mouseY The y position on the screen.
-     * @return If the shown methods are drawn there.
+     * @return If the shown list is drawn there.
      */
     public boolean isOverCompletions(double mouseX, double mouseY) {
         return isInCompletions(mouseX - textX, mouseY - textY);
@@ -556,22 +563,26 @@ public class ExpressionTextField {
     }
 
     /**
-     * Replace the typed name with that of a method, and the rest of the name after the cursor too.
-     * Brackets are added if there are none yet, closed if the method takes no other inputs.
+     * Replace the typed name with that of a method or type, and the rest of the name after the cursor too.
+     * For methods, brackets are added if there are none yet, closed if the method takes no other inputs.
      */
     private void acceptCompletion(int index) {
         Completion completion = completions.get(index);
         completions = List.of();
         String value = text.value();
         int end = text.cursor();
-        while (end < value.length() && (Character.isLetterOrDigit(value.charAt(end)) || value.charAt(end) == '_')) {
+        while (end < value.length() && (completion.operator() == null ? ExpressionParser.isTypeNamePart(value.charAt(end))
+                : Character.isLetterOrDigit(value.charAt(end)) || value.charAt(end) == '_')) {
             end++;
         }
         boolean bracket = end < value.length() && value.charAt(end) == '(';
-        String brackets = bracket ? "" : completion.operator().getRequiredInputLength() > 1 ? "(" : "()";
+        String brackets = "";
+        if (completion.operator() != null && !bracket) {
+            brackets = completion.operator().getRequiredInputLength() > 1 ? "(" : "()";
+        }
         select(completionsStart, end);
         insert(completion.name() + brackets);
-        if (bracket) {
+        if (completion.operator() != null && bracket) {
             text.seekCursor(Whence.RELATIVE, 1);
         }
     }
@@ -685,7 +696,7 @@ public class ExpressionTextField {
     }
 
     /**
-     * Place the methods below the line of the typed name, starting at the name.
+     * Place the list below the line of the typed name, starting at the name.
      * They move to stay on the screen, and above the line if there is no room below it.
      * @return Where they are, relative to the text, or null if the name is scrolled out of view.
      */
@@ -722,7 +733,7 @@ public class ExpressionTextField {
     }
 
     /**
-     * Draw the methods shown while typing, if the text was drawn since.
+     * Draw the list shown while typing, if the text was drawn since.
      * This is done after everything else, as slots and labels are drawn without depth, so they would cover them.
      * @param guiGraphics The graphics, without translation.
      */
@@ -764,7 +775,7 @@ public class ExpressionTextField {
                 guiGraphics.drawString(font, detail, detailX, rowY + 1, COLOR_DETAIL, false);
             }
         }
-        // How far down the list the shown methods are
+        // How far down the list the shown entries are
         if (completions.size() > rows) {
             int barHeight = Math.max(3, (height - 2) * rows / completions.size());
             int barY = boxY + 1 + (height - 2 - barHeight) * completionsFirst / (completions.size() - rows);
@@ -774,12 +785,12 @@ public class ExpressionTextField {
     }
 
     /**
-     * A method that can be called on the value before a point.
-     * @param name The name to call it with.
-     * @param operator Its operator.
-     * @param detail Its other inputs and output.
+     * A method that can be called on the value before a point, or a type.
+     * @param name The name to write.
+     * @param detail The other inputs and output of a method, or the name of a type as the game shows it.
+     * @param operator The operator of a method, or null for a type.
      */
-    private static record Completion(String name, IOperator operator, String detail) {}
+    private static record Completion(String name, String detail, @Nullable IOperator operator) {}
 
     /**
      * Vanilla's text model, with its lines as plain indexes, since its line type is not visible here.

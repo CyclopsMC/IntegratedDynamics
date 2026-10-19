@@ -7,8 +7,10 @@ import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueDeseralizationContextMocked;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeAddonMocked;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeListProxyFactories;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
+import org.cyclops.integrateddynamics.core.logicprogrammer.ExpressionEditor;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -132,6 +134,57 @@ public class TestExpressionCompletion {
         assertThat(complete("(s: string) => s.contains(nope, ").call(), nullValue());
         assertThat(complete("(s: string) => s.contains(\"a").call(), nullValue());
         assertThat(ExpressionParser.complete("abc", 5, context()), is(ExpressionParser.Completion.NONE));
+    }
+
+    private static void assertTypes(String text, int start, String prefix, boolean parameter) {
+        assertThat(text, complete(text).types(), is(new ExpressionParser.Types(start, prefix, parameter)));
+    }
+
+    @Test
+    public void testCompleteTypes() {
+        // Of parameters
+        assertTypes("(x: ", 4, "", true);
+        assertTypes("(x:", 3, "", true);
+        assertTypes("(x: int", 4, "int", true);
+        assertTypes("(x: in|teger) => x", 4, "in", true);
+        assertTypes("(x: integer, y, z: str", 19, "str", true);
+        assertTypes("(x: testaddon:", 4, "testaddon:", true);
+        assertTypes("(x: testaddon:chem", 4, "testaddon:chem", true);
+        // Of values
+        assertTypes("@", 1, "", false);
+        assertTypes("x + @ite", 5, "ite", false);
+        assertTypes("@testaddon:chem", 1, "testaddon:chem", false);
+        // Not after a type, a space or the parameters, for names, in other brackets, or in strings
+        assertThat(complete("(x: int ").types(), nullValue());
+        assertThat(complete("(x: integer)").types(), nullValue());
+        assertThat(complete("(x: integer) => x").types(), nullValue());
+        assertThat(complete("(x, y").types(), nullValue());
+        assertThat(complete("(x int").types(), nullValue());
+        assertThat(complete("(b ? 1 : 2").types(), nullValue());
+        assertThat(complete("\"a@it").types(), nullValue());
+        assertThat(complete("#5 @").types(), is(new ExpressionParser.Types(4, "", false)));
+    }
+
+    @Test
+    public void testTypes() {
+        ExpressionParser.Context context = new ExpressionParser.Context(ValueDeseralizationContextMocked.get(), id -> null,
+                label -> IntLists.EMPTY_LIST, ExpressionEditor::isParameterType, operator -> true);
+        IValueType<?> chemical = ValueTypeAddonMocked.CHEMICAL;
+        assertThat(ExpressionParser.getTypes(new ExpressionParser.Types(0, "int", true), context), is(List.of(ValueTypes.INTEGER)));
+        assertThat(ExpressionParser.getTypes(new ExpressionParser.Types(0, "Int", true), context), is(List.of(ValueTypes.INTEGER)));
+        assertThat(ExpressionParser.getTypes(new ExpressionParser.Types(0, "nu", true), context), is(List.of(ValueTypes.CATEGORY_NUMBER)));
+        // Also by the name without the namespace of an add-on, which comes after those of Integrated Dynamics
+        assertThat(ExpressionParser.getTypes(new ExpressionParser.Types(0, "chem", true), context), is(List.of(chemical)));
+        assertThat(ExpressionParser.getTypes(new ExpressionParser.Types(0, "testaddon:c", true), context), is(List.of(chemical)));
+        List<IValueType<?>> all = ExpressionParser.getTypes(new ExpressionParser.Types(0, "", true), context);
+        assertThat(all.get(0), is(ValueTypes.CATEGORY_ANY));
+        assertTrue(all.indexOf(chemical) > all.indexOf(ValueTypes.STRING));
+        assertFalse(all.contains(ValueTypes.CATEGORY_NAMED));
+        // Values have no categories
+        List<IValueType<?>> values = ExpressionParser.getTypes(new ExpressionParser.Types(0, "", false), context);
+        assertTrue(values.contains(ValueTypes.OBJECT_ITEMSTACK));
+        assertFalse(values.contains(ValueTypes.CATEGORY_ANY));
+        assertFalse(values.contains(ValueTypes.CATEGORY_NUMBER));
     }
 
 }

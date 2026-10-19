@@ -680,7 +680,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         pressedParameter = -1;
         draggingParameter = false;
         getTextField().setPressed(false);
-        // The methods shown while typing, which can cover the rest of the panel
+        // The list shown while typing, which can cover the rest of the panel
         if (getTextField().mouseClickedCompletion(mouseX - guiLeft - PANEL_X - 2, mouseY - guiTop - textBoxY - 2)) {
             return true;
         }

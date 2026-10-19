@@ -37,8 +37,10 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import javax.annotation.Nullable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Deque;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -130,12 +132,21 @@ public final class ExpressionParser {
         if (cursor < 0 || cursor > Math.min(text.length(), MAX_LENGTH)) {
             return Completion.NONE;
         }
+        String before = text.substring(0, cursor);
+        Types valueType = getValueTypeAtEnd(before, context);
+        if (valueType != null) {
+            return new Completion(null, null, valueType);
+        }
         List<Token> tokens;
         try {
-            tokens = new Lexer(text.substring(0, cursor), context).tokenize();
+            tokens = new Lexer(before, context).tokenize();
         } catch (ExpressionParseException e) {
             // Such as within a string
             return Completion.NONE;
+        }
+        Types parameterType = getParameterTypeAtEnd(tokens);
+        if (parameterType != null) {
+            return new Completion(null, null, parameterType);
         }
         ExpressionParser parser = new ExpressionParser(context, tokens, true);
         try {
@@ -144,8 +155,110 @@ public final class ExpressionParser {
         } catch (ExpressionParseException e) {
             // Calls are only open at the cursor if the text before it ends within them, and not at an error
             boolean atCursor = parser.methods != null || e.getPosition() == cursor;
-            return new Completion(parser.methods, atCursor ? parser.getOpenCall() : null);
+            return new Completion(parser.methods, atCursor ? parser.getOpenCall() : null, null);
         }
+    }
+
+    /**
+     * @param text The text before the cursor.
+     * @param context What the parser needs to know about the world.
+     * @return The type of a value that is being typed at the end, as in {@code @item}, or null.
+     */
+    @Nullable
+    private static Types getValueTypeAtEnd(String text, Context context) {
+        int start = text.length();
+        while (start > 0 && isTypeNamePart(text.charAt(start - 1))) {
+            start--;
+        }
+        if (start == 0 || text.charAt(start - 1) != '@') {
+            return null;
+        }
+        try {
+            new Lexer(text.substring(0, start - 1), context).tokenize();
+        } catch (ExpressionParseException e) {
+            // Such as within a string
+            return null;
+        }
+        return new Types(start, text.substring(start), false);
+    }
+
+    /**
+     * @param tokens The tokens of the text before the cursor.
+     * @return The type of a parameter that is being typed at the end, as in {@code (x: int}, or null.
+     */
+    @Nullable
+    private static Types getParameterTypeAtEnd(List<Token> tokens) {
+        int end = tokens.size() - 1;
+        if (!isSymbol(tokens.get(0), "(")) {
+            return null;
+        }
+        int i = 1;
+        while (true) {
+            if (tokens.get(i).kind() != Kind.NAME) {
+                return null;
+            }
+            i++;
+            if (isSymbol(tokens.get(i), ",")) {
+                i++;
+                continue;
+            }
+            if (!isSymbol(tokens.get(i), ":")) {
+                return null;
+            }
+            int start = ++i;
+            while (i < end && !isSymbol(tokens.get(i), ",")) {
+                i++;
+            }
+            if (i == end) {
+                return getTypeAtEnd(tokens, start);
+            }
+            i++;
+        }
+    }
+
+    /**
+     * @param tokens Tokens.
+     * @param start The index of the first token of a type that ends at the end of the tokens.
+     * @return The type if it is being typed: nothing yet, a name, or a namespace with a colon and maybe a name,
+     *         without spaces up to the end, or null.
+     */
+    @Nullable
+    private static Types getTypeAtEnd(List<Token> tokens, int start) {
+        int end = tokens.size() - 1;
+        int count = end - start;
+        if (count > 3 || (count > 0 && tokens.get(start).kind() != Kind.NAME)
+                || (count > 1 && !isSymbol(tokens.get(start + 1), ":")) || (count > 2 && tokens.get(start + 2).kind() != Kind.NAME)) {
+            return null;
+        }
+        StringBuilder prefix = new StringBuilder();
+        for (int i = start; i < end; i++) {
+            Token token = tokens.get(i);
+            Token next = tokens.get(i + 1);
+            if (token.start() + token.text().length() != next.start()) {
+                return null;
+            }
+            prefix.append(token.text());
+        }
+        return new Types(count > 0 ? tokens.get(start).start() : tokens.get(end).start(), prefix.toString(), true);
+    }
+
+    /**
+     * @param types A type that is being typed.
+     * @param context What the parser needs to know about the world.
+     * @return The types whose name starts with what is typed, or whose name without the namespace of an add-on does,
+     *         ordered by name, those of Integrated Dynamics first. For parameters, only the types they can have.
+     */
+    public static List<IValueType<?>> getTypes(Types types, Context context) {
+        String prefix = types.prefix().toLowerCase(Locale.ROOT);
+        List<IValueType<?>> matches = new ArrayList<>();
+        for (IValueType<?> type : ValueTypes.REGISTRY.getValueTypes()) {
+            if ((types.parameter() ? context.parameterTypes().test(type) : !type.isCategory())
+                    && (getTypeName(type).startsWith(prefix) || type.getUniqueName().getPath().startsWith(prefix))) {
+                matches.add(type);
+            }
+        }
+        matches.sort(Comparator.comparing((IValueType<?> type) -> getTypeName(type).contains(":")).thenComparing(ExpressionParser::getTypeName));
+        return matches;
     }
 
     /**
@@ -210,6 +323,14 @@ public final class ExpressionParser {
 
     private static boolean isNamePart(char c) {
         return Character.isLetterOrDigit(c) || c == '_';
+    }
+
+    /**
+     * @param c A character.
+     * @return If it can be part of the name of a type after {@code @}, which can contain a namespace.
+     */
+    public static boolean isTypeNamePart(char c) {
+        return isNamePart(c) || ".:/-".indexOf(c) >= 0;
     }
 
     // --------------- Grammar ---------------
@@ -815,10 +936,18 @@ public final class ExpressionParser {
      * What can be completed at a cursor.
      * @param methods The methods that can be called on the value before a point right before the cursor, or null.
      * @param call The innermost call whose brackets are open at the cursor, or null.
+     * @param types The type being typed at the cursor, or null.
      */
-    public static record Completion(@Nullable Methods methods, @Nullable Call call) {
-        public static final Completion NONE = new Completion(null, null);
+    public static record Completion(@Nullable Methods methods, @Nullable Call call, @Nullable Types types) {
+        public static final Completion NONE = new Completion(null, null, null);
     }
+
+    /**
+     * @param start Where the name of the type starts.
+     * @param prefix What is typed of the name, up to the cursor.
+     * @param parameter If it is the type of a parameter, as in {@code (x: int}, or otherwise of a value, as in {@code @item}.
+     */
+    public static record Types(int start, String prefix, boolean parameter) {}
 
     /**
      * @param receiverType The type of the value that the methods are called on.
@@ -1014,7 +1143,7 @@ public final class ExpressionParser {
             int start = position;
             position++;
             int nameStart = position;
-            while (position < text.length() && (isNamePart(text.charAt(position)) || ".:/-".indexOf(text.charAt(position)) >= 0)) {
+            while (position < text.length() && isTypeNamePart(text.charAt(position))) {
                 position++;
             }
             String typeName = text.substring(nameStart, position);
