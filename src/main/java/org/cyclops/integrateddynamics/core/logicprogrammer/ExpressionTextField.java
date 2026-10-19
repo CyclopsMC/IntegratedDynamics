@@ -1,6 +1,7 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
 import net.minecraft.Util;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.MultilineTextField;
@@ -13,6 +14,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.integrateddynamics.api.evaluate.expression.tree.Expression;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionParser;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionPrinter;
+import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionTextNavigation;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -34,6 +36,8 @@ public class ExpressionTextField {
     private static final int COLOR_SELECTION = 0xFF3060A0;
     private static final int COLOR_CARET = 0xFFE0E0E0;
     private static final int COLOR_SCROLLBAR = 0xFF808080;
+    private static final int COLOR_BRACKET = 0xFF2F6B60;
+    private static final long MULTI_CLICK_MS = 250;
 
     private final Font font;
     private final TextModel text;
@@ -54,6 +58,10 @@ public class ExpressionTextField {
     private int visibleLines = 1;
     private long lastInput = 0;
     private long lastEdit = 0;
+    private long lastClick = 0;
+    private int lastClickIndex = -1;
+    // Selected by a double or triple click, which a drag that stays on the clicked character keeps
+    private boolean selectedByClicks = false;
 
     /**
      * @param font The font.
@@ -245,10 +253,27 @@ public class ExpressionTextField {
 
     /**
      * Place the cursor, or extend the selection while shift is held.
+     * A double click selects a word, and a triple click everything.
      * @param x The x position, relative to the text.
      * @param y The y position, relative to the text.
      */
     public void mouseClicked(double x, double y) {
+        long now = Util.getMillis();
+        int index = getIndexAtPoint(x, y);
+        boolean repeated = now - lastClick < MULTI_CLICK_MS && index == lastClickIndex && !Screen.hasShiftDown();
+        lastClick = now;
+        lastClickIndex = index;
+        selectedByClicks = repeated;
+        if (repeated) {
+            lastInput = now;
+            if (text.hasSelection()) {
+                select(0, text.value().length());
+            } else {
+                int[] word = ExpressionTextNavigation.getWordAt(text.value(), index);
+                select(word[0], word[1]);
+            }
+            return;
+        }
         text.setSelecting(Screen.hasShiftDown());
         seek(x, y);
     }
@@ -259,9 +284,41 @@ public class ExpressionTextField {
      * @param y The y position, relative to the text.
      */
     public void mouseDragged(double x, double y) {
+        if (selectedByClicks && getIndexAtPoint(x, y) == lastClickIndex) {
+            return;
+        }
         text.setSelecting(true);
         seek(x, y);
         text.setSelecting(Screen.hasShiftDown());
+    }
+
+    private void select(int begin, int end) {
+        text.setSelecting(false);
+        text.seekCursor(Whence.ABSOLUTE, begin);
+        text.setSelecting(true);
+        text.seekCursor(Whence.ABSOLUTE, end);
+        text.setSelecting(false);
+    }
+
+    /**
+     * @param x The x position, relative to the text.
+     * @param y The y position, relative to the text.
+     * @return The index of the character at the position, or of the last one of its line when the position is after it.
+     */
+    private int getIndexAtPoint(double x, double y) {
+        String value = text.value();
+        int[] lines = text.getLines();
+        int line = Mth.clamp(Mth.floor(y / LINE_HEIGHT) + scroll, 0, lines.length / 2 - 1);
+        int begin = lines[line * 2];
+        int end = lines[line * 2 + 1];
+        int charRight = 0;
+        for (int i = begin; i < end; i++) {
+            charRight += font.width(value.substring(i, i + 1));
+            if (x < charRight) {
+                return i;
+            }
+        }
+        return Math.max(begin, end - 1);
     }
 
     private void seek(double x, double y) {
@@ -281,11 +338,30 @@ public class ExpressionTextField {
     public boolean keyPressed(int keyCode) {
         lastInput = Util.getMillis();
         String value = text.value();
-        boolean handled = text.keyPressed(keyCode);
+        boolean handled = keyPressedNavigation(keyCode) || text.keyPressed(keyCode);
         if (!value.equals(text.value())) {
             lastEdit = lastInput;
         }
         return handled;
+    }
+
+    // Moving and deleting by word, and by line on macOS, where expressions differ from vanilla's text fields
+    private boolean keyPressedNavigation(int keyCode) {
+        int[] lines = text.getLines();
+        int line = Mth.clamp(text.getLineAtCursor(), 0, lines.length / 2 - 1);
+        ExpressionTextNavigation.KeyTarget target = ExpressionTextNavigation.getKeyTarget(text.value(), text.cursor(),
+                lines[line * 2], lines[line * 2 + 1], keyCode, Minecraft.ON_OSX, Screen.hasControlDown(), Screen.hasAltDown());
+        if (target == null) {
+            return false;
+        }
+        if (target.delete()) {
+            // Deletes the selection instead, if any
+            text.deleteText(target.position() - text.cursor());
+        } else {
+            text.setSelecting(Screen.hasShiftDown());
+            text.seekCursor(Whence.ABSOLUTE, target.position());
+        }
+        return true;
     }
 
     public void charTyped(char character) {
@@ -333,6 +409,8 @@ public class ExpressionTextField {
         String value = text.value();
         int[] selection = text.getSelection();
         int[] lines = text.getLines();
+        // The bracket next to the cursor and its match
+        int[] brackets = focused && selection == null ? ExpressionTextNavigation.getMatchingBrackets(value, text.cursor()) : null;
         for (int line = 0; line < lines.length / 2; line++) {
             if (line >= scroll && line < scroll + visibleLines) {
                 int lineY = y + (line - scroll) * LINE_HEIGHT;
@@ -341,7 +419,8 @@ public class ExpressionTextField {
                 // Backgrounds, with the selection on top
                 for (int i = begin; i < end; i++) {
                     boolean selected = selection != null && i >= selection[0] && i < selection[1];
-                    int background = selected ? COLOR_SELECTION : backgrounds[i];
+                    boolean bracket = brackets != null && (i == brackets[0] || i == brackets[1]);
+                    int background = selected ? COLOR_SELECTION : bracket ? COLOR_BRACKET : backgrounds[i];
                     if (background != 0) {
                         int charX = x + font.width(value.substring(begin, i));
                         guiGraphics.fill(charX, lineY - 1, charX + font.width(value.substring(i, i + 1)), lineY + LINE_HEIGHT - 1, background);
