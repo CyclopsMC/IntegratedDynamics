@@ -7,11 +7,14 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.MultilineTextField;
 import net.minecraft.client.gui.components.Whence;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.locale.Language;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.util.StringUtil;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import org.cyclops.cyclopscore.helper.L10NHelpers;
 import org.cyclops.integrateddynamics.api.evaluate.expression.tree.Expression;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -28,7 +31,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 /**
  * The text of an expression in the logic programmer, which can be edited in place.
@@ -51,6 +53,8 @@ public class ExpressionTextField {
     private static final int COLOR_POPUP = 0xFF202020;
     private static final int COLOR_POPUP_BORDER = 0xFFA0A0A0;
     private static final int COLOR_DETAIL = 0xFF909090;
+    // Neutral, so the colors of types stay readable
+    private static final int COLOR_POPUP_SELECTED = 0xFF505050;
 
     private final Font font;
     private final TextModel text;
@@ -468,7 +472,7 @@ public class ExpressionTextField {
             completionsStart = methods.start();
         } else if (completion.types() != null) {
             for (IValueType<?> type : ExpressionParser.getTypes(completion.types(), parserContext.get())) {
-                items.add(new Completion(ExpressionParser.getTypeName(type), L10NHelpers.localize(type.getTranslationKey()), null));
+                items.add(new Completion(ExpressionParser.getTypeName(type), getTypeName(type), null));
             }
             completionsStart = completion.types().start();
         }
@@ -590,14 +594,22 @@ public class ExpressionTextField {
     /**
      * @param operator An operator.
      * @param method If it is called as a method, so its first input is left out.
-     * @return Its inputs and output, as in {@code (Integer, String): Boolean}.
+     * @return Its inputs and output in the colors of their types, as in {@code (Integer, String): Boolean}.
      */
-    public static String getSignature(IOperator operator, boolean method) {
+    public static Component getSignature(IOperator operator, boolean method) {
         IValueType<?>[] inputs = operator.getInputTypes();
-        return Arrays.stream(inputs, method ? Math.min(1, inputs.length) : 0, inputs.length)
-                .map(type -> L10NHelpers.localize(type.getTranslationKey()))
-                .collect(Collectors.joining(", ", "(", "): "))
-                + L10NHelpers.localize(operator.getOutputType().getTranslationKey());
+        MutableComponent signature = Component.literal("(");
+        for (int i = method ? Math.min(1, inputs.length) : 0, first = i; i < inputs.length; i++) {
+            if (i > first) {
+                signature.append(", ");
+            }
+            signature.append(getTypeName(inputs[i]));
+        }
+        return signature.append("): ").append(getTypeName(operator.getOutputType()));
+    }
+
+    private static Component getTypeName(IValueType<?> type) {
+        return Component.translatable(type.getTranslationKey()).withStyle(type.getDisplayColorFormat());
     }
 
     private int getMaxScroll() {
@@ -760,19 +772,19 @@ public class ExpressionTextField {
             Completion completion = completions.get(index);
             int rowY = boxY + 1 + row * LINE_HEIGHT;
             if (index == completionIndex) {
-                guiGraphics.fill(boxX, rowY, boxX + width, rowY + LINE_HEIGHT, COLOR_SELECTION);
+                guiGraphics.fill(boxX, rowY, boxX + width, rowY + LINE_HEIGHT, COLOR_POPUP_SELECTED);
             }
             String name = font.plainSubstrByWidth(completion.name(), width - 4);
             guiGraphics.drawString(font, name, boxX + 2, rowY + 1, COLOR_CARET, false);
             int detailX = boxX + 2 + font.width(name) + 6;
             int detailWidth = boxX + width - 2 - detailX;
-            String detail = completion.detail();
+            FormattedText detail = completion.detail();
             if (font.width(detail) > detailWidth) {
-                detail = font.plainSubstrByWidth(detail, Math.max(0, detailWidth - font.width(OperatorLPElementRenderPattern.ELLIPSIS)))
-                        + OperatorLPElementRenderPattern.ELLIPSIS;
+                detail = FormattedText.composite(font.substrByWidth(detail, Math.max(0, detailWidth - font.width(OperatorLPElementRenderPattern.ELLIPSIS))),
+                        FormattedText.of(OperatorLPElementRenderPattern.ELLIPSIS));
             }
             if (detailWidth > font.width(OperatorLPElementRenderPattern.ELLIPSIS)) {
-                guiGraphics.drawString(font, detail, detailX, rowY + 1, COLOR_DETAIL, false);
+                guiGraphics.drawString(font, Language.getInstance().getVisualOrder(detail), detailX, rowY + 1, COLOR_DETAIL, false);
             }
         }
         // How far down the list the shown entries are
@@ -787,10 +799,10 @@ public class ExpressionTextField {
     /**
      * A method that can be called on the value before a point, or a type.
      * @param name The name to write.
-     * @param detail The other inputs and output of a method, or the name of a type as the game shows it.
+     * @param detail The other inputs and output of a method, or the name of a type as the game shows it, in the colors of the types.
      * @param operator The operator of a method, or null for a type.
      */
-    private static record Completion(String name, String detail, @Nullable IOperator operator) {}
+    private static record Completion(String name, Component detail, @Nullable IOperator operator) {}
 
     /**
      * Vanilla's text model, with its lines as plain indexes, since its line type is not visible here.
