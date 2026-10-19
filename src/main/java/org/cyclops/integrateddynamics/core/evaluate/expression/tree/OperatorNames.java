@@ -4,6 +4,7 @@ import org.cyclops.integrateddynamics.api.evaluate.expression.tree.ExpressionNod
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeCategory;
+import org.cyclops.integrateddynamics.core.evaluate.operator.GeneralChoiceOperator;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 
@@ -24,6 +25,8 @@ import java.util.TreeMap;
  * Some scoped names are shared by operators with different first input types,
  * so a scoped name is only used when the type of the first argument tells which operator it is.
  * Otherwise, the globally unique interact name is used, such as {@code stringLength}.
+ * A call with a scoped name is written as a method of its first argument, as in {@code item.size()},
+ * as Integrated Scripting does for the methods of values.
  * A few common operators are written as symbols instead, such as {@code a + b} and {@code !a},
  * where + joins strings as well.
  *
@@ -178,6 +181,30 @@ public final class OperatorNames {
      */
     public static String getCallName(ExpressionNode.Operator node, int[] path, ExpressionTypeChecker.Result types) {
         return getName(node.operator(), node.children().isEmpty() ? null : getChildType(types, path, 0));
+    }
+
+    /**
+     * Calls are written as a method of their first argument, as in {@code item.size()}, when they use the scoped name,
+     * as the type of that argument tells which operator it is.
+     * Operators that take an operator first, such as {@code map(f, l)}, and choices stay calls,
+     * and so do calls on an empty slot or a number, which reads as a decimal point, as in {@code 1.max(2)}.
+     * @param node An operator node.
+     * @param path The path of the node.
+     * @param types The type checking result of the expression that contains the node.
+     * @return If the node is written as a method of its first argument.
+     */
+    public static boolean isMethodCall(ExpressionNode.Operator node, int[] path, ExpressionTypeChecker.Result types) {
+        IOperator operator = node.operator();
+        if (node.children().isEmpty() || !isRegistered(operator) || operator instanceof GeneralChoiceOperator
+                || operator.getInputTypes()[0] == ValueTypes.OPERATOR) {
+            return false;
+        }
+        ExpressionNode receiver = node.children().get(0);
+        if (receiver instanceof ExpressionNode.Empty || getChildType(types, path, 0) == ValueTypes.OPERATOR
+                || (receiver instanceof ExpressionNode.Const constant && ValueTypes.CATEGORY_NUMBER.correspondsTo(constant.value().getType()))) {
+            return false;
+        }
+        return getCallName(node, path, types).equals(operator.getScopedInteractName());
     }
 
     /**

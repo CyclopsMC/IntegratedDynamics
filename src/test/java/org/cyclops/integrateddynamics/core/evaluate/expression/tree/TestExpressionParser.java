@@ -168,7 +168,7 @@ public class TestExpressionParser {
         assertRoundTrip(expression);
         // The type of a reference tells shared names apart
         Expression typed = new Expression(op(Operators.STRING_LENGTH, new ExpressionNode.Ref(5)));
-        assertThat(printExact(typed), is("length(#5)"));
+        assertThat(printExact(typed), is("#5.length()"));
         assertRoundTrip(typed);
     }
 
@@ -274,13 +274,40 @@ public class TestExpressionParser {
         // On literals, references, parenthesized values and global names
         assertThat(parse("\"abc\".length() + #5.length() + (#5).stringLength()"),
                 is(parse("length(\"abc\") + length(#5) + length(#5)")));
-        // Printed as calls
-        assertThat(printExact(parse("(s: string) => s.length()")), is("(s: string) => length(s)"));
+        // Calls with a scoped name are printed as methods
+        assertThat(printExact(parse("(s: string) => length(s)")), is("(s: string) => s.length()"));
         // Examples of the Integrated Scripting book
         assertThat(parse("(item: itemstack) => item.isStackable() && item.size() >= 16"),
                 is(parse("(item: itemstack) => isStackable(item) && size(item) >= 16")));
         assertThat(parse("(item: itemstack, block: block) => item.strength(block) > 10"),
                 is(parse("(item: itemstack, block: block) => strength(item, block) > 10")));
+    }
+
+    // Prints as the given text, which reads back into the same expression
+    private static void assertPrinted(String text, String printed) throws ExpressionParseException {
+        Expression expression = parse(text);
+        assertThat(text, printExact(expression), is(printed));
+        assertThat(printed, parse(printed), is(expression));
+    }
+
+    @Test
+    public void testPrintMethods() throws ExpressionParseException {
+        assertPrinted("(item: itemstack) => isStackable(item) && size(item) >= 16",
+                "(item: itemstack) => item.isStackable() && (item.size() >= 16)");
+        assertPrinted("(item: itemstack) => getInteger(nbt(item), \"k\")", "(item: itemstack) => item.nbt().getInteger(\"k\")");
+        // On literals, and on symbols in brackets
+        assertPrinted("length(\"abc\") + length(#5)", "\"abc\".length() + #5.length()");
+        assertPrinted("(s: string, t: string) => length(s + t) > 2", "(s: string, t: string) => (s + t).length() > 2");
+        assertPrinted("(b: boolean, c: boolean) => nand(!b, c)", "(b: boolean, c: boolean) => (!b).nand(c)");
+        assertPrinted("(s: string) => !contains(s, \"a\")", "(s: string) => !s.contains(\"a\")");
+        // Calls with a global name, on operators, on empty slots and on numbers, and choices stay calls
+        assertPrinted("x => stringLength(x)", "x => stringLength(x)");
+        assertPrinted("(l: list) => map((stringLength), l)", "(l: list) => map((stringLength), l)");
+        assertPrinted("(f: operator) => isNull(f)", "(f: operator) => isNull(f)");
+        assertPrinted("isStackable(?)", "isStackable(?)");
+        assertPrinted("max(1, 2)", "max(1, 2)");
+        assertPrinted("(n: integer) => max(n, 2)", "(n: integer) => n.max(2)");
+        assertPrinted("(b: boolean) => choice(b, 1, ?)", "(b: boolean) => choice(b, 1, ?)");
     }
 
     @Test

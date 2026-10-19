@@ -28,8 +28,8 @@ import java.util.function.Function;
 import java.util.function.IntFunction;
 
 /**
- * Pretty-prints expression trees, such as {@code item => size(nbt(item)) > 3}.
- * Operators are named as described in {@link OperatorNames}.
+ * Pretty-prints expression trees, such as {@code item => item.size() > 3}.
+ * Operators are named, and written as methods, as described in {@link OperatorNames}.
  * Choices are printed as {@code c ? a : b}, operator values as {@code (+)} or {@code (reduce)}.
  * @author rubensworks
  */
@@ -358,16 +358,34 @@ public final class ExpressionPrinter {
             } else if (prefixSymbol != null && children.size() == 1) {
                 tokens.add(new Token(prefixSymbol, path));
                 visit(children.get(0), ExpressionTrees.append(path, 0), true);
+            } else if (OperatorNames.isMethodCall(node, path, types)) {
+                // The receiver in brackets if it has symbols, as a method binds tighter than those
+                ExpressionNode receiver = children.get(0);
+                boolean prefix = receiver instanceof ExpressionNode.Operator op && OperatorNames.getPrefixSymbol(op.operator()) != null
+                        && op.children().size() == 1;
+                if (prefix) {
+                    tokens.add(new Token("(", path));
+                }
+                visit(receiver, ExpressionTrees.append(path, 0), true);
+                if (prefix) {
+                    tokens.add(new Token(")", path));
+                }
+                tokens.add(new Token("." + OperatorNames.getCallName(node, path, types) + "(", path));
+                visitArguments(children, path, 1);
             } else {
                 tokens.add(new Token(OperatorNames.getCallName(node, path, types) + "(", path));
-                for (int i = 0; i < children.size(); i++) {
-                    if (i > 0) {
-                        tokens.add(new Token(", ", path));
-                    }
-                    visit(children.get(i), ExpressionTrees.append(path, i), false);
-                }
-                tokens.add(new Token(")", path));
+                visitArguments(children, path, 0);
             }
+        }
+
+        private void visitArguments(List<ExpressionNode> children, int[] path, int first) {
+            for (int i = first; i < children.size(); i++) {
+                if (i > first) {
+                    tokens.add(new Token(", ", path));
+                }
+                visit(children.get(i), ExpressionTrees.append(path, i), false);
+            }
+            tokens.add(new Token(")", path));
         }
 
         private String printConst(IValue value) {

@@ -563,7 +563,7 @@ public class TestExpressionTrees {
                 List.of(param("s", ValueTypes.STRING), param("n", ValueTypes.INTEGER))));
         assertThat(bool(eval(operator, ValueTypeString.ValueString.of("abcd"), i(3))), is(true));
         assertThat(bool(eval(operator, ValueTypeString.ValueString.of("ab"), i(3))), is(false));
-        assertThat(ExpressionPrinter.print(operator.getExpression()), is("(s, n) => ((length(s) * n) == (n * length(s))) && (length(s) > n)"));
+        assertThat(ExpressionPrinter.print(operator.getExpression()), is("(s, n) => ((s.length() * n) == (n * s.length())) && (s.length() > n)"));
     }
 
     @Test
@@ -680,7 +680,7 @@ public class TestExpressionTrees {
 
     @Test
     public void testPrint() {
-        assertThat(ExpressionPrinter.print(longString()), is("s => length(s) > 3"));
+        assertThat(ExpressionPrinter.print(longString()), is("s => s.length() > 3"));
     }
 
     @Test
@@ -702,7 +702,7 @@ public class TestExpressionTrees {
     @Test
     public void testPrintCallAndConst() {
         Expression expression = new Expression(op(Operators.ARITHMETIC_INCREMENT, c("x")));
-        assertThat(ExpressionPrinter.print(expression), is("increment(\"x\")"));
+        assertThat(ExpressionPrinter.print(expression), is("\"x\".increment()"));
     }
 
     @Test
@@ -710,7 +710,7 @@ public class TestExpressionTrees {
         // size is shared by item stacks and NBT, the parameter type tells them apart
         Expression expression = new Expression(op(Operators.RELATIONAL_GT, op(Operators.NBT_COMPOUND_SIZE, p(0)), c(3)),
                 List.of(param("tag", ValueTypes.NBT)));
-        assertThat(ExpressionPrinter.print(expression), is("tag => size(tag) > 3"));
+        assertThat(ExpressionPrinter.print(expression), is("tag => tag.size() > 3"));
     }
 
     @Test
@@ -754,14 +754,14 @@ public class TestExpressionTrees {
                 op(Operators.OBJECT_ITEMSTACK_ISDATAEQUAL, p(0), p(0)),
                 op(Operators.RELATIONAL_EQUALS, op(Operators.NBT_COMPOUND_VALUE_INTEGER, op(Operators.OBJECT_ITEMSTACK_DATA, p(0)), c("k")), c(1))),
                 List.of(param("item", ValueTypes.OBJECT_ITEMSTACK)));
-        assertThat(ExpressionPrinter.print(items), is("item => isNbtEqual(item, item) && (getInteger(nbt(item), \"k\") == 1)"));
+        assertThat(ExpressionPrinter.print(items), is("item => item.isNbtEqual(item) && (item.nbt().getInteger(\"k\") == 1)"));
         // String + only when it is read as concat
         assertThat(ExpressionPrinter.print(new Expression(op(Operators.STRING_CONCAT, c("a"), c("b")))), is("\"a\" + \"b\""));
         assertThat(ExpressionPrinter.print(new Expression(op(Operators.STRING_CONCAT, p(0), p(0)), List.of(param("x", ValueTypes.CATEGORY_ANY)))),
                 is("x => stringConcat(x, x)"));
         // ∩
         Expression lists = new Expression(op(Operators.LIST_INTERSECTION, p(0), p(0)), List.of(param("l", ValueTypes.LIST)));
-        assertThat(ExpressionPrinter.print(lists), is("l => intersection(l, l)"));
+        assertThat(ExpressionPrinter.print(lists), is("l => l.intersection(l)"));
         // !
         Expression not = new Expression(op(Operators.LOGICAL_NOT, op(Operators.LOGICAL_AND, p(0), op(Operators.LOGICAL_NOT, p(0)))),
                 List.of(param("x", ValueTypes.BOOLEAN)));
@@ -772,7 +772,7 @@ public class TestExpressionTrees {
     public void testPrintWithRefTypes() {
         Expression expression = new Expression(op(Operators.STRING_LENGTH, ref(5)));
         assertThat(ExpressionPrinter.print(expression), is("stringLength(#5)"));
-        assertThat(ExpressionPrinter.print(expression, id -> null, id -> id == 5 ? ValueTypes.STRING : null), is("length(#5)"));
+        assertThat(ExpressionPrinter.print(expression, id -> null, id -> id == 5 ? ValueTypes.STRING : null), is("#5.length()"));
     }
 
     @Test

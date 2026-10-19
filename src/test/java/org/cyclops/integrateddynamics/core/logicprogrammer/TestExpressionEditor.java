@@ -59,7 +59,7 @@ public class TestExpressionEditor {
         assertThat(editor.getCurrentOperator(), is(Operators.OBJECT_ITEMSTACK_DATA));
         apply(editor, ExpressionEditor.actionParam(new int[]{0, 0}, 0, 0));
 
-        assertThat(ExpressionPrinter.print(editor.getExpression()), is("item => size(nbt(item)) > 3"));
+        assertThat(ExpressionPrinter.print(editor.getExpression()), is("item => item.nbt().size() > 3"));
         // The parameter type was inferred from the slot it was dropped in
         assertThat(editor.getExpression().parameters().get(0).type(), is((IValueType) ValueTypes.OBJECT_ITEMSTACK));
         assertThat(editor.check().isValid(), is(true));
