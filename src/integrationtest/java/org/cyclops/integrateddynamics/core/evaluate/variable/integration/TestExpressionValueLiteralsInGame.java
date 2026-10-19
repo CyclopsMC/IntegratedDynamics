@@ -123,7 +123,7 @@ public class TestExpressionValueLiteralsInGame {
 
     @IntegrationTest
     public void testRoundTripItems() {
-        TestHelpers.assertEqual(assertRoundTrip(item(new ItemStack(Items.DIAMOND))), "@itemstack{count:1,id:\"minecraft:diamond\"}", "Diamond");
+        TestHelpers.assertEqual(assertRoundTrip(item(new ItemStack(Items.DIAMOND))), "@item{count:1,id:\"minecraft:diamond\"}", "Diamond");
         assertRoundTrip(item(new ItemStack(Items.COBBLESTONE, 64)));
         // More than fits a stack
         assertRoundTrip(item(new ItemStack(Items.COBBLESTONE, 1000)));
@@ -134,17 +134,17 @@ public class TestExpressionValueLiteralsInGame {
         // From the registries the values are written with
         sword.enchant(values().holderLookupProvider().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.SHARPNESS), 3);
         assertRoundTrip(item(sword));
-        TestHelpers.assertEqual(assertRoundTrip(item(ItemStack.EMPTY)), "@itemstack{}", "Empty item");
+        TestHelpers.assertEqual(assertRoundTrip(item(ItemStack.EMPTY)), "@item{}", "Empty item");
     }
 
     @IntegrationTest
     public void testReadItems() throws ExpressionParseException {
         // Without a count, it is a single one, and ids can leave out the minecraft namespace
-        TestHelpers.assertEqual(read("@itemstack{id: \"minecraft:diamond\"}"), item(new ItemStack(Items.DIAMOND)), "Without count");
-        TestHelpers.assertEqual(read("@itemstack{id: \"diamond\", count: 3}"), item(new ItemStack(Items.DIAMOND, 3)), "Without namespace");
+        TestHelpers.assertEqual(read("@item{id: \"minecraft:diamond\"}"), item(new ItemStack(Items.DIAMOND)), "Without count");
+        TestHelpers.assertEqual(read("@item{id: \"diamond\", count: 3}"), item(new ItemStack(Items.DIAMOND, 3)), "Without namespace");
         // Unknown items are not read as air
-        assertError("@itemstack{id: \"minecraft:diamnd\"} == ?", L10NValues.EXPRESSION_PARSE_VALUE_CHANGED);
-        assertError("@itemstack{id: \"minecraft:diamond\", count: 0} == ?", L10NValues.EXPRESSION_PARSE_VALUE_CHANGED);
+        assertError("@item{id: \"minecraft:diamnd\"} == ?", L10NValues.EXPRESSION_PARSE_VALUE_CHANGED);
+        assertError("@item{id: \"minecraft:diamond\", count: 0} == ?", L10NValues.EXPRESSION_PARSE_VALUE_CHANGED);
     }
 
     // --------------- Blocks ---------------
@@ -170,14 +170,14 @@ public class TestExpressionValueLiteralsInGame {
     @IntegrationTest
     public void testRoundTripFluids() {
         TestHelpers.assertEqual(assertRoundTrip(ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(Fluids.WATER, 1000))),
-                "@fluidstack{amount:1000,id:\"minecraft:water\"}", "Water");
+                "@fluid{amount:1000,id:\"minecraft:water\"}", "Water");
         assertRoundTrip(ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(Fluids.LAVA, 250)));
         assertRoundTrip(ValueObjectTypeFluidStack.ValueFluidStack.of(FluidStack.EMPTY));
     }
 
     @IntegrationTest
     public void testReadFluids() throws ExpressionParseException {
-        TestHelpers.assertEqual(read("@fluidstack{id: \"water\", amount: 500}"),
+        TestHelpers.assertEqual(read("@fluid{id: \"water\", amount: 500}"),
                 ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(Fluids.WATER, 500)), "Without namespace");
     }
 
@@ -216,8 +216,8 @@ public class TestExpressionValueLiteralsInGame {
      */
     @IntegrationTest
     public void testRecipeFromOperators() throws ExpressionParseException, EvaluationException {
-        Expression expression = parse("withInputOutput(withItems(@ingredients{}, [@itemstack{id: \"oak_log\"}]), "
-                + "withItems(@ingredients{}, [@itemstack{id: \"oak_planks\", count: 4}]))");
+        Expression expression = parse("withInputOutput(withItems(@ingredients{}, [@item{id: \"oak_log\"}]), "
+                + "withItems(@ingredients{}, [@item{id: \"oak_planks\", count: 4}]))");
         IValue value = ExpressionEvaluator.buildLazy(expression.root(), 0, new ExpressionEvaluator.LocalValueCache(), id -> null).getValue();
         Asserts.check(value instanceof ValueObjectTypeRecipe.ValueRecipe recipe && recipe.getRawValue().isPresent(), "Is a recipe");
         IValue output = Operators.RECIPE_OUTPUT.evaluate(new org.cyclops.integrateddynamics.api.evaluate.variable.IVariable[]{
@@ -232,7 +232,7 @@ public class TestExpressionValueLiteralsInGame {
     @IntegrationTest
     public void testRoundTripListsOfObjects() {
         TestHelpers.assertEqual(assertRoundTrip(list(ValueTypes.OBJECT_ITEMSTACK, item(new ItemStack(Items.DIAMOND)), item(new ItemStack(Items.STONE, 2)))),
-                "[@itemstack{count:1,id:\"minecraft:diamond\"}, @itemstack{count:2,id:\"minecraft:stone\"}]", "Items");
+                "[@item{count:1,id:\"minecraft:diamond\"}, @item{count:2,id:\"minecraft:stone\"}]", "Items");
         assertRoundTrip(list(ValueTypes.OBJECT_BLOCK, ValueObjectTypeBlock.ValueBlock.of(Blocks.STONE.defaultBlockState())));
         assertRoundTrip(list(ValueTypes.OBJECT_FLUIDSTACK, ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(Fluids.WATER, 1))));
         assertRoundTrip(list(ValueTypes.OBJECT_INGREDIENTS, ValueObjectTypeIngredients.ValueIngredients.of(mixedIngredients())));

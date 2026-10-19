@@ -90,7 +90,7 @@ public class TestExpressionCompletion {
         assertMethods("(s: string) => s.len", ValueTypes.STRING, 17, "len");
         assertMethods("(s: string) => s.len|gth() + 1", ValueTypes.STRING, 17, "len");
         // After calls, literals, references and brackets
-        assertMethods("(item: itemstack) => item.size().", ValueTypes.INTEGER, 33, "");
+        assertMethods("(item: item) => item.size().", ValueTypes.INTEGER, 28, "");
         assertMethods("(s: string) => s.concat(s).l", ValueTypes.STRING, 27, "l");
         assertMethods("\"abc\".", ValueTypes.STRING, 6, "");
         assertMethods("#5.", ValueTypes.STRING, 3, "");
@@ -173,6 +173,10 @@ public class TestExpressionCompletion {
         assertThat(ExpressionParser.getTypes(new ExpressionParser.Types(0, "int", true), context), is(List.of(ValueTypes.INTEGER)));
         assertThat(ExpressionParser.getTypes(new ExpressionParser.Types(0, "Int", true), context), is(List.of(ValueTypes.INTEGER)));
         assertThat(ExpressionParser.getTypes(new ExpressionParser.Types(0, "nu", true), context), is(List.of(ValueTypes.CATEGORY_NUMBER)));
+        // Items and fluids by their name and their id
+        assertThat(ExpressionParser.getTypes(new ExpressionParser.Types(0, "ite", true), context), is(List.of(ValueTypes.OBJECT_ITEMSTACK)));
+        assertThat(ExpressionParser.getTypes(new ExpressionParser.Types(0, "itemst", true), context), is(List.of(ValueTypes.OBJECT_ITEMSTACK)));
+        assertThat(ExpressionParser.getTypes(new ExpressionParser.Types(0, "flu", false), context), is(List.of(ValueTypes.OBJECT_FLUIDSTACK)));
         // Also by the name without the namespace of an add-on, which comes after those of Integrated Dynamics
         assertThat(ExpressionParser.getTypes(new ExpressionParser.Types(0, "chem", true), context), is(List.of(chemical)));
         assertThat(ExpressionParser.getTypes(new ExpressionParser.Types(0, "testaddon:c", true), context), is(List.of(chemical)));

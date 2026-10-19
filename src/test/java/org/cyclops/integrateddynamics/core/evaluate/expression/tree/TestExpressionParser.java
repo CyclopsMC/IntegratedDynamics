@@ -222,7 +222,7 @@ public class TestExpressionParser {
     public void testParameters() throws ExpressionParseException {
         assertThat(parse("x => x + 1").parameters(), is(List.of(param("x", ValueTypes.CATEGORY_ANY))));
         assertThat(parse("(x) => x + 1").parameters(), is(List.of(param("x", ValueTypes.CATEGORY_ANY))));
-        assertThat(parse("(item: itemstack, n: number) => n + 1").parameters(),
+        assertThat(parse("(item: item, n: number) => n + 1").parameters(),
                 is(List.of(param("item", ValueTypes.OBJECT_ITEMSTACK), param("n", ValueTypes.CATEGORY_NUMBER))));
         // A parenthesized parameter is not an operator value
         assertThat(parse("(length) => (length) + 1").root(), is(op(Operators.ARITHMETIC_ADDITION, p(0), i(1))));
@@ -277,10 +277,26 @@ public class TestExpressionParser {
         // Calls with a scoped name are printed as methods
         assertThat(printExact(parse("(s: string) => length(s)")), is("(s: string) => s.length()"));
         // Examples of the Integrated Scripting book
-        assertThat(parse("(item: itemstack) => item.isStackable() && item.size() >= 16"),
-                is(parse("(item: itemstack) => isStackable(item) && size(item) >= 16")));
-        assertThat(parse("(item: itemstack, block: block) => item.strength(block) > 10"),
-                is(parse("(item: itemstack, block: block) => strength(item, block) > 10")));
+        assertThat(parse("(item: item) => item.isStackable() && item.size() >= 16"),
+                is(parse("(item: item) => isStackable(item) && size(item) >= 16")));
+        assertThat(parse("(item: item, block: block) => item.strength(block) > 10"),
+                is(parse("(item: item, block: block) => strength(item, block) > 10")));
+    }
+
+    @Test
+    public void testTypeNames() throws ExpressionParseException {
+        // Items and fluids are called as in the game, and their ids are read too
+        assertThat(ExpressionParser.getTypeName(ValueTypes.OBJECT_ITEMSTACK), is("item"));
+        assertThat(ExpressionParser.getTypeName(ValueTypes.OBJECT_FLUIDSTACK), is("fluid"));
+        assertThat(ExpressionParser.getTypeName(ValueTypes.INTEGER), is("integer"));
+        for (String name : List.of("item", "itemstack", "integrateddynamics:itemstack")) {
+            assertThat(name, ExpressionParser.getValueType(name), is(ValueTypes.OBJECT_ITEMSTACK));
+        }
+        for (String name : List.of("fluid", "fluidstack", "integrateddynamics:fluidstack")) {
+            assertThat(name, ExpressionParser.getValueType(name), is(ValueTypes.OBJECT_FLUIDSTACK));
+        }
+        assertThat(ExpressionParser.getValueType("integrateddynamics:item"), is((IValueType<?>) null));
+        assertPrinted("(i: itemstack, f: fluidstack) => i.size() > f.amount()", "(i: item, f: fluid) => i.size() > f.amount()");
     }
 
     // Prints as the given text, which reads back into the same expression
@@ -292,9 +308,9 @@ public class TestExpressionParser {
 
     @Test
     public void testPrintMethods() throws ExpressionParseException {
-        assertPrinted("(item: itemstack) => isStackable(item) && size(item) >= 16",
-                "(item: itemstack) => item.isStackable() && (item.size() >= 16)");
-        assertPrinted("(item: itemstack) => getInteger(nbt(item), \"k\")", "(item: itemstack) => item.nbt().getInteger(\"k\")");
+        assertPrinted("(item: item) => isStackable(item) && size(item) >= 16",
+                "(item: item) => item.isStackable() && (item.size() >= 16)");
+        assertPrinted("(item: item) => getInteger(nbt(item), \"k\")", "(item: item) => item.nbt().getInteger(\"k\")");
         // On literals, and on symbols in brackets
         assertPrinted("length(\"abc\") + length(#5)", "\"abc\".length() + #5.length()");
         assertPrinted("(s: string, t: string) => length(s + t) > 2", "(s: string, t: string) => (s + t).length() > 2");

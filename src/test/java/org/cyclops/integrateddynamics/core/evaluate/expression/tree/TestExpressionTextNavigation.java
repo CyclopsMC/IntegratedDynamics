@@ -36,7 +36,7 @@ public class TestExpressionTextNavigation {
         // Numbers with a point, labels, typed values and strings
         assertThat(wordAt("x * 1.5 + 2", 5), is("1.5"));
         assertThat(wordAt("#my_label + 1", 4), is("my_label"));
-        assertThat(wordAt("@itemstack{id: \"minecraft:diamond\"}", 3), is("itemstack"));
+        assertThat(wordAt("@item{id: \"minecraft:diamond\"}", 3), is("item"));
         assertThat(wordAt("\"hello world\" == ?", 3), is("hello"));
         // Past the end, and no text
         assertThat(wordAt(text, 100), is("16"));

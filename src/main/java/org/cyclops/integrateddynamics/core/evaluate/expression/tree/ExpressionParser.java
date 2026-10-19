@@ -89,6 +89,9 @@ public final class ExpressionParser {
     private static final List<IOperator> APPLY_OPERATORS = List.of(
             Operators.OPERATOR_APPLY_0, Operators.OPERATOR_APPLY, Operators.OPERATOR_APPLY_2, Operators.OPERATOR_APPLY_3);
     private static final Set<String> RESERVED_NAMES = Set.of("true", "false", "NaN", "Infinity");
+    // Types written by the name the game shows for them instead of their id, see ValueObjectTypeItemStack
+    private static final Map<String, String> TYPE_NAMES = Map.of("itemstack", "item", "fluidstack", "fluid");
+    private static final Map<String, String> TYPE_IDS = Map.of("item", "itemstack", "fluid", "fluidstack");
 
     private final Context context;
     private final List<Token> tokens;
@@ -287,20 +290,24 @@ public final class ExpressionParser {
 
     /**
      * @param valueType A value type.
-     * @return The name of the type in the text form.
+     * @return The name of the type in the text form: its id, without the namespace for those of Integrated Dynamics,
+     *         where items and fluids are called item and fluid, as the game shows them.
      */
     public static String getTypeName(IValueType<?> valueType) {
         ResourceLocation id = valueType.getUniqueName();
-        return id.getNamespace().equals(Reference.MOD_ID) ? id.getPath() : id.toString();
+        return id.getNamespace().equals(Reference.MOD_ID) ? TYPE_NAMES.getOrDefault(id.getPath(), id.getPath()) : id.toString();
     }
 
     /**
      * @param name The name of a type in the text form, which types of add-ons can also leave their namespace out of
-     *             when no other type has that name, as in {@code chemicalstack}.
+     *             when no other type has that name, as in {@code chemicalstack}. Ids, such as {@code itemstack}, are read too.
      * @return The type, or null if unknown or ambiguous.
      */
     @Nullable
     public static IValueType<?> getValueType(String name) {
+        if (!name.contains(":")) {
+            name = TYPE_IDS.getOrDefault(name, name);
+        }
         ResourceLocation id = ResourceLocation.tryParse(name.contains(":") ? name : Reference.MOD_ID + ":" + name);
         IValueType<?> type = id == null ? null : ValueTypes.REGISTRY.getValueType(id);
         if (type != null || name.contains(":")) {
