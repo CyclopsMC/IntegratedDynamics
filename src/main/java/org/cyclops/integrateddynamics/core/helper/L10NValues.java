@@ -44,6 +44,7 @@ public class L10NValues {
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_COPY = "gui." + NS + ".logicprogrammer.expression.text.copy";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_UNDO = "gui." + NS + ".logicprogrammer.expression.text.undo";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_REDO = "gui." + NS + ".logicprogrammer.expression.text.redo";
+    public static final String GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_FORMAT = "gui." + NS + ".logicprogrammer.expression.text.format";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_ERROR = "gui." + NS + ".logicprogrammer.expression.text.error";
     public static final String GUI_LOGICPROGRAMMER_FILTER = "gui." + NS + ".logicprogrammer.filter";
     public static final String GUI_LOGICPROGRAMMER_RESET = "gui." + NS + ".logicprogrammer.reset";

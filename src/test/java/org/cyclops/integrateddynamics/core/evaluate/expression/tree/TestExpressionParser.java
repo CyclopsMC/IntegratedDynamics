@@ -30,8 +30,10 @@ import org.cyclops.integrateddynamics.core.logicprogrammer.ExpressionEditor;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -465,6 +467,41 @@ public class TestExpressionParser {
         } catch (ExpressionParseException e) {
             assertThat(((TranslatableContents) e.getComponent().getContents()).getKey(), is(L10NValues.EXPRESSION_PARSE_TOO_DEEP));
         }
+    }
+
+    // --------------- Tokens of typed text ---------------
+
+    /**
+     * @return Each token of the text as its text and the path of its node, after checking that they make up the text,
+     *         and that the expression is the parsed one.
+     */
+    private static List<String> tokens(String text) throws ExpressionParseException {
+        ExpressionParser.Tokenized tokenized = ExpressionParser.tokenize(text, context());
+        assertThat(tokenized.expression(), is(parse(text)));
+        assertThat(tokenized.tokens().stream().map(ExpressionPrinter.Token::text).collect(Collectors.joining()), is(text));
+        return tokenized.tokens().stream()
+                .map(token -> token.text() + "=" + (token.path() == null ? "-" : Arrays.toString(token.path()))).toList();
+    }
+
+    @Test
+    public void testTokenize() throws ExpressionParseException {
+        // Typed text keeps its form, and each part belongs to its innermost node, as in printed text
+        assertThat(tokens("(x: integer) => x.add(3)"), is(List.of("(x: integer) => =-", "x=[0]", ".add(=[]", "3=[1]", ")=[]")));
+        assertThat(tokens("#5.length() > 2"), is(List.of("#5=[0, 0]", ".length()=[0]", " > =[]", "2=[1]")));
+        assertThat(tokens("  1 + 2  "), is(List.of("  =-", "1=[0]", " + =[]", "2=[1]", "  =-")));
+        assertThat(tokens("x => x ? 1 : 2"), is(List.of("x => =-", "x=[0]", " ? =[]", "1=[1]", " : =[]", "2=[2]")));
+        // Brackets belong to the value in them, and the minus to its number
+        assertThat(tokens("x => (x + 1) * 2"), is(List.of("x => =-", "(=[0]", "x=[0, 0]", " + =[0]", "1=[0, 1]", ")=[0]", " * =[]", "2=[1]")));
+        assertThat(tokens("x => !(x == -1)"), is(List.of("x => =-", "!=[]", "(=[0]", "x=[0, 0]", " == =[0]", "-1=[0, 1]", ")=[0]")));
+        // Strings with their quotes, also in single quotes
+        assertThat(tokens("'a' + \"b\""), is(List.of("'a'=[0]", " + =[]", "\"b\"=[1]")));
+        // A called parameter, which is the first input of apply
+        assertThat(tokens("(f: operator) => f(1)"), is(List.of("(f: operator) => =-", "f=[0]", "(=[]", "1=[1]", ")=[]")));
+        // Empty slots are one instance, which are told apart by their order
+        assertThat(tokens("(?) + ?"), is(List.of("(?)=[0]", " + =[]", "?=[1]")));
+        assertThat(tokens("? ? ? : (?)"), is(List.of("?=[0]", " ? =[]", "?=[1]", " : =[]", "(?)=[2]")));
+        // Operators as values
+        assertThat(tokens("l => reduce((+), l, 0)"), is(List.of("l => =-", "reduce(=[]", "(+)=[0]", ", =[]", "l=[1]", ", =[]", "0=[2]", ")=[]")));
     }
 
 }

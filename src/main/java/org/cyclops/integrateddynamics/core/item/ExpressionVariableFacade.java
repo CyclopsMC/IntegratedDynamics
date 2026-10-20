@@ -54,6 +54,8 @@ public class ExpressionVariableFacade extends VariableFacadeBase implements IExp
     @Nullable
     private final Expression expression;
     private final Map<Integer, IValueType<?>> referenceTypes;
+    @Nullable
+    private final String text;
     private IVariable<?> variable = null;
     private int lastNetworkHash = -1;
     private IValueType<?> outputType = null;
@@ -64,28 +66,38 @@ public class ExpressionVariableFacade extends VariableFacadeBase implements IExp
     private boolean validating = false;
 
     public ExpressionVariableFacade(boolean generateId, @Nullable Expression expression) {
-        this(generateId, expression, Map.of());
+        this(generateId, expression, Map.of(), null);
     }
 
     public ExpressionVariableFacade(int id, @Nullable Expression expression) {
-        this(id, expression, Map.of());
+        this(id, expression, Map.of(), null);
     }
 
-    public ExpressionVariableFacade(boolean generateId, @Nullable Expression expression, Map<Integer, IValueType<?>> referenceTypes) {
+    public ExpressionVariableFacade(boolean generateId, @Nullable Expression expression, Map<Integer, IValueType<?>> referenceTypes,
+                                    @Nullable String text) {
         super(generateId);
         this.expression = expression;
         this.referenceTypes = Map.copyOf(referenceTypes);
+        this.text = text;
     }
 
-    public ExpressionVariableFacade(int id, @Nullable Expression expression, Map<Integer, IValueType<?>> referenceTypes) {
+    public ExpressionVariableFacade(int id, @Nullable Expression expression, Map<Integer, IValueType<?>> referenceTypes,
+                                    @Nullable String text) {
         super(id);
         this.expression = expression;
         this.referenceTypes = Map.copyOf(referenceTypes);
+        this.text = text;
     }
 
     @Override
     public Map<Integer, IValueType<?>> getReferenceTypes() {
         return referenceTypes;
+    }
+
+    @Nullable
+    @Override
+    public String getText() {
+        return text;
     }
 
     @Nullable

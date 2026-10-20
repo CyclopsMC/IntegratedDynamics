@@ -671,14 +671,14 @@ public class GameTestsExpressions {
 
             // Typed with another root operator, so the element of that operator becomes active
             Expression expression = ExpressionParser.parse("(#" + redstoneId + " + 3) * 2", context);
-            container.applyExpressionAction(ExpressionEditor.actionSet(values, expression));
+            container.applyExpressionAction(ExpressionEditor.actionSet(values, expression, null));
             helper.assertTrue(container.getActiveElement() instanceof OperatorLPElement element
                     && element.getOperator() == Operators.ARITHMETIC_MULTIPLICATION, "The element of the new root operator is not active");
             OperatorLPElement element = (OperatorLPElement) container.getActiveElement();
             helper.assertTrue(element.getEditor().getExpression().equals(expression), "The expression was not set");
 
             // Something that can not be edited is ignored
-            container.applyExpressionAction(ExpressionEditor.actionSet(values, new Expression(c(1))));
+            container.applyExpressionAction(ExpressionEditor.actionSet(values, new Expression(c(1)), null));
             helper.assertTrue(container.getActiveElement() == element && element.getEditor().getExpression().equals(expression),
                     "An expression that can not be edited was set");
 
@@ -701,7 +701,7 @@ public class GameTestsExpressions {
 
             // Typed in the empty panel, which makes the element of its root operator active
             Expression expression = ExpressionParser.parse("(x: integer) => x * 2", context);
-            container.applyExpressionAction(ExpressionEditor.actionSet(values, expression));
+            container.applyExpressionAction(ExpressionEditor.actionSet(values, expression, null));
             helper.assertTrue(container.getActiveElement() instanceof OperatorLPElement element
                     && element.getOperator() == Operators.ARITHMETIC_MULTIPLICATION
                     && element.getEditor().getExpression().equals(expression), "The expression was not set without an active element");
@@ -711,7 +711,7 @@ public class GameTestsExpressions {
             helper.assertTrue(other != null, "The integer element does not exist");
             container.setActiveElement(other, 0, 0);
             Expression addition = ExpressionParser.parse("1 + 2", context);
-            container.applyExpressionAction(ExpressionEditor.actionSet(values, addition));
+            container.applyExpressionAction(ExpressionEditor.actionSet(values, addition, null));
             helper.assertTrue(container.getActiveElement() instanceof OperatorLPElement element
                     && element.getOperator() == Operators.ARITHMETIC_ADDITION
                     && element.getEditor().getExpression().equals(addition), "The expression was not set while a value element was active");
@@ -730,18 +730,55 @@ public class GameTestsExpressions {
             ContainerLogicProgrammer container = new ContainerLogicProgrammer(0, player.getInventory());
             OperatorLPElement element = container.getOperatorElement(Operators.ARITHMETIC_MULTIPLICATION);
             container.setActiveElement(element, 0, 0);
-            container.applyExpressionAction(ExpressionEditor.actionSet(values, ExpressionParser.parse("(1 + 2) * 3", context)));
+            container.applyExpressionAction(ExpressionEditor.actionSet(values, ExpressionParser.parse("(1 + 2) * 3", context), null));
             container.applyExpressionAction(ExpressionEditor.actionNavigate(new int[]{0}));
             helper.assertTrue(element.getEditor().getEditPath().length == 1, "The nested operator was not opened");
 
             // Typing a change inside the open operator keeps it open
-            container.applyExpressionAction(ExpressionEditor.actionSet(values, ExpressionParser.parse("(1 + 5) * 3", context)));
+            container.applyExpressionAction(ExpressionEditor.actionSet(values, ExpressionParser.parse("(1 + 5) * 3", context), null));
             helper.assertTrue(container.getActiveElement() == element && element.getEditor().getEditPath().length == 1
                     && element.getEditor().getEditPath()[0] == 0, "The open operator was closed");
 
             // When it is gone, the root is opened
-            container.applyExpressionAction(ExpressionEditor.actionSet(values, ExpressionParser.parse("4 * 3", context)));
+            container.applyExpressionAction(ExpressionEditor.actionSet(values, ExpressionParser.parse("4 * 3", context), null));
             helper.assertTrue(element.getEditor().getEditPath().length == 0, "The root was not opened");
+        } finally {
+            player.getServer().getPlayerList().remove(player);
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testLogicProgrammerKeepsTypedText(GameTestHelper helper) throws ExpressionParseException {
+        ValueDeseralizationContext values = ValueDeseralizationContext.of(helper.getLevel());
+        ExpressionParser.Context context = ExpressionEditor.getParserContext(values, id -> null, label -> IntLists.EMPTY_LIST);
+        IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
+        // Printed as x + 3, but kept as typed
+        String text = "(x: integer) => x.add(3)";
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        try {
+            ContainerLogicProgrammer container = new ContainerLogicProgrammer(0, player.getInventory());
+            container.applyExpressionAction(ExpressionEditor.actionSet(values, ExpressionParser.parse(text, context), text));
+            OperatorLPElement element = (OperatorLPElement) container.getActiveElement();
+            helper.assertTrue(text.equals(element.getEditor().getText()), "The text was not kept");
+            ItemStack written = element.writeElement(player, new ItemStack(RegistryEntries.ITEM_VARIABLE.get()));
+
+            // The card and its copies keep the text, and loading the card brings it back
+            ExpressionVariableFacade facade = (ExpressionVariableFacade) getVariableFacade(helper.getLevel(), written);
+            helper.assertTrue(text.equals(facade.getText()), "The card does not have the text");
+            helper.assertTrue(text.equals(((ExpressionVariableFacade) getVariableFacade(helper.getLevel(), registry.copy(true, written))).getText()),
+                    "The copy does not have the text");
+            OperatorLPElement loaded = new OperatorLPElement(Operators.ARITHMETIC_ADDITION);
+            loaded.activate();
+            loaded.loadElement(facade);
+            helper.assertTrue(text.equals(loaded.getEditor().getText()), "The text was not loaded");
+
+            // Changing a slot prints the expression from then on, also on the card
+            loaded.getEditor().setChild(1, new ExpressionNode.Const(ValueTypeInteger.ValueInteger.of(4)));
+            helper.assertTrue(loaded.getEditor().getText() == null, "The text was kept after a slot changed");
+            ItemStack rewritten = loaded.writeElement(player, new ItemStack(RegistryEntries.ITEM_VARIABLE.get()));
+            helper.assertTrue(((ExpressionVariableFacade) getVariableFacade(helper.getLevel(), rewritten)).getText() == null,
+                    "The card has text after a slot changed");
         } finally {
             player.getServer().getPlayerList().remove(player);
         }

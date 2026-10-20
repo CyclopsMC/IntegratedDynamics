@@ -359,7 +359,8 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
             }
         }
         // Stay at the open operator if it is still there, such as after typing a change inside it
-        target.setExpression(expression, target == current ? current.getEditor().getEditPath() : new int[0]);
+        target.setExpression(expression, target == current ? current.getEditor().getEditPath() : new int[0],
+                ExpressionEditor.readSetActionText(action));
         target.findReferencedCards(player);
         if (MinecraftHelpers.isClientSideThread()) {
             getGui().onExpressionNavigated();

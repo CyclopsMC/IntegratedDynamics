@@ -32,4 +32,13 @@ public interface IExpressionVariableFacade extends IVariableFacade {
         return Map.of();
     }
 
+    /**
+     * @return The text the expression was typed as, or null if it was not typed or is printed.
+     *         This is only used when editing the card, and only while the text still reads as the expression.
+     */
+    @Nullable
+    public default String getText() {
+        return null;
+    }
+
 }

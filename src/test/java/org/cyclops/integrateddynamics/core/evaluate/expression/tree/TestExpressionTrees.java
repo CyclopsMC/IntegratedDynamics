@@ -669,11 +669,11 @@ public class TestExpressionTrees {
     public void testFacadeOutputTypeWithReferenceTypes() {
         // a -> a + #5, written while #5 was an Integer card
         Expression expression = new Expression(op(Operators.ARITHMETIC_ADDITION, p(0), ref(5)), List.of(param("a", ValueTypes.INTEGER)));
-        ExpressionVariableFacade facade = new ExpressionVariableFacade(1, expression, Map.of(5, ValueTypes.INTEGER));
+        ExpressionVariableFacade facade = new ExpressionVariableFacade(1, expression, Map.of(5, ValueTypes.INTEGER), null);
         assertThat(facade.getKnownRootOutputType(), is(ValueTypes.INTEGER));
         // Networks check the actual variables against the type without references
         assertThat(facade.getRootOutputType(), is(ValueTypes.CATEGORY_ANY));
-        assertThat(new ExpressionVariableFacade(1, expression, Map.of()).getKnownRootOutputType(), is(ValueTypes.CATEGORY_ANY));
+        assertThat(new ExpressionVariableFacade(1, expression, Map.of(), null).getKnownRootOutputType(), is(ValueTypes.CATEGORY_ANY));
     }
 
     // --------------- Printing ---------------

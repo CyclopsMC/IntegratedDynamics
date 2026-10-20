@@ -161,10 +161,49 @@ public class TestExpressionEditor {
     public void testSetAction() {
         Expression expression = new Expression(new ExpressionNode.Operator(Operators.STRING_LENGTH, List.of(new ExpressionNode.Param(0))),
                 List.of(new ExpressionParameter("s", ValueTypes.STRING)));
-        CompoundTag action = ExpressionEditor.actionSet(ValueDeseralizationContextMocked.get(), expression);
+        CompoundTag action = ExpressionEditor.actionSet(ValueDeseralizationContextMocked.get(), expression, null);
         assertThat(ExpressionEditor.readSetAction(ValueDeseralizationContextMocked.get(), action), is(expression));
+        assertThat(ExpressionEditor.readSetActionText(action), nullValue());
         // Not a set action
         assertThat(ExpressionEditor.readSetAction(ValueDeseralizationContextMocked.get(), ExpressionEditor.actionAddParam()), nullValue());
+
+        // With the text it was typed as, which is left out if it is too long to be read
+        String text = "(s: string) => length(s)";
+        assertThat(ExpressionEditor.readSetActionText(ExpressionEditor.actionSet(ValueDeseralizationContextMocked.get(), expression, text)), is(text));
+        String tooLong = "x".repeat(ExpressionParser.MAX_LENGTH + 1);
+        assertThat(ExpressionEditor.readSetActionText(ExpressionEditor.actionSet(ValueDeseralizationContextMocked.get(), expression, tooLong)), nullValue());
+        action.putString("text", tooLong);
+        assertThat(ExpressionEditor.readSetActionText(action), nullValue());
+    }
+
+    @Test
+    public void testTextIsKeptUntilAnEditChangesTheExpression() {
+        Expression expression = new Expression(new ExpressionNode.Operator(Operators.ARITHMETIC_ADDITION,
+                List.of(new ExpressionNode.Param(0), ExpressionNode.EMPTY)), List.of(new ExpressionParameter("x", ValueTypes.INTEGER)));
+        ExpressionEditor editor = new ExpressionEditor(Operators.ARITHMETIC_ADDITION);
+        editor.setExpression(expression, "(x: integer) => x.add(?)");
+        assertThat(editor.getText(), is("(x: integer) => x.add(?)"));
+
+        // Edits that leave the expression as it is keep the text
+        assertThat(apply(editor, ExpressionEditor.actionNavigate(new int[0])), is(ExpressionEditor.ActionResult.NONE));
+        editor.setChild(0, new ExpressionNode.Param(0));
+        editor.renameParameter(0, "x");
+        editor.setParameterType(0, ValueTypes.INTEGER);
+        assertThat(editor.getText(), is("(x: integer) => x.add(?)"));
+
+        // Edits that change it print it from then on
+        assertThat(apply(editor, ExpressionEditor.actionConst(ValueDeseralizationContextMocked.get(), new int[0], 1,
+                ValueTypeInteger.ValueInteger.of(3))), is(ExpressionEditor.ActionResult.SLOT_CHANGED));
+        assertThat(editor.getText(), nullValue());
+        for (CompoundTag action : List.of(ExpressionEditor.actionAddParam(), ExpressionEditor.actionRenameParam(0, "z"),
+                ExpressionEditor.actionParamType(0, ValueTypes.LONG), ExpressionEditor.actionRemoveParam(1))) {
+            editor.setExpression(editor.getExpression(), "text");
+            assertThat(apply(editor, action), is(ExpressionEditor.ActionResult.CHANGED));
+            assertThat(editor.getText(), nullValue());
+        }
+        editor.setExpression(editor.getExpression(), "text");
+        editor.setExpression(editor.getExpression());
+        assertThat(editor.getText(), nullValue());
     }
 
     @Test
@@ -191,7 +230,7 @@ public class TestExpressionEditor {
 
     private static Expression readBack(Expression expression) {
         return ExpressionEditor.readSetAction(ValueDeseralizationContextMocked.get(),
-                ExpressionEditor.actionSet(ValueDeseralizationContextMocked.get(), expression));
+                ExpressionEditor.actionSet(ValueDeseralizationContextMocked.get(), expression, null));
     }
 
     @Test

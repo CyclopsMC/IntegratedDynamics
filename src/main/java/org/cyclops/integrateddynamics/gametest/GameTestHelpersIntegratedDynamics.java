@@ -101,7 +101,7 @@ public class GameTestHelpersIntegratedDynamics {
         IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
         ItemStack itemStack = new ItemStack(RegistryEntries.ITEM_VARIABLE);
         return registry.writeVariableFacadeItem(true, itemStack, ExpressionVariableFacadeHandler.getInstance(),
-                new OperatorLPElement.ExpressionVariableFacadeFactory(expression, referenceTypes), level, null, RegistryEntries.BLOCK_LOGIC_PROGRAMMER.get().defaultBlockState());
+                new OperatorLPElement.ExpressionVariableFacadeFactory(expression, referenceTypes, null), level, null, RegistryEntries.BLOCK_LOGIC_PROGRAMMER.get().defaultBlockState());
     }
 
     public static IVariableFacade getVariableFacade(Level level, ItemStack itemStack) {

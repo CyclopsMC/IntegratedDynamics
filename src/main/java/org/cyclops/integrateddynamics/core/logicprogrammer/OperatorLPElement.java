@@ -269,7 +269,7 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
                     new OperatorVariableFacadeFactory(operator, variableIds), player.level(), player, RegistryEntries.BLOCK_LOGIC_PROGRAMMER.get().defaultBlockState());
         }
         return registry.writeVariableFacadeItem(!player.level().isClientSide(), itemStack, ExpressionVariableFacadeHandler.getInstance(),
-                new ExpressionVariableFacadeFactory(expression, editor.getRefTypes()), player.level(), player, RegistryEntries.BLOCK_LOGIC_PROGRAMMER.get().defaultBlockState());
+                new ExpressionVariableFacadeFactory(expression, editor.getRefTypes(), editor.getText()), player.level(), player, RegistryEntries.BLOCK_LOGIC_PROGRAMMER.get().defaultBlockState());
     }
 
     @Override
@@ -278,7 +278,7 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
             this.editor.setExpression(ExpressionTrees.fromPlainOperator(operator, operatorVariableFacade.getVariableIds()));
         } else if (variableFacade instanceof IExpressionVariableFacade expressionVariableFacade
                 && expressionVariableFacade.getExpression() != null) {
-            this.editor.setExpression(expressionVariableFacade.getExpression());
+            this.editor.setExpression(expressionVariableFacade.getExpression(), expressionVariableFacade.getText());
             expressionVariableFacade.getReferenceTypes().forEach(this.editor::setRefType);
         } else {
             return;
@@ -333,16 +333,17 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
      * @param expression An expression with this element's operator as root.
      */
     public void setExpression(Expression expression) {
-        setExpression(expression, new int[0]);
+        setExpression(expression, new int[0], null);
     }
 
     /**
      * Replace the whole expression, and open the operator at the given path if it is one.
      * @param expression An expression with this element's operator as root.
      * @param editPath The path of the operator to open, such as the one that was open before.
+     * @param text The text it was typed as, or null if it is printed.
      */
-    public void setExpression(Expression expression, int[] editPath) {
-        editor.setExpression(expression);
+    public void setExpression(Expression expression, int[] editPath, @Nullable String text) {
+        editor.setExpression(expression, text);
         editor.navigate(editPath);
         editor.inferMissingRefTypes();
         selectedSlot = -1;
@@ -557,24 +558,27 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
 
         private final Expression expression;
         private final Map<Integer, IValueType<?>> referenceTypes;
+        @Nullable
+        private final String text;
 
         public ExpressionVariableFacadeFactory(Expression expression) {
-            this(expression, Map.of());
+            this(expression, Map.of(), null);
         }
 
-        public ExpressionVariableFacadeFactory(Expression expression, Map<Integer, IValueType<?>> referenceTypes) {
+        public ExpressionVariableFacadeFactory(Expression expression, Map<Integer, IValueType<?>> referenceTypes, @Nullable String text) {
             this.expression = expression;
             this.referenceTypes = referenceTypes;
+            this.text = text;
         }
 
         @Override
         public IExpressionVariableFacade create(boolean generateId) {
-            return new ExpressionVariableFacade(generateId, expression, referenceTypes);
+            return new ExpressionVariableFacade(generateId, expression, referenceTypes, text);
         }
 
         @Override
         public IExpressionVariableFacade create(int id) {
-            return new ExpressionVariableFacade(id, expression, referenceTypes);
+            return new ExpressionVariableFacade(id, expression, referenceTypes, text);
         }
     }
 

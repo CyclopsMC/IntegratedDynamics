@@ -29,13 +29,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
  * The text of an expression in the logic programmer, which can be edited in place.
- * The text is either the printed expression, text that was applied as typed and is printed once it loses focus,
- * or a draft that the player typed and that is not applied yet.
+ * The text is either the text of the expression, which is the text it was typed as or otherwise its printed form,
+ * text that was applied and is not followed yet, or a draft that the player typed and that is not applied yet.
  * It is drawn with a color for each character, which vanilla text boxes cannot do.
  * It is kept in the container, so it survives the panel being recreated, such as when navigating.
  * @author rubensworks
@@ -62,6 +63,8 @@ public class ExpressionTextField {
     private String printed = "";
     @Nullable
     private Expression printedExpression = null;
+    @Nullable
+    private String printedText = null;
     // The text that the expression was applied from, kept as typed while it has focus
     @Nullable
     private String applied = null;
@@ -126,7 +129,7 @@ public class ExpressionTextField {
     }
 
     /**
-     * @return If the text is the printed expression, so the tokens tell the node of each character.
+     * @return If the text is the text of the expression, so the tokens tell the node of each character.
      */
     public boolean isPrinted() {
         return text.value().equals(printed);
@@ -142,9 +145,11 @@ public class ExpressionTextField {
     }
 
     /**
-     * Print the expression in place of applied text, unless the applied expression is not followed yet.
+     * Show the text of the expression in place of applied text, unless the applied expression is not followed yet.
+     * The expression keeps the text it was typed as, so this only changes text that no longer reads as the expression,
+     * such as a reference whose type became known.
      */
-    public void format() {
+    public void showExpressionText() {
         if (!isDraft() && !isPrinted() && appliedExpression == null) {
             revert();
         }
@@ -158,21 +163,21 @@ public class ExpressionTextField {
     }
 
     /**
-     * @return The tokens of the printed expression, which tell the node of each character while it is printed.
+     * @return The tokens of the text of the expression, which tell the node of each character while it is shown.
      */
     public List<ExpressionPrinter.Token> getTokens() {
         return tokens;
     }
 
     /**
-     * @return The text of the expression, without a draft.
+     * @return The text of the expression, as typed or printed, without a draft.
      */
     public String getPrinted() {
         return printed;
     }
 
     /**
-     * @param values A value for each character of the printed text, such as its color.
+     * @param values A value for each character of the text of the expression, such as its color.
      * @param typed The value of the characters that were typed.
      * @return A value for each character of the text, where the text before and after what was typed keeps its value.
      */
@@ -207,16 +212,18 @@ public class ExpressionTextField {
 
     /**
      * Follow the given expression. A draft is kept, and is compared to the new expression from now on.
-     * Applied text is kept if this is the expression it was applied as, and is printed otherwise.
+     * Applied text is kept if this is the expression it was applied as, and is replaced by the text of the expression otherwise.
      * @param expression The current expression.
-     * @param printer Prints the expression as tokens, only called when the expression changed.
+     * @param text The text it was typed as, or null if it is printed.
+     * @param printer Gives the text of the expression as tokens, only called when the expression or its text changed.
      */
-    public void sync(Expression expression, Supplier<List<ExpressionPrinter.Token>> printer) {
-        if (expression == printedExpression) {
+    public void sync(Expression expression, @Nullable String text, Supplier<List<ExpressionPrinter.Token>> printer) {
+        if (expression == printedExpression && Objects.equals(text, printedText)) {
             return;
         }
         boolean draft = isDraft();
         printedExpression = expression;
+        printedText = text;
         tokens = printer.get();
         StringBuilder sb = new StringBuilder();
         tokens.forEach(token -> sb.append(token.text()));
@@ -229,7 +236,7 @@ public class ExpressionTextField {
     }
 
     /**
-     * Throw away the draft or the applied text, so the text is the printed expression.
+     * Throw away the draft or the applied text, so the text is that of the expression.
      */
     public void revert() {
         applied = null;
@@ -242,6 +249,7 @@ public class ExpressionTextField {
      */
     public void reset() {
         printedExpression = null;
+        printedText = null;
         tokens = List.of();
         printed = "";
         applied = null;

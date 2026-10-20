@@ -184,7 +184,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         updateEditor();
 
         buttons = new ExpressionPanelButtons(() -> getEditor() != null && getEditor().getExpression().parameters().isEmpty(),
-                this::addParameter, this::undo, this::redo, this::copyText);
+                this::addParameter, this::undo, this::redo, this::formatText, this::copyText);
         buttonList.addAll(buttons.getAll());
         updateButtons();
     }
@@ -217,6 +217,9 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         buttons.undo.active = draft || container.getExpressionHistory().canUndo();
         buttons.redo.visible = panel;
         buttons.redo.active = !draft && container.getExpressionHistory().canRedo();
+        // Typed text is shown as typed, until it is formatted
+        buttons.format.visible = panel;
+        buttons.format.active = draft ? parseText() != null : panel && editor.getText() != null;
         buttons.copy.visible = panel;
         buttons.layout(guiLeft, guiTop);
         if (editor != null) {
@@ -303,9 +306,33 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         return getTextField().isDraft();
     }
 
-    protected List<ExpressionPrinter.Token> printTokens(Expression expression) {
+    /**
+     * @param expression The expression.
+     * @param text The text it was typed as, or null.
+     * @return The tokens of the text if it still reads as the expression, and otherwise of the expression in its usual form,
+     *         such as after a label that the text uses changed.
+     */
+    protected List<ExpressionPrinter.Token> printTokens(Expression expression, @Nullable String text) {
+        if (text != null) {
+            try {
+                ExpressionParser.Tokenized tokenized = ExpressionParser.tokenize(text, getParserContext());
+                if (tokenized.expression().equals(expression)) {
+                    return tokenized.tokens();
+                }
+            } catch (ExpressionParseException e) {
+                // Printed instead
+            }
+        }
         return ExpressionPrinter.tokenizeExact(expression, ValueDeseralizationContext.ofClient(), this::getLabel, this::getLabelIds,
                 ExpressionTypeChecker.check(expression, this::getRefType));
+    }
+
+    /**
+     * @param expression An expression.
+     * @return Its usual form.
+     */
+    protected String printExact(Expression expression) {
+        return ExpressionPrinter.printExact(expression, ValueDeseralizationContext.ofClient(), this::getLabel, this::getLabelIds, this::getRefType);
     }
 
     /**
@@ -345,7 +372,8 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     }
 
     /**
-     * Apply the typed text if it parses. It stays as typed while it has focus.
+     * Apply the typed text if it parses. It stays as typed, also on the card, unless it is the usual form.
+     * The same expression typed in another way is applied too, as its text is kept.
      * This can make another element active, which replaces this panel, so it is not done while rendering.
      */
     protected void applyText() {
@@ -354,12 +382,29 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         if (expression == null || editor == null) {
             return;
         }
-        if (expression.equals(editor.getExpression())) {
+        String typed = getTextField().getValue();
+        String text = typed.equals(printExact(expression)) ? null : typed;
+        if (expression.equals(editor.getExpression()) && Objects.equals(text, editor.getText())) {
             getTextField().markApplied(null);
         } else {
             getTextField().markApplied(expression);
-            sendAction(ExpressionEditor.actionSet(ValueDeseralizationContext.ofClient(), expression));
+            sendAction(ExpressionEditor.actionSet(ValueDeseralizationContext.ofClient(), expression, text));
         }
+    }
+
+    /**
+     * Show the expression in its usual form instead of as typed, applying typed text first if it parses.
+     * This can make another element active, which replaces this panel.
+     */
+    protected void formatText() {
+        ExpressionEditor editor = getEditor();
+        Expression expression = isDraft() ? parseText() : editor == null ? null : editor.getExpression();
+        if (expression == null) {
+            return;
+        }
+        // The text of the expression replaces the typed text once it follows the expression
+        getTextField().revert();
+        sendAction(ExpressionEditor.actionSet(ValueDeseralizationContext.ofClient(), expression, null));
     }
 
     protected void revertText() {
@@ -367,7 +412,8 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     }
 
     /**
-     * Apply typed text once typing pauses, or when the panel is hidden, and print applied text once it loses focus.
+     * Apply typed text once typing pauses, or when the panel is hidden, and show the text of the expression in place of
+     * applied text once it loses focus.
      * Called each tick, outside of rendering.
      */
     public void tickText() {
@@ -387,7 +433,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
             field.setFocused(false);
         }
         if (!field.isFocused()) {
-            field.format();
+            field.showExpressionText();
         }
     }
 
@@ -408,9 +454,9 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
             revertText();
             return;
         }
-        Expression expression = container.getExpressionHistory().undo();
-        if (expression != null) {
-            setExpressionFromHistory(expression);
+        ExpressionHistory.Entry entry = container.getExpressionHistory().undo();
+        if (entry != null) {
+            setExpressionFromHistory(entry);
         }
     }
 
@@ -418,9 +464,9 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         if (isDraft()) {
             return;
         }
-        Expression expression = container.getExpressionHistory().redo();
-        if (expression != null) {
-            setExpressionFromHistory(expression);
+        ExpressionHistory.Entry entry = container.getExpressionHistory().redo();
+        if (entry != null) {
+            setExpressionFromHistory(entry);
         }
     }
 
@@ -428,10 +474,10 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
      * Set an expression from the history without recording it as a change.
      * This can make another element active, which replaces this panel.
      */
-    protected void setExpressionFromHistory(Expression expression) {
-        sendAction(ExpressionEditor.actionSet(ValueDeseralizationContext.ofClient(), expression));
+    protected void setExpressionFromHistory(ExpressionHistory.Entry entry) {
+        sendAction(ExpressionEditor.actionSet(ValueDeseralizationContext.ofClient(), entry.expression(), entry.text()));
         if (container.getActiveElement() instanceof OperatorLPElement active && active.getEditor() != null) {
-            container.getExpressionHistory().moved(active.getEditor().getExpression());
+            container.getExpressionHistory().moved(new ExpressionHistory.Entry(active.getEditor().getExpression(), active.getEditor().getText()));
         }
     }
 
@@ -984,9 +1030,9 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         }
 
         // Changes from slots, parameters and text alike can be undone
-        container.getExpressionHistory().observe(editor.getExpression());
+        container.getExpressionHistory().observe(editor.getExpression(), editor.getText());
         ExpressionTextField field = getTextField();
-        field.sync(editor.getExpression(), () -> printTokens(editor.getExpression()));
+        field.sync(editor.getExpression(), editor.getText(), () -> printTokens(editor.getExpression(), editor.getText()));
         if (ContainerScreenLogicProgrammerBase.isExpressionPanelOpen()) {
             renderTitle(guiGraphics, guiLeft, guiTop, fontRenderer);
             int hoveredSlot = getSlotAt(mouseX, mouseY);
@@ -1194,7 +1240,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
                 if (!draft && result.hasErrorAt(nodePath) && (path == nodePath || result.getError(nodePath, path[path.length - 1]) != null)) {
                     color = COLOR_TEXT_ERROR;
                 }
-                if (token.text().equals(ExpressionPrinter.EMPTY)) {
+                if (ExpressionTrees.get(expression.root(), path) instanceof ExpressionNode.Empty) {
                     color = COLOR_EMPTY;
                 }
                 Arrays.fill(colors, position, position + length, color);

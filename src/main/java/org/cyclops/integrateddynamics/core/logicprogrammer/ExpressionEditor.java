@@ -73,6 +73,9 @@ public class ExpressionEditor {
     private static final String[] DEFAULT_PARAM_NAMES = {"x", "y", "z", "a", "b", "c", "d", "e"};
 
     private Expression expression;
+    // The text the expression was typed as, which is shown instead of the printed form
+    @Nullable
+    private String text = null;
     private int[] editPath = new int[0];
     private final Int2ObjectMap<IValueType<?>> refTypes = new Int2ObjectOpenHashMap<>();
     @Nullable
@@ -87,6 +90,14 @@ public class ExpressionEditor {
     }
 
     /**
+     * @return The text the expression was typed as, or null if it is printed. It is only shown while it still reads as the expression.
+     */
+    @Nullable
+    public String getText() {
+        return text;
+    }
+
+    /**
      * @return All known types of referenced variables, also of variables that are no longer referenced.
      */
     public Map<Integer, IValueType<?>> getKnownRefTypes() {
@@ -94,9 +105,29 @@ public class ExpressionEditor {
     }
 
     public void setExpression(Expression expression) {
+        setExpression(expression, null);
+    }
+
+    /**
+     * @param expression The expression.
+     * @param text The text it was typed as, or null if it is printed.
+     */
+    public void setExpression(Expression expression, @Nullable String text) {
         this.expression = expression;
+        this.text = text;
         this.editPath = new int[0];
         this.lastResult = null;
+    }
+
+    /**
+     * Replace the expression after an edit of a part of it, which is printed from then on if it changed.
+     */
+    private void edit(Expression edited) {
+        if (!edited.equals(expression)) {
+            text = null;
+        }
+        expression = edited;
+        lastResult = null;
     }
 
     public int[] getEditPath() {
@@ -220,18 +251,18 @@ public class ExpressionEditor {
         if (slot < 0 || slot >= getSlotCount()) {
             return;
         }
+        Expression edited = expression;
         // Infer the type of an untyped parameter from the slot it is dropped in
-        if (node instanceof ExpressionNode.Param param && param.index() < expression.parameters().size()) {
-            ExpressionParameter parameter = expression.parameters().get(param.index());
+        if (node instanceof ExpressionNode.Param param && param.index() < edited.parameters().size()) {
+            ExpressionParameter parameter = edited.parameters().get(param.index());
             IValueType<?> expectedType = getExpectedType(slot);
             if (parameter.type() == ValueTypes.CATEGORY_ANY && expectedType != ValueTypes.CATEGORY_ANY && isParameterType(expectedType)) {
-                List<ExpressionParameter> parameters = new ArrayList<>(expression.parameters());
+                List<ExpressionParameter> parameters = new ArrayList<>(edited.parameters());
                 parameters.set(param.index(), parameter.withType(expectedType));
-                expression = expression.withParameters(parameters);
+                edited = edited.withParameters(parameters);
             }
         }
-        expression = expression.withRoot(ExpressionTrees.replace(expression.root(), ExpressionTrees.append(editPath, slot), node));
-        lastResult = null;
+        edit(edited.withRoot(ExpressionTrees.replace(edited.root(), ExpressionTrees.append(editPath, slot), node)));
     }
 
     public boolean navigate(int[] path) {
@@ -249,8 +280,7 @@ public class ExpressionEditor {
         }
         String name = getNewParameterName(parameters.stream().map(ExpressionParameter::name).toList());
         parameters.add(new ExpressionParameter(name, ValueTypes.CATEGORY_ANY));
-        expression = expression.withParameters(parameters);
-        lastResult = null;
+        edit(expression.withParameters(parameters));
         return parameters.size() - 1;
     }
 
@@ -296,8 +326,7 @@ public class ExpressionEditor {
         }
         List<ExpressionParameter> parameters = new ArrayList<>(expression.parameters());
         parameters.remove(index);
-        expression = new Expression(ExpressionTrees.removeParam(expression.root(), index), parameters);
-        lastResult = null;
+        edit(new Expression(ExpressionTrees.removeParam(expression.root(), index), parameters));
     }
 
     public void renameParameter(int index, String name) {
@@ -311,8 +340,7 @@ public class ExpressionEditor {
         }
         List<ExpressionParameter> parameters = new ArrayList<>(expression.parameters());
         parameters.set(index, parameters.get(index).withName(name));
-        expression = expression.withParameters(parameters);
-        lastResult = null;
+        edit(expression.withParameters(parameters));
     }
 
     public void setParameterType(int index, IValueType<?> type) {
@@ -321,8 +349,7 @@ public class ExpressionEditor {
         }
         List<ExpressionParameter> parameters = new ArrayList<>(expression.parameters());
         parameters.set(index, parameters.get(index).withType(type));
-        expression = expression.withParameters(parameters);
-        lastResult = null;
+        edit(expression.withParameters(parameters));
     }
 
     /**
@@ -508,12 +535,30 @@ public class ExpressionEditor {
      * An action that replaces the whole expression, which can have another root operator.
      * @param context The serialization context.
      * @param expression The new expression.
+     * @param text The text it was typed as, to show it as typed, or null to print it.
      * @return The action.
      */
-    public static CompoundTag actionSet(ValueDeseralizationContext context, Expression expression) {
+    public static CompoundTag actionSet(ValueDeseralizationContext context, Expression expression, @Nullable String text) {
         CompoundTag tag = action(ACTION_SET, new int[0]);
         tag.put("expression", ExpressionTrees.serialize(context, expression));
+        if (text != null && text.length() <= ExpressionParser.MAX_LENGTH) {
+            tag.putString("text", text);
+        }
         return tag;
+    }
+
+    /**
+     * @param action A set action.
+     * @return The text its expression was typed as, or null if there is none or it is too long.
+     *         It is not checked against the expression, as it is only shown while it reads as the expression.
+     */
+    @Nullable
+    public static String readSetActionText(CompoundTag action) {
+        if (!action.contains("text", Tag.TAG_STRING)) {
+            return null;
+        }
+        String text = action.getString("text");
+        return text.length() <= ExpressionParser.MAX_LENGTH ? text : null;
     }
 
     /**

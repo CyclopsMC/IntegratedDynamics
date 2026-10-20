@@ -19,7 +19,7 @@ import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElem
 import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.PANEL_X;
 
 /**
- * The buttons of the expression panel: Undo, Redo and Copy right of the title, and the button to add a parameter after the chips.
+ * The buttons of the expression panel: Undo, Redo, Format and Copy right of the title, and the button to add a parameter after the chips.
  * The panel of an expression and the panel without an operator both have them, so the panel looks the same before and after
  * an expression is typed.
  * @author rubensworks
@@ -32,6 +32,7 @@ public class ExpressionPanelButtons {
     final ButtonText addParameter;
     final ButtonIcon undo;
     final ButtonIcon redo;
+    final ButtonIcon format;
     final ButtonIcon copy;
     private long copiedTime = 0;
 
@@ -40,9 +41,11 @@ public class ExpressionPanelButtons {
      * @param addParameter Adds a parameter.
      * @param undo Goes back one change.
      * @param redo Goes forward one change.
+     * @param format Prints the expression in its usual form.
      * @param copy Copies the text.
      */
-    public ExpressionPanelButtons(BooleanSupplier firstParameter, Runnable addParameter, Runnable undo, Runnable redo, Runnable copy) {
+    public ExpressionPanelButtons(BooleanSupplier firstParameter, Runnable addParameter, Runnable undo, Runnable redo, Runnable format,
+                                  Runnable copy) {
         Component add = Component.literal("+");
         Component addFirst = Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_ADD_FIRST);
         this.addParameter = new ButtonText(0, 0, 12, CHIP_HEIGHT, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_ADD),
@@ -55,6 +58,7 @@ public class ExpressionPanelButtons {
         this.addParameter.setTooltip(Tooltip.create(Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_ADD)));
         this.undo = createButton(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_UNDO, undo, ButtonIcon.Icon.UNDO);
         this.redo = createButton(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_REDO, redo, ButtonIcon.Icon.REDO);
+        this.format = createButton(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_FORMAT, format, ButtonIcon.Icon.FORMAT);
         this.copy = new ButtonIcon(0, 0, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_COPY),
                 () -> Util.getMillis() - copiedTime < COPIED_MS ? ButtonIcon.Icon.CHECK : ButtonIcon.Icon.COPY, b -> {
             copy.run();
@@ -76,18 +80,18 @@ public class ExpressionPanelButtons {
      * @return All buttons.
      */
     public List<Button> getAll() {
-        return List.of(addParameter, undo, redo, copy);
+        return List.of(addParameter, undo, redo, format, copy);
     }
 
     /**
-     * Place the visible ones of Undo, Redo and Copy right of the title, aligned to the right,
+     * Place the visible ones of Undo, Redo, Format and Copy right of the title, aligned to the right,
      * and fit the button to add a parameter to its text, before the chips are placed around it.
      * @param guiLeft The left of the gui.
      * @param guiTop The top of the gui.
      */
     public void layout(int guiLeft, int guiTop) {
         int x = guiLeft + PANEL_X + PANEL_WIDTH;
-        for (ButtonIcon button : List.of(copy, redo, undo)) {
+        for (ButtonIcon button : List.of(copy, format, redo, undo)) {
             if (button.visible) {
                 x -= button.getWidth();
                 button.setPosition(x, guiTop + BUTTONS_Y);

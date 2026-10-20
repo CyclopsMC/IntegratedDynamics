@@ -5,37 +5,41 @@ import org.cyclops.integrateddynamics.api.evaluate.expression.tree.Expression;
 import javax.annotation.Nullable;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.Objects;
 
 /**
  * The changes to an expression in the logic programmer, to go back and forth through them.
  * Changes are recorded by observing the expression, so they can come from slots, parameters or text alike.
+ * Typing the same expression in another way is a change as well, as the text is shown as typed.
  * @author rubensworks
  */
 public class ExpressionHistory {
 
     public static final int MAX_SIZE = 64;
 
-    private final Deque<Expression> undo = new ArrayDeque<>();
-    private final Deque<Expression> redo = new ArrayDeque<>();
+    private final Deque<Entry> undo = new ArrayDeque<>();
+    private final Deque<Entry> redo = new ArrayDeque<>();
     @Nullable
-    private Expression current = null;
+    private Entry current = null;
 
     /**
-     * Observe the current expression, which records a change if it differs from the one observed before.
+     * Observe the current expression, which records a change if it or its text differs from the one observed before.
      * @param expression The current expression.
+     * @param text The text it was typed as, or null if it is printed.
      */
-    public void observe(Expression expression) {
-        if (expression == current) {
+    public void observe(Expression expression, @Nullable String text) {
+        if (current != null && expression == current.expression() && Objects.equals(text, current.text())) {
             return;
         }
-        if (current != null && !current.equals(expression)) {
+        Entry entry = new Entry(expression, text);
+        if (current != null && !current.equals(entry)) {
             undo.push(current);
             if (undo.size() > MAX_SIZE) {
                 undo.removeLast();
             }
             redo.clear();
         }
-        current = expression;
+        current = entry;
     }
 
     public boolean canUndo() {
@@ -47,11 +51,11 @@ public class ExpressionHistory {
     }
 
     /**
-     * Go back one change. Call {@link #moved(Expression)} once the returned expression is set.
+     * Go back one change. Call {@link #moved(Entry)} once the returned expression is set.
      * @return The expression to go back to, or null if there is none.
      */
     @Nullable
-    public Expression undo() {
+    public Entry undo() {
         if (!canUndo()) {
             return null;
         }
@@ -60,11 +64,11 @@ public class ExpressionHistory {
     }
 
     /**
-     * Go forward one undone change. Call {@link #moved(Expression)} once the returned expression is set.
+     * Go forward one undone change. Call {@link #moved(Entry)} once the returned expression is set.
      * @return The expression to go forward to, or null if there is none.
      */
     @Nullable
-    public Expression redo() {
+    public Entry redo() {
         if (!canRedo()) {
             return null;
         }
@@ -74,10 +78,10 @@ public class ExpressionHistory {
 
     /**
      * Make the given expression the current one without recording a change, after an undo or redo set it.
-     * @param expression The current expression.
+     * @param entry The current expression and its text.
      */
-    public void moved(Expression expression) {
-        current = expression;
+    public void moved(Entry entry) {
+        current = entry;
     }
 
     /**
@@ -88,5 +92,11 @@ public class ExpressionHistory {
         redo.clear();
         current = null;
     }
+
+    /**
+     * @param expression An expression.
+     * @param text The text it was typed as, or null if it is printed.
+     */
+    public static record Entry(Expression expression, @Nullable String text) {}
 
 }

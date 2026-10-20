@@ -20,6 +20,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationC
 import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionParseException;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionParser;
+import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionPrinter;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionTypeChecker;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.Region;
@@ -78,10 +79,13 @@ public class ExpressionStartPanel {
     private ExpressionTypeChecker.Result parsedTextResult = null;
     @Nullable
     private ExpressionParseException textError = null;
+    // The usual form of the typed expression
+    @Nullable
+    private String parsedTextPrinted = null;
 
     // Redo has nothing to redo, as there is no history without an expression
     private final ExpressionPanelButtons buttons = new ExpressionPanelButtons(() -> true, this::addParameter, this::undo, () -> {},
-            this::copyText);
+            this::formatText, this::copyText);
 
     public ExpressionStartPanel(ContainerScreenLogicProgrammerBase<?> gui, ContainerLogicProgrammerBase container) {
         this.gui = gui;
@@ -132,10 +136,12 @@ public class ExpressionStartPanel {
             try {
                 parsedText = ExpressionEditor.parse(text, getParserContext());
                 parsedTextResult = ExpressionTypeChecker.check(parsedText, this::getRefType);
+                parsedTextPrinted = printExact(parsedText);
                 textError = null;
             } catch (ExpressionParseException e) {
                 parsedText = null;
                 parsedTextResult = null;
+                parsedTextPrinted = null;
                 textError = e;
             }
         }
@@ -152,8 +158,10 @@ public class ExpressionStartPanel {
             return;
         }
         // The text stays as typed, and keeps focus, in the panel of the expression
+        String text = getTextField().getValue();
         getTextField().markApplied(expression);
-        CompoundTag action = ExpressionEditor.actionSet(ValueDeseralizationContext.ofClient(), expression);
+        CompoundTag action = ExpressionEditor.actionSet(ValueDeseralizationContext.ofClient(), expression,
+                text.equals(parsedTextPrinted) ? null : text);
         container.applyExpressionAction(action);
         IntegratedDynamics._instance.getPacketHandler().sendToServer(new LogicProgrammerExpressionActionPacket(action));
     }
@@ -225,6 +233,22 @@ public class ExpressionStartPanel {
 
     protected void undo() {
         getTextField().revert();
+    }
+
+    /**
+     * Replace the typed text by its usual form, which is applied as any typed text.
+     */
+    protected void formatText() {
+        Expression expression = parseText();
+        if (expression != null) {
+            focusText();
+            getTextField().replace(parsedTextPrinted);
+        }
+    }
+
+    protected String printExact(Expression expression) {
+        return ExpressionPrinter.printExact(expression, ValueDeseralizationContext.ofClient(),
+                variableId -> LabelsWorldStorage.getInstance(IntegratedDynamics._instance).getLabel(variableId), this::getLabelIds, this::getRefType);
     }
 
     protected void copyText() {
@@ -340,6 +364,7 @@ public class ExpressionStartPanel {
         renderTitle(guiGraphics, guiLeft, guiTop, font);
         buttons.undo.active = getTextField().isDraft();
         buttons.redo.active = false;
+        buttons.format.active = parseText() != null && !getTextField().getValue().equals(parsedTextPrinted);
         buttons.layout(guiLeft, guiTop);
         buttons.addParameter.setPosition(guiLeft + PANEL_X, guiTop + PARAMS_Y);
         for (AbstractWidget button : buttons.getAll()) {

@@ -27,6 +27,7 @@ public class ExpressionVariableFacadeHandler implements IVariableFacadeHandler<I
 
     public static final String KEY_EXPRESSION = "expression";
     public static final String KEY_REFERENCE_TYPES = "referenceTypes";
+    public static final String KEY_TEXT = "text";
 
     private static final IExpressionVariableFacade INVALID_FACADE = new ExpressionVariableFacade(false, null);
     private static ExpressionVariableFacadeHandler _instance;
@@ -69,7 +70,8 @@ public class ExpressionVariableFacadeHandler implements IVariableFacadeHandler<I
                 }
             }
         }
-        return new ExpressionVariableFacade(id, expression, referenceTypes);
+        String text = tag.contains(KEY_TEXT, Tag.TAG_STRING) ? tag.getString(KEY_TEXT) : null;
+        return new ExpressionVariableFacade(id, expression, referenceTypes, text);
     }
 
     @Override
@@ -81,6 +83,9 @@ public class ExpressionVariableFacadeHandler implements IVariableFacadeHandler<I
             CompoundTag referenceTypesTag = new CompoundTag();
             variableFacade.getReferenceTypes().forEach((id, type) -> referenceTypesTag.putString(String.valueOf(id), type.getUniqueName().toString()));
             tag.put(KEY_REFERENCE_TYPES, referenceTypesTag);
+        }
+        if (variableFacade.getText() != null) {
+            tag.putString(KEY_TEXT, variableFacade.getText());
         }
     }
 

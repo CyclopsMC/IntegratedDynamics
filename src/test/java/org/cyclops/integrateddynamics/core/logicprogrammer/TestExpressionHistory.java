@@ -27,59 +27,76 @@ public class TestExpressionHistory {
                 new ExpressionNode.Const(ValueTypeInteger.ValueInteger.of(a)), new ExpressionNode.Const(ValueTypeInteger.ValueInteger.of(b)))));
     }
 
+    private static ExpressionHistory.Entry entry(Expression expression) {
+        return new ExpressionHistory.Entry(expression, null);
+    }
+
     @Test
     public void testUndoRedo() {
         ExpressionHistory history = new ExpressionHistory();
-        history.observe(sum(1, 1));
-        history.observe(sum(1, 2));
-        history.observe(sum(1, 3));
+        history.observe(sum(1, 1), null);
+        history.observe(sum(1, 2), null);
+        history.observe(sum(1, 3), null);
         assertThat(history.canRedo(), is(false));
 
-        assertThat(history.undo(), is(sum(1, 2)));
-        history.moved(sum(1, 2));
-        assertThat(history.undo(), is(sum(1, 1)));
-        history.moved(sum(1, 1));
+        assertThat(history.undo(), is(entry(sum(1, 2))));
+        history.moved(entry(sum(1, 2)));
+        assertThat(history.undo(), is(entry(sum(1, 1))));
+        history.moved(entry(sum(1, 1)));
         assertThat(history.canUndo(), is(false));
         assertThat(history.undo(), nullValue());
 
-        assertThat(history.redo(), is(sum(1, 2)));
-        history.moved(sum(1, 2));
-        assertThat(history.redo(), is(sum(1, 3)));
-        history.moved(sum(1, 3));
+        assertThat(history.redo(), is(entry(sum(1, 2))));
+        history.moved(entry(sum(1, 2)));
+        assertThat(history.redo(), is(entry(sum(1, 3))));
+        history.moved(entry(sum(1, 3)));
         assertThat(history.redo(), nullValue());
     }
 
     @Test
     public void testNewChangeDropsRedo() {
         ExpressionHistory history = new ExpressionHistory();
-        history.observe(sum(1, 1));
-        history.observe(sum(1, 2));
+        history.observe(sum(1, 1), null);
+        history.observe(sum(1, 2), null);
         history.moved(history.undo());
         assertThat(history.canRedo(), is(true));
-        history.observe(sum(5, 5));
+        history.observe(sum(5, 5), null);
         assertThat(history.canRedo(), is(false));
-        assertThat(history.undo(), is(sum(1, 1)));
+        assertThat(history.undo(), is(entry(sum(1, 1))));
     }
 
     @Test
     public void testEqualExpressionIsNoChange() {
         ExpressionHistory history = new ExpressionHistory();
-        history.observe(sum(1, 1));
+        history.observe(sum(1, 1), null);
         // Such as the same expression deserialized again after a set action
-        history.observe(sum(1, 1));
+        history.observe(sum(1, 1), null);
         assertThat(history.canUndo(), is(false));
+    }
+
+    @Test
+    public void testTextIsChange() {
+        ExpressionHistory history = new ExpressionHistory();
+        history.observe(sum(1, 1), null);
+        // The same expression typed in another way
+        history.observe(sum(1, 1), "add(1, 1)");
+        history.observe(sum(1, 1), "add(1, 1)");
+        assertThat(history.undo(), is(entry(sum(1, 1))));
+        history.moved(entry(sum(1, 1)));
+        assertThat(history.canUndo(), is(false));
+        assertThat(history.redo(), is(new ExpressionHistory.Entry(sum(1, 1), "add(1, 1)")));
     }
 
     @Test
     public void testLimitAndClear() {
         ExpressionHistory history = new ExpressionHistory();
         for (int i = 0; i <= ExpressionHistory.MAX_SIZE + 10; i++) {
-            history.observe(sum(0, i));
+            history.observe(sum(0, i), null);
         }
         int undone = 0;
-        Expression expression;
-        while ((expression = history.undo()) != null) {
-            history.moved(expression);
+        ExpressionHistory.Entry entry;
+        while ((entry = history.undo()) != null) {
+            history.moved(entry);
             undone++;
         }
         assertThat(undone, is(ExpressionHistory.MAX_SIZE));
@@ -88,7 +105,7 @@ public class TestExpressionHistory {
         assertThat(history.canUndo(), is(false));
         assertThat(history.canRedo(), is(false));
         // The first expression after clearing is no change
-        history.observe(sum(9, 9));
+        history.observe(sum(9, 9), null);
         assertThat(history.canUndo(), is(false));
     }
 

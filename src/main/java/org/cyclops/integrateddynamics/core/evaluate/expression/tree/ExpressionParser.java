@@ -37,8 +37,10 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import javax.annotation.Nullable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Deque;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -104,6 +106,9 @@ public final class ExpressionParser {
     private final Deque<OpenCall> openCalls;
     @Nullable
     private Methods methods = null;
+    // While tokenizing, where each node was read, children before their parents
+    @Nullable
+    private List<Span> spans = null;
 
     private ExpressionParser(Context context, List<Token> tokens, boolean completing) {
         this.context = context;
@@ -118,10 +123,68 @@ public final class ExpressionParser {
      * @throws ExpressionParseException If the text is not a valid expression.
      */
     public static Expression parse(String text, Context context) throws ExpressionParseException {
+        return parse(text, context, null);
+    }
+
+    private static Expression parse(String text, Context context, @Nullable List<Span> spans) throws ExpressionParseException {
         if (text.length() > MAX_LENGTH) {
             throw new ExpressionParseException(MAX_LENGTH, Component.translatable(L10NValues.EXPRESSION_PARSE_TOO_LONG, MAX_LENGTH));
         }
-        return new ExpressionParser(context, new Lexer(text, context).tokenize(), false).parseExpression();
+        ExpressionParser parser = new ExpressionParser(context, new Lexer(text, context).tokenize(), false);
+        parser.spans = spans;
+        return parser.parseExpression();
+    }
+
+    /**
+     * Parse the text of an expression, and split the text into tokens that tell what node each part belongs to,
+     * as {@link ExpressionPrinter#tokenizeExact} does for printed text, so typed text can be shown as typed.
+     * @param text The text of an expression.
+     * @param context What the parser needs to know about the world.
+     * @return The expression and the tokens of the text.
+     * @throws ExpressionParseException If the text is not a valid expression.
+     */
+    public static Tokenized tokenize(String text, Context context) throws ExpressionParseException {
+        List<Span> spans = new ArrayList<>();
+        Expression expression = parse(text, context, spans);
+        // Empty nodes are one instance, which are read in the same order as their paths are visited
+        Map<ExpressionNode, int[]> paths = new IdentityHashMap<>();
+        Deque<int[]> emptyPaths = new ArrayDeque<>();
+        collectPaths(expression.root(), new int[0], paths, emptyPaths);
+        int[][] spanPaths = new int[spans.size()][];
+        for (int i = 0; i < spans.size(); i++) {
+            ExpressionNode node = spans.get(i).node();
+            // Null for nodes that are not in the tree, such as the elements of a list
+            spanPaths[i] = node instanceof ExpressionNode.Empty ? emptyPaths.poll() : paths.get(node);
+        }
+        // Children are read before their parents, so each character ends up with its innermost node
+        int[][] owners = new int[text.length()][];
+        for (int i = spans.size() - 1; i >= 0; i--) {
+            if (spanPaths[i] != null) {
+                Arrays.fill(owners, spans.get(i).start(), spans.get(i).end(), spanPaths[i]);
+            }
+        }
+        List<ExpressionPrinter.Token> tokens = new ArrayList<>();
+        int start = 0;
+        for (int i = 1; i <= text.length(); i++) {
+            if (i == text.length() || owners[i] != owners[start]) {
+                tokens.add(new ExpressionPrinter.Token(text.substring(start, i), owners[start]));
+                start = i;
+            }
+        }
+        return new Tokenized(expression, tokens);
+    }
+
+    private static void collectPaths(ExpressionNode node, int[] path, Map<ExpressionNode, int[]> paths, Deque<int[]> emptyPaths) {
+        if (node instanceof ExpressionNode.Empty) {
+            emptyPaths.add(path);
+        } else {
+            paths.put(node, path);
+        }
+        if (node instanceof ExpressionNode.Operator operator) {
+            for (int i = 0; i < operator.children().size(); i++) {
+                collectPaths(operator.children().get(i), ExpressionTrees.append(path, i), paths, emptyPaths);
+            }
+        }
     }
 
     /**
@@ -188,7 +251,7 @@ public final class ExpressionParser {
             }
             Token first = tokens.get(0);
             if (first.kind() == Kind.NAME) {
-                return new ParameterList(List.of(first.text()), first.start() + first.text().length(), false);
+                return new ParameterList(List.of(first.text()), first.end(), false);
             }
             // The names follow the opening bracket and each comma
             List<String> names = new ArrayList<>();
@@ -287,7 +350,7 @@ public final class ExpressionParser {
         for (int i = start; i < end; i++) {
             Token token = tokens.get(i);
             Token next = tokens.get(i + 1);
-            if (token.start() + token.text().length() != next.start()) {
+            if (token.end() != next.start()) {
                 return null;
             }
             prefix.append(token.text());
@@ -488,6 +551,7 @@ public final class ExpressionParser {
     }
 
     private ExpressionNode parseTernary() throws ExpressionParseException {
+        Token first = peek(0);
         ExpressionNode condition = parseBinary(0);
         Token question = peek(0);
         if (!accept("?")) {
@@ -498,19 +562,20 @@ public final class ExpressionParser {
         expect(":");
         ExpressionNode otherwise = parseTernary();
         nesting--;
-        return operator(Operators.GENERAL_CHOICE, List.of(condition, then, otherwise), question);
+        return span(operator(Operators.GENERAL_CHOICE, List.of(condition, then, otherwise), question), first);
     }
 
     private ExpressionNode parseBinary(int level) throws ExpressionParseException {
         if (level == BINARY_LEVELS.size()) {
             return parseUnary();
         }
+        Token first = peek(0);
         ExpressionNode left = parseBinary(level + 1);
         while (peek(0).kind() == Kind.SYMBOL && BINARY_LEVELS.get(level).contains(symbol(peek(0)))) {
             Token symbol = next();
             ExpressionNode right = parseBinary(level + 1);
             IOperator operator = OperatorNames.getInfixOperator(symbol(symbol), types.getType(left), types.getType(right));
-            left = operator(operator, List.of(left, right), symbol);
+            left = span(operator(operator, List.of(left, right), symbol), first);
         }
         return left;
     }
@@ -521,19 +586,21 @@ public final class ExpressionParser {
             enter(token);
             ExpressionNode child = parseUnary();
             nesting--;
-            return operator(OperatorNames.getPrefixOperator("!"), List.of(child), token);
+            return span(operator(OperatorNames.getPrefixOperator("!"), List.of(child), token), token);
         }
         if (isSymbol(token, "-") && isNumber(peek(1))) {
             next();
-            return parseMethodCalls(new ExpressionNode.Const(parseNumber(next(), true)));
+            return parseMethodCalls(span(new ExpressionNode.Const(parseNumber(next(), true)), token), token);
         }
-        return parseMethodCalls(parsePrimary());
+        return parseMethodCalls(parsePrimary(), token);
     }
 
     /**
      * Read the method calls after a value, where a.f(b) is f(a, b).
+     * @param receiver The value.
+     * @param first The first token of the value.
      */
-    private ExpressionNode parseMethodCalls(ExpressionNode receiver) throws ExpressionParseException {
+    private ExpressionNode parseMethodCalls(ExpressionNode receiver, Token first) throws ExpressionParseException {
         int outerNesting = nesting;
         while (isSymbol(peek(0), ".")) {
             Token dot = next();
@@ -550,7 +617,7 @@ public final class ExpressionParser {
             List<ExpressionNode> arguments = new ArrayList<>();
             arguments.add(receiver);
             arguments.addAll(parseArguments(name, receiver));
-            receiver = resolveCall(name, arguments);
+            receiver = span(resolveCall(name, arguments), first);
         }
         nesting = outerNesting;
         return receiver;
@@ -563,52 +630,56 @@ public final class ExpressionParser {
      */
     private boolean isTypingMethodName(Token dot, Token name) {
         Token previous = tokens.get(index - 2);
-        if (previous.kind() == Kind.NUMBER && previous.start() + previous.text().length() == dot.start()) {
+        if (previous.kind() == Kind.NUMBER && previous.end() == dot.start()) {
             return false;
         }
         Token end = tokens.get(tokens.size() - 1);
         return name.kind() == Kind.END
-                || (name.kind() == Kind.NAME && peek(1).kind() == Kind.END && name.start() + name.text().length() == end.start());
+                || (name.kind() == Kind.NAME && peek(1).kind() == Kind.END && name.end() == end.start());
     }
 
     private ExpressionNode parsePrimary() throws ExpressionParseException {
         Token token = next();
         switch (token.kind()) {
             case NUMBER -> {
-                return new ExpressionNode.Const(parseNumber(token, false));
+                return span(new ExpressionNode.Const(parseNumber(token, false)), token);
             }
             case STRING -> {
-                return new ExpressionNode.Const(ValueTypeString.ValueString.of((String) token.value()));
+                return span(new ExpressionNode.Const(ValueTypeString.ValueString.of((String) token.value())), token);
             }
             case TYPED -> {
-                return new ExpressionNode.Const((IValue) token.value());
+                return span(new ExpressionNode.Const((IValue) token.value()), token);
             }
             case REF -> {
-                return parseRef(token);
+                return span(parseRef(token), token);
             }
             case NAME -> {
                 if (isSymbol(peek(0), "(")) {
-                    return parseCall(token);
+                    return span(parseCall(token), token);
                 }
-                return parseName(token);
+                return span(parseName(token), token);
             }
             case SYMBOL -> {
                 if (isSymbol(token, "?")) {
-                    return ExpressionNode.EMPTY;
+                    return span(ExpressionNode.EMPTY, token);
                 }
                 if (isSymbol(token, "[")) {
-                    return new ExpressionNode.Const(parseList(token));
+                    return span(new ExpressionNode.Const(parseList(token)), token);
                 }
                 if (isSymbol(token, "(")) {
                     if (isOperatorValue(peek(0)) && isSymbol(peek(1), ")")) {
                         Token name = next();
                         next();
-                        return new ExpressionNode.Const(ValueTypeOperator.ValueOperator.of(resolveOperatorValue(name)));
+                        return span(new ExpressionNode.Const(ValueTypeOperator.ValueOperator.of(resolveOperatorValue(name))), token);
                     }
                     enter(token);
                     ExpressionNode node = parseTernary();
                     expect(")");
                     nesting--;
+                    // The brackets belong to the value in them, which was read last
+                    if (spans != null) {
+                        spans.set(spans.size() - 1, new Span(node, token.start(), tokens.get(index - 1).end()));
+                    }
                     return node;
                 }
                 throw error(token, L10NValues.EXPRESSION_PARSE_EXPECTED_VALUE, token.text());
@@ -757,7 +828,7 @@ public final class ExpressionParser {
             throw error(name, L10NValues.EXPRESSION_PARSE_PARAMETER_CALL, name.text(), APPLY_OPERATORS.size() - 1);
         }
         List<ExpressionNode> children = new ArrayList<>();
-        children.add(new ExpressionNode.Param(parameter));
+        children.add(span(new ExpressionNode.Param(parameter), name.start(), name.end()));
         children.addAll(arguments);
         return operator(APPLY_OPERATORS.get(arguments.size()), children, name);
     }
@@ -867,6 +938,20 @@ public final class ExpressionParser {
         } catch (NumberFormatException e) {
             throw error(token, L10NValues.EXPRESSION_PARSE_BAD_NUMBER, text);
         }
+    }
+
+    /**
+     * Record where a node was read while tokenizing, from the given token up to the last token that was read.
+     */
+    private ExpressionNode span(ExpressionNode node, Token first) {
+        return span(node, first.start(), tokens.get(index - 1).end());
+    }
+
+    private ExpressionNode span(ExpressionNode node, int start, int end) {
+        if (spans != null) {
+            spans.add(new Span(node, start, end));
+        }
+        return node;
     }
 
     // --------------- Resolution ---------------
@@ -1021,6 +1106,19 @@ public final class ExpressionParser {
      */
     public static record Call(IOperator operator, String name, boolean method, int input) {}
 
+    /**
+     * @param expression The expression of a text.
+     * @param tokens The text as tokens, which tell what node each part of the text belongs to.
+     */
+    public static record Tokenized(Expression expression, List<ExpressionPrinter.Token> tokens) {}
+
+    /**
+     * @param node A node.
+     * @param start The offset of the first character it was read from.
+     * @param end The offset after the last character it was read from.
+     */
+    private static record Span(ExpressionNode node, int start, int end) {}
+
     private static final class OpenCall {
         private final Token name;
         @Nullable
@@ -1050,9 +1148,10 @@ public final class ExpressionParser {
      * @param kind The kind of token.
      * @param text The text of the token, without quotes for strings.
      * @param start The offset of the first character.
+     * @param end The offset after the last character, which is after the quotes of strings.
      * @param value The parsed value of strings, references and typed values.
      */
-    private static record Token(Kind kind, String text, int start, @Nullable Object value) {}
+    private static record Token(Kind kind, String text, int start, int end, @Nullable Object value) {}
 
     private static class Lexer {
         private final String text;
@@ -1072,12 +1171,12 @@ public final class ExpressionParser {
                 if (isWhitespace(c)) {
                     position++;
                 } else if (isNameStart(c)) {
-                    tokens.add(new Token(Kind.NAME, readName(), start, null));
+                    tokens.add(new Token(Kind.NAME, readName(), start, position, null));
                 } else if (Character.isDigit(c)) {
-                    tokens.add(new Token(Kind.NUMBER, readNumber(), start, null));
+                    tokens.add(new Token(Kind.NUMBER, readNumber(), start, position, null));
                 } else if (isQuote(c) || isSingleQuote(c)) {
                     String string = readString();
-                    tokens.add(new Token(Kind.STRING, string, start, string));
+                    tokens.add(new Token(Kind.STRING, string, start, position, string));
                 } else if (c == '#') {
                     tokens.add(readRef());
                 } else if (c == '@') {
@@ -1088,10 +1187,10 @@ public final class ExpressionParser {
                         throw new ExpressionParseException(start, Component.translatable(L10NValues.EXPRESSION_PARSE_UNKNOWN_CHARACTER, String.valueOf(c)));
                     }
                     position += symbol.length();
-                    tokens.add(new Token(Kind.SYMBOL, symbol, start, null));
+                    tokens.add(new Token(Kind.SYMBOL, symbol, start, position, null));
                 }
             }
-            tokens.add(new Token(Kind.END, "", text.length(), null));
+            tokens.add(new Token(Kind.END, "", text.length(), text.length(), null));
             return tokens;
         }
 
@@ -1180,18 +1279,18 @@ public final class ExpressionParser {
                 skipDigits();
                 String digits = text.substring(digitsStart, position);
                 try {
-                    return new Token(Kind.REF, text.substring(start, position), start, Integer.parseInt(digits));
+                    return new Token(Kind.REF, text.substring(start, position), start, position, Integer.parseInt(digits));
                 } catch (NumberFormatException e) {
                     throw new ExpressionParseException(start, Component.translatable(L10NValues.EXPRESSION_PARSE_BAD_NUMBER, digits));
                 }
             }
             if (position < text.length() && isNameStart(text.charAt(position))) {
                 String label = readName();
-                return new Token(Kind.REF, "#" + label, start, label);
+                return new Token(Kind.REF, "#" + label, start, position, label);
             }
             if (position < text.length() && (isQuote(text.charAt(position)) || isSingleQuote(text.charAt(position)))) {
                 String label = readString();
-                return new Token(Kind.REF, text.substring(start, position), start, label);
+                return new Token(Kind.REF, text.substring(start, position), start, position, label);
             }
             throw new ExpressionParseException(start, Component.translatable(L10NValues.EXPRESSION_PARSE_BAD_REF));
         }
@@ -1215,7 +1314,7 @@ public final class ExpressionParser {
             // No NBT at all, as an empty NBT value field gives
             if (valueType == ValueTypes.NBT && text.startsWith("()", valueStart)) {
                 position = valueStart + 2;
-                return new Token(Kind.TYPED, text.substring(start, position), start, ValueTypeNbt.ValueNbt.of());
+                return new Token(Kind.TYPED, text.substring(start, position), start, position, ValueTypeNbt.ValueNbt.of());
             }
             Tag tag;
             try {
@@ -1227,7 +1326,7 @@ public final class ExpressionParser {
             position = reader.getCursor();
             // NBT is written as the tag itself, as in commands
             if (valueType == ValueTypes.NBT) {
-                return new Token(Kind.TYPED, text.substring(start, position), start, ValueTypeNbt.ValueNbt.of(tag));
+                return new Token(Kind.TYPED, text.substring(start, position), start, position, ValueTypeNbt.ValueNbt.of(tag));
             }
             // An item without a count is a single one
             if (valueType == ValueTypes.OBJECT_ITEMSTACK && tag instanceof CompoundTag compound && !compound.isEmpty() && !compound.contains("count")) {
@@ -1248,7 +1347,7 @@ public final class ExpressionParser {
             if (!isKept(tag, written)) {
                 throw new ExpressionParseException(valueStart, Component.translatable(L10NValues.EXPRESSION_PARSE_VALUE_CHANGED, typeName, written.toString()));
             }
-            return new Token(Kind.TYPED, text.substring(start, position), start, value);
+            return new Token(Kind.TYPED, text.substring(start, position), start, position, value);
         }
 
         private static MutableComponent badValue(String typeName, String reason) {
