@@ -366,7 +366,29 @@ public class ExpressionTextField {
 
     private void seek(double x, double y) {
         lastInput = Util.getMillis();
-        text.seekCursorToPoint(x, y + scroll * LINE_HEIGHT);
+        text.seekCursor(Whence.ABSOLUTE, getCursorAtPoint(x, y));
+    }
+
+    /**
+     * @param x The x position, relative to the text.
+     * @param y The y position, relative to the text.
+     * @return The position between characters that is closest to the point, where vanilla's text model takes the one
+     *         before the character under it, which makes it hard to click between two brackets.
+     */
+    private int getCursorAtPoint(double x, double y) {
+        String value = text.value();
+        int[] lines = text.getLines();
+        int line = Mth.clamp(Mth.floor(y / LINE_HEIGHT) + scroll, 0, lines.length / 2 - 1);
+        int end = lines[line * 2 + 1];
+        int charLeft = 0;
+        for (int i = lines[line * 2]; i < end; i++) {
+            int width = font.width(value.substring(i, i + 1));
+            if (x < charLeft + width / 2.0) {
+                return i;
+            }
+            charLeft += width;
+        }
+        return end;
     }
 
     public void scroll(double amount) {
