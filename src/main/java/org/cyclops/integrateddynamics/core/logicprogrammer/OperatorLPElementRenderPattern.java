@@ -86,6 +86,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     // Parameter chips wrap onto as many rows as needed, followed by the button to add one, the expression follows below them
     static final int PARAMS_Y = TITLE_Y + 12;
     static final int CHIP_HEIGHT = 12;
+    private static final int BREADCRUMB_SEPARATOR = 8;
     static final int LINE_HEIGHT = 9;
     // Buttons right of the title, with their icons in line with it
     static final int BUTTONS_Y = TITLE_Y - 2;
@@ -931,26 +932,34 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         if (editPath.length > 0) {
             int x = ContainerLogicProgrammerBase.BASE_X + 2;
             int y = ContainerLogicProgrammerBase.BASE_Y + 2;
-            List<IOperator> operators = editor.getOperatorsAlongPath(editPath);
-            for (int i = 0; i < operators.size(); i++) {
+            List<String> names = new ArrayList<>();
+            for (int i = 0; i < editor.getOperatorsAlongPath(editPath).size(); i++) {
                 int[] tabPath = Arrays.copyOf(editPath, i);
+                names.add(OperatorNames.getNodeName((ExpressionNode.Operator) ExpressionTrees.get(editor.getExpression().root(), tabPath), tabPath, result));
+            }
+            List<Tab> tabs = layoutBreadcrumb(fontRenderer, names, ContainerLogicProgrammerBase.MAX_WIDTH - 4);
+            for (int i = 0; i < tabs.size(); i++) {
+                Tab tab = tabs.get(i);
                 if (i > 0) {
                     guiGraphics.drawString(fontRenderer, "\u203a", guiLeft + x + 1, guiTop + y + 2, COLOR_TEXT, false);
-                    x += 8;
+                    x += BREADCRUMB_SEPARATOR;
                 }
-                String text = OperatorNames.getNodeName((ExpressionNode.Operator) ExpressionTrees.get(editor.getExpression().root(), tabPath), tabPath, result);
-                int width = fontRenderer.width(text) + 6;
-                boolean current = i == operators.size() - 1;
-                guiGraphics.fill(guiLeft + x, guiTop + y, guiLeft + x + width, guiTop + y + 12, current ? 0xFFFFFFFF : COLOR_TAB);
-                drawOutline(guiGraphics, guiLeft + x, guiTop + y, width, 12, current ? COLOR_TEXT : 0xFF8B8B8B);
-                guiGraphics.drawString(fontRenderer, text, guiLeft + x + 3, guiTop + y + 2, current ? COLOR_TEXT : COLOR_LINK, false);
+                boolean current = i == tabs.size() - 1;
+                guiGraphics.fill(guiLeft + x, guiTop + y, guiLeft + x + tab.width(), guiTop + y + 12, current ? 0xFFFFFFFF : COLOR_TAB);
+                drawOutline(guiGraphics, guiLeft + x, guiTop + y, tab.width(), 12, current ? COLOR_TEXT : 0xFF8B8B8B);
+                guiGraphics.drawString(fontRenderer, tab.text(), guiLeft + x + 3, guiTop + y + 2, current ? COLOR_TEXT : COLOR_LINK, false);
                 if (!current) {
-                    regions.add(new Region(x, y, width, 12, button -> {
+                    int[] tabPath = Arrays.copyOf(editPath, tab.depth());
+                    // Collapsed tabs tell which operators they stand for
+                    Component tooltip = tab.collapsed()
+                            ? Component.literal(String.join(" \u203a ", names.subList(1, tab.depth() + 1)))
+                            : Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_BREADCRUMB);
+                    regions.add(new Region(x, y, tab.width(), 12, button -> {
                         selectSlot(-1);
                         sendAction(ExpressionEditor.actionNavigate(tabPath));
-                    }, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_BREADCRUMB)));
+                    }, tooltip));
                 }
-                x += width;
+                x += tab.width();
             }
         }
 
@@ -994,6 +1003,64 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
             } else {
                 renderTextError(guiGraphics, guiLeft, guiTop, fontRenderer, field.getValue(), textError, regions);
             }
+        }
+    }
+
+    /**
+     * Lay out the breadcrumb in the given width, as paths are shortened:
+     * the tabs in the middle that do not fit are collapsed into one, and the names of the others are cut off if they still do not fit.
+     * @param font The font.
+     * @param names The names of the operators from the root to the edited one.
+     * @param available The width.
+     * @return The tabs to draw, where a collapsed one leads to the last operator it stands for.
+     */
+    protected static List<Tab> layoutBreadcrumb(Font font, List<String> names, int available) {
+        int count = names.size();
+        // Show the root, then the last tabs from this one on, with a collapsed tab in between if any are left out
+        int shownFrom = 1;
+        while (shownFrom < count - 1 && getBreadcrumbWidth(font, names, shownFrom, Integer.MAX_VALUE) > available) {
+            shownFrom++;
+        }
+        int maxWidth = names.stream().mapToInt(font::width).max().orElse(0);
+        while (maxWidth > font.width(ELLIPSIS) && getBreadcrumbWidth(font, names, shownFrom, maxWidth) > available) {
+            maxWidth--;
+        }
+        List<Tab> tabs = new ArrayList<>();
+        tabs.add(new Tab(font, cutOff(font, names.get(0), maxWidth), 0, false));
+        if (shownFrom > 1) {
+            tabs.add(new Tab(font, ELLIPSIS, shownFrom - 1, true));
+        }
+        for (int i = shownFrom; i < count; i++) {
+            tabs.add(new Tab(font, cutOff(font, names.get(i), maxWidth), i, false));
+        }
+        return tabs;
+    }
+
+    private static int getBreadcrumbWidth(Font font, List<String> names, int shownFrom, int maxWidth) {
+        int width = Math.min(font.width(names.get(0)), maxWidth) + 6;
+        if (shownFrom > 1) {
+            width += BREADCRUMB_SEPARATOR + font.width(ELLIPSIS) + 6;
+        }
+        for (int i = shownFrom; i < names.size(); i++) {
+            width += BREADCRUMB_SEPARATOR + Math.min(font.width(names.get(i)), maxWidth) + 6;
+        }
+        return width;
+    }
+
+    private static String cutOff(Font font, String text, int width) {
+        return font.width(text) <= width ? text : font.plainSubstrByWidth(text, width - font.width(ELLIPSIS)) + ELLIPSIS;
+    }
+
+    /**
+     * A tab of the breadcrumb.
+     * @param text Its text.
+     * @param depth The depth of the operator it leads to.
+     * @param collapsed If it stands for several operators that are left out.
+     * @param width Its width.
+     */
+    protected static record Tab(String text, int depth, boolean collapsed, int width) {
+        Tab(Font font, String text, int depth, boolean collapsed) {
+            this(text, depth, collapsed, font.width(text) + 6);
         }
     }
 
