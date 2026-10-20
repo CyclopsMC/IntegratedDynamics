@@ -193,7 +193,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         }
         getScrollbar().renderWidget(guiGraphics, mouseX, mouseY, partialTicks);
         subGuiHolder.renderBg(guiGraphics, this.leftPos, this.topPos, getMinecraft().getTextureManager(), font, partialTicks, mouseX, mouseY);
-        expressionStartPanel.render(guiGraphics, font);
+        expressionStartPanel.render(guiGraphics, font, mouseX, mouseY, partialTicks);
 
         // Draw container name
         font.drawInBatch(Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_FILTER),
@@ -579,7 +579,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-        if (expressionStartPanel.mouseClicked(mouseX, mouseY) || subGuiHolder.mouseClicked(mouseX, mouseY, mouseButton)) {
+        if (expressionStartPanel.mouseClicked(mouseX, mouseY, mouseButton) || subGuiHolder.mouseClicked(mouseX, mouseY, mouseButton)) {
             if (isSearchFieldFocussed()) {
                 setSearchFieldFocussed(false);
             }

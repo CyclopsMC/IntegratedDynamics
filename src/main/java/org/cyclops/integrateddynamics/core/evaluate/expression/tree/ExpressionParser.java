@@ -163,6 +163,56 @@ public final class ExpressionParser {
     }
 
     /**
+     * Find the parameters in front of a text, which does not need to parse as a whole.
+     * @param text The text of an expression.
+     * @param context What the parser needs to know about the world.
+     * @return The parameters, or null if there are none.
+     */
+    @Nullable
+    public static ParameterList getParameterList(String text, Context context) {
+        // Only the parameters need to be read, which also works when the rest is not complete, such as an open string
+        int arrow = text.indexOf("=>");
+        if (arrow < 0 || (text.contains("->") && text.indexOf("->") < arrow)) {
+            arrow = text.indexOf("->");
+        }
+        for (String part : arrow < 0 ? List.of(text) : List.of(text, text.substring(0, arrow + 2))) {
+            List<Token> tokens;
+            try {
+                tokens = new Lexer(part, context).tokenize();
+            } catch (ExpressionParseException e) {
+                continue;
+            }
+            ExpressionParser parser = new ExpressionParser(context, tokens, false);
+            if (!parser.isParameterHeader()) {
+                return null;
+            }
+            Token first = tokens.get(0);
+            if (first.kind() == Kind.NAME) {
+                return new ParameterList(List.of(first.text()), first.start() + first.text().length(), false);
+            }
+            // The names follow the opening bracket and each comma
+            List<String> names = new ArrayList<>();
+            int i = 0;
+            while (!isSymbol(tokens.get(i), ")")) {
+                names.add(tokens.get(i + 1).text());
+                i += 2;
+                while (!isSymbol(tokens.get(i), ",") && !isSymbol(tokens.get(i), ")")) {
+                    i++;
+                }
+            }
+            return new ParameterList(names, tokens.get(i).start(), true);
+        }
+        return null;
+    }
+
+    /**
+     * @param names The names of the parameters.
+     * @param end Where the parameters end: at the closing bracket, or after the name of a single one without brackets.
+     * @param bracketed If they are in brackets.
+     */
+    public static record ParameterList(List<String> names, int end, boolean bracketed) {}
+
+    /**
      * @param text The text before the cursor.
      * @param context What the parser needs to know about the world.
      * @return The type of a value that is being typed at the end, as in {@code @item}, or null.

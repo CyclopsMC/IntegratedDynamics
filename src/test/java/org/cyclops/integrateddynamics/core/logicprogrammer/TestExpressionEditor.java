@@ -240,4 +240,27 @@ public class TestExpressionEditor {
         }
     }
 
+
+    private static String addParameterToText(String text) {
+        return ExpressionEditor.addParameterToText(text, ExpressionParser.Context.of(ValueDeseralizationContextMocked.get()));
+    }
+
+    @Test
+    public void testAddParameterToText() {
+        // In front, without parameters
+        assertThat(addParameterToText(""), is("x => "));
+        assertThat(addParameterToText("1 + 2"), is("x => 1 + 2"));
+        // After the other parameters, with a name they do not have
+        assertThat(addParameterToText("x => x + 1"), is("(x, y) => x + 1"));
+        assertThat(addParameterToText("  x -> x + 1"), is("  (x, y) -> x + 1"));
+        assertThat(addParameterToText("(x: integer, y) => x + y"), is("(x: integer, y, z) => x + y"));
+        assertThat(addParameterToText("(a: integratedmekanism:chemicalstack) => a"), is("(a: integratedmekanism:chemicalstack, x) => a"));
+        // Also when the rest is not complete
+        assertThat(addParameterToText("(x) => \"open"), is("(x, y) => \"open"));
+        assertThat(addParameterToText("(x) => "), is("(x, y) => "));
+        // Not beyond the most parameters
+        String full = "(x, y, z, a, b, c, d, e) => x";
+        assertThat(addParameterToText(full), is(full));
+    }
+
 }

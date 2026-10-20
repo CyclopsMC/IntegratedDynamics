@@ -424,6 +424,34 @@ public class ExpressionTextField {
         text.insertText(value);
     }
 
+    /**
+     * Change the text as if it was typed, with the cursor after the part that changed.
+     * @param value The new text.
+     */
+    public void replace(String value) {
+        String old = text.value();
+        int length = Math.min(old.length(), value.length());
+        int suffix = 0;
+        while (suffix < length && old.charAt(old.length() - 1 - suffix) == value.charAt(value.length() - 1 - suffix)) {
+            suffix++;
+        }
+        lastInput = Util.getMillis();
+        lastEdit = lastInput;
+        text.setValue(value);
+        text.seekCursor(Whence.ABSOLUTE, value.length() - suffix);
+    }
+
+    /**
+     * Add a parameter to the text, as typing it would, with the cursor where the rest is typed if nothing follows the parameters yet.
+     * @param context What the parser needs to know about the world.
+     */
+    public void addParameter(ExpressionParser.Context context) {
+        replace(ExpressionEditor.addParameterToText(text.value(), context));
+        if (text.value().substring(text.cursor()).matches("\\)?\\s*(=>|->)\\s*")) {
+            text.seekCursor(Whence.END, 0);
+        }
+    }
+
     // --------------- Completion ---------------
 
     /**

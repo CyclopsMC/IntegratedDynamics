@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -33,6 +34,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.APPLY_DELAY_MS;
+import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.CHIP_HEIGHT;
 import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.COLOR_EMPTY;
 import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.COLOR_FOCUS;
 import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.COLOR_STRIP;
@@ -54,13 +56,14 @@ import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElem
 /**
  * The expression panel while no operator is active, where an expression can be typed right away.
  * Applying it makes the element of its root operator active, where the text can be edited further.
+ * It looks like the panel of an expression without parameters, with the same buttons, which work on the text.
  * @author rubensworks
  */
 @OnlyIn(Dist.CLIENT)
 public class ExpressionStartPanel {
 
-    // Where the parameters start once an operator is selected
-    private static final int TEXT_BOX_Y = PARAMS_Y;
+    // Below the button to add a parameter, as in the panel of an expression without parameters
+    private static final int TEXT_BOX_Y = PARAMS_Y + CHIP_HEIGHT + 2;
 
     private final ContainerScreenLogicProgrammerBase<?> gui;
     private final ContainerLogicProgrammerBase container;
@@ -75,6 +78,10 @@ public class ExpressionStartPanel {
     private ExpressionTypeChecker.Result parsedTextResult = null;
     @Nullable
     private ExpressionParseException textError = null;
+
+    // Redo has nothing to redo, as there is no history without an expression
+    private final ExpressionPanelButtons buttons = new ExpressionPanelButtons(() -> true, this::addParameter, this::undo, () -> {},
+            this::copyText);
 
     public ExpressionStartPanel(ContainerScreenLogicProgrammerBase<?> gui, ContainerLogicProgrammerBase container) {
         this.gui = gui;
@@ -199,6 +206,31 @@ public class ExpressionStartPanel {
         return true;
     }
 
+    protected void focusText() {
+        ExpressionTextField field = getTextField();
+        if (!field.isFocused()) {
+            field.setFocused(true);
+            // Cards may have been added to the inventory since
+            inventoryCardTypes = null;
+        }
+    }
+
+    /**
+     * Add a parameter to the typed text, as there is no expression to add it to yet.
+     */
+    protected void addParameter() {
+        focusText();
+        getTextField().addParameter(getParserContext());
+    }
+
+    protected void undo() {
+        getTextField().revert();
+    }
+
+    protected void copyText() {
+        Minecraft.getInstance().keyboardHandler.setClipboard(getTextField().getValue());
+    }
+
     // --------------- Input ---------------
 
     protected boolean isInTextBox(double mouseX, double mouseY) {
@@ -207,7 +239,7 @@ public class ExpressionStartPanel {
         return x >= PANEL_X && x < PANEL_X + PANEL_WIDTH && y >= TEXT_BOX_Y && y < FOOTER_Y;
     }
 
-    public boolean mouseClicked(double mouseX, double mouseY) {
+    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
         if (!isShown()) {
             return false;
         }
@@ -216,12 +248,13 @@ public class ExpressionStartPanel {
         if (field.mouseClickedCompletion(mouseX - gui.getGuiLeft() - PANEL_X - 2, mouseY - gui.getGuiTop() - TEXT_BOX_Y - 2)) {
             return true;
         }
-        if (isInTextBox(mouseX, mouseY)) {
-            if (!field.isFocused()) {
-                field.setFocused(true);
-                // Cards may have been added to the inventory since
-                inventoryCardTypes = null;
+        for (AbstractWidget button : buttons.getAll()) {
+            if (button.visible && button.mouseClicked(mouseX, mouseY, mouseButton)) {
+                return true;
             }
+        }
+        if (isInTextBox(mouseX, mouseY)) {
+            focusText();
             field.mouseClicked(mouseX - gui.getGuiLeft() - PANEL_X - 2, mouseY - gui.getGuiTop() - TEXT_BOX_Y - 2);
             field.setPressed(true);
             return true;
@@ -297,7 +330,7 @@ public class ExpressionStartPanel {
 
     // --------------- Rendering ---------------
 
-    public void render(GuiGraphics guiGraphics, Font font) {
+    public void render(GuiGraphics guiGraphics, Font font, int mouseX, int mouseY, float partialTicks) {
         regions.clear();
         if (!isShown()) {
             return;
@@ -305,6 +338,13 @@ public class ExpressionStartPanel {
         int guiLeft = gui.getGuiLeft();
         int guiTop = gui.getGuiTop();
         renderTitle(guiGraphics, guiLeft, guiTop, font);
+        buttons.undo.active = getTextField().isDraft();
+        buttons.redo.active = false;
+        buttons.layout(guiLeft, guiTop);
+        buttons.addParameter.setPosition(guiLeft + PANEL_X, guiTop + PARAMS_Y);
+        for (AbstractWidget button : buttons.getAll()) {
+            button.render(guiGraphics, mouseX, mouseY, partialTicks);
+        }
 
         // The text box, as in the panel of an expression
         ExpressionTextField field = getTextField();

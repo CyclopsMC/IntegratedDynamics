@@ -9,7 +9,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.nbt.CompoundTag;
@@ -22,7 +21,6 @@ import net.minecraft.world.Container;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.tuple.Pair;
-import org.cyclops.cyclopscore.client.gui.component.button.ButtonText;
 import org.cyclops.cyclopscore.client.gui.component.input.WidgetArrowedListField;
 import org.cyclops.cyclopscore.client.gui.component.input.WidgetTextFieldExtended;
 import org.cyclops.cyclopscore.helper.L10NHelpers;
@@ -57,7 +55,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.List;
-import java.util.function.Supplier;
 
 /**
  * Render pattern for operator elements, which supports editing nested expressions.
@@ -88,10 +85,10 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     static final int TITLE_Y = ContainerLogicProgrammerBase.EXPRESSION_PANEL_Y + 6;
     // Parameter chips wrap onto as many rows as needed, followed by the button to add one, the expression follows below them
     static final int PARAMS_Y = TITLE_Y + 12;
-    private static final int CHIP_HEIGHT = 12;
+    static final int CHIP_HEIGHT = 12;
     static final int LINE_HEIGHT = 9;
     // Buttons right of the title, with their icons in line with it
-    private static final int BUTTONS_Y = TITLE_Y - 2;
+    static final int BUTTONS_Y = TITLE_Y - 2;
     static final int CONTENT_BOTTOM = ContainerLogicProgrammerBase.EXPRESSION_PANEL_Y + ContainerLogicProgrammerBase.EXPRESSION_PANEL_HEIGHT - 6;
     // The type, or an error instead, below the expression
     static final int FOOTER_LINES = 3;
@@ -103,7 +100,6 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     static final int COLOR_TEXT_ERROR = 0xFFFF6060;
     static final int COLOR_FOCUS = 0xFFA0A0A0;
     static final String ELLIPSIS = "\u2026";
-    private static final int COPIED_MS = 1500;
     // How long typing pauses before valid text is applied
     static final int APPLY_DELAY_MS = 750;
 
@@ -130,16 +126,14 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
 
     // Clickable regions, relative to the gui, recalculated while rendering
     private final List<Region> regions = new ArrayList<>();
+    // Undo, Redo, Copy and adding a parameter
     @Nullable
-    private ButtonText addParameterButton = null;
+    private ExpressionPanelButtons buttons = null;
     // A parameter chip can also be dragged onto a slot, instead of clicking it and then the slot
     private int pressedParameter = -1;
     private double pressX;
     private double pressY;
     private boolean draggingParameter = false;
-    private ButtonIcon undoButton;
-    private ButtonIcon redoButton;
-    private ButtonIcon copyButton;
 
     // Editing the expression as text, in the box that shows it
     @Nullable
@@ -153,7 +147,6 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     private ExpressionTypeChecker.Result parsedTextResult = null;
     @Nullable
     private ExpressionParseException textError = null;
-    private long copiedTime = 0;
 
     public OperatorLPElementRenderPattern(OperatorLPElement element, int baseX, int baseY, int maxWidth, int maxHeight,
                                           ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
@@ -189,23 +182,9 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         this.typeSelector.setListener(this::onTypeSelected);
         updateEditor();
 
-        // Says what it adds while there are no parameters, as it is not next to any then
-        Component add = Component.literal("+");
-        Component addFirst = Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_ADD_FIRST);
-        buttonList.add(addParameterButton = new ButtonText(0, 0, 12, CHIP_HEIGHT,
-                Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_ADD), add,
-                button -> sendAction(ExpressionEditor.actionAddParam()), true) {
-            @Override
-            public Component getText() {
-                ExpressionEditor editor = getEditor();
-                return editor != null && editor.getExpression().parameters().isEmpty() ? addFirst : add;
-            }
-        });
-        addParameterButton.setTooltip(Tooltip.create(Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_ADD)));
-        undoButton = addPanelButton(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_UNDO, this::undo, () -> ButtonIcon.Icon.UNDO);
-        redoButton = addPanelButton(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_REDO, this::redo, () -> ButtonIcon.Icon.REDO);
-        copyButton = addPanelButton(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_COPY, this::copyText,
-                () -> Util.getMillis() - copiedTime < COPIED_MS ? ButtonIcon.Icon.CHECK : ButtonIcon.Icon.COPY);
+        buttons = new ExpressionPanelButtons(() -> getEditor() != null && getEditor().getExpression().parameters().isEmpty(),
+                this::addParameter, this::undo, this::redo, this::copyText);
+        buttonList.addAll(buttons.getAll());
         updateButtons();
     }
 
@@ -222,53 +201,39 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     }
 
     /**
-     * Add a button with an icon right of the title, which is laid out by {@link #updateButtons()}.
-     * @param key The translation key of its narration, and of its tooltip with ".tooltip" appended.
-     * @param action What it does.
-     * @param icon The icon, which can change depending on the state.
-     * @return The button.
-     */
-    protected ButtonIcon addPanelButton(String key, Runnable action, Supplier<ButtonIcon.Icon> icon) {
-        ButtonIcon button = new ButtonIcon(0, guiTop + BUTTONS_Y, Component.translatable(key), icon, b -> action.run());
-        button.setTooltip(Tooltip.create(Component.translatable(key + ".tooltip")));
-        buttonList.add(button);
-        return button;
-    }
-
-    /**
      * Show the buttons that apply to the current state, before they are rendered or clicked.
      */
     protected void updateButtons() {
         ExpressionEditor editor = getEditor();
         boolean panel = editor != null && ContainerScreenLogicProgrammerBase.isExpressionPanelOpen();
         boolean draft = panel && isDraft();
-        if (addParameterButton == null) {
+        if (buttons == null) {
             return;
         }
-        addParameterButton.visible = panel && !draft && editor.getExpression().parameters().size() < ExpressionTrees.MAX_PARAMETERS;
+        buttons.addParameter.visible = panel && editor.getExpression().parameters().size() < ExpressionTrees.MAX_PARAMETERS;
         // Undo also reverts typed text that is not applied yet
-        undoButton.visible = panel;
-        undoButton.active = draft || container.getExpressionHistory().canUndo();
-        redoButton.visible = panel;
-        redoButton.active = !draft && container.getExpressionHistory().canRedo();
-        copyButton.visible = panel;
-
-        // Right-aligned
-        int x = guiLeft + PANEL_X + PANEL_WIDTH;
-        for (ButtonIcon button : List.of(copyButton, redoButton, undoButton)) {
-            if (button.visible) {
-                x -= button.getWidth();
-                button.setX(x);
-                x -= 2;
-            }
-        }
-
+        buttons.undo.visible = panel;
+        buttons.undo.active = draft || container.getExpressionHistory().canUndo();
+        buttons.redo.visible = panel;
+        buttons.redo.active = !draft && container.getExpressionHistory().canRedo();
+        buttons.copy.visible = panel;
+        buttons.layout(guiLeft, guiTop);
         if (editor != null) {
-            Font font = Minecraft.getInstance().font;
-            addParameterButton.setWidth(font.width(addParameterButton.getText()) + 6);
-            List<int[]> chips = layoutParameters(font, editor.getExpression().parameters());
+            List<int[]> chips = layoutParameters(Minecraft.getInstance().font, editor.getExpression().parameters());
             int[] last = chips.get(chips.size() - 1);
-            addParameterButton.setPosition(guiLeft + last[0], guiTop + last[1]);
+            buttons.addParameter.setPosition(guiLeft + last[0], guiTop + last[1]);
+        }
+    }
+
+    /**
+     * Add a parameter, to the typed text while it is not applied yet, as applying it would undo the parameter otherwise.
+     */
+    protected void addParameter() {
+        if (isDraft()) {
+            focusText();
+            getTextField().addParameter(getParserContext());
+        } else {
+            sendAction(ExpressionEditor.actionAddParam());
         }
     }
 
@@ -285,7 +250,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         int y = PARAMS_Y;
         for (int i = 0; i < count; i++) {
             // Long names are cut off, so they do not take a row each
-            int width = i < parameters.size() ? Math.min(font.width(parameters.get(i).name()) + 4, (PANEL_WIDTH - 2) / 2) : addParameterButton.getWidth();
+            int width = i < parameters.size() ? Math.min(font.width(parameters.get(i).name()) + 4, (PANEL_WIDTH - 2) / 2) : buttons.addParameter.getWidth();
             if (x + width > PANEL_X + PANEL_WIDTH) {
                 x = PANEL_X;
                 y += CHIP_HEIGHT + 1;
@@ -471,7 +436,6 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
 
     protected void copyText() {
         Minecraft.getInstance().keyboardHandler.setClipboard(getTextField().getValue());
-        copiedTime = Util.getMillis();
     }
 
     /**
