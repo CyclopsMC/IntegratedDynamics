@@ -47,7 +47,6 @@ import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElem
 import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.PANEL_X;
 import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.PARAMS_Y;
 import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.drawOutline;
-import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.getCallSignature;
 import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.renderFooter;
 import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.renderStatus;
 import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.renderTextError;
@@ -391,11 +390,8 @@ public class ExpressionStartPanel {
         int mark = expression == null && textError != null && !text.isEmpty() ? Math.min(textError.getPosition(), text.length()) : -1;
         field.render(guiGraphics, x + 2, y + 2, PANEL_WIDTH - 3, guiTop + FOOTER_Y - y - 3, colors, new int[text.length()], mark, COLOR_TEXT_ERROR);
 
-        // The call at the cursor, the type of what was typed, or why it can not be used
-        ExpressionParser.Call call = field.getCallAtCursor();
-        if (call != null) {
-            renderFooter(guiGraphics, guiLeft, guiTop, font, getCallSignature(call), null, regions);
-        } else if (text.isBlank()) {
+        // The type of what was typed, or why it can not be used
+        if (text.isBlank()) {
             renderFooter(guiGraphics, guiLeft, guiTop, font, Component.empty(), null, regions);
         } else if (expression != null) {
             renderStatus(guiGraphics, guiLeft, guiTop, font, expression, parsedTextResult, regions);

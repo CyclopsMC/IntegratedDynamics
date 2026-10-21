@@ -50,4 +50,16 @@ public class TestExpressionTextField {
         assertThat(follow("aaa", "aa"), is(new int[]{1, 2}));
     }
 
+    @Test
+    public void testPlaceSignature() {
+        // Above the line of the cursor, from the left of the text, as in Integrated Scripting's editor
+        assertThat(ExpressionTextField.placeSignature(100, 50, 68, 80, 400), is(new int[]{-1, 7, 82, 10}));
+        assertThat(ExpressionTextField.placeSignature(100, 50, 59, 80, 400), is(new int[]{-1, -2, 82, 10}));
+        // Below the first line, as there is no room above it within the text
+        assertThat(ExpressionTextField.placeSignature(100, 50, 50, 80, 400), is(new int[]{-1, 10, 82, 10}));
+        // Moved left to stay on the screen, and cut off if it is wider
+        assertThat(ExpressionTextField.placeSignature(350, 50, 68, 80, 400), is(new int[]{-34, 7, 82, 10}));
+        assertThat(ExpressionTextField.placeSignature(100, 50, 68, 500, 400), is(new int[]{-98, 7, 396, 10}));
+    }
+
 }

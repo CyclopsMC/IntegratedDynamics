@@ -290,14 +290,14 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     @Override
     protected void drawCurrentScreen(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         super.drawCurrentScreen(guiGraphics, mouseX, mouseY, partialTicks);
-        // The list shown while typing an expression, over everything but tooltips
-        OperatorLPElementRenderPattern.getTextField(getMenu()).renderCompletions(guiGraphics);
+        // The list or signature shown while typing an expression, over everything but tooltips
+        OperatorLPElementRenderPattern.getTextField(getMenu()).renderPopups(guiGraphics);
     }
 
     @Override
     protected void renderTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        // Not for slots below the list shown while typing
-        if (!OperatorLPElementRenderPattern.getTextField(getMenu()).isOverCompletions(mouseX, mouseY)) {
+        // Not for slots below the list or signature shown while typing
+        if (!OperatorLPElementRenderPattern.getTextField(getMenu()).isOverPopups(mouseX, mouseY)) {
             super.renderTooltip(guiGraphics, mouseX, mouseY);
         }
     }

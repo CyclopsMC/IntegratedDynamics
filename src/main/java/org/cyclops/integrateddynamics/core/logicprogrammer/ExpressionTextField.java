@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.core.logicprogrammer;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -104,6 +105,11 @@ public class ExpressionTextField {
     private int textY = 0;
     // If the text was drawn since the list was last drawn, as it is drawn after everything else
     private boolean completionsPlaced = false;
+    // The signature of the call at the cursor, and where it is drawn, relative to the text
+    @Nullable
+    private Component signature = null;
+    @Nullable
+    private int[] signatureBox = null;
 
     /**
      * @param font The font.
@@ -507,7 +513,7 @@ public class ExpressionTextField {
      * @return The call that the cursor is in while the text has focus, or null.
      */
     @Nullable
-    public ExpressionParser.Call getCallAtCursor() {
+    private ExpressionParser.Call getCallAtCursor() {
         return focused ? getCompletion().call() : null;
     }
 
@@ -613,10 +619,13 @@ public class ExpressionTextField {
     /**
      * @param mouseX The x position on the screen.
      * @param mouseY The y position on the screen.
-     * @return If the shown list is drawn there.
+     * @return If the shown list or signature is drawn there.
      */
-    public boolean isOverCompletions(double mouseX, double mouseY) {
-        return isInCompletions(mouseX - textX, mouseY - textY);
+    public boolean isOverPopups(double mouseX, double mouseY) {
+        double x = mouseX - textX;
+        double y = mouseY - textY;
+        return isInCompletions(x, y) || (signatureBox != null && x >= signatureBox[0] - 1 && x < signatureBox[0] + signatureBox[2] + 1
+                && y >= signatureBox[1] - 1 && y < signatureBox[1] + signatureBox[3] + 1);
     }
 
     private boolean isInCompletions(double x, double y) {
@@ -666,7 +675,31 @@ public class ExpressionTextField {
         return signature.append("): ").append(getTypeName(operator.getOutputType()));
     }
 
-    private static Component getTypeName(IValueType<?> type) {
+    /**
+     * @param call A call that the cursor is in.
+     * @return Its signature in the colors of its types, with the input at the cursor underlined,
+     *         as in {@code Item.strength(Block): Double} for a method, where the first input is before the point.
+     */
+    public static Component getCallSignature(ExpressionParser.Call call) {
+        IOperator operator = call.operator();
+        IValueType<?>[] inputs = operator.getInputTypes();
+        int first = call.method() ? Math.min(1, inputs.length) : 0;
+        MutableComponent signature = Component.empty();
+        if (first > 0) {
+            signature.append(getTypeName(inputs[0])).append(".");
+        }
+        signature.append(call.name()).append("(");
+        for (int i = first; i < inputs.length; i++) {
+            if (i > first) {
+                signature.append(", ");
+            }
+            MutableComponent input = getTypeName(inputs[i]);
+            signature.append(i == call.input() ? input.withStyle(ChatFormatting.UNDERLINE) : input);
+        }
+        return signature.append("): ").append(getTypeName(operator.getOutputType()));
+    }
+
+    private static MutableComponent getTypeName(IValueType<?> type) {
         return Component.translatable(type.getTranslationKey()).withStyle(type.getDisplayColorFormat());
     }
 
@@ -762,7 +795,36 @@ public class ExpressionTextField {
         textX = x;
         textY = y;
         completionsBox = focused && !getShownCompletions().isEmpty() ? placeCompletions(x, y, lines) : null;
+        // The signature of the call at the cursor, unless the list is shown, as in Integrated Scripting's editor
+        ExpressionParser.Call call = focused && getShownCompletions().isEmpty() ? getCallAtCursor() : null;
+        signature = call != null ? getCallSignature(call) : null;
+        signatureBox = signature != null && cursorLine >= scroll && cursorLine < scroll + visibleLines
+                ? placeSignature(x, y, y + (cursorLine - scroll) * LINE_HEIGHT, font.width(signature),
+                        Minecraft.getInstance().getWindow().getGuiScaledWidth()) : null;
         completionsPlaced = true;
+    }
+
+    /**
+     * Place the signature of a call above the line of the cursor, starting at the left of the text, as in Integrated Scripting's editor.
+     * It is placed below the line if there is no room above it within the text, and moved left to stay on the screen.
+     * @param x The left of the text.
+     * @param y The top of the text.
+     * @param lineY The top of the line of the cursor.
+     * @param signatureWidth The width of the signature.
+     * @param screenWidth The width of the screen.
+     * @return The x, y, width and height of the popup within its border, relative to the text.
+     */
+    static int[] placeSignature(int x, int y, int lineY, int signatureWidth, int screenWidth) {
+        int width = Math.min(signatureWidth + 2, screenWidth - 4);
+        // A line and a pixel high, which leaves room for the underline of the input at the cursor
+        int height = LINE_HEIGHT + 1;
+        int boxX = Math.min(x - 1, screenWidth - 2 - width);
+        int boxY = lineY - height - 1;
+        // The text starts 2 pixels into its box
+        if (boxY < y - 2) {
+            boxY = lineY + LINE_HEIGHT + 1;
+        }
+        return new int[]{boxX - x, boxY - y, width, height};
     }
 
     /**
@@ -803,15 +865,19 @@ public class ExpressionTextField {
     }
 
     /**
-     * Draw the list shown while typing, if the text was drawn since.
+     * Draw the list shown while typing, or the signature of the call at the cursor, if the text was drawn since.
      * This is done after everything else, as slots and labels are drawn without depth, so they would cover them.
      * @param guiGraphics The graphics, without translation.
      */
-    public void renderCompletions(GuiGraphics guiGraphics) {
+    public void renderPopups(GuiGraphics guiGraphics) {
         if (!completionsPlaced) {
             completionsBox = null;
+            signatureBox = null;
         }
         completionsPlaced = false;
+        if (signatureBox != null) {
+            renderSignature(guiGraphics);
+        }
         if (completionsBox == null || getShownCompletions().isEmpty()) {
             return;
         }
@@ -851,6 +917,25 @@ public class ExpressionTextField {
             int barY = boxY + 1 + (height - 2 - barHeight) * completionsFirst / (completions.size() - rows);
             guiGraphics.fill(boxX + width - 1, barY, boxX + width, barY + barHeight, COLOR_SCROLLBAR);
         }
+        guiGraphics.pose().popPose();
+    }
+
+    private void renderSignature(GuiGraphics guiGraphics) {
+        int boxX = textX + signatureBox[0];
+        int boxY = textY + signatureBox[1];
+        int width = signatureBox[2];
+        FormattedText shown = signature;
+        if (font.width(shown) > width - 2) {
+            shown = FormattedText.composite(font.substrByWidth(shown, Math.max(0, width - 2 - font.width(OperatorLPElementRenderPattern.ELLIPSIS))),
+                    FormattedText.of(OperatorLPElementRenderPattern.ELLIPSIS));
+        }
+        // Below tooltips, in the colors of the list
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(0, 0, 300);
+        int height = signatureBox[3];
+        guiGraphics.fill(boxX - 1, boxY - 1, boxX + width + 1, boxY + height + 1, COLOR_POPUP_BORDER);
+        guiGraphics.fill(boxX, boxY, boxX + width, boxY + height, COLOR_POPUP);
+        guiGraphics.drawString(font, Language.getInstance().getVisualOrder(shown), boxX + 1, boxY + 1, COLOR_CARET, false);
         guiGraphics.pose().popPose();
     }
 

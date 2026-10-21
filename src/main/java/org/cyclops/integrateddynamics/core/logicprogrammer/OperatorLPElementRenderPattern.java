@@ -15,7 +15,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.FormattedText;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.Container;
 import net.neoforged.api.distmarker.Dist;
@@ -1039,10 +1038,8 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
             int[] hoveredPath = hoveredSlot >= 0 && hoveredSlot < editor.getSlotCount() ? ExpressionTrees.append(editPath, hoveredSlot) : null;
             textBoxY = renderParameters(guiGraphics, guiLeft, guiTop, fontRenderer, editor);
             renderTextField(guiGraphics, guiLeft, guiTop, editor, result, hoveredPath);
-            ExpressionParser.Call call = field.getCallAtCursor();
-            if (call != null) {
-                renderFooter(guiGraphics, guiLeft, guiTop, fontRenderer, getCallSignature(call), null, regions);
-            } else if (!field.isDraft()) {
+            // The signature of the call at the cursor is shown above its line instead, so this always describes the expression
+            if (!field.isDraft()) {
                 renderStatus(guiGraphics, guiLeft, guiTop, fontRenderer, editor.getExpression(), result, regions);
             } else if (parseText() != null) {
                 renderStatus(guiGraphics, guiLeft, guiTop, fontRenderer, parsedText, parsedTextResult, regions);
@@ -1286,34 +1283,6 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
                 ? ValueTypeOperator.getSignature(ExpressionTypeChecker.getInputTypes(expression), outputType)
                 : Component.translatable(outputType.getTranslationKey()).withStyle(outputType.getDisplayColorFormat());
         renderFooter(guiGraphics, guiLeft, guiTop, font, type, null, regions);
-    }
-
-    /**
-     * @param call A call that the cursor is in.
-     * @return Its signature in the colors of its types, with the input at the cursor underlined,
-     *         as in {@code Item.strength(Block): Double} for a method, where the first input is before the point.
-     */
-    static Component getCallSignature(ExpressionParser.Call call) {
-        IOperator operator = call.operator();
-        IValueType<?>[] inputs = operator.getInputTypes();
-        int first = call.method() ? Math.min(1, inputs.length) : 0;
-        MutableComponent signature = Component.empty();
-        if (first > 0) {
-            signature.append(getTypeName(inputs[0], false)).append(".");
-        }
-        signature.append(call.name()).append("(");
-        for (int i = first; i < inputs.length; i++) {
-            if (i > first) {
-                signature.append(", ");
-            }
-            signature.append(getTypeName(inputs[i], i == call.input()));
-        }
-        return signature.append("): ").append(getTypeName(operator.getOutputType(), false));
-    }
-
-    private static Component getTypeName(IValueType<?> type, boolean underlined) {
-        MutableComponent name = Component.translatable(type.getTranslationKey()).withStyle(type.getDisplayColorFormat());
-        return underlined ? name.withStyle(ChatFormatting.UNDERLINE) : name;
     }
 
     /**
