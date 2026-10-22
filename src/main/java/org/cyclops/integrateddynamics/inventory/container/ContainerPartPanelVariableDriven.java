@@ -78,12 +78,18 @@ public class ContainerPartPanelVariableDriven<P extends PartTypePanelVariableDri
         super.broadcastChanges();
 
         if (!player.level().isClientSide()) {
+            Optional<S> partStateOptional = getPartState();
+            if (partStateOptional.isEmpty()) {
+                // The part was removed, stillValid will close this container.
+                return;
+            }
+            S partState = partStateOptional.get();
             MutableComponent readValue = Component.literal("");
             int readValueColor = 0;
             if (!NetworkHelpers.shouldWork()) {
                 readValue = Component.literal("SAFE-MODE");
             } else {
-                IValue value = getPartState().get().getDisplayValue();
+                IValue value = partState.getDisplayValue();
                 if (value != null) {
                     readValue = value.getType().toCompactString(value);
                     readValueColor = value.getType().getDisplayColor();
@@ -91,13 +97,13 @@ public class ContainerPartPanelVariableDriven<P extends PartTypePanelVariableDri
             }
             ValueNotifierHelpers.setValue(this, readValueId, readValue);
             ValueNotifierHelpers.setValue(this, readColorId, readValueColor);
-            ValueNotifierHelpers.setValue(this, readErrorsId, getPartState().get().getGlobalErrors());
+            ValueNotifierHelpers.setValue(this, readErrorsId, partState.getGlobalErrors());
         }
     }
 
     @Override
     public void onDirty() {
-        if (!player.level().isClientSide()) {
+        if (!player.level().isClientSide() && getPartState().isPresent()) {
             S partState = getPartState().get();
             partState.onVariableContentsUpdated(getPartType(), getTarget().get());
             Optional<INetwork> optionalNetwork = NetworkHelpers.getNetwork(getTarget().get().getCenter());
