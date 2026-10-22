@@ -67,7 +67,9 @@ public abstract class ContainerMultipart<P extends IPartType<P, S>, S extends IP
     }
 
     public Optional<S> getPartState() {
-        return partContainer.map(p -> (S) p.getPartState(getTarget().get().getCenter().getSide()));
+        return partContainer
+                .filter(p -> p.hasPart(getTarget().get().getCenter().getSide()))
+                .map(p -> (S) p.getPartState(getTarget().get().getCenter().getSide()));
     }
 
     public Optional<IPartContainer> getPartContainer() {

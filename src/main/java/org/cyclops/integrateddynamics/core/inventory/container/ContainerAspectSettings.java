@@ -211,12 +211,16 @@ public class ContainerAspectSettings extends InventoryContainer {
     }
 
     public Optional<IPartState> getPartState() {
-        return partContainer.map(p -> p.getPartState(getTarget().get().getCenter().getSide()));
+        return partContainer
+                .filter(p -> p.hasPart(getTarget().get().getCenter().getSide()))
+                .map(p -> p.getPartState(getTarget().get().getCenter().getSide()));
     }
 
     @Override
     public boolean stillValid(Player player) {
-        return true;
+        return getTarget()
+                .map(target -> PartHelpers.canInteractWith(target, player, this.partContainer.get()))
+                .orElse(true);
     }
 
     @Override
@@ -341,10 +345,11 @@ public class ContainerAspectSettings extends InventoryContainer {
         super.onUpdate(valueId, value);
         if(!world.isClientSide()) {
             IAspectPropertyTypeInstance property = propertyIds.get(valueId);
-            if (property != null && !isPropertyVariableFilled(this.propertyTypes.indexOf(property))) {
+            Optional<IPartState> partStateOptional = getPartState();
+            if (property != null && partStateOptional.isPresent() && !isPropertyVariableFilled(this.propertyTypes.indexOf(property))) {
                 IPartType partType = getPartType().get();
                 PartTarget target = getTarget().get();
-                IPartState partState = getPartState().get();
+                IPartState partState = partStateOptional.get();
 
                 IAspectProperties aspectProperties = aspect.getStaticProperties(partType, target, partState);
                 aspectProperties = aspectProperties.clone();
