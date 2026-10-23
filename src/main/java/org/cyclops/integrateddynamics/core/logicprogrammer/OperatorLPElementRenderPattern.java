@@ -1044,7 +1044,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
             } else if (parseText() != null) {
                 renderStatus(guiGraphics, guiLeft, guiTop, fontRenderer, parsedText, parsedTextResult, regions);
             } else {
-                renderTextError(guiGraphics, guiLeft, guiTop, fontRenderer, field.getValue(), textError, regions);
+                renderTextError(guiGraphics, guiLeft, guiTop, fontRenderer, textError, regions);
             }
         }
     }
@@ -1144,21 +1144,12 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
                 guiLeft + PANEL_X, guiTop + TITLE_Y, COLOR_TEXT, false);
     }
 
-    static void renderTextError(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font, String text, ExpressionParseException error,
+    /**
+     * Draw the message of an error in the text in the footer, without where it is, as the text marks it.
+     */
+    static void renderTextError(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font, ExpressionParseException error,
                                 List<Region> regions) {
-        int position = Math.min(error.getPosition(), text.length());
-        int line = 1;
-        int column = 1;
-        for (int i = 0; i < position; i++) {
-            if (text.charAt(i) == '\n') {
-                line++;
-                column = 1;
-            } else {
-                column++;
-            }
-        }
-        Component message = Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_ERROR, line, column, error.getComponent());
-        renderFooter(guiGraphics, guiLeft, guiTop, font, message.copy().withStyle(ChatFormatting.RED), null, regions);
+        renderFooter(guiGraphics, guiLeft, guiTop, font, error.getComponent().copy().withStyle(ChatFormatting.RED), null, regions);
     }
 
     /**
@@ -1253,12 +1244,14 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
             backgrounds = field.followDraft(backgrounds, 0);
         }
         int mark = -1;
+        int markEnd = -1;
         if (draft && parseText() == null && textError != null) {
             mark = Math.min(textError.getPosition(), field.getValue().length());
+            markEnd = Math.min(textError.getEnd(), field.getValue().length());
         }
-        field.render(guiGraphics, x + 2, y + 2, PANEL_WIDTH - 3, guiTop + FOOTER_Y - y - 3, colors, backgrounds, mark, COLOR_TEXT_ERROR);
+        field.render(guiGraphics, x + 2, y + 2, PANEL_WIDTH - 3, guiTop + FOOTER_Y - y - 3, colors, backgrounds, mark, markEnd, COLOR_TEXT_ERROR);
         if (mark >= 0) {
-            field.renderErrorTooltip(guiGraphics, mark, textError.getComponent(), mouseX, mouseY);
+            field.renderErrorTooltip(guiGraphics, mark, markEnd, textError.getComponent(), mouseX, mouseY);
         } else if (!draft) {
             // The type errors of the part of the text under the mouse, which is red
             int index = field.getCharAtMouse(mouseX, mouseY);

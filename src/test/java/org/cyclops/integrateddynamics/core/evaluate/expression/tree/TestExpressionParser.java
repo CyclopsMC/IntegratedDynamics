@@ -409,6 +409,31 @@ public class TestExpressionParser {
 
     // --------------- Errors ---------------
 
+    private static void assertErrorRange(String text, int position, int end) {
+        try {
+            parse(text);
+            fail("Expected an error for " + text);
+        } catch (ExpressionParseException e) {
+            assertThat(text, e.getPosition(), is(position));
+            assertThat(text, e.getEnd(), is(end));
+        }
+    }
+
+    @Test
+    public void testErrorRanges() {
+        // The whole name or type that is not known, so all of it can be marked
+        assertErrorRange("x => lenght(x)", 5, 11);
+        assertErrorRange("(s: string) => s.lenght()", 17, 23);
+        assertErrorRange("y + 1", 0, 1);
+        assertErrorRange("(x: thing) => x + 1", 4, 9);
+        assertErrorRange("(x: mod:thing) => x + 1", 4, 13);
+        assertErrorRange("@thing{} == 1", 0, 6);
+        assertErrorRange("#nothing + 1", 0, 8);
+        // A single symbol, and the end of the text
+        assertErrorRange("(x: item) => x.", 14, 15);
+        assertErrorRange("1 + ", 4, 4);
+    }
+
     @Test
     public void testErrors() {
         assertError("x => lenght(x)", L10NValues.EXPRESSION_PARSE_UNKNOWN_OPERATOR, 5);

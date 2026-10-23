@@ -736,11 +736,12 @@ public class ExpressionTextField {
      * @param height The height of the text.
      * @param colors The color of each character.
      * @param backgrounds The background of each character, or 0 for none.
-     * @param mark A character to underline, such as where an error is, or -1.
+     * @param mark The first character to underline, such as where an error is, or -1.
+     * @param markEnd The character after the last one to underline, which is at least the first one.
      * @param markColor The color of the underline.
      */
     public void render(GuiGraphics guiGraphics, int x, int y, int width, int height, int[] colors, int[] backgrounds,
-                       int mark, int markColor) {
+                       int mark, int markEnd, int markColor) {
         visibleLines = Math.max(1, height / LINE_HEIGHT);
         scroll = Mth.clamp(scroll, 0, getMaxScroll());
         String value = text.value();
@@ -776,10 +777,16 @@ public class ExpressionTextField {
                         runStart = i;
                     }
                 }
-                if (mark >= begin && (mark < end || (mark == end && end == value.length()))) {
-                    int markX = x + font.width(value.substring(begin, mark));
-                    int markWidth = mark < end ? font.width(value.substring(mark, mark + 1)) : 4;
+                // The marked characters on this line, or a short line after its end, such as at the end of the text
+                int markFrom = Math.max(mark, begin);
+                int markTo = Math.min(Math.max(markEnd, mark + 1), end);
+                if (mark >= 0 && markFrom < markTo) {
+                    int markX = x + font.width(value.substring(begin, markFrom));
+                    int markWidth = font.width(value.substring(markFrom, markTo));
                     guiGraphics.fill(markX, lineY + LINE_HEIGHT - 1, markX + Math.max(markWidth, 2), lineY + LINE_HEIGHT, markColor);
+                } else if (mark == end && mark >= begin && (end == value.length() || value.charAt(end) == '\n')) {
+                    int markX = x + font.width(value.substring(begin, end));
+                    guiGraphics.fill(markX, lineY + LINE_HEIGHT - 1, markX + 4, lineY + LINE_HEIGHT, markColor);
                 }
             }
         }
@@ -821,11 +828,12 @@ public class ExpressionTextField {
      * and in place of the signature of the call at the cursor, which it would cover. Called after the text is drawn.
      * @param guiGraphics The graphics.
      * @param position Where the error is.
+     * @param end The character after the part with the error, which is at least the position.
      * @param message The message.
      * @param mouseX The x position of the mouse.
      * @param mouseY The y position of the mouse.
      */
-    public void renderErrorTooltip(GuiGraphics guiGraphics, int position, Component message, int mouseX, int mouseY) {
+    public void renderErrorTooltip(GuiGraphics guiGraphics, int position, int end, Component message, int mouseX, int mouseY) {
         Screen screen = Minecraft.getInstance().screen;
         if (screen == null || !getShownCompletions().isEmpty() || isOverPopups(mouseX, mouseY)) {
             return;
@@ -855,11 +863,12 @@ public class ExpressionTextField {
         if (!hovering) {
             return;
         }
-        // Below the row of the error, as the line can be wrapped, or else below the row of the mouse
+        // Below the row of the error, as the line can be wrapped, or else below the row of the mouse.
+        // The arrow points at the middle of the marked part on that row.
         if (errorRow >= 0) {
             int begin = lines[errorRow * 2];
-            int end = lines[errorRow * 2 + 1];
-            int width = position < end ? font.width(value.substring(position, position + 1)) : 4;
+            int rowEnd = Math.min(Math.max(end, position + 1), lines[errorRow * 2 + 1]);
+            int width = position < rowEnd ? font.width(value.substring(position, rowEnd)) : 4;
             renderTooltip(guiGraphics, screen, textY + (errorRow - scroll) * LINE_HEIGHT,
                     textX + font.width(value.substring(begin, position)) + width / 2, message, mouseX);
         } else {

@@ -540,11 +540,15 @@ public final class ExpressionParser {
                 typeText += ":" + next().text();
             }
             type = getValueType(typeText);
+            // Also the namespace of an add-on's type
+            int typeEnd = tokens.get(index - 1).end();
             if (type == null) {
-                throw error(typeName, L10NValues.EXPRESSION_PARSE_UNKNOWN_TYPE, typeText);
+                throw new ExpressionParseException(typeName.start(), typeEnd,
+                        Component.translatable(L10NValues.EXPRESSION_PARSE_UNKNOWN_TYPE, typeText));
             }
             if (!context.parameterTypes().test(type)) {
-                throw error(typeName, L10NValues.EXPRESSION_PARSE_PARAMETER_TYPE, typeText);
+                throw new ExpressionParseException(typeName.start(), typeEnd,
+                        Component.translatable(L10NValues.EXPRESSION_PARSE_PARAMETER_TYPE, typeText));
             }
         }
         return new ExpressionParameter(name.text(), type);
@@ -1055,7 +1059,7 @@ public final class ExpressionParser {
     }
 
     private static ExpressionParseException error(Token token, String key, Object... args) {
-        return new ExpressionParseException(token.start(), Component.translatable(key, args));
+        return new ExpressionParseException(token.start(), token.end(), Component.translatable(key, args));
     }
 
     /**
@@ -1305,7 +1309,7 @@ public final class ExpressionParser {
             String typeName = text.substring(nameStart, position);
             IValueType<?> valueType = getValueType(typeName);
             if (valueType == null) {
-                throw new ExpressionParseException(start, Component.translatable(L10NValues.EXPRESSION_PARSE_UNKNOWN_TYPE, typeName));
+                throw new ExpressionParseException(start, position, Component.translatable(L10NValues.EXPRESSION_PARSE_UNKNOWN_TYPE, typeName));
             }
             StringReader reader = new StringReader(text);
             reader.setCursor(position);

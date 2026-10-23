@@ -388,9 +388,11 @@ public class ExpressionStartPanel {
         int[] colors = new int[text.length()];
         Arrays.fill(colors, COLOR_TEXT_LIGHT);
         int mark = expression == null && textError != null && !text.isEmpty() ? Math.min(textError.getPosition(), text.length()) : -1;
-        field.render(guiGraphics, x + 2, y + 2, PANEL_WIDTH - 3, guiTop + FOOTER_Y - y - 3, colors, new int[text.length()], mark, COLOR_TEXT_ERROR);
+        int markEnd = mark >= 0 ? Math.min(textError.getEnd(), text.length()) : -1;
+        field.render(guiGraphics, x + 2, y + 2, PANEL_WIDTH - 3, guiTop + FOOTER_Y - y - 3, colors, new int[text.length()], mark, markEnd,
+                COLOR_TEXT_ERROR);
         if (mark >= 0) {
-            field.renderErrorTooltip(guiGraphics, mark, textError.getComponent(), mouseX, mouseY);
+            field.renderErrorTooltip(guiGraphics, mark, markEnd, textError.getComponent(), mouseX, mouseY);
         }
 
         // The type of what was typed, or why it can not be used
@@ -399,7 +401,7 @@ public class ExpressionStartPanel {
         } else if (expression != null) {
             renderStatus(guiGraphics, guiLeft, guiTop, font, expression, parsedTextResult, regions);
         } else {
-            renderTextError(guiGraphics, guiLeft, guiTop, font, text, textError, regions);
+            renderTextError(guiGraphics, guiLeft, guiTop, font, textError, regions);
         }
     }
 
