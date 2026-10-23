@@ -31,6 +31,13 @@ public class ValueTypeItemStackLPElement<V extends IValue> extends ValueTypeLPEl
         this.itemStackToValue = itemStackToValue;
     }
 
+    /**
+     * @return How items become values of this type, and the other way around.
+     */
+    public IItemStackToValue<V> getItemStackToValue() {
+        return itemStackToValue;
+    }
+
     @Override
     public ILogicProgrammerElementType getType() {
         return LogicProgrammerElementTypes.VALUETYPE;

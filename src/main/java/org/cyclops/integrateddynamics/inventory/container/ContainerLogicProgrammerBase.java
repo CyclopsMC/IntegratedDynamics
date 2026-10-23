@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.inventory.container;
 
 import com.google.common.collect.Lists;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringUtil;
@@ -22,6 +23,9 @@ import org.cyclops.cyclopscore.inventory.slot.SlotSingleItem;
 import org.cyclops.cyclopscore.persist.IDirtyMarkListener;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
+import org.cyclops.integrateddynamics.api.evaluate.expression.tree.Expression;
+import org.cyclops.integrateddynamics.api.evaluate.expression.tree.ExpressionNode;
+import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
@@ -29,13 +33,19 @@ import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
 import org.cyclops.integrateddynamics.client.gui.container.ContainerScreenLogicProgrammerBase;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.core.inventory.container.slot.SlotVariable;
+import org.cyclops.integrateddynamics.core.logicprogrammer.ExpressionEditor;
+import org.cyclops.integrateddynamics.core.logicprogrammer.ExpressionHistory;
+import org.cyclops.integrateddynamics.core.logicprogrammer.ExpressionTextField;
 import org.cyclops.integrateddynamics.core.logicprogrammer.LogicProgrammerElementTypes;
+import org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElement;
 import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * Base container for the logic programmer.
@@ -50,6 +60,14 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     public static final int BASE_Y = 18;
     public static final int MAX_WIDTH = 160;
     public static final int MAX_HEIGHT = 87;
+
+    /**
+     * The expression side panel, to the right of the main panel.
+     */
+    public static final int EXPRESSION_PANEL_X = 252;
+    public static final int EXPRESSION_PANEL_Y = 4;
+    public static final int EXPRESSION_PANEL_WIDTH = 150;
+    public static final int EXPRESSION_PANEL_HEIGHT = 172;
 
     protected static final IItemPredicate<ILogicProgrammerElement> FILTERER =
             (item, pattern) -> pattern.matcher(item.getMatchString()).matches()
@@ -66,6 +84,13 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
     private IValueType filterIn1 = null;
     private IValueType filterIn2 = null;
     private IValueType filterOut = null;
+    private IValueType expressionSlotFilter = null;
+    // Client-side state of the expression panel, which outlives the config pattern
+    @OnlyIn(Dist.CLIENT)
+    @Nullable
+    private ExpressionTextField expressionTextField;
+    private final ExpressionHistory expressionHistory = new ExpressionHistory();
+    private boolean settingExpression = false;
 
     @OnlyIn(Dist.CLIENT)
     private ContainerScreenLogicProgrammerBase gui;
@@ -169,6 +194,13 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
 
         this.lastError = null;
         this.activeElement = activeElement;
+        // Another expression, unless a set action moves the expression to the element of its root
+        if (!settingExpression) {
+            expressionHistory.clear();
+            if (MinecraftHelpers.isClientSideThread()) {
+                resetExpressionTextField();
+            }
+        }
 
         this.setElementInventory(this.activeElement, baseX, baseY);
 
@@ -205,6 +237,137 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
         }
         initializeSlotsPost();
         this.lastLabel = "";
+    }
+
+    /**
+     * Recreate the slots of the given element, for example when the element changes its render pattern.
+     * In contrast to {@link #setElementInventory(ILogicProgrammerElement, int, int)}, this keeps the current label.
+     * @param element The element.
+     * @param baseX The slots X coordinate
+     * @param baseY The slots Y coordinate
+     */
+    public void refreshElementInventory(final ILogicProgrammerElement element, int baseX, int baseY) {
+        String label = this.lastLabel;
+        this.setElementInventory(element, baseX, baseY);
+        this.lastLabel = label;
+        this.temporaryInputSlots.removeDirtyMarkListener(this);
+        element.setValueInContainer(this);
+        this.temporaryInputSlots.addDirtyMarkListener(this);
+    }
+
+    /**
+     * Apply an expression edit action to the active element.
+     * This is called on the server via a packet, and directly on the client.
+     * @param action The action.
+     */
+    public void applyExpressionAction(CompoundTag action) {
+        if (ExpressionEditor.ACTION_SET.equals(action.getString("a"))) {
+            applySetExpressionAction(action);
+            return;
+        }
+        if (activeElement instanceof OperatorLPElement operatorElement) {
+            ExpressionEditor.ActionResult result = operatorElement.applyExpressionAction(this,
+                    ValueDeseralizationContext.of(player.level()), action);
+            if (result == ExpressionEditor.ActionResult.NAVIGATED) {
+                if (MinecraftHelpers.isClientSideThread()) {
+                    getGui().onExpressionNavigated();
+                } else {
+                    refreshElementInventory(operatorElement, 0, 0);
+                }
+            }
+            if (result != ExpressionEditor.ActionResult.NONE) {
+                onDirty();
+            }
+        }
+    }
+
+    /**
+     * @param factory Creates the text field the first time.
+     * @return The text of the expression, which is kept while the panel is recreated.
+     */
+    @OnlyIn(Dist.CLIENT)
+    public ExpressionTextField getExpressionTextField(Supplier<ExpressionTextField> factory) {
+        if (expressionTextField == null) {
+            expressionTextField = factory.get();
+        }
+        return expressionTextField;
+    }
+
+    /**
+     * @return The changes to the expression in the active element, which are only recorded on the client.
+     */
+    public ExpressionHistory getExpressionHistory() {
+        return expressionHistory;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    protected void resetExpressionTextField() {
+        if (expressionTextField != null) {
+            expressionTextField.reset();
+        }
+    }
+
+    /**
+     * @param operator An operator.
+     * @return The element for building expressions with this operator as root, or null if there is none.
+     */
+    @Nullable
+    public OperatorLPElement getOperatorElement(IOperator operator) {
+        for (ILogicProgrammerElement element : getUnfilteredItems()) {
+            if (element instanceof OperatorLPElement operatorElement && operatorElement.getOperator() == operator) {
+                return operatorElement;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Replace the whole expression of the active element.
+     * If the root operator changes, the element of that operator becomes active, as when loading a card.
+     * This also happens if no operator element is active, such as for an expression that was typed in the empty panel.
+     * @param action A set action.
+     */
+    protected void applySetExpressionAction(CompoundTag action) {
+        Expression expression = ExpressionEditor.readSetAction(ValueDeseralizationContext.of(player.level()), action);
+        if (expression == null) {
+            return;
+        }
+        OperatorLPElement current = activeElement instanceof OperatorLPElement operatorElement && operatorElement.getEditor() != null
+                ? operatorElement : null;
+        IOperator root = ((ExpressionNode.Operator) expression.root()).operator();
+        OperatorLPElement target = current;
+        if (current == null || current.getOperator() != root) {
+            target = getOperatorElement(root);
+            if (target == null) {
+                return;
+            }
+            // Activating the target deactivates the current element, which forgets its references
+            OperatorLPElement.References references = current != null ? current.getReferences() : null;
+            // The history and text continue in the other element
+            settingExpression = true;
+            try {
+                if (MinecraftHelpers.isClientSideThread()) {
+                    getGui().handleElementActivation(target, false);
+                } else {
+                    setActiveElement(target, 0, 0);
+                }
+            } finally {
+                settingExpression = false;
+            }
+            if (references != null) {
+                target.addReferences(references);
+            }
+        }
+        // Stay at the open operator if it is still there, such as after typing a change inside it
+        target.setExpression(expression, target == current ? current.getEditor().getEditPath() : new int[0],
+                ExpressionEditor.readSetActionText(action));
+        target.findReferencedCards(player);
+        if (MinecraftHelpers.isClientSideThread()) {
+            getGui().onExpressionNavigated();
+        } else {
+            refreshElementInventory(target, 0, 0);
+        }
+        onDirty();
     }
 
     public boolean canWriteActiveElementPre() {
@@ -298,6 +461,9 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
                 }
                 temporaryInputSlots.removeDirtyMarkListener(this);
                 element.loadElement(variableFacade);
+                if (element instanceof OperatorLPElement operatorElement) {
+                    operatorElement.findReferencedCards(player);
+                }
                 if (MinecraftHelpers.isClientSideThread()) {
                     element.setValueInGui(getGui().getOperatorConfigPattern());
                 } else {
@@ -330,8 +496,26 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
         }
     }
 
+    /**
+     * Only show operators whose output fits the given type, used while an expression slot is selected.
+     * For operator slots, all operators are shown.
+     * @param type The expected type, or null to disable this filter.
+     */
+    public void setExpressionSlotFilter(@Nullable IValueType type) {
+        if (this.expressionSlotFilter != type) {
+            this.expressionSlotFilter = type;
+            refreshFilter();
+        }
+    }
+
     @Override
     protected boolean additionalApplies(ILogicProgrammerElement item) {
+        // In operator slots, every operator can be picked as a value
+        if (expressionSlotFilter != null && !(item instanceof OperatorLPElement
+                && (expressionSlotFilter == ValueTypes.OPERATOR || item.matchesOutput(expressionSlotFilter))
+                && ((OperatorLPElement) item).getOperator().getRenderPattern() != null)) {
+            return false;
+        }
         return (
                 ((filterIn1 == null || item.matchesInput(filterIn1)) && (filterIn2 == null || item.matchesInput(filterIn2))) || (filterIn1 == null && filterIn2 == null))
                 && (filterOut == null || item.matchesOutput(filterOut));
