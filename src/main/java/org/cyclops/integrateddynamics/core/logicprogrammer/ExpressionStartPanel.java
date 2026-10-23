@@ -389,6 +389,9 @@ public class ExpressionStartPanel {
         Arrays.fill(colors, COLOR_TEXT_LIGHT);
         int mark = expression == null && textError != null && !text.isEmpty() ? Math.min(textError.getPosition(), text.length()) : -1;
         field.render(guiGraphics, x + 2, y + 2, PANEL_WIDTH - 3, guiTop + FOOTER_Y - y - 3, colors, new int[text.length()], mark, COLOR_TEXT_ERROR);
+        if (mark >= 0) {
+            field.renderErrorTooltip(guiGraphics, mark, textError.getComponent(), mouseX, mouseY);
+        }
 
         // The type of what was typed, or why it can not be used
         if (text.isBlank()) {

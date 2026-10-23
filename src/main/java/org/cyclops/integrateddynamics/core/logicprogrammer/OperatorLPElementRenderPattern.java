@@ -1037,7 +1037,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
             int hoveredSlot = getSlotAt(mouseX, mouseY);
             int[] hoveredPath = hoveredSlot >= 0 && hoveredSlot < editor.getSlotCount() ? ExpressionTrees.append(editPath, hoveredSlot) : null;
             textBoxY = renderParameters(guiGraphics, guiLeft, guiTop, fontRenderer, editor);
-            renderTextField(guiGraphics, guiLeft, guiTop, editor, result, hoveredPath);
+            renderTextField(guiGraphics, guiLeft, guiTop, editor, result, hoveredPath, mouseX, mouseY);
             // The signature of the call at the cursor is shown above its line instead, so this always describes the expression
             if (!field.isDraft()) {
                 renderStatus(guiGraphics, guiLeft, guiTop, fontRenderer, editor.getExpression(), result, regions);
@@ -1207,7 +1207,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
      * It is colored like the slots: the edited operator, errors, empty slots, and the part of a hovered slot.
      */
     protected void renderTextField(GuiGraphics guiGraphics, int guiLeft, int guiTop, ExpressionEditor editor,
-                                   ExpressionTypeChecker.Result result, @Nullable int[] hoveredPath) {
+                                   ExpressionTypeChecker.Result result, @Nullable int[] hoveredPath, int mouseX, int mouseY) {
         ExpressionTextField field = getTextField();
         field.setParserContext(this::getParserContext);
         int x = guiLeft + PANEL_X;
@@ -1257,6 +1257,9 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
             mark = Math.min(textError.getPosition(), field.getValue().length());
         }
         field.render(guiGraphics, x + 2, y + 2, PANEL_WIDTH - 3, guiTop + FOOTER_Y - y - 3, colors, backgrounds, mark, COLOR_TEXT_ERROR);
+        if (mark >= 0) {
+            field.renderErrorTooltip(guiGraphics, mark, textError.getComponent(), mouseX, mouseY);
+        }
     }
 
     /**

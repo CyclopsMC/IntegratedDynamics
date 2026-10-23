@@ -12,6 +12,7 @@ import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.util.StringUtil;
 import net.neoforged.api.distmarker.Dist;
@@ -23,6 +24,7 @@ import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionPa
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionPrinter;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionTextNavigation;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.OperatorNames;
+import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
@@ -57,6 +59,13 @@ public class ExpressionTextField {
     private static final int COLOR_DETAIL = 0xFF909090;
     // Neutral, so the colors of types stay readable
     private static final int COLOR_POPUP_SELECTED = 0xFF505050;
+    // Height of the arrow between an error tooltip and its error, as in Integrated Scripting's editor
+    private static final int TOOLTIP_ARROW = 4;
+    // How far vanilla tooltip backgrounds extend beyond their contents, and their colors
+    private static final int TOOLTIP_BORDER = 4;
+    private static final int TOOLTIP_BACKGROUND = 0xF0100010;
+    private static final int TOOLTIP_BORDER_COLOR = 0x505000FF;
+    private static final int TOOLTIP_WIDTH = 200;
 
     private final Font font;
     private final TextModel text;
@@ -103,6 +112,7 @@ public class ExpressionTextField {
     private int completionsFirst = 0;
     private int textX = 0;
     private int textY = 0;
+    private int textWidth = 0;
     // If the text was drawn since the list was last drawn, as it is drawn after everything else
     private boolean completionsPlaced = false;
     // The signature of the call at the cursor, and where it is drawn, relative to the text
@@ -794,6 +804,7 @@ public class ExpressionTextField {
 
         textX = x;
         textY = y;
+        textWidth = width;
         completionsBox = focused && !getShownCompletions().isEmpty() ? placeCompletions(x, y, lines) : null;
         // The signature of the call at the cursor, unless the list is shown, as in Integrated Scripting's editor
         ExpressionParser.Call call = focused && getShownCompletions().isEmpty() ? getCallAtCursor() : null;
@@ -802,6 +813,92 @@ public class ExpressionTextField {
                 ? placeSignature(x, y, y + (cursorLine - scroll) * LINE_HEIGHT, font.width(signature),
                         Minecraft.getInstance().getWindow().getGuiScaledWidth()) : null;
         completionsPlaced = true;
+    }
+
+    /**
+     * Show the message of an error in a tooltip while the mouse is over its line, with an arrow at its position,
+     * as in Integrated Scripting's editor. Not while the list is shown, which is what is being typed in,
+     * and in place of the signature of the call at the cursor, which it would cover. Called after the text is drawn.
+     * @param guiGraphics The graphics.
+     * @param position Where the error is.
+     * @param message The message.
+     * @param mouseX The x position of the mouse.
+     * @param mouseY The y position of the mouse.
+     */
+    public void renderErrorTooltip(GuiGraphics guiGraphics, int position, Component message, int mouseX, int mouseY) {
+        Screen screen = Minecraft.getInstance().screen;
+        if (screen == null || !getShownCompletions().isEmpty() || isOverPopups(mouseX, mouseY)) {
+            return;
+        }
+        String value = text.value();
+        int[] lines = text.getLines();
+        position = Mth.clamp(position, 0, value.length());
+        // The rows of the line of the error, which can be wrapped over several
+        int lineStart = value.lastIndexOf('\n', position - 1) + 1;
+        int lineEnd = value.indexOf('\n', position);
+        if (lineEnd < 0) {
+            lineEnd = value.length();
+        }
+        boolean hovering = false;
+        int errorRow = -1;
+        for (int line = scroll; line < Math.min(lines.length / 2, scroll + visibleLines); line++) {
+            int begin = lines[line * 2];
+            int rowY = textY + (line - scroll) * LINE_HEIGHT;
+            if (begin >= lineStart && begin <= lineEnd) {
+                hovering |= mouseX >= textX && mouseX < textX + textWidth && mouseY >= rowY - 1 && mouseY < rowY + LINE_HEIGHT - 1;
+                if (position >= begin && (position < lines[line * 2 + 1] || position == lines[line * 2 + 1]
+                        && (line == lines.length / 2 - 1 || lines[line * 2 + 2] > position))) {
+                    errorRow = line;
+                }
+            }
+        }
+        if (!hovering) {
+            return;
+        }
+        // The signature would be covered by it
+        signatureBox = null;
+        // Below the row of the error, as the line can be wrapped, or else below the row of the mouse
+        int top;
+        int errorCenterX = -1;
+        if (errorRow >= 0) {
+            int begin = lines[errorRow * 2];
+            int end = lines[errorRow * 2 + 1];
+            top = textY + (errorRow - scroll) * LINE_HEIGHT;
+            int width = position < end ? font.width(value.substring(position, position + 1)) : 4;
+            errorCenterX = textX + font.width(value.substring(begin, position)) + width / 2;
+        } else {
+            top = textY + Math.floorDiv(mouseY + 1 - textY, LINE_HEIGHT) * LINE_HEIGHT;
+        }
+        int bottom = top + LINE_HEIGHT;
+        List<FormattedCharSequence> rows = font.split(message, TOOLTIP_WIDTH);
+        int screenHeight = Minecraft.getInstance().getWindow().getGuiScaledHeight();
+        // Same height as vanilla tooltips of text lines
+        int tooltipHeight = rows.size() * 10 - (rows.size() == 1 ? 2 : 0);
+        boolean below = bottom + TOOLTIP_ARROW + TOOLTIP_BORDER + tooltipHeight + TOOLTIP_BORDER <= screenHeight
+                || top - TOOLTIP_ARROW - TOOLTIP_BORDER - tooltipHeight - TOOLTIP_BORDER < 0;
+        int tooltipY = below ? bottom + TOOLTIP_ARROW + TOOLTIP_BORDER : top - TOOLTIP_ARROW - TOOLTIP_BORDER - tooltipHeight;
+        int anchorX = errorCenterX >= 0 ? errorCenterX - 12 : mouseX + 12;
+        screen.setTooltipForNextRenderPass(rows, (screenWidth, screenHeightIgnored, mouseXIgnored, mouseYIgnored, width, height) ->
+                new Vector2i(Math.max(TOOLTIP_BORDER, Math.min(anchorX, screenWidth - width - TOOLTIP_BORDER)), tooltipY), true);
+        if (errorCenterX >= 0) {
+            renderTooltipArrow(guiGraphics, errorCenterX, below ? bottom : top - 1, below);
+        }
+    }
+
+    /**
+     * Draw an arrow between a tooltip and the given position, in the style of vanilla tooltips.
+     */
+    private static void renderTooltipArrow(GuiGraphics guiGraphics, int x, int tipY, boolean pointUp) {
+        guiGraphics.pose().pushPose();
+        // Same depth as tooltips
+        guiGraphics.pose().translate(0, 0, 400);
+        for (int i = 0; i < TOOLTIP_ARROW; i++) {
+            int y = pointUp ? tipY + i : tipY - i;
+            guiGraphics.fill(x - i, y, x + i + 1, y + 1, TOOLTIP_BACKGROUND);
+            guiGraphics.fill(x - i, y, x - i + 1, y + 1, TOOLTIP_BORDER_COLOR);
+            guiGraphics.fill(x + i, y, x + i + 1, y + 1, TOOLTIP_BORDER_COLOR);
+        }
+        guiGraphics.pose().popPose();
     }
 
     /**
