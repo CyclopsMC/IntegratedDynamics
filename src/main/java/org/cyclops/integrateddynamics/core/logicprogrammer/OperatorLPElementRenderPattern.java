@@ -1259,6 +1259,21 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         field.render(guiGraphics, x + 2, y + 2, PANEL_WIDTH - 3, guiTop + FOOTER_Y - y - 3, colors, backgrounds, mark, COLOR_TEXT_ERROR);
         if (mark >= 0) {
             field.renderErrorTooltip(guiGraphics, mark, textError.getComponent(), mouseX, mouseY);
+        } else if (!draft) {
+            // The type errors of the part of the text under the mouse, which is red
+            int index = field.getCharAtMouse(mouseX, mouseY);
+            int start = 0;
+            for (ExpressionPrinter.Token token : field.getTokens()) {
+                int end = start + token.text().length();
+                if (index >= start && index < end) {
+                    Component message = token.path() == null ? null : result.getErrorMessage(expression.root(), token.path());
+                    if (message != null) {
+                        field.renderPartTooltip(guiGraphics, start, end, message, mouseX, mouseY);
+                    }
+                    break;
+                }
+                start = end;
+            }
         }
     }
 

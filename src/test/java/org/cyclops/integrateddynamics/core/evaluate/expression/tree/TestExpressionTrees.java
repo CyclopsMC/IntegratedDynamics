@@ -630,6 +630,32 @@ public class TestExpressionTrees {
     }
 
     @Test
+    public void testTypeCheckErrorMessages() {
+        // length(s) > "abc" && 5: the string in slot 1 of >, and the integer in slot 1 of &&
+        Expression expression = new Expression(op(Operators.LOGICAL_AND,
+                op(Operators.RELATIONAL_GT, op(Operators.STRING_LENGTH, p(0)), c("abc")), c(5)),
+                List.of(param("s", ValueTypes.STRING)));
+        ExpressionNode root = expression.root();
+        ExpressionTypeChecker.Result result = ExpressionTypeChecker.check(expression, id -> null);
+        assertThat(result.errors().size(), is(2));
+        // A value shows the error of its slot, and an operator its own errors
+        assertThat(result.getErrorMessage(root, new int[]{0, 1}), is(result.getError(new int[]{0}, 1).message()));
+        assertThat(result.getErrorMessage(root, new int[]{1}), is(result.getError(new int[0], 1).message()));
+        assertThat(result.getErrorMessage(root, new int[]{0}), is(result.getError(new int[]{0}, 1).message()));
+        assertThat(result.getErrorMessage(root, new int[0]), is(result.getError(new int[0], 1).message()));
+        // Nodes without errors, also a value in a slot without one
+        assertThat(result.getErrorMessage(root, new int[]{0, 0}), nullValue());
+        assertThat(result.getErrorMessage(root, new int[]{0, 0, 0}), nullValue());
+
+        // An operator with an error in each slot shows both, one per line
+        Expression twice = new Expression(op(Operators.RELATIONAL_GT, c("a"), c("b")));
+        ExpressionTypeChecker.Result twiceResult = ExpressionTypeChecker.check(twice, id -> null);
+        assertThat(twiceResult.errors().size(), is(2));
+        assertThat(twiceResult.getErrorMessage(twice.root(), new int[0]).getString().split("\n").length, is(2));
+        assertThat(twiceResult.getErrorMessage(twice.root(), new int[]{1}), is(twiceResult.getError(new int[0], 1).message()));
+    }
+
+    @Test
     public void testTypeCheckNestedErrorPosition() {
         // length(5) > 3: error in slot 0 of node [0]
         Expression expression = new Expression(op(Operators.RELATIONAL_GT, op(Operators.STRING_LENGTH, c(5)), c(3)));

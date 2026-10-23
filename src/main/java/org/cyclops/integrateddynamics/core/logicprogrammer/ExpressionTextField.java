@@ -855,20 +855,76 @@ public class ExpressionTextField {
         if (!hovering) {
             return;
         }
-        // The signature would be covered by it
-        signatureBox = null;
         // Below the row of the error, as the line can be wrapped, or else below the row of the mouse
-        int top;
-        int errorCenterX = -1;
         if (errorRow >= 0) {
             int begin = lines[errorRow * 2];
             int end = lines[errorRow * 2 + 1];
-            top = textY + (errorRow - scroll) * LINE_HEIGHT;
             int width = position < end ? font.width(value.substring(position, position + 1)) : 4;
-            errorCenterX = textX + font.width(value.substring(begin, position)) + width / 2;
+            renderTooltip(guiGraphics, screen, textY + (errorRow - scroll) * LINE_HEIGHT,
+                    textX + font.width(value.substring(begin, position)) + width / 2, message, mouseX);
         } else {
-            top = textY + Math.floorDiv(mouseY + 1 - textY, LINE_HEIGHT) * LINE_HEIGHT;
+            renderTooltip(guiGraphics, screen, textY + Math.floorDiv(mouseY + 1 - textY, LINE_HEIGHT) * LINE_HEIGHT, -1, message, mouseX);
         }
+    }
+
+    /**
+     * Show the message of an error of a part of the text in a tooltip while the mouse is over that part,
+     * with an arrow at the part on the row of the mouse, as for {@link #renderErrorTooltip}.
+     * @param guiGraphics The graphics.
+     * @param start The first character of the part.
+     * @param end The character after the part.
+     * @param message The message.
+     * @param mouseX The x position of the mouse.
+     * @param mouseY The y position of the mouse.
+     */
+    public void renderPartTooltip(GuiGraphics guiGraphics, int start, int end, Component message, int mouseX, int mouseY) {
+        Screen screen = Minecraft.getInstance().screen;
+        int index = getCharAtMouse(mouseX, mouseY);
+        if (screen == null || index < start || index >= end || !getShownCompletions().isEmpty() || isOverPopups(mouseX, mouseY)) {
+            return;
+        }
+        String value = text.value();
+        int[] lines = text.getLines();
+        int line = scroll + Math.floorDiv(mouseY + 1 - textY, LINE_HEIGHT);
+        int begin = lines[line * 2];
+        int partStart = Math.max(start, begin);
+        int partEnd = Math.min(end, lines[line * 2 + 1]);
+        int x = textX + font.width(value.substring(begin, partStart)) + font.width(value.substring(partStart, partEnd)) / 2;
+        renderTooltip(guiGraphics, screen, textY + (line - scroll) * LINE_HEIGHT, x, message, mouseX);
+    }
+
+    /**
+     * @param mouseX The x position of the mouse.
+     * @param mouseY The y position of the mouse.
+     * @return The index of the character under the mouse, or -1 if it is not over a character of the text.
+     */
+    public int getCharAtMouse(int mouseX, int mouseY) {
+        int x = mouseX - textX;
+        // Rows start a pixel above the text, as their backgrounds do
+        int row = Math.floorDiv(mouseY + 1 - textY, LINE_HEIGHT);
+        int[] lines = text.getLines();
+        if (x < 0 || x >= textWidth || row < 0 || row >= visibleLines || scroll + row >= lines.length / 2) {
+            return -1;
+        }
+        String value = text.value();
+        int charRight = 0;
+        for (int i = lines[(scroll + row) * 2]; i < lines[(scroll + row) * 2 + 1]; i++) {
+            charRight += font.width(value.substring(i, i + 1));
+            if (x < charRight) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Show a message in a vanilla tooltip below a row, or above it if there is no room, with an arrow at the given x position,
+     * in place of the signature of the call at the cursor, which it would cover.
+     * @param top The top of the row.
+     * @param arrowX Where the arrow points at, or -1 for none, which places the tooltip at the mouse.
+     */
+    private void renderTooltip(GuiGraphics guiGraphics, Screen screen, int top, int arrowX, Component message, int mouseX) {
+        signatureBox = null;
         int bottom = top + LINE_HEIGHT;
         List<FormattedCharSequence> rows = font.split(message, TOOLTIP_WIDTH);
         int screenHeight = Minecraft.getInstance().getWindow().getGuiScaledHeight();
@@ -877,11 +933,11 @@ public class ExpressionTextField {
         boolean below = bottom + TOOLTIP_ARROW + TOOLTIP_BORDER + tooltipHeight + TOOLTIP_BORDER <= screenHeight
                 || top - TOOLTIP_ARROW - TOOLTIP_BORDER - tooltipHeight - TOOLTIP_BORDER < 0;
         int tooltipY = below ? bottom + TOOLTIP_ARROW + TOOLTIP_BORDER : top - TOOLTIP_ARROW - TOOLTIP_BORDER - tooltipHeight;
-        int anchorX = errorCenterX >= 0 ? errorCenterX - 12 : mouseX + 12;
+        int anchorX = arrowX >= 0 ? arrowX - 12 : mouseX + 12;
         screen.setTooltipForNextRenderPass(rows, (screenWidth, screenHeightIgnored, mouseXIgnored, mouseYIgnored, width, height) ->
                 new Vector2i(Math.max(TOOLTIP_BORDER, Math.min(anchorX, screenWidth - width - TOOLTIP_BORDER)), tooltipY), true);
-        if (errorCenterX >= 0) {
-            renderTooltipArrow(guiGraphics, errorCenterX, below ? bottom : top - 1, below);
+        if (arrowX >= 0) {
+            renderTooltipArrow(guiGraphics, arrowX, below ? bottom : top - 1, below);
         }
     }
 

@@ -100,6 +100,27 @@ public final class ExpressionTypeChecker {
         }
 
         /**
+         * @param root The root node of the expression.
+         * @param path The path of a node.
+         * @return The messages of the errors that are shown on that node in the text, or null if it has none:
+         *         the error of its slot for a value, or all errors of an operator, one per line, for the parts of the operator itself.
+         */
+        @Nullable
+        public Component getErrorMessage(ExpressionNode root, int[] path) {
+            if (!ExpressionTrees.isOperatorPath(root, path)) {
+                Error error = path.length == 0 ? null : getError(ExpressionTrees.parent(path), path[path.length - 1]);
+                return error == null ? null : error.message();
+            }
+            MutableComponent message = null;
+            for (Error error : errors) {
+                if (Arrays.equals(error.path(), path)) {
+                    message = message == null ? error.message().copy() : message.append("\n").append(error.message());
+                }
+            }
+            return message;
+        }
+
+        /**
          * @param path A node path.
          * @return If the node at this path or any node below it has an error.
          */
