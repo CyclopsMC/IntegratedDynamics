@@ -342,11 +342,15 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
         @Override
         public void init(int guiLeft, int guiTop) {
             super.init(guiLeft, guiTop);
+            boolean reInit = valueTypeSelector != null;
             valueTypeSelector = new WidgetArrowedListField<IValueType<?>>(Minecraft.getInstance().font,
                     getX() + guiLeft + getWidth() / 2 - 50, getY() + guiTop + 9, 100, 15, true,
                     Component.translatable("valuetype.integrateddynamics.value_type"), true, getValueTypes());
             valueTypeSelector.setListener(this);
-            if (element.activeElement == -1) {
+            if (reInit && element.listValueType != null) {
+                // Screen was re-initialized (e.g. after returning from JEI), so keep the current type
+                setActiveElement(element.listValueType);
+            } else if (element.activeElement == -1) {
                 onChanged();
             }
             int x = guiLeft + getX();

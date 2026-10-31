@@ -225,6 +225,15 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
         return activeElement;
     }
 
+    /**
+     * @return The element owning the current temporary input slots.
+     *         This differs from the active element for nested elements, such as list entries.
+     */
+    @Nullable
+    public ILogicProgrammerElement getTemporarySlotsElement() {
+        return temporarySlotsElement;
+    }
+
     @Override
     public void removed(Player player) {
         super.removed(player);
