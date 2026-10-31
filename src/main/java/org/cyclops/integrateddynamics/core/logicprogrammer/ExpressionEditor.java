@@ -19,6 +19,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationC
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionParseException;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionParser;
+import org.cyclops.integrateddynamics.core.evaluate.expression.tree.OperatorNames;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionTrees;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionTypeChecker;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
@@ -60,15 +61,6 @@ public class ExpressionEditor {
      * The maximum number of nodes in an expression that is set as a whole.
      */
     public static final int MAX_NODES = 1024;
-
-    /**
-     * The types of Integrated Dynamics that a parameter can be given, in cycling order, before those of add-ons.
-     */
-    private static final List<IValueType<?>> PREFERRED_PARAMETER_TYPES = List.of(
-            ValueTypes.CATEGORY_ANY, ValueTypes.BOOLEAN, ValueTypes.INTEGER, ValueTypes.LONG, ValueTypes.DOUBLE,
-            ValueTypes.CATEGORY_NUMBER, ValueTypes.STRING, ValueTypes.LIST, ValueTypes.OPERATOR, ValueTypes.NBT,
-            ValueTypes.OBJECT_ITEMSTACK, ValueTypes.OBJECT_BLOCK, ValueTypes.OBJECT_FLUIDSTACK, ValueTypes.OBJECT_ENTITY,
-            ValueTypes.OBJECT_INGREDIENTS, ValueTypes.OBJECT_RECIPE);
 
     private static final String[] DEFAULT_PARAM_NAMES = {"x", "y", "z", "a", "b", "c", "d", "e"};
 
@@ -382,7 +374,8 @@ public class ExpressionEditor {
      * @return The types parameters can have, in cycling order: those of Integrated Dynamics, then those of add-ons by name.
      */
     public static List<IValueType<?>> getParameterTypes() {
-        List<IValueType<?>> types = new ArrayList<>(PREFERRED_PARAMETER_TYPES);
+        // The same order decides between operators of a shared name
+        List<IValueType<?>> types = new ArrayList<>(OperatorNames.TYPE_ORDER);
         ValueTypes.REGISTRY.getValueTypes().stream()
                 .filter(type -> !types.contains(type) && isParameterType(type))
                 .sorted(Comparator.comparing(type -> type.getUniqueName().toString()))

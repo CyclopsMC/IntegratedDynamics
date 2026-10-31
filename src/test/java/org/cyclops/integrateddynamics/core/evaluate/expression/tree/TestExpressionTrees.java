@@ -713,8 +713,8 @@ public class TestExpressionTrees {
     public void testPrintEmptyAndRefs() {
         Expression expression = new Expression(op(Operators.RELATIONAL_GT, op(Operators.STRING_LENGTH, ExpressionNode.EMPTY), ref(42)));
         // length is shared by strings and lists, and an empty slot has no type to tell them apart
-        assertThat(ExpressionPrinter.print(expression), is("stringLength(?) > #42"));
-        assertThat(ExpressionPrinter.print(expression, id -> id == 42 ? "limit" : null), is("stringLength(?) > #limit"));
+        assertThat(ExpressionPrinter.print(expression), is("length(?) > #42"));
+        assertThat(ExpressionPrinter.print(expression, id -> id == 42 ? "limit" : null), is("length(?) > #limit"));
     }
 
     @Test
@@ -768,7 +768,7 @@ public class TestExpressionTrees {
                 op(Operators.OPERATOR_MAP, opConst(Operators.STRING_LENGTH), p(0)), c(0)),
                 List.of(param("l", ValueTypes.LIST)));
         // Operator values have no argument to tell shared names apart
-        assertThat(ExpressionPrinter.print(expression), is("l => reduce((+), map((stringLength), l), 0)"));
+        assertThat(ExpressionPrinter.print(expression), is("l => reduce((+), map((length), l), 0)"));
         // Unregistered operators are printed by their full symbol
         assertThat(ExpressionPrinter.printValue(ValueTypeOperator.ValueOperator.of(doubler())), is("(x => x * 2)"));
     }
@@ -784,7 +784,7 @@ public class TestExpressionTrees {
         // String + only when it is read as concat
         assertThat(ExpressionPrinter.print(new Expression(op(Operators.STRING_CONCAT, c("a"), c("b")))), is("\"a\" + \"b\""));
         assertThat(ExpressionPrinter.print(new Expression(op(Operators.STRING_CONCAT, p(0), p(0)), List.of(param("x", ValueTypes.CATEGORY_ANY)))),
-                is("x => stringConcat(x, x)"));
+                is("x => x.concat(x)"));
         // ∩
         Expression lists = new Expression(op(Operators.LIST_INTERSECTION, p(0), p(0)), List.of(param("l", ValueTypes.LIST)));
         assertThat(ExpressionPrinter.print(lists), is("l => l.intersection(l)"));
@@ -796,9 +796,9 @@ public class TestExpressionTrees {
 
     @Test
     public void testPrintWithRefTypes() {
-        Expression expression = new Expression(op(Operators.STRING_LENGTH, ref(5)));
-        assertThat(ExpressionPrinter.print(expression), is("stringLength(#5)"));
-        assertThat(ExpressionPrinter.print(expression, id -> null, id -> id == 5 ? ValueTypes.STRING : null), is("#5.length()"));
+        Expression expression = new Expression(op(Operators.LIST_LENGTH, ref(5)));
+        assertThat(ExpressionPrinter.print(expression), is("listLength(#5)"));
+        assertThat(ExpressionPrinter.print(expression, id -> null, id -> id == 5 ? ValueTypes.LIST : null), is("#5.length()"));
     }
 
     @Test

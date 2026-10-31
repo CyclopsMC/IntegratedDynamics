@@ -15,6 +15,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
@@ -73,10 +74,13 @@ public class TestExpressionCompletion {
         List<String> sorted = new ArrayList<>(names);
         sorted.sort(String.CASE_INSENSITIVE_ORDER);
         assertThat(names, is(sorted));
-        // Each name is read back as its operator
+        // Each name is read back as its operator, with only the receiver known
         for (IValueType<?> type : ValueTypes.REGISTRY.getValueTypes()) {
-            OperatorNames.getMethods(type).forEach((name, operator) ->
-                    assertThat(type + "." + name, OperatorNames.resolve(name, type), is(operator)));
+            OperatorNames.getMethods(type).forEach((name, operator) -> {
+                List<IValueType<?>> argumentTypes = new ArrayList<>(Collections.nCopies(operator.getRequiredInputLength(), null));
+                argumentTypes.set(0, type);
+                assertThat(type + "." + name, OperatorNames.resolve(name, argumentTypes), is(operator));
+            });
         }
     }
 
@@ -125,10 +129,11 @@ public class TestExpressionCompletion {
         ExpressionParser.Completion completion = complete("(s: string) => s.contains(s.");
         assertThat(completion.methods(), is(new ExpressionParser.Methods(ValueTypes.STRING, 28, "")));
         assertThat(completion.call(), is(new ExpressionParser.Call(Operators.STRING_CONTAINS, "contains", true, 1)));
-        // Not after the call, for shared names before the first argument, for parameters, unusable operators and after errors
+        // A shared name before the first argument is the first in the order of types
+        assertCall("contains(", Operators.STRING_CONTAINS, "contains", false, 0);
+        // Not after the call, for parameters, unusable operators and after errors
         assertThat(complete("(s: string) => s.length()").call(), nullValue());
         assertThat(complete("(s: string) => s.length() + 1").call(), nullValue());
-        assertThat(complete("contains(").call(), nullValue());
         assertThat(complete("(f: operator) => f(").call(), nullValue());
         assertThat(complete("(s: string) => s.endsWith(").call(), nullValue());
         assertThat(complete("(s: string) => s.contains(nope, ").call(), nullValue());

@@ -877,8 +877,12 @@ public final class ExpressionParser {
         if (open == null || types == null || (open.receiver == null && getParameterIndex(open.name.text()) >= 0)) {
             return null;
         }
-        ExpressionNode first = open.receiver != null ? open.receiver : open.arguments.isEmpty() ? null : open.arguments.get(0);
-        IOperator operator = OperatorNames.resolve(open.name.text(), first == null ? null : types.getType(first));
+        List<IValueType<?>> argumentTypes = new ArrayList<>();
+        if (open.receiver != null) {
+            argumentTypes.add(types.getType(open.receiver));
+        }
+        open.arguments.forEach(argument -> argumentTypes.add(types.getType(argument)));
+        IOperator operator = OperatorNames.resolvePartial(open.name.text(), argumentTypes);
         if (operator == null || !context.operators().test(operator)) {
             return null;
         }
@@ -887,8 +891,7 @@ public final class ExpressionParser {
     }
 
     private ExpressionNode resolveCall(Token name, List<ExpressionNode> arguments) throws ExpressionParseException {
-        IValueType<?> firstArgumentType = arguments.isEmpty() ? null : types.getType(arguments.get(0));
-        IOperator operator = OperatorNames.resolve(name.text(), firstArgumentType);
+        IOperator operator = OperatorNames.resolve(name.text(), arguments.stream().<IValueType<?>>map(types::getType).toList());
         if (operator == null) {
             throw unknownOperator(name);
         }
@@ -990,11 +993,6 @@ public final class ExpressionParser {
     }
 
     private ExpressionParseException unknownOperator(Token name) {
-        List<IOperator> candidates = OperatorNames.getScopedNameOperators(name.text());
-        if (candidates.size() > 1) {
-            return error(name, L10NValues.EXPRESSION_PARSE_AMBIGUOUS_OPERATOR, name.text(),
-                    candidates.stream().map(IOperator::getGlobalInteractName).sorted().collect(Collectors.joining(", ")));
-        }
         return error(name, L10NValues.EXPRESSION_PARSE_UNKNOWN_OPERATOR, name.text());
     }
 

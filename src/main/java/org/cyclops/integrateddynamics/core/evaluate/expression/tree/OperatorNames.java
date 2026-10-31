@@ -3,13 +3,14 @@ package org.cyclops.integrateddynamics.core.evaluate.expression.tree;
 import org.cyclops.integrateddynamics.api.evaluate.expression.tree.ExpressionNode;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeCategory;
 import org.cyclops.integrateddynamics.core.evaluate.operator.GeneralChoiceOperator;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -22,9 +23,10 @@ import java.util.TreeMap;
  *
  * Operators are named by their scoped interact name, such as {@code length},
  * as Integrated Scripting does for the methods of values.
- * Some scoped names are shared by operators with different first input types,
- * so a scoped name is only used when the type of the first argument tells which operator it is.
- * Otherwise, the globally unique interact name is used, such as {@code stringLength}.
+ * Some scoped names are shared by operators with different input types, as + is by addition and concat.
+ * Which one a name or symbol stands for is decided in the same way for both, see {@link #choose}.
+ * A scoped name is only used when it is read back as the same operator,
+ * and otherwise the globally unique interact name is used, such as {@code listLength}.
  * A call with a scoped name is written as a method of its first argument, as in {@code item.size()},
  * as Integrated Scripting does for the methods of values.
  * A few common operators are written as symbols instead, such as {@code a + b} and {@code !a},
@@ -49,6 +51,22 @@ public final class OperatorNames {
             Map.entry(Operators.LOGICAL_AND, "&&"),
             Map.entry(Operators.LOGICAL_OR, "||"));
     private static final Map<IOperator, String> PREFIX_SYMBOLS = Map.of(Operators.LOGICAL_NOT, "!");
+    // + also joins strings
+    private static final List<IOperator> PLUS_OPERATORS = List.of(Operators.ARITHMETIC_ADDITION, Operators.STRING_CONCAT);
+    /**
+     * The types of Integrated Dynamics in the order of the type selector of parameters,
+     * which also decides between the operators of a shared name or symbol, see {@link #choose}.
+     */
+    public static final List<IValueType<?>> TYPE_ORDER = List.of(
+            ValueTypes.CATEGORY_ANY, ValueTypes.BOOLEAN, ValueTypes.INTEGER, ValueTypes.LONG, ValueTypes.DOUBLE,
+            ValueTypes.CATEGORY_NUMBER, ValueTypes.STRING, ValueTypes.LIST, ValueTypes.OPERATOR, ValueTypes.NBT,
+            ValueTypes.OBJECT_ITEMSTACK, ValueTypes.OBJECT_BLOCK, ValueTypes.OBJECT_FLUIDSTACK, ValueTypes.OBJECT_ENTITY,
+            ValueTypes.OBJECT_INGREDIENTS, ValueTypes.OBJECT_RECIPE);
+    // By the first input type in that order, then by the id of that type, as for those of add-ons, then by global name
+    private static final Comparator<IOperator> ORDER = Comparator
+            .comparingInt((IOperator operator) -> getOrder(getFirstInputType(operator)))
+            .thenComparing(operator -> getFirstInputType(operator) == null ? "" : getFirstInputType(operator).getUniqueName().toString())
+            .thenComparing(IOperator::getGlobalInteractName);
     private static final Map<String, IOperator> INFIX_OPERATORS = invert(INFIX_SYMBOLS);
     private static final Map<String, IOperator> PREFIX_OPERATORS = invert(PREFIX_SYMBOLS);
 
@@ -87,15 +105,15 @@ public final class OperatorNames {
 
     /**
      * @param symbol A symbol.
-     * @param leftType The type of the first input.
-     * @param rightType The type of the second input.
-     * @return The operator written with this symbol between inputs of these types, or null.
-     *         + is concat as soon as one of the inputs is a string, as in Integrated Scripting.
+     * @param leftType The type of the first input, or null if unknown.
+     * @param rightType The type of the second input, or null if unknown.
+     * @return The operator written with this symbol between inputs of these types, see {@link #choose}, or null.
+     *         So + is concat if one of the inputs is a string, and addition otherwise.
      */
     @Nullable
-    public static IOperator getInfixOperator(String symbol, IValueType<?> leftType, IValueType<?> rightType) {
-        if (symbol.equals("+") && (leftType == ValueTypes.STRING || rightType == ValueTypes.STRING)) {
-            return Operators.STRING_CONCAT;
+    public static IOperator getInfixOperator(String symbol, @Nullable IValueType<?> leftType, @Nullable IValueType<?> rightType) {
+        if (symbol.equals("+")) {
+            return choose(PLUS_OPERATORS, Arrays.asList(leftType, rightType), true);
         }
         return getInfixOperator(symbol);
     }
@@ -138,20 +156,20 @@ public final class OperatorNames {
 
     /**
      * @param operator An operator.
-     * @param firstArgumentType The type of the first argument, or null if unknown.
-     * @return The name to call the operator with.
+     * @param argumentTypes The types of its arguments, null where unknown, or null for an operator used as a value.
+     * @return The name to call the operator with: its scoped name if that is read back as the operator, and its global name otherwise.
      */
-    public static String getName(IOperator operator, @Nullable IValueType<?> firstArgumentType) {
+    public static String getName(IOperator operator, @Nullable List<IValueType<?>> argumentTypes) {
         if (!isRegistered(operator)) {
             return operator.getSymbol();
         }
         String scopedName = operator.getScopedInteractName();
-        return resolve(scopedName, firstArgumentType) == operator ? scopedName : operator.getGlobalInteractName();
+        return resolve(scopedName, argumentTypes) == operator ? scopedName : operator.getGlobalInteractName();
     }
 
     /**
      * @param operator An operator that is used as a value.
-     * @return Its name, without an argument to tell shared names apart.
+     * @return Its name, without arguments to tell shared names apart.
      */
     public static String getValueName(IOperator operator) {
         String symbol = getSymbol(operator);
@@ -180,7 +198,11 @@ public final class OperatorNames {
      * @return The name of the node's operator, as it is printed when the node is written as a call.
      */
     public static String getCallName(ExpressionNode.Operator node, int[] path, ExpressionTypeChecker.Result types) {
-        return getName(node.operator(), node.children().isEmpty() ? null : getChildType(types, path, 0));
+        List<IValueType<?>> argumentTypes = new ArrayList<>();
+        for (int i = 0; i < node.children().size(); i++) {
+            argumentTypes.add(getChildType(types, path, i));
+        }
+        return getName(node.operator(), argumentTypes);
     }
 
     /**
@@ -208,34 +230,119 @@ public final class OperatorNames {
     }
 
     /**
-     * Find the operator with the given name, as written by {@link #getName(IOperator, IValueType)}.
-     * Global names always match exactly. Scoped names match by the type of the first argument,
-     * or match on their own if only one operator has them.
+     * Find the operator with the given name, as written by {@link #getName}.
+     * Global names always match exactly, and scoped names that several operators share are chosen between by {@link #choose}.
      * @param name A global or scoped name.
-     * @param firstArgumentType The type of the first argument, or null if unknown.
-     * @return The operator, or null if the name is unknown or ambiguous.
+     * @param argumentTypes The types of all arguments, null where unknown, or null for an operator used as a value.
+     * @return The operator, or null if the name is unknown.
      */
     @Nullable
-    public static IOperator resolve(String name, @Nullable IValueType<?> firstArgumentType) {
+    public static IOperator resolve(String name, @Nullable List<IValueType<?>> argumentTypes) {
+        return resolve(name, argumentTypes, true);
+    }
+
+    /**
+     * Find the operator of a call that is still being typed, as {@link #resolve(String, List)} does.
+     * @param name A global or scoped name.
+     * @param argumentTypes The types of the arguments typed so far, null where unknown.
+     * @return The operator, or null if the name is unknown.
+     */
+    @Nullable
+    public static IOperator resolvePartial(String name, List<IValueType<?>> argumentTypes) {
+        return resolve(name, argumentTypes, false);
+    }
+
+    @Nullable
+    private static IOperator resolve(String name, @Nullable List<IValueType<?>> argumentTypes, boolean allArguments) {
         IOperator global = Operators.REGISTRY.getGlobalInteractOperators().get(name);
         if (global != null) {
             return global;
         }
-        List<IOperator> owners = getScopedNameOwners().getOrDefault(name, List.of());
-        if (firstArgumentType != null) {
-            IOperator match = null;
-            int matches = 0;
-            for (IOperator owner : owners) {
-                if (accepts(owner, firstArgumentType)) {
-                    match = owner;
-                    matches++;
+        return choose(getScopedNameOwners().getOrDefault(name, List.of()), argumentTypes, allArguments);
+    }
+
+    /**
+     * Choose the operator that a shared name or symbol stands for, in the same way for all of them:
+     * <ol>
+     *     <li>the operators that take as many inputs as there are arguments,</li>
+     *     <li>of those, the ones whose inputs fit the arguments whose type is known best, where an input of exactly
+     *     the type of an argument fits better than one of a category that holds it, such as Number or Any,</li>
+     *     <li>and of those, the one whose first input comes first in {@link #TYPE_ORDER}, the order of the type selector,
+     *     where the types of add-ons come last.</li>
+     * </ol>
+     * So {@code x + y} is addition, unless one of them is a string, {@code concat(x, "a")} joins strings,
+     * and {@code length(x)} is the length of a string, unless x is a list.
+     * When no operator takes the types, this still gives one, whose type error then tells what does not fit.
+     * @param candidates The operators.
+     * @param argumentTypes The types of the arguments, null or Any where unknown, or null for an operator used as a value.
+     * @param allArguments If these are all arguments, and not only the ones typed so far.
+     * @return The operator, or null if there are no candidates.
+     */
+    @Nullable
+    static IOperator choose(List<IOperator> candidates, @Nullable List<IValueType<?>> argumentTypes, boolean allArguments) {
+        if (candidates.size() <= 1) {
+            return candidates.isEmpty() ? null : candidates.get(0);
+        }
+        List<IOperator> best = candidates;
+        if (argumentTypes != null) {
+            if (allArguments) {
+                List<IOperator> sameCount = candidates.stream()
+                        .filter(operator -> operator.getRequiredInputLength() == argumentTypes.size()).toList();
+                if (!sameCount.isEmpty()) {
+                    best = sameCount;
                 }
             }
-            if (matches == 1) {
-                return match;
+            List<IOperator> fitting = new ArrayList<>();
+            int bestFit = -1;
+            for (IOperator operator : best) {
+                int fit = getFit(operator, argumentTypes);
+                if (fit > bestFit) {
+                    bestFit = fit;
+                    fitting.clear();
+                }
+                if (fit == bestFit) {
+                    fitting.add(operator);
+                }
+            }
+            best = fitting;
+        }
+        return best.stream().min(ORDER).orElse(null);
+    }
+
+    /**
+     * @return How well the inputs of the operator fit the arguments of a known type:
+     *         two for each input of exactly the type of its argument, and one for each input that holds it,
+     *         or whose type it holds, as a category such as Number does.
+     */
+    private static int getFit(IOperator operator, List<IValueType<?>> argumentTypes) {
+        IValueType<?>[] inputTypes = operator.getInputTypes();
+        int fit = 0;
+        for (int i = 0; i < Math.min(inputTypes.length, argumentTypes.size()); i++) {
+            IValueType<?> argumentType = argumentTypes.get(i);
+            if (argumentType == null || argumentType == ValueTypes.CATEGORY_ANY) {
+                continue;
+            }
+            if (inputTypes[i] == argumentType) {
+                fit += 2;
+            } else if (inputTypes[i].correspondsTo(argumentType) || (argumentType.isCategory() && argumentType.correspondsTo(inputTypes[i]))) {
+                fit += 1;
             }
         }
-        return owners.size() == 1 ? owners.get(0) : null;
+        return fit;
+    }
+
+    /**
+     * @param type A value type, or null.
+     * @return Its position in {@link #TYPE_ORDER}, with all other types after it.
+     */
+    private static int getOrder(@Nullable IValueType<?> type) {
+        int index = type == null ? -1 : TYPE_ORDER.indexOf(type);
+        return index >= 0 ? index : TYPE_ORDER.size();
+    }
+
+    @Nullable
+    private static IValueType<?> getFirstInputType(IOperator operator) {
+        return operator.getInputTypes().length == 0 ? null : operator.getInputTypes()[0];
     }
 
     /**
@@ -249,7 +356,10 @@ public final class OperatorNames {
         Operators.REGISTRY.getScopedInteractOperators().forEach((firstInputType, operators) -> {
             if (firstInputType.correspondsTo(receiverType)) {
                 for (IOperator operator : operators.values()) {
-                    methods.put(getName(operator, receiverType), operator);
+                    // Only the receiver is known
+                    List<IValueType<?>> argumentTypes = new ArrayList<>(Collections.nCopies(operator.getRequiredInputLength(), null));
+                    argumentTypes.set(0, receiverType);
+                    methods.put(getName(operator, argumentTypes), operator);
                 }
             }
         });
@@ -280,13 +390,6 @@ public final class OperatorNames {
     public static boolean isRegistered(IOperator operator) {
         // Global names are unique by registration, unique names are not guaranteed to be
         return Operators.REGISTRY.getGlobalInteractOperators().get(operator.getGlobalInteractName()) == operator;
-    }
-
-    // Categories only match exactly, as they can hold several types with their own operators
-    private static boolean accepts(IOperator operator, IValueType<?> firstArgumentType) {
-        IValueType<?> firstInputType = operator.getInputTypes()[0];
-        return firstInputType == firstArgumentType
-                || (!(firstArgumentType instanceof IValueTypeCategory<?>) && firstInputType.correspondsTo(firstArgumentType));
     }
 
     private static Map<String, List<IOperator>> getScopedNameOwners() {

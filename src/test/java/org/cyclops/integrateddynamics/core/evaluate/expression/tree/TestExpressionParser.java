@@ -319,8 +319,8 @@ public class TestExpressionParser {
         assertPrinted("(b: boolean, c: boolean) => nand(!b, c)", "(b: boolean, c: boolean) => (!b).nand(c)");
         assertPrinted("(s: string) => !contains(s, \"a\")", "(s: string) => !s.contains(\"a\")");
         // Calls with a global name, on operators, on empty slots and on numbers, and choices stay calls
-        assertPrinted("x => stringLength(x)", "x => stringLength(x)");
-        assertPrinted("(l: list) => map((stringLength), l)", "(l: list) => map((stringLength), l)");
+        assertPrinted("x => listLength(x)", "x => listLength(x)");
+        assertPrinted("(l: list) => map((listLength), l)", "(l: list) => map((listLength), l)");
         assertPrinted("(f: operator) => isNull(f)", "(f: operator) => isNull(f)");
         assertPrinted("isStackable(?)", "isStackable(?)");
         assertPrinted("max(1, 2)", "max(1, 2)");
@@ -407,6 +407,30 @@ public class TestExpressionParser {
         assertError("(s: string) => s" + ".concat(s)".repeat(400), L10NValues.EXPRESSION_PARSE_TOO_DEEP, 16 + 10 * 127 + 7);
     }
 
+    // --------------- Shared names ---------------
+
+    @Test
+    public void testSharedNames() throws ExpressionParseException {
+        // The types of all arguments decide, also for symbols
+        assertThat(parse("x => concat(x, \"whatever\")").root(), is(op(Operators.STRING_CONCAT, p(0), c(ValueTypeString.ValueString.of("whatever")))));
+        assertThat(parse("x => x + \"a\"").root(), is(op(Operators.STRING_CONCAT, p(0), c(ValueTypeString.ValueString.of("a")))));
+        assertThat(parse("(x: list) => x.length()").root(), is(op(Operators.LIST_LENGTH, p(0))));
+        // Otherwise, the order of types: numbers before strings before lists
+        assertThat(parse("x => x + x").root(), is(op(Operators.ARITHMETIC_ADDITION, p(0), p(0))));
+        assertThat(parse("(x, y) => concat(x, y)").root(), is(op(Operators.STRING_CONCAT, p(0), p(1))));
+        assertThat(parse("x => length(x)").root(), is(op(Operators.STRING_LENGTH, p(0))));
+        assertThat(parse("x => (length) == x").root(), is(op(Operators.RELATIONAL_EQUALS,
+                c(ValueTypeOperator.ValueOperator.of(Operators.STRING_LENGTH)), p(0))));
+        // What is not chosen that way is printed with its global name, which reads back the same
+        assertRoundTrip(new Expression(op(Operators.LIST_LENGTH, p(0)), List.of(param("x", ValueTypes.CATEGORY_ANY))));
+        assertThat(printExact(new Expression(op(Operators.LIST_LENGTH, p(0)), List.of(param("x", ValueTypes.CATEGORY_ANY)))),
+                is("x => listLength(x)"));
+        assertThat(printExact(new Expression(op(Operators.STRING_LENGTH, p(0)), List.of(param("x", ValueTypes.CATEGORY_ANY)))),
+                is("x => x.length()"));
+        assertRoundTrip(new Expression(op(Operators.LIST_CONCAT, p(0), p(1)),
+                List.of(param("x", ValueTypes.CATEGORY_ANY), param("y", ValueTypes.CATEGORY_ANY))));
+    }
+
     // --------------- Errors ---------------
 
     private static void assertErrorRange(String text, int position, int end) {
@@ -437,7 +461,6 @@ public class TestExpressionParser {
     @Test
     public void testErrors() {
         assertError("x => lenght(x)", L10NValues.EXPRESSION_PARSE_UNKNOWN_OPERATOR, 5);
-        assertError("x => length(x)", L10NValues.EXPRESSION_PARSE_AMBIGUOUS_OPERATOR, 5);
         assertError("length(\"a\", \"b\")", L10NValues.EXPRESSION_PARSE_INPUT_COUNT, 0);
         assertError("length(\"abc)", L10NValues.EXPRESSION_PARSE_UNTERMINATED_STRING, 7);
         assertError("1 + 2 3", L10NValues.EXPRESSION_PARSE_TRAILING, 6);
