@@ -1,0 +1,7 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.30.0 or higher.
+
+Fixes:
+* Fix recipe transfer to recipe entries in LP lists (#46), Closes #1771
+* Fix list value type resetting when returning from JEI (#1773), Required for #1772
+* Fix server crash when removing a part while its gui is open (#1770), Closes #1769

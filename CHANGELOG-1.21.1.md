@@ -1,8 +1,17 @@
 # Changelog for Minecraft 1.21.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.21.1-1.38.2"></a>
+## [1.21.1-1.38.2](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.38.1...1.21.1-1.38.2) - 2026-10-31 16:30:26
+
+
+### Fixed
+* Fix recipe transfer to recipe entries in LP lists (#46), Closes #1771
+* Fix list value type resetting when returning from JEI (#1773), Required for #1772
+* Fix server crash when removing a part while its gui is open (#1770), Closes #1769
+
 <a name="1.21.1-1.38.1"></a>
-## [1.21.1-1.38.1](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.38.0...1.21.1-1.38.1) - 2026-10-17 08:41:11
+## [1.21.1-1.38.1](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.38.0...1.21.1-1.38.1) - 2026-10-17 08:41:11 +0200
 
 
 ### Added

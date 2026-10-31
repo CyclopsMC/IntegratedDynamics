@@ -1,8 +1,16 @@
 # Changelog for Minecraft 1.20.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.20.1-1.31.4"></a>
+## [1.20.1-1.31.4](/compare/1.20.1-1.31.3...1.20.1-1.31.4) - 2026-10-31 16:28:37
+
+
+### Fixed
+* Fix recipe transfer to recipe entries in LP lists (#47), Closes #1771
+* Fix list value type resetting when returning from JEI (#1773), Required for #1772
+
 <a name="1.20.1-1.31.3"></a>
-## [1.20.1-1.31.3](/compare/1.20.1-1.31.2...1.20.1-1.31.3) - 2026-09-27 07:42:34
+## [1.20.1-1.31.3](/compare/1.20.1-1.31.2...1.20.1-1.31.3) - 2026-09-27 07:42:34 +0200
 
 
 ### Changed

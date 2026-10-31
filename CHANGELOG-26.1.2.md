@@ -1,8 +1,17 @@
 # Changelog for Minecraft 26.1.2
 All notable changes to this project will be documented in this file.
 
+<a name="26.1.2-1.36.3"></a>
+## [26.1.2-1.36.3](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.36.2...26.1.2-1.36.3) - 2026-10-31 16:31:28
+
+
+### Fixed
+* Fix recipe transfer to recipe entries in LP lists (#48), Closes #1771
+* Fix list value type resetting when returning from JEI (#1773), Required for #1772
+* Fix server crash when removing a part while its gui is open (#1770), Closes #1769
+
 <a name="26.1.2-1.36.2"></a>
-## [26.1.2-1.36.2](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.36.1...26.1.2-1.36.2) - 2026-10-17 08:44:10
+## [26.1.2-1.36.2](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.36.1...26.1.2-1.36.2) - 2026-10-17 08:44:10 +0200
 
 
 ### Added
