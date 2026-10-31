@@ -37,7 +37,6 @@ import java.util.List;
 import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.APPLY_DELAY_MS;
 import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.CHIP_HEIGHT;
 import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.COLOR_EMPTY;
-import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.COLOR_FOCUS;
 import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.COLOR_STRIP;
 import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.COLOR_TEXT_ERROR;
 import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.COLOR_TEXT_LIGHT;
@@ -46,7 +45,7 @@ import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElem
 import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.PANEL_WIDTH;
 import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.PANEL_X;
 import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.PARAMS_Y;
-import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.drawOutline;
+import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.renderTextBoxBorder;
 import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.renderFooter;
 import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.renderStatus;
 import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.renderTextError;
@@ -373,9 +372,7 @@ public class ExpressionStartPanel {
         int x = guiLeft + PANEL_X;
         int y = guiTop + TEXT_BOX_Y;
         guiGraphics.fill(x, y, x + PANEL_WIDTH, guiTop + CONTENT_BOTTOM, COLOR_STRIP);
-        if (field.isFocused()) {
-            drawOutline(guiGraphics, x, y, PANEL_WIDTH, guiTop + FOOTER_Y - y, COLOR_FOCUS);
-        }
+        renderTextBoxBorder(guiGraphics, x, y, guiTop + FOOTER_Y, field.isFocused());
         String text = field.getValue();
         if (text.isEmpty() && !field.isFocused()) {
             guiGraphics.drawWordWrap(font, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_PLACEHOLDER),

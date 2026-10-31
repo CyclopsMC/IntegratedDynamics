@@ -914,6 +914,19 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         return (r * 299 + g * 587 + b * 114) / 1000 > 128 ? COLOR_TEXT : COLOR_TEXT_LIGHT;
     }
 
+    /**
+     * Draw the outline of the text box while it is focused, and otherwise the line between it and the footer,
+     * which is where the bottom of the outline goes.
+     * @param bottom Where the footer starts.
+     */
+    static void renderTextBoxBorder(GuiGraphics guiGraphics, int x, int y, int bottom, boolean focused) {
+        if (focused) {
+            drawOutline(guiGraphics, x, y, PANEL_WIDTH, bottom - y, COLOR_FOCUS);
+        } else {
+            guiGraphics.fill(x, bottom - 1, x + PANEL_WIDTH, bottom, COLOR_STRIP_LINE);
+        }
+    }
+
     protected static void drawOutline(GuiGraphics guiGraphics, int x, int y, int width, int height, int color) {
         guiGraphics.fill(x, y, x + width, y + 1, color);
         guiGraphics.fill(x, y + height - 1, x + width, y + height, color);
@@ -1207,9 +1220,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         int x = guiLeft + PANEL_X;
         int y = guiTop + textBoxY;
         guiGraphics.fill(x, y, x + PANEL_WIDTH, guiTop + CONTENT_BOTTOM, COLOR_STRIP);
-        if (field.isFocused()) {
-            drawOutline(guiGraphics, x, y, PANEL_WIDTH, guiTop + FOOTER_Y - y, COLOR_FOCUS);
-        }
+        renderTextBoxBorder(guiGraphics, x, y, guiTop + FOOTER_Y, field.isFocused());
 
         // Errors are only marked without a draft, as the footer shows those of the draft
         boolean draft = field.isDraft();
@@ -1308,7 +1319,6 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     static void renderFooter(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font, Component text, @Nullable Component tooltip,
                              List<Region> regions) {
         guiGraphics.fill(guiLeft + PANEL_X, guiTop + FOOTER_Y, guiLeft + PANEL_X + PANEL_WIDTH, guiTop + CONTENT_BOTTOM, COLOR_STRIP);
-        guiGraphics.fill(guiLeft + PANEL_X + 2, guiTop + FOOTER_Y, guiLeft + PANEL_X + PANEL_WIDTH - 2, guiTop + FOOTER_Y + 1, COLOR_STRIP_LINE);
         int width = PANEL_WIDTH - 4;
         List<FormattedText> lines = font.getSplitter().splitLines(text, width, Style.EMPTY);
         boolean truncated = lines.size() > FOOTER_LINES;
