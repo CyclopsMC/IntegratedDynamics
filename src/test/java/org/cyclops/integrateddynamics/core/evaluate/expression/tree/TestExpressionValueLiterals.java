@@ -200,7 +200,7 @@ public class TestExpressionValueLiterals {
         assertThat(assertRoundTrip(ValueTypeOperator.ValueOperator.of(Operators.STRING_LENGTH)), is("(length)"));
         // Operators that are not registered, such as curried ones, are written with their type
         assertThat(assertRoundTrip(ValueTypeOperator.ValueOperator.of(new CurriedOperator(Operators.ARITHMETIC_ADDITION,
-                new Variable<>(i(1))))), startsWith("@operator{"));
+                new Variable<>(i(1))))), startsWith("@Operator{"));
     }
 
     @Test
@@ -223,27 +223,27 @@ public class TestExpressionValueLiterals {
         CompoundTag nested = new CompoundTag();
         nested.putBoolean("flag", true);
         compound.put("nested", nested);
-        assertThat(assertRoundTrip(ValueTypeNbt.ValueNbt.of(compound)), startsWith("@nbt{"));
+        assertThat(assertRoundTrip(ValueTypeNbt.ValueNbt.of(compound)), startsWith("@NBT{"));
 
         // Written as the tag itself, as in commands
         CompoundTag simple = new CompoundTag();
         simple.putByte("a", (byte) 1);
-        assertThat(assertRoundTrip(ValueTypeNbt.ValueNbt.of(simple)), is("@nbt{a:1b}"));
-        assertThat(assertRoundTrip(ValueTypeNbt.ValueNbt.of(new CompoundTag())), is("@nbt{}"));
+        assertThat(assertRoundTrip(ValueTypeNbt.ValueNbt.of(simple)), is("@NBT{a:1b}"));
+        assertThat(assertRoundTrip(ValueTypeNbt.ValueNbt.of(new CompoundTag())), is("@NBT{}"));
         // Tags other than compounds, with a space where the type name would continue
-        assertThat(assertRoundTrip(ValueTypeNbt.ValueNbt.of(IntTag.valueOf(5))), is("@nbt 5"));
-        assertThat(assertRoundTrip(ValueTypeNbt.ValueNbt.of(StringTag.valueOf("text"))), is("@nbt\"text\""));
-        assertThat(assertRoundTrip(ValueTypeNbt.ValueNbt.of(list)), is("@nbt[\"x\",\"y\"]"));
-        assertThat(assertRoundTrip(ValueTypeNbt.ValueNbt.of(LongTag.valueOf(-3))), is("@nbt -3L"));
+        assertThat(assertRoundTrip(ValueTypeNbt.ValueNbt.of(IntTag.valueOf(5))), is("@NBT 5"));
+        assertThat(assertRoundTrip(ValueTypeNbt.ValueNbt.of(StringTag.valueOf("text"))), is("@NBT\"text\""));
+        assertThat(assertRoundTrip(ValueTypeNbt.ValueNbt.of(list)), is("@NBT[\"x\",\"y\"]"));
+        assertThat(assertRoundTrip(ValueTypeNbt.ValueNbt.of(LongTag.valueOf(-3))), is("@NBT -3L"));
         // No NBT at all
-        assertThat(assertRoundTrip(ValueTypeNbt.ValueNbt.of()), is("@nbt()"));
+        assertThat(assertRoundTrip(ValueTypeNbt.ValueNbt.of()), is("@NBT()"));
     }
 
     @Test
     public void testRoundTripEntities() {
         UUID uuid = UUID.fromString("0b6c3b6e-8a31-4d1c-9d5e-5d8f2a7c1e33");
-        assertThat(assertRoundTrip(ValueObjectTypeEntity.ValueEntity.of(uuid)), is("@entity\"0b6c3b6e-8a31-4d1c-9d5e-5d8f2a7c1e33\""));
-        assertThat(assertRoundTrip(ValueObjectTypeEntity.ValueEntity.of((UUID) null)), is("@entity\"\""));
+        assertThat(assertRoundTrip(ValueObjectTypeEntity.ValueEntity.of(uuid)), is("@Entity\"0b6c3b6e-8a31-4d1c-9d5e-5d8f2a7c1e33\""));
+        assertThat(assertRoundTrip(ValueObjectTypeEntity.ValueEntity.of((UUID) null)), is("@Entity\"\""));
     }
 
     @Test
@@ -257,7 +257,7 @@ public class TestExpressionValueLiterals {
                 ValueTypeOperator.ValueOperator.of(Operators.STRING_LENGTH))), is("[(+), (length)]"));
         CompoundTag tag = new CompoundTag();
         tag.putInt("a", 1);
-        assertThat(assertRoundTrip(list(ValueTypes.NBT, ValueTypeNbt.ValueNbt.of(tag), ValueTypeNbt.ValueNbt.of())), is("[@nbt{a:1}, @nbt()]"));
+        assertThat(assertRoundTrip(list(ValueTypes.NBT, ValueTypeNbt.ValueNbt.of(tag), ValueTypeNbt.ValueNbt.of())), is("[@NBT{a:1}, @NBT()]"));
         // Nested lists, also with different element types
         assertThat(assertRoundTrip(list(ValueTypes.LIST, list(ValueTypes.INTEGER, i(1), i(2)), list(ValueTypes.STRING, s("a")))),
                 is("[[1, 2], [\"a\"]]"));
@@ -266,11 +266,11 @@ public class TestExpressionValueLiterals {
         assertThat(assertRoundTrip(list(ValueTypes.CATEGORY_ANY, s("a"), i(1), ValueTypeLong.ValueLong.of(2))), is("[\"a\", 1, 2L]"));
         assertThat(assertRoundTrip(list(ValueTypes.CATEGORY_ANY)), is("[]"));
         // Lists whose type the values do not give are written with their type
-        assertThat(assertRoundTrip(list(ValueTypes.STRING)), startsWith("@list{"));
-        assertThat(assertRoundTrip(list(ValueTypes.CATEGORY_ANY, s("a"), s("b"))), startsWith("@list{"));
-        assertThat(assertRoundTrip(list(ValueTypes.CATEGORY_NUMBER, i(1), i(2))), startsWith("@list{"));
+        assertThat(assertRoundTrip(list(ValueTypes.STRING)), startsWith("@List{"));
+        assertThat(assertRoundTrip(list(ValueTypes.CATEGORY_ANY, s("a"), s("b"))), startsWith("@List{"));
+        assertThat(assertRoundTrip(list(ValueTypes.CATEGORY_NUMBER, i(1), i(2))), startsWith("@List{"));
         // Such a list within a list literal
-        assertThat(assertRoundTrip(list(ValueTypes.LIST, list(ValueTypes.STRING), list(ValueTypes.STRING, s("a")))), startsWith("[@list{"));
+        assertThat(assertRoundTrip(list(ValueTypes.LIST, list(ValueTypes.STRING), list(ValueTypes.STRING, s("a")))), startsWith("[@List{"));
     }
 
     // --------------- Reading ---------------
@@ -305,21 +305,21 @@ public class TestExpressionValueLiterals {
     public void testReadNbt() throws ExpressionParseException {
         CompoundTag tag = new CompoundTag();
         tag.putByte("a", (byte) 1);
-        assertSameValue("compound", read("@nbt {a: 1b}"), ValueTypeNbt.ValueNbt.of(tag));
-        assertSameValue("none", read("@nbt ()"), ValueTypeNbt.ValueNbt.of());
-        assertSameValue("empty", read("@nbt{}"), ValueTypeNbt.ValueNbt.of(new CompoundTag()));
-        assertSameValue("string", read("@nbt \"text\""), ValueTypeNbt.ValueNbt.of(StringTag.valueOf("text")));
+        assertSameValue("compound", read("@NBT {a: 1b}"), ValueTypeNbt.ValueNbt.of(tag));
+        assertSameValue("none", read("@NBT ()"), ValueTypeNbt.ValueNbt.of());
+        assertSameValue("empty", read("@NBT{}"), ValueTypeNbt.ValueNbt.of(new CompoundTag()));
+        assertSameValue("string", read("@NBT \"text\""), ValueTypeNbt.ValueNbt.of(StringTag.valueOf("text")));
     }
 
     @Test
     public void testReadTypedValueErrors() {
         // Values that would be read as something else than what was typed
-        assertError("@list [\"a\", \"b\"] == ?", L10NValues.EXPRESSION_PARSE_VALUE_CHANGED, 6);
-        assertError("@list {valueType: \"integrateddynamics:string\", values: [\"a\"]} == ?", L10NValues.EXPRESSION_PARSE_VALUE_CHANGED, 6);
-        assertError("@entity \"not-a-uuid\" == ?", L10NValues.EXPRESSION_PARSE_VALUE_CHANGED, 8);
+        assertError("@List [\"a\", \"b\"] == ?", L10NValues.EXPRESSION_PARSE_VALUE_CHANGED, 6);
+        assertError("@List {valueType: \"integrateddynamics:string\", values: [\"a\"]} == ?", L10NValues.EXPRESSION_PARSE_VALUE_CHANGED, 6);
+        assertError("@Entity \"not-a-uuid\" == ?", L10NValues.EXPRESSION_PARSE_VALUE_CHANGED, 8);
         // Values that cannot be read at all
-        assertError("@operator {} == ?", L10NValues.EXPRESSION_PARSE_BAD_VALUE, 10);
-        assertError("@nbt {a: } == ?", L10NValues.EXPRESSION_PARSE_BAD_VALUE, 9);
+        assertError("@Operator {} == ?", L10NValues.EXPRESSION_PARSE_BAD_VALUE, 10);
+        assertError("@NBT {a: } == ?", L10NValues.EXPRESSION_PARSE_BAD_VALUE, 9);
     }
 
     @Test

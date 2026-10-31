@@ -95,7 +95,7 @@ public class TestExpressionAddonTypes {
         assertError("(w: widget) => w == w", L10NValues.EXPRESSION_PARSE_UNKNOWN_TYPE, 4);
         assertError("(w: nothing:widget) => w == w", L10NValues.EXPRESSION_PARSE_UNKNOWN_TYPE, 4);
         // The types of Integrated Dynamics go first
-        assertThat(parse("(s: string) => s == s").parameters(), is(List.of(new ExpressionParameter("s", ValueTypes.STRING))));
+        assertThat(parse("(s: String) => s == s").parameters(), is(List.of(new ExpressionParameter("s", ValueTypes.STRING))));
     }
 
     @Test

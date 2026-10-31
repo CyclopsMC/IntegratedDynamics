@@ -36,7 +36,7 @@ public class TestExpressionTextNavigation {
         // Numbers with a point, labels, typed values and strings
         assertThat(wordAt("x * 1.5 + 2", 5), is("1.5"));
         assertThat(wordAt("#my_label + 1", 4), is("my_label"));
-        assertThat(wordAt("@item{id: \"minecraft:diamond\"}", 3), is("item"));
+        assertThat(wordAt("@Item{id: \"minecraft:diamond\"}", 3), is("Item"));
         assertThat(wordAt("\"hello world\" == ?", 3), is("hello"));
         // Past the end, and no text
         assertThat(wordAt(text, 100), is("16"));
@@ -82,7 +82,7 @@ public class TestExpressionTextNavigation {
         assertThat(ExpressionTextNavigation.getBracketPartners("('it\\'s )')")[0], is(10));
         assertThat(ExpressionTextNavigation.getBracketPartners("(\"it's\")")[0], is(7));
         // Braces of typed values
-        assertThat(ExpressionTextNavigation.getBracketPartners("@nbt{a: [1]}")[4], is(11));
+        assertThat(ExpressionTextNavigation.getBracketPartners("@NBT{a: [1]}")[4], is(11));
         // Brackets that do not match
         assertThat(ExpressionTextNavigation.getBracketPartners("(]")[0], is(-1));
         assertThat(ExpressionTextNavigation.getBracketPartners("(a")[0], is(-1));

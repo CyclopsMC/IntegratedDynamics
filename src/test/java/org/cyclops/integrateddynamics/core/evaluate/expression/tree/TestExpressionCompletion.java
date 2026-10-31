@@ -90,24 +90,24 @@ public class TestExpressionCompletion {
 
     @Test
     public void testCompleteMethods() {
-        assertMethods("(s: string) => s.", ValueTypes.STRING, 17, "");
-        assertMethods("(s: string) => s.len", ValueTypes.STRING, 17, "len");
-        assertMethods("(s: string) => s.len|gth() + 1", ValueTypes.STRING, 17, "len");
+        assertMethods("(s: String) => s.", ValueTypes.STRING, 17, "");
+        assertMethods("(s: String) => s.len", ValueTypes.STRING, 17, "len");
+        assertMethods("(s: String) => s.len|gth() + 1", ValueTypes.STRING, 17, "len");
         // After calls, literals, references and brackets
-        assertMethods("(item: item) => item.size().", ValueTypes.INTEGER, 28, "");
-        assertMethods("(s: string) => s.concat(s).l", ValueTypes.STRING, 27, "l");
+        assertMethods("(item: Item) => item.size().", ValueTypes.INTEGER, 28, "");
+        assertMethods("(s: String) => s.concat(s).l", ValueTypes.STRING, 27, "l");
         assertMethods("\"abc\".", ValueTypes.STRING, 6, "");
         assertMethods("#5.", ValueTypes.STRING, 3, "");
         assertMethods("(1 + 2).", ValueTypes.INTEGER, 8, "");
         assertMethods("[1, 2].", ValueTypes.LIST, 7, "");
         // Of the value right before the point
-        assertMethods("(b: boolean, s: string) => b ? 1 : 2 > s.", ValueTypes.STRING, 41, "");
+        assertMethods("(b: Boolean, s: String) => b ? 1 : 2 > s.", ValueTypes.STRING, 41, "");
         // Not for the point of a decimal number, in strings, after a space, or after errors
         assertThat(complete("2 > 1.").methods(), nullValue());
         assertThat(complete("\"a.").methods(), nullValue());
-        assertThat(complete("(s: string) => s.len ").methods(), nullValue());
-        assertThat(complete("(s: string) => nope.").methods(), nullValue());
-        assertThat(complete("(s: string) => s").methods(), nullValue());
+        assertThat(complete("(s: String) => s.len ").methods(), nullValue());
+        assertThat(complete("(s: String) => nope.").methods(), nullValue());
+        assertThat(complete("(s: String) => s").methods(), nullValue());
     }
 
     private static void assertCall(String text, IOperator operator, String name, boolean method, int input) {
@@ -116,28 +116,28 @@ public class TestExpressionCompletion {
 
     @Test
     public void testCompleteCalls() {
-        assertCall("(s: string) => s.contains(", Operators.STRING_CONTAINS, "contains", true, 1);
-        assertCall("(s: string) => contains(s, ", Operators.STRING_CONTAINS, "contains", false, 1);
-        assertCall("(s: string) => contains(s", Operators.STRING_CONTAINS, "contains", false, 0);
+        assertCall("(s: String) => s.contains(", Operators.STRING_CONTAINS, "contains", true, 1);
+        assertCall("(s: String) => contains(s, ", Operators.STRING_CONTAINS, "contains", false, 1);
+        assertCall("(s: String) => contains(s", Operators.STRING_CONTAINS, "contains", false, 0);
         assertCall("stringContains(", Operators.STRING_CONTAINS, "stringContains", false, 0);
-        assertCall("(s: string) => s.contains(\"a\"|) && true", Operators.STRING_CONTAINS, "contains", true, 1);
+        assertCall("(s: String) => s.contains(\"a\"|) && true", Operators.STRING_CONTAINS, "contains", true, 1);
         // The innermost call
-        assertCall("(s: string) => s.contains(s.concat(", Operators.STRING_CONCAT, "concat", true, 1);
-        assertCall("(s: string) => s.contains(s.concat(s), ", Operators.STRING_CONTAINS, "contains", true, 2);
-        assertCall("(s: string) => s.contains(1 + 2 > 3 ? \"a\" : ", Operators.STRING_CONTAINS, "contains", true, 1);
+        assertCall("(s: String) => s.contains(s.concat(", Operators.STRING_CONCAT, "concat", true, 1);
+        assertCall("(s: String) => s.contains(s.concat(s), ", Operators.STRING_CONTAINS, "contains", true, 2);
+        assertCall("(s: String) => s.contains(1 + 2 > 3 ? \"a\" : ", Operators.STRING_CONTAINS, "contains", true, 1);
         // Also while typing a method
-        ExpressionParser.Completion completion = complete("(s: string) => s.contains(s.");
+        ExpressionParser.Completion completion = complete("(s: String) => s.contains(s.");
         assertThat(completion.methods(), is(new ExpressionParser.Methods(ValueTypes.STRING, 28, "")));
         assertThat(completion.call(), is(new ExpressionParser.Call(Operators.STRING_CONTAINS, "contains", true, 1)));
         // A shared name before the first argument is the first in the order of types
         assertCall("contains(", Operators.STRING_CONTAINS, "contains", false, 0);
         // Not after the call, for parameters, unusable operators and after errors
-        assertThat(complete("(s: string) => s.length()").call(), nullValue());
-        assertThat(complete("(s: string) => s.length() + 1").call(), nullValue());
-        assertThat(complete("(f: operator) => f(").call(), nullValue());
-        assertThat(complete("(s: string) => s.endsWith(").call(), nullValue());
-        assertThat(complete("(s: string) => s.contains(nope, ").call(), nullValue());
-        assertThat(complete("(s: string) => s.contains(\"a").call(), nullValue());
+        assertThat(complete("(s: String) => s.length()").call(), nullValue());
+        assertThat(complete("(s: String) => s.length() + 1").call(), nullValue());
+        assertThat(complete("(f: Operator) => f(").call(), nullValue());
+        assertThat(complete("(s: String) => s.endsWith(").call(), nullValue());
+        assertThat(complete("(s: String) => s.contains(nope, ").call(), nullValue());
+        assertThat(complete("(s: String) => s.contains(\"a").call(), nullValue());
         assertThat(ExpressionParser.complete("abc", 5, context()), is(ExpressionParser.Completion.NONE));
     }
 
@@ -152,7 +152,7 @@ public class TestExpressionCompletion {
         assertTypes("(x:", 3, "", true);
         assertTypes("(x: int", 4, "int", true);
         assertTypes("(x: in|teger) => x", 4, "in", true);
-        assertTypes("(x: integer, y, z: str", 19, "str", true);
+        assertTypes("(x: Integer, y, z: str", 19, "str", true);
         assertTypes("(x: testaddon:", 4, "testaddon:", true);
         assertTypes("(x: testaddon:chem", 4, "testaddon:chem", true);
         // Of values
@@ -161,8 +161,8 @@ public class TestExpressionCompletion {
         assertTypes("@testaddon:chem", 1, "testaddon:chem", false);
         // Not after a type, a space or the parameters, for names, in other brackets, or in strings
         assertThat(complete("(x: int ").types(), nullValue());
-        assertThat(complete("(x: integer)").types(), nullValue());
-        assertThat(complete("(x: integer) => x").types(), nullValue());
+        assertThat(complete("(x: Integer)").types(), nullValue());
+        assertThat(complete("(x: Integer) => x").types(), nullValue());
         assertThat(complete("(x, y").types(), nullValue());
         assertThat(complete("(x int").types(), nullValue());
         assertThat(complete("(b ? 1 : 2").types(), nullValue());

@@ -700,7 +700,7 @@ public class GameTestsExpressions {
             ContainerLogicProgrammer container = new ContainerLogicProgrammer(0, player.getInventory());
 
             // Typed in the empty panel, which makes the element of its root operator active
-            Expression expression = ExpressionParser.parse("(x: integer) => x * 2", context);
+            Expression expression = ExpressionParser.parse("(x: Integer) => x * 2", context);
             container.applyExpressionAction(ExpressionEditor.actionSet(values, expression, null));
             helper.assertTrue(container.getActiveElement() instanceof OperatorLPElement element
                     && element.getOperator() == Operators.ARITHMETIC_MULTIPLICATION
@@ -754,7 +754,7 @@ public class GameTestsExpressions {
         ExpressionParser.Context context = ExpressionEditor.getParserContext(values, id -> null, label -> IntLists.EMPTY_LIST);
         IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
         // Printed as x + 3, but kept as typed
-        String text = "(x: integer) => x.add(3)";
+        String text = "(x: Integer) => x.add(3)";
         ServerPlayer player = helper.makeMockServerPlayerInLevel();
         try {
             ContainerLogicProgrammer container = new ContainerLogicProgrammer(0, player.getInventory());

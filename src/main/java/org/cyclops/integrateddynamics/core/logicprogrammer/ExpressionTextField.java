@@ -546,7 +546,10 @@ public class ExpressionTextField {
             completionsStart = methods.start();
         } else if (completion.types() != null) {
             for (IValueType<?> type : ExpressionParser.getTypes(completion.types(), parserContext.get())) {
-                items.add(new Completion(ExpressionParser.getTypeName(type), getTypeName(type), null));
+                // The name the game shows, if it differs, such as for types of add-ons or in other languages
+                String name = ExpressionParser.getTypeName(type);
+                Component shown = getTypeName(type);
+                items.add(new Completion(name, shown.getString().equalsIgnoreCase(name) ? Component.empty() : shown, null));
             }
             completionsStart = completion.types().start();
         }

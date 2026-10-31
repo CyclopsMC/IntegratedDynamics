@@ -168,7 +168,7 @@ public class TestExpressionEditor {
         assertThat(ExpressionEditor.readSetAction(ValueDeseralizationContextMocked.get(), ExpressionEditor.actionAddParam()), nullValue());
 
         // With the text it was typed as, which is left out if it is too long to be read
-        String text = "(s: string) => length(s)";
+        String text = "(s: String) => length(s)";
         assertThat(ExpressionEditor.readSetActionText(ExpressionEditor.actionSet(ValueDeseralizationContextMocked.get(), expression, text)), is(text));
         String tooLong = "x".repeat(ExpressionParser.MAX_LENGTH + 1);
         assertThat(ExpressionEditor.readSetActionText(ExpressionEditor.actionSet(ValueDeseralizationContextMocked.get(), expression, tooLong)), nullValue());
@@ -181,15 +181,15 @@ public class TestExpressionEditor {
         Expression expression = new Expression(new ExpressionNode.Operator(Operators.ARITHMETIC_ADDITION,
                 List.of(new ExpressionNode.Param(0), ExpressionNode.EMPTY)), List.of(new ExpressionParameter("x", ValueTypes.INTEGER)));
         ExpressionEditor editor = new ExpressionEditor(Operators.ARITHMETIC_ADDITION);
-        editor.setExpression(expression, "(x: integer) => x.add(?)");
-        assertThat(editor.getText(), is("(x: integer) => x.add(?)"));
+        editor.setExpression(expression, "(x: Integer) => x.add(?)");
+        assertThat(editor.getText(), is("(x: Integer) => x.add(?)"));
 
         // Edits that leave the expression as it is keep the text
         assertThat(apply(editor, ExpressionEditor.actionNavigate(new int[0])), is(ExpressionEditor.ActionResult.NONE));
         editor.setChild(0, new ExpressionNode.Param(0));
         editor.renameParameter(0, "x");
         editor.setParameterType(0, ValueTypes.INTEGER);
-        assertThat(editor.getText(), is("(x: integer) => x.add(?)"));
+        assertThat(editor.getText(), is("(x: Integer) => x.add(?)"));
 
         // Edits that change it print it from then on
         assertThat(apply(editor, ExpressionEditor.actionConst(ValueDeseralizationContextMocked.get(), new int[0], 1,
@@ -292,7 +292,7 @@ public class TestExpressionEditor {
         // After the other parameters, with a name they do not have
         assertThat(addParameterToText("x => x + 1"), is("(x, y) => x + 1"));
         assertThat(addParameterToText("  x -> x + 1"), is("  (x, y) -> x + 1"));
-        assertThat(addParameterToText("(x: integer, y) => x + y"), is("(x: integer, y, z) => x + y"));
+        assertThat(addParameterToText("(x: Integer, y) => x + y"), is("(x: Integer, y, z) => x + y"));
         assertThat(addParameterToText("(a: integratedmekanism:chemicalstack) => a"), is("(a: integratedmekanism:chemicalstack, x) => a"));
         // Also when the rest is not complete
         assertThat(addParameterToText("(x) => \"open"), is("(x, y) => \"open"));

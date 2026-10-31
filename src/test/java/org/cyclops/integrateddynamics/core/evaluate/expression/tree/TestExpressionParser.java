@@ -224,7 +224,7 @@ public class TestExpressionParser {
     public void testParameters() throws ExpressionParseException {
         assertThat(parse("x => x + 1").parameters(), is(List.of(param("x", ValueTypes.CATEGORY_ANY))));
         assertThat(parse("(x) => x + 1").parameters(), is(List.of(param("x", ValueTypes.CATEGORY_ANY))));
-        assertThat(parse("(item: item, n: number) => n + 1").parameters(),
+        assertThat(parse("(item: Item, n: Number) => n + 1").parameters(),
                 is(List.of(param("item", ValueTypes.OBJECT_ITEMSTACK), param("n", ValueTypes.CATEGORY_NUMBER))));
         // A parenthesized parameter is not an operator value
         assertThat(parse("(length) => (length) + 1").root(), is(op(Operators.ARITHMETIC_ADDITION, p(0), i(1))));
@@ -232,8 +232,8 @@ public class TestExpressionParser {
 
     @Test
     public void testNamesTellApartByType() throws ExpressionParseException {
-        assertThat(parse("(s: string) => length(s)").root(), is(op(Operators.STRING_LENGTH, p(0))));
-        assertThat(parse("(l: list) => length(l)").root(), is(op(Operators.LIST_LENGTH, p(0))));
+        assertThat(parse("(s: String) => length(s)").root(), is(op(Operators.STRING_LENGTH, p(0))));
+        assertThat(parse("(l: List) => length(l)").root(), is(op(Operators.LIST_LENGTH, p(0))));
         assertThat(parse("x => listLength(x)").root(), is(op(Operators.LIST_LENGTH, p(0))));
         assertThat(parse("length(\"abc\")").root(), is(op(Operators.STRING_LENGTH, c(ValueTypeString.ValueString.of("abc")))));
     }
@@ -249,7 +249,7 @@ public class TestExpressionParser {
                 c(ValueTypeBoolean.ValueBoolean.of(true)), c(ValueTypeBoolean.ValueBoolean.of(false)))));
         assertThat(parse("\"\\u0041\\\\\" == ?").root(), is(op(Operators.RELATIONAL_EQUALS,
                 c(ValueTypeString.ValueString.of("A\\")), ExpressionNode.EMPTY)));
-        Expression nbt = parse("@nbt {a: 1b} == ?");
+        Expression nbt = parse("@NBT {a: 1b} == ?");
         assertTrue(((ExpressionNode.Operator) nbt.root()).children().get(0) instanceof ExpressionNode.Const constant
                 && constant.value() instanceof ValueTypeNbt.ValueNbt);
     }
@@ -258,47 +258,57 @@ public class TestExpressionParser {
 
     @Test
     public void testArrows() throws ExpressionParseException {
-        Expression expression = parse("(x: integer) => x * 2");
-        assertThat(parse("(x: integer) -> x * 2"), is(expression));
+        Expression expression = parse("(x: Integer) => x * 2");
+        assertThat(parse("(x: Integer) -> x * 2"), is(expression));
         assertThat(parse("x -> x + 1"), is(parse("x => x + 1")));
-        assertThat(printExact(expression), is("(x: integer) => x * 2"));
+        assertThat(printExact(expression), is("(x: Integer) => x * 2"));
     }
 
     @Test
     public void testMethodCalls() throws ExpressionParseException {
-        assertThat(parse("(s: string) => s.length()").root(), is(op(Operators.STRING_LENGTH, p(0))));
+        assertThat(parse("(s: String) => s.length()").root(), is(op(Operators.STRING_LENGTH, p(0))));
         // The receiver tells shared names apart
-        assertThat(parse("(l: list) => l.length()").root(), is(op(Operators.LIST_LENGTH, p(0))));
+        assertThat(parse("(l: List) => l.length()").root(), is(op(Operators.LIST_LENGTH, p(0))));
         // Arguments follow the receiver, calls chain, and they bind tighter than ! and infix operators
-        assertThat(parse("(s: string, t: string) => s.concat(t).length() > 2"),
-                is(parse("(s: string, t: string) => length(concat(s, t)) > 2")));
-        assertThat(parse("(s: string) => !s.contains(\"a\")"), is(parse("(s: string) => !contains(s, \"a\")")));
+        assertThat(parse("(s: String, t: String) => s.concat(t).length() > 2"),
+                is(parse("(s: String, t: String) => length(concat(s, t)) > 2")));
+        assertThat(parse("(s: String) => !s.contains(\"a\")"), is(parse("(s: String) => !contains(s, \"a\")")));
         // On literals, references, parenthesized values and global names
         assertThat(parse("\"abc\".length() + #5.length() + (#5).stringLength()"),
                 is(parse("length(\"abc\") + length(#5) + length(#5)")));
         // Calls with a scoped name are printed as methods
-        assertThat(printExact(parse("(s: string) => length(s)")), is("(s: string) => s.length()"));
+        assertThat(printExact(parse("(s: String) => length(s)")), is("(s: String) => s.length()"));
         // Examples of the Integrated Scripting book
-        assertThat(parse("(item: item) => item.isStackable() && item.size() >= 16"),
-                is(parse("(item: item) => isStackable(item) && size(item) >= 16")));
-        assertThat(parse("(item: item, block: block) => item.strength(block) > 10"),
-                is(parse("(item: item, block: block) => strength(item, block) > 10")));
+        assertThat(parse("(item: Item) => item.isStackable() && item.size() >= 16"),
+                is(parse("(item: Item) => isStackable(item) && size(item) >= 16")));
+        assertThat(parse("(item: Item, block: Block) => item.strength(block) > 10"),
+                is(parse("(item: Item, block: Block) => strength(item, block) > 10")));
     }
 
     @Test
     public void testTypeNames() throws ExpressionParseException {
-        // Items and fluids are called as in the game, and their ids are read too
-        assertThat(ExpressionParser.getTypeName(ValueTypes.OBJECT_ITEMSTACK), is("item"));
-        assertThat(ExpressionParser.getTypeName(ValueTypes.OBJECT_FLUIDSTACK), is("fluid"));
-        assertThat(ExpressionParser.getTypeName(ValueTypes.INTEGER), is("integer"));
-        for (String name : List.of("item", "itemstack", "integrateddynamics:itemstack")) {
+        // Types are called as in the Logic Programmer, and read in any case, also by their ids
+        assertThat(ExpressionParser.getTypeName(ValueTypes.OBJECT_ITEMSTACK), is("Item"));
+        assertThat(ExpressionParser.getTypeName(ValueTypes.OBJECT_FLUIDSTACK), is("Fluid"));
+        assertThat(ExpressionParser.getTypeName(ValueTypes.INTEGER), is("Integer"));
+        assertThat(ExpressionParser.getTypeName(ValueTypes.NBT), is("NBT"));
+        assertThat(ExpressionParser.getTypeName(ValueTypes.CATEGORY_ANY), is("Any"));
+        for (String name : List.of("Item", "item", "ITEM", "itemstack", "ItemStack", "integrateddynamics:itemstack")) {
             assertThat(name, ExpressionParser.getValueType(name), is(ValueTypes.OBJECT_ITEMSTACK));
         }
-        for (String name : List.of("fluid", "fluidstack", "integrateddynamics:fluidstack")) {
+        for (String name : List.of("Fluid", "fluid", "fluidstack", "integrateddynamics:fluidstack")) {
             assertThat(name, ExpressionParser.getValueType(name), is(ValueTypes.OBJECT_FLUIDSTACK));
         }
+        for (String name : List.of("Integer", "integer", "INTEGER", "integrateddynamics:integer")) {
+            assertThat(name, ExpressionParser.getValueType(name), is(ValueTypes.INTEGER));
+        }
+        for (String name : List.of("NBT", "nbt", "Nbt")) {
+            assertThat(name, ExpressionParser.getValueType(name), is(ValueTypes.NBT));
+        }
         assertThat(ExpressionParser.getValueType("integrateddynamics:item"), is((IValueType<?>) null));
-        assertPrinted("(i: itemstack, f: fluidstack) => i.size() > f.amount()", "(i: item, f: fluid) => i.size() > f.amount()");
+        assertPrinted("(i: itemstack, f: fluidstack) => i.size() > f.amount()", "(i: Item, f: Fluid) => i.size() > f.amount()");
+        assertPrinted("(i: integer, s: STRING) => s.length() > i", "(i: Integer, s: String) => s.length() > i");
+        assertPrinted("(n: nbt) => n == @nbt{a: 1b}", "(n: NBT) => n == @NBT{a:1b}");
     }
 
     // Prints as the given text, which reads back into the same expression
@@ -310,39 +320,39 @@ public class TestExpressionParser {
 
     @Test
     public void testPrintMethods() throws ExpressionParseException {
-        assertPrinted("(item: item) => isStackable(item) && size(item) >= 16",
-                "(item: item) => item.isStackable() && (item.size() >= 16)");
-        assertPrinted("(item: item) => getInteger(nbt(item), \"k\")", "(item: item) => item.nbt().getInteger(\"k\")");
+        assertPrinted("(item: Item) => isStackable(item) && size(item) >= 16",
+                "(item: Item) => item.isStackable() && (item.size() >= 16)");
+        assertPrinted("(item: Item) => getInteger(nbt(item), \"k\")", "(item: Item) => item.nbt().getInteger(\"k\")");
         // On literals, and on symbols in brackets
         assertPrinted("length(\"abc\") + length(#5)", "\"abc\".length() + #5.length()");
-        assertPrinted("(s: string, t: string) => length(s + t) > 2", "(s: string, t: string) => (s + t).length() > 2");
-        assertPrinted("(b: boolean, c: boolean) => nand(!b, c)", "(b: boolean, c: boolean) => (!b).nand(c)");
-        assertPrinted("(s: string) => !contains(s, \"a\")", "(s: string) => !s.contains(\"a\")");
+        assertPrinted("(s: String, t: String) => length(s + t) > 2", "(s: String, t: String) => (s + t).length() > 2");
+        assertPrinted("(b: Boolean, c: Boolean) => nand(!b, c)", "(b: Boolean, c: Boolean) => (!b).nand(c)");
+        assertPrinted("(s: String) => !contains(s, \"a\")", "(s: String) => !s.contains(\"a\")");
         // Calls with a global name, on operators, on empty slots and on numbers, and choices stay calls
         assertPrinted("x => listLength(x)", "x => listLength(x)");
-        assertPrinted("(l: list) => map((listLength), l)", "(l: list) => map((listLength), l)");
-        assertPrinted("(f: operator) => isNull(f)", "(f: operator) => isNull(f)");
+        assertPrinted("(l: List) => map((listLength), l)", "(l: List) => map((listLength), l)");
+        assertPrinted("(f: Operator) => isNull(f)", "(f: Operator) => isNull(f)");
         assertPrinted("isStackable(?)", "isStackable(?)");
         assertPrinted("max(1, 2)", "max(1, 2)");
-        assertPrinted("(n: integer) => max(n, 2)", "(n: integer) => n.max(2)");
-        assertPrinted("(b: boolean) => choice(b, 1, ?)", "(b: boolean) => choice(b, 1, ?)");
+        assertPrinted("(n: Integer) => max(n, 2)", "(n: Integer) => n.max(2)");
+        assertPrinted("(b: Boolean) => choice(b, 1, ?)", "(b: Boolean) => choice(b, 1, ?)");
     }
 
     @Test
     public void testMethodCallErrors() {
-        assertError("(s: string) => s.length", L10NValues.EXPRESSION_PARSE_METHOD, 16);
-        assertError("(s: string) => s.", L10NValues.EXPRESSION_PARSE_METHOD, 16);
-        assertError("(s: string) => s.(1)", L10NValues.EXPRESSION_PARSE_METHOD, 16);
-        assertError("(s: string) => s.lenght()", L10NValues.EXPRESSION_PARSE_UNKNOWN_OPERATOR, 17);
-        assertError("(s: string) => s.length(1)", L10NValues.EXPRESSION_PARSE_INPUT_COUNT, 17);
+        assertError("(s: String) => s.length", L10NValues.EXPRESSION_PARSE_METHOD, 16);
+        assertError("(s: String) => s.", L10NValues.EXPRESSION_PARSE_METHOD, 16);
+        assertError("(s: String) => s.(1)", L10NValues.EXPRESSION_PARSE_METHOD, 16);
+        assertError("(s: String) => s.lenght()", L10NValues.EXPRESSION_PARSE_UNKNOWN_OPERATOR, 17);
+        assertError("(s: String) => s.length(1)", L10NValues.EXPRESSION_PARSE_INPUT_COUNT, 17);
     }
 
     @Test
     public void testParameterCalls() throws ExpressionParseException {
-        assertThat(parse("(f: operator, x: integer) => f(x)").root(), is(op(Operators.OPERATOR_APPLY, p(0), p(1))));
-        assertThat(parse("(f: operator) => f()").root(), is(op(Operators.OPERATOR_APPLY_0, p(0))));
-        assertThat(parse("(f: operator) => f(1, 2)").root(), is(op(Operators.OPERATOR_APPLY_2, p(0), i(1), i(2))));
-        assertThat(parse("(f: operator) => f(1, 2, 3)").root(), is(op(Operators.OPERATOR_APPLY_3, p(0), i(1), i(2), i(3))));
+        assertThat(parse("(f: Operator, x: Integer) => f(x)").root(), is(op(Operators.OPERATOR_APPLY, p(0), p(1))));
+        assertThat(parse("(f: Operator) => f()").root(), is(op(Operators.OPERATOR_APPLY_0, p(0))));
+        assertThat(parse("(f: Operator) => f(1, 2)").root(), is(op(Operators.OPERATOR_APPLY_2, p(0), i(1), i(2))));
+        assertThat(parse("(f: Operator) => f(1, 2, 3)").root(), is(op(Operators.OPERATOR_APPLY_3, p(0), i(1), i(2), i(3))));
         assertThat(parse("f => f.apply(1)"), is(parse("f => f(1)")));
         // Printed with apply
         assertThat(printExact(parse("f => f(1)")), is("f => apply(f, 1)"));
@@ -353,7 +363,7 @@ public class TestExpressionParser {
     public void testStrictEquality() throws ExpressionParseException {
         assertThat(parse("1 === 2"), is(parse("1 == 2")));
         assertThat(parse("1 !== 2"), is(parse("1 != 2")));
-        assertThat(parse("(value: integer) => value % 2 !== 0"), is(parse("(value: integer) => value % 2 != 0")));
+        assertThat(parse("(value: Integer) => value % 2 !== 0"), is(parse("(value: Integer) => value % 2 != 0")));
         assertThat(parse("reduce((===), ?, ?)"), is(parse("reduce((==), ?, ?)")));
         assertThat(printExact(parse("1 === 2")), is("1 == 2"));
     }
@@ -376,10 +386,10 @@ public class TestExpressionParser {
         ExpressionNode a = c(ValueTypeString.ValueString.of("a"));
         ExpressionNode b = c(ValueTypeString.ValueString.of("b"));
         assertThat(parse("\"a\" + \"b\"").root(), is(op(Operators.STRING_CONCAT, a, b)));
-        assertThat(parse("(s: string) => s + \"a\" + s").root(), is(op(Operators.STRING_CONCAT, op(Operators.STRING_CONCAT, p(0), a), p(0))));
-        assertThat(parse("(s: string) => s.length() + 1").root(), is(op(Operators.ARITHMETIC_ADDITION, op(Operators.STRING_LENGTH, p(0)), i(1))));
+        assertThat(parse("(s: String) => s + \"a\" + s").root(), is(op(Operators.STRING_CONCAT, op(Operators.STRING_CONCAT, p(0), a), p(0))));
+        assertThat(parse("(s: String) => s.length() + 1").root(), is(op(Operators.ARITHMETIC_ADDITION, op(Operators.STRING_LENGTH, p(0)), i(1))));
         // One string is enough, where the other input then has the wrong type
-        assertThat(parse("(s: string) => 1 + s").root(), is(op(Operators.STRING_CONCAT, i(1), p(0))));
+        assertThat(parse("(s: String) => 1 + s").root(), is(op(Operators.STRING_CONCAT, i(1), p(0))));
         // Unknown types stay addition
         assertThat(parse("x => x + #9").root(), is(op(Operators.ARITHMETIC_ADDITION, p(0), new ExpressionNode.Ref(9))));
         assertThat(parse("reduce((+), ?, ?)").root(), is(op(Operators.OPERATOR_REDUCE,
@@ -390,7 +400,7 @@ public class TestExpressionParser {
     public void testRoundTripStringConcat() throws ExpressionParseException {
         Expression concat = new Expression(op(Operators.STRING_CONCAT, p(0), c(ValueTypeString.ValueString.of("!"))),
                 List.of(param("s", ValueTypes.STRING)));
-        assertThat(printExact(concat), is("(s: string) => s + \"!\""));
+        assertThat(printExact(concat), is("(s: String) => s + \"!\""));
         assertRoundTrip(concat);
         // Not with + when it would be read as addition, or the other way around
         assertRoundTrip(new Expression(op(Operators.STRING_CONCAT, p(0), p(1)),
@@ -404,7 +414,7 @@ public class TestExpressionParser {
     public void testLongChains() {
         // Types are not inferred again for each operator of a chain
         assertError("1" + " + 1".repeat(2000), L10NValues.EXPRESSION_PARSE_TOO_DEEP, 0);
-        assertError("(s: string) => s" + ".concat(s)".repeat(400), L10NValues.EXPRESSION_PARSE_TOO_DEEP, 16 + 10 * 127 + 7);
+        assertError("(s: String) => s" + ".concat(s)".repeat(400), L10NValues.EXPRESSION_PARSE_TOO_DEEP, 16 + 10 * 127 + 7);
     }
 
     // --------------- Shared names ---------------
@@ -414,7 +424,7 @@ public class TestExpressionParser {
         // The types of all arguments decide, also for symbols
         assertThat(parse("x => concat(x, \"whatever\")").root(), is(op(Operators.STRING_CONCAT, p(0), c(ValueTypeString.ValueString.of("whatever")))));
         assertThat(parse("x => x + \"a\"").root(), is(op(Operators.STRING_CONCAT, p(0), c(ValueTypeString.ValueString.of("a")))));
-        assertThat(parse("(x: list) => x.length()").root(), is(op(Operators.LIST_LENGTH, p(0))));
+        assertThat(parse("(x: List) => x.length()").root(), is(op(Operators.LIST_LENGTH, p(0))));
         // Otherwise, the order of types: numbers before strings before lists
         assertThat(parse("x => x + x").root(), is(op(Operators.ARITHMETIC_ADDITION, p(0), p(0))));
         assertThat(parse("(x, y) => concat(x, y)").root(), is(op(Operators.STRING_CONCAT, p(0), p(1))));
@@ -447,14 +457,14 @@ public class TestExpressionParser {
     public void testErrorRanges() {
         // The whole name or type that is not known, so all of it can be marked
         assertErrorRange("x => lenght(x)", 5, 11);
-        assertErrorRange("(s: string) => s.lenght()", 17, 23);
+        assertErrorRange("(s: String) => s.lenght()", 17, 23);
         assertErrorRange("y + 1", 0, 1);
         assertErrorRange("(x: thing) => x + 1", 4, 9);
         assertErrorRange("(x: mod:thing) => x + 1", 4, 13);
         assertErrorRange("@thing{} == 1", 0, 6);
         assertErrorRange("#nothing + 1", 0, 8);
         // A single symbol, and the end of the text
-        assertErrorRange("(x: item) => x.", 14, 15);
+        assertErrorRange("(x: Item) => x.", 14, 15);
         assertErrorRange("1 + ", 4, 4);
     }
 
@@ -471,7 +481,7 @@ public class TestExpressionParser {
         assertError("true => 1 + 1", L10NValues.EXPRESSION_PARSE_PARAMETER_NAME, 0);
         assertError("(x: thing) => x + 1", L10NValues.EXPRESSION_PARSE_UNKNOWN_TYPE, 4);
         assertError("@thing{} == 1", L10NValues.EXPRESSION_PARSE_UNKNOWN_TYPE, 0);
-        assertError("@nbt {a: } == 1", L10NValues.EXPRESSION_PARSE_BAD_VALUE, 9);
+        assertError("@NBT {a: } == 1", L10NValues.EXPRESSION_PARSE_BAD_VALUE, 9);
         assertError("1 + ", L10NValues.EXPRESSION_PARSE_EXPECTED_VALUE_END, 4);
         assertError("(1 + 2", L10NValues.EXPRESSION_PARSE_UNEXPECTED_END, 6);
         assertError("1 + $", L10NValues.EXPRESSION_PARSE_UNKNOWN_CHARACTER, 4);
@@ -492,7 +502,7 @@ public class TestExpressionParser {
             assertThat(e.getPosition(), is(7));
         }
         try {
-            ExpressionParser.parse("(b: block) => b == b", context);
+            ExpressionParser.parse("(b: Block) => b == b", context);
             fail("Expected an error");
         } catch (ExpressionParseException e) {
             assertThat(((TranslatableContents) e.getComponent().getContents()).getKey(), is(L10NValues.EXPRESSION_PARSE_PARAMETER_TYPE));
@@ -534,7 +544,7 @@ public class TestExpressionParser {
     @Test
     public void testTokenize() throws ExpressionParseException {
         // Typed text keeps its form, and each part belongs to its innermost node, as in printed text
-        assertThat(tokens("(x: integer) => x.add(3)"), is(List.of("(x: integer) => =-", "x=[0]", ".add(=[]", "3=[1]", ")=[]")));
+        assertThat(tokens("(x: Integer) => x.add(3)"), is(List.of("(x: Integer) => =-", "x=[0]", ".add(=[]", "3=[1]", ")=[]")));
         assertThat(tokens("#5.length() > 2"), is(List.of("#5=[0, 0]", ".length()=[0]", " > =[]", "2=[1]")));
         assertThat(tokens("  1 + 2  "), is(List.of("  =-", "1=[0]", " + =[]", "2=[1]", "  =-")));
         assertThat(tokens("x => x ? 1 : 2"), is(List.of("x => =-", "x=[0]", " ? =[]", "1=[1]", " : =[]", "2=[2]")));
@@ -544,7 +554,7 @@ public class TestExpressionParser {
         // Strings with their quotes, also in single quotes
         assertThat(tokens("'a' + \"b\""), is(List.of("'a'=[0]", " + =[]", "\"b\"=[1]")));
         // A called parameter, which is the first input of apply
-        assertThat(tokens("(f: operator) => f(1)"), is(List.of("(f: operator) => =-", "f=[0]", "(=[]", "1=[1]", ")=[]")));
+        assertThat(tokens("(f: Operator) => f(1)"), is(List.of("(f: Operator) => =-", "f=[0]", "(=[]", "1=[1]", ")=[]")));
         // Empty slots are one instance, which are told apart by their order
         assertThat(tokens("(?) + ?"), is(List.of("(?)=[0]", " + =[]", "?=[1]")));
         assertThat(tokens("? ? ? : (?)"), is(List.of("?=[0]", " ? =[]", "?=[1]", " : =[]", "(?)=[2]")));

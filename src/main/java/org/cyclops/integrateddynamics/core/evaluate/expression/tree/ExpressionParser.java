@@ -91,9 +91,15 @@ public final class ExpressionParser {
     private static final List<IOperator> APPLY_OPERATORS = List.of(
             Operators.OPERATOR_APPLY_0, Operators.OPERATOR_APPLY, Operators.OPERATOR_APPLY_2, Operators.OPERATOR_APPLY_3);
     private static final Set<String> RESERVED_NAMES = Set.of("true", "false", "NaN", "Infinity");
-    // Types written by the name the game shows for them instead of their id, see ValueObjectTypeItemStack
-    private static final Map<String, String> TYPE_NAMES = Map.of("itemstack", "item", "fluidstack", "fluid");
-    private static final Map<String, String> TYPE_IDS = Map.of("item", "itemstack", "fluid", "fluidstack");
+    // Names of the types of Integrated Dynamics by id, as the logic programmer shows them, see ValueObjectTypeItemStack
+    private static final Map<String, String> TYPE_NAMES = Map.ofEntries(
+            Map.entry("any", "Any"), Map.entry("number", "Number"), Map.entry("named", "Named"), Map.entry("uniquely_named", "UniquelyNamed"),
+            Map.entry("boolean", "Boolean"), Map.entry("integer", "Integer"), Map.entry("long", "Long"), Map.entry("double", "Double"),
+            Map.entry("string", "String"), Map.entry("list", "List"), Map.entry("operator", "Operator"), Map.entry("nbt", "NBT"),
+            Map.entry("itemstack", "Item"), Map.entry("block", "Block"), Map.entry("fluidstack", "Fluid"), Map.entry("entity", "Entity"),
+            Map.entry("ingredients", "Ingredients"), Map.entry("recipe", "Recipe"));
+    // In lower case, for names that differ from the id
+    private static final Map<String, String> TYPE_IDS = Map.of("item", "itemstack", "fluid", "fluidstack", "uniquelynamed", "uniquely_named");
 
     private final Context context;
     private final List<Token> tokens;
@@ -369,11 +375,12 @@ public final class ExpressionParser {
         List<IValueType<?>> matches = new ArrayList<>();
         for (IValueType<?> type : ValueTypes.REGISTRY.getValueTypes()) {
             if ((types.parameter() ? context.parameterTypes().test(type) : !type.isCategory())
-                    && (getTypeName(type).startsWith(prefix) || type.getUniqueName().getPath().startsWith(prefix))) {
+                    && (getTypeName(type).toLowerCase(Locale.ROOT).startsWith(prefix) || type.getUniqueName().getPath().startsWith(prefix))) {
                 matches.add(type);
             }
         }
-        matches.sort(Comparator.comparing((IValueType<?> type) -> getTypeName(type).contains(":")).thenComparing(ExpressionParser::getTypeName));
+        matches.sort(Comparator.comparing((IValueType<?> type) -> getTypeName(type).contains(":"))
+                .thenComparing(ExpressionParser::getTypeName, String.CASE_INSENSITIVE_ORDER));
         return matches;
     }
 
@@ -403,8 +410,8 @@ public final class ExpressionParser {
 
     /**
      * @param valueType A value type.
-     * @return The name of the type in the text form: its id, without the namespace for those of Integrated Dynamics,
-     *         where items and fluids are called item and fluid, as the game shows them.
+     * @return The name of the type in the text form: for those of Integrated Dynamics, the name the logic programmer
+     *         shows, as in {@code Integer} or {@code Item}, otherwise its id.
      */
     public static String getTypeName(IValueType<?> valueType) {
         ResourceLocation id = valueType.getUniqueName();
@@ -412,12 +419,14 @@ public final class ExpressionParser {
     }
 
     /**
-     * @param name The name of a type in the text form, which types of add-ons can also leave their namespace out of
+     * @param name The name of a type in the text form, in any case, as in {@code Integer} or {@code integer}.
+     *             Types of add-ons are written by their id, whose namespace can be left out
      *             when no other type has that name, as in {@code chemicalstack}. Ids, such as {@code itemstack}, are read too.
      * @return The type, or null if unknown or ambiguous.
      */
     @Nullable
     public static IValueType<?> getValueType(String name) {
+        name = name.toLowerCase(Locale.ROOT);
         if (!name.contains(":")) {
             name = TYPE_IDS.getOrDefault(name, name);
         }
