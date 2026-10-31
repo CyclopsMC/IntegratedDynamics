@@ -134,7 +134,7 @@ public final class ExpressionPrinter {
             case ValueTypeDouble.ValueDouble doubleValue -> printDouble(doubleValue.getRawValue());
             case ValueTypeString.ValueString string -> quote(string.getRawValue());
             case ValueTypeOperator.ValueOperator operator when OperatorNames.isRegistered(operator.getRawValue()) ->
-                    "(" + OperatorNames.getValueName(operator.getRawValue()) + ")";
+                    printOperatorValue(operator.getRawValue());
             case ValueTypeList.ValueList list when isListLiteral(list) -> printList(list, values);
             // NBT is written as the tag itself, as in commands, and () for none
             case ValueTypeNbt.ValueNbt nbt -> printTyped(value, nbt.getRawValue().map(Object::toString).orElse("()"));
@@ -264,7 +264,7 @@ public final class ExpressionPrinter {
         if (value instanceof ValueTypeString.ValueString string) {
             text = "\"" + string.getRawValue() + "\"";
         } else if (value instanceof ValueTypeOperator.ValueOperator operatorValue) {
-            text = "(" + OperatorNames.getValueName(operatorValue.getRawValue()) + ")";
+            text = printOperatorValue(operatorValue.getRawValue());
         } else {
             text = type.toCompactString(value).getString();
         }
@@ -272,6 +272,15 @@ public final class ExpressionPrinter {
             text = text.substring(0, MAX_CONST_LENGTH - 1) + "…";
         }
         return text;
+    }
+
+    /**
+     * @param operator An operator that is used as a value.
+     * @return Its name, as in {@code map(length, l)}, or its symbol in brackets, as in {@code (+)}.
+     */
+    public static String printOperatorValue(IOperator operator) {
+        String name = OperatorNames.getValueName(operator);
+        return ExpressionParser.isIdentifier(name) ? name : "(" + name + ")";
     }
 
     /**
@@ -403,7 +412,7 @@ public final class ExpressionPrinter {
                 IOperator operator = operatorValue.getRawValue();
                 String name = OperatorNames.getValueName(operator);
                 if (expression.parameters().stream().anyMatch(parameter -> parameter.name().equals(name))) {
-                    return "(" + operator.getGlobalInteractName() + ")";
+                    return operator.getGlobalInteractName();
                 }
             }
             return exact != null ? printLiteral(value, exact.values()) : printValue(value);

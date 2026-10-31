@@ -198,6 +198,41 @@ public class TestExpressionParser {
     }
 
     @Test
+    public void testOperatorNamesAsValues() throws ExpressionParseException {
+        IValue pipe = ValueTypeOperator.ValueOperator.of(Operators.OPERATOR_PIPE);
+        IValue length = ValueTypeOperator.ValueOperator.of(Operators.STRING_LENGTH);
+        // A name without brackets after it is the operator as a value, also as a method receiver
+        assertThat(parse("flip(pipe)").root(), is(op(Operators.OPERATOR_FLIP, c(pipe))));
+        assertThat(parse("pipe.flip()").root(), is(op(Operators.OPERATOR_FLIP, c(pipe))));
+        assertThat(parse("(l: List) => map(length, l)").root(), is(op(Operators.OPERATOR_MAP, c(length), p(0))));
+        assertThat(parse("(l: List) => map(listLength, l)").root(), is(op(Operators.OPERATOR_MAP,
+                c(ValueTypeOperator.ValueOperator.of(Operators.LIST_LENGTH)), p(0))));
+        // Brackets are still read, and are needed for symbols
+        assertThat(parse("flip((pipe))"), is(parse("flip(pipe)")));
+        assertPrinted("(l: List) => reduce((+), l, 0)", "(l: List) => reduce((+), l, 0)");
+        assertPrinted("flip((pipe))", "flip(pipe)");
+        assertPrinted("pipe.flip()", "flip(pipe)");
+        assertPrinted("(l: List) => map((length), l)", "(l: List) => map(length, l)");
+        // Parameters go first, and the global name is printed for an operator with the name of a parameter
+        assertThat(parse("(length: Operator) => flip(length)").root(), is(op(Operators.OPERATOR_FLIP, p(0))));
+        Expression shadowed = new Expression(op(Operators.OPERATOR_MAP, c(length), p(1)),
+                List.of(param("length", ValueTypes.CATEGORY_ANY), param("l", ValueTypes.LIST)));
+        assertThat(printExact(shadowed), is("(length, l: List) => map(stringLength, l)"));
+        assertRoundTrip(shadowed);
+        // A name that is neither is unknown
+        assertError("(l: List) => map(lenght, l)", L10NValues.EXPRESSION_PARSE_UNKNOWN_NAME, 17);
+        // Every registered operator as a value reads back from its text
+        int checked = 0;
+        for (IOperator operator : Operators.REGISTRY.getOperators()) {
+            if (OperatorNames.isRegistered(operator)) {
+                checked++;
+                assertRoundTrip(new Expression(op(Operators.OPERATOR_FLIP, c(ValueTypeOperator.ValueOperator.of(operator)))));
+            }
+        }
+        assertTrue("Only " + checked + " operators were checked", checked > 250);
+    }
+
+    @Test
     public void testDisplayFormParses() throws ExpressionParseException {
         Expression expression = new Expression(op(Operators.OPERATOR_REDUCE, c(ValueTypeOperator.ValueOperator.of(Operators.ARITHMETIC_ADDITION)),
                 op(Operators.OPERATOR_MAP, c(ValueTypeOperator.ValueOperator.of(Operators.STRING_LENGTH)), p(0)), i(0)),
@@ -330,7 +365,7 @@ public class TestExpressionParser {
         assertPrinted("(s: String) => !contains(s, \"a\")", "(s: String) => !s.contains(\"a\")");
         // Calls with a global name, on operators, on empty slots and on numbers, and choices stay calls
         assertPrinted("x => listLength(x)", "x => listLength(x)");
-        assertPrinted("(l: List) => map((listLength), l)", "(l: List) => map((listLength), l)");
+        assertPrinted("(l: List) => map((listLength), l)", "(l: List) => map(listLength, l)");
         assertPrinted("(f: Operator) => isNull(f)", "(f: Operator) => isNull(f)");
         assertPrinted("isStackable(?)", "isStackable(?)");
         assertPrinted("max(1, 2)", "max(1, 2)");
@@ -541,7 +576,7 @@ public class TestExpressionParser {
         assertPrinted("(x) => x", "x => x");
         assertPrinted("(x: Item) => x", "(x: Item) => x");
         assertPrinted("#limit", "#limit");
-        assertPrinted("(pipe)", "(pipe)");
+        assertPrinted("(pipe)", "pipe");
         assertPrinted("@NBT{a: 1b}", "@NBT{a:1b}");
         assertPrinted("x => @NBT{a: 1b}", "x => @NBT{a:1b}");
         // As if the identity operator was written

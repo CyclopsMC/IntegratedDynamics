@@ -818,6 +818,12 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         return true;
     }
 
+    // In brackets for an operator, as a nested operator shows the same name
+    private static String getConstantText(IValue value) {
+        String text = ExpressionPrinter.printValue(value);
+        return value instanceof ValueTypeOperator.ValueOperator && !text.startsWith("(") ? "(" + text + ")" : text;
+    }
+
     @Override
     public boolean charTyped(char typedChar, int keyCode) {
         ExpressionTextField field = getTextField();
@@ -953,7 +959,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
                 case ExpressionNode.Const constant -> {
                     if (OperatorLPElement.getConstantItem(constant).isEmpty()) {
                         guiGraphics.fill(x + 1, y + 1, x + 17, y + 17, COLOR_CONST);
-                        drawFitted(guiGraphics, fontRenderer, ExpressionPrinter.printValue(constant.value()), x + 1, y + 1, 16, 16, COLOR_TEXT);
+                        drawFitted(guiGraphics, fontRenderer, getConstantText(constant.value()), x + 1, y + 1, 16, 16, COLOR_TEXT);
                     }
                 }
                 case ExpressionNode.Param param -> {

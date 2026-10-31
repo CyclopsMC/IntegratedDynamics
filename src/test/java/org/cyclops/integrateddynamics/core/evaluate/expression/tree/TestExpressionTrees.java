@@ -768,7 +768,7 @@ public class TestExpressionTrees {
                 op(Operators.OPERATOR_MAP, opConst(Operators.STRING_LENGTH), p(0)), c(0)),
                 List.of(param("l", ValueTypes.LIST)));
         // Operator values have no argument to tell shared names apart
-        assertThat(ExpressionPrinter.print(expression), is("l => reduce((+), map((length), l), 0)"));
+        assertThat(ExpressionPrinter.print(expression), is("l => reduce((+), map(length, l), 0)"));
         // Unregistered operators are printed by their full symbol
         assertThat(ExpressionPrinter.printValue(ValueTypeOperator.ValueOperator.of(doubler())), is("(x => x * 2)"));
     }

@@ -825,6 +825,11 @@ public final class ExpressionParser {
         if (isNumber(token)) {
             return new ExpressionNode.Const(parseNumber(token, false));
         }
+        // An operator as a value, as in map(length, l)
+        IOperator operator = OperatorNames.resolve(name, null);
+        if (operator != null) {
+            return new ExpressionNode.Const(ValueTypeOperator.ValueOperator.of(operator));
+        }
         throw error(token, L10NValues.EXPRESSION_PARSE_UNKNOWN_NAME, name);
     }
 

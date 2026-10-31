@@ -197,7 +197,7 @@ public class TestExpressionValueLiterals {
     public void testRoundTripOperators() {
         assertThat(assertRoundTrip(ValueTypeOperator.ValueOperator.of(Operators.ARITHMETIC_ADDITION)), is("(+)"));
         assertThat(assertRoundTrip(ValueTypeOperator.ValueOperator.of(Operators.LOGICAL_NOT)), is("(!)"));
-        assertThat(assertRoundTrip(ValueTypeOperator.ValueOperator.of(Operators.STRING_LENGTH)), is("(length)"));
+        assertThat(assertRoundTrip(ValueTypeOperator.ValueOperator.of(Operators.STRING_LENGTH)), is("length"));
         // Operators that are not registered, such as curried ones, are written with their type
         assertThat(assertRoundTrip(ValueTypeOperator.ValueOperator.of(new CurriedOperator(Operators.ARITHMETIC_ADDITION,
                 new Variable<>(i(1))))), startsWith("@Operator{"));
@@ -254,7 +254,7 @@ public class TestExpressionValueLiterals {
         assertThat(assertRoundTrip(list(ValueTypes.DOUBLE, ValueTypeDouble.ValueDouble.of(0.5), ValueTypeDouble.ValueDouble.of(Double.POSITIVE_INFINITY))), is("[0.5, Infinity]"));
         assertThat(assertRoundTrip(list(ValueTypes.BOOLEAN, ValueTypeBoolean.ValueBoolean.of(true))), is("[true]"));
         assertThat(assertRoundTrip(list(ValueTypes.OPERATOR, ValueTypeOperator.ValueOperator.of(Operators.ARITHMETIC_ADDITION),
-                ValueTypeOperator.ValueOperator.of(Operators.STRING_LENGTH))), is("[(+), (length)]"));
+                ValueTypeOperator.ValueOperator.of(Operators.STRING_LENGTH))), is("[(+), length]"));
         CompoundTag tag = new CompoundTag();
         tag.putInt("a", 1);
         assertThat(assertRoundTrip(list(ValueTypes.NBT, ValueTypeNbt.ValueNbt.of(tag), ValueTypeNbt.ValueNbt.of())), is("[@NBT{a:1}, @NBT()]"));
