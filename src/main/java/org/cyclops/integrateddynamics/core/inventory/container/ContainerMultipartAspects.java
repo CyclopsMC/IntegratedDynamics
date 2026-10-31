@@ -127,7 +127,8 @@ public abstract class ContainerMultipartAspects<P extends IPartType<P, S>, S ext
     public void broadcastChanges() {
         super.broadcastChanges();
 
-        if (!player.level().isClientSide()) {
+        // If the part was removed, stillValid will close this container.
+        if (!player.level().isClientSide() && partContainer.hasPart(getTarget().getCenter().getSide())) {
             for (Map.Entry<IAspect, Integer> entry : this.aspectPropertyValueIds.entrySet()) {
                 ValueNotifierHelpers.setValue(this, entry.getValue(), getModifiedAspectPropertyValues(entry.getKey()));
             }

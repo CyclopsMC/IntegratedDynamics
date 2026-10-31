@@ -425,11 +425,11 @@ public class PartHelpers {
      * @param target The part target.
      * @param player The player.
      * @param expectedPartContainer The expected part container.
-     * @return If the player can interact with it.
+     * @return If the player can interact with it, which requires the part to still be present.
      */
     public static boolean canInteractWith(PartTarget target, Player player, IPartContainer expectedPartContainer) {
         IPartContainer partContainer = PartHelpers.getPartContainer(target.getCenter().getPos(), target.getCenter().getSide()).orElse(null);
-        return partContainer == expectedPartContainer;
+        return partContainer != null && partContainer == expectedPartContainer && partContainer.hasPart(target.getCenter().getSide());
     }
 
     /**

@@ -187,7 +187,8 @@ public class ContainerPartOffset extends InventoryContainer {
     public void broadcastChanges() {
         super.broadcastChanges();
 
-        if (!player.level().isClientSide()) {
+        // If the part was removed, stillValid will close this container.
+        if (!player.level().isClientSide() && partContainer.get().hasPart(getTarget().getCenter().getSide())) {
             IPartState partState = getPartState();
 
             if (this.dirtyInv) {

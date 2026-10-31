@@ -227,5 +227,4 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase<ValueTypeList
                 (activeElement >= 0 && subElements.containsKey(activeElement)
                         && subElements.get(activeElement).isItemValidForSlot(slotId, itemStack));
     }
-
 }
