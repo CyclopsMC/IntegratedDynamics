@@ -438,12 +438,11 @@ public class ExpressionTextField {
         return handled;
     }
 
-    // Moving and deleting by word, and by line on macOS, where expressions differ from vanilla's text fields
+    // Moving and deleting by word, and by line, where expressions differ from vanilla's text fields
     private boolean keyPressedNavigation(int keyCode) {
-        int[] lines = text.getLines();
-        int line = Mth.clamp(text.getLineAtCursor(), 0, lines.length / 2 - 1);
+        int[] line = ExpressionTextNavigation.getLine(text.value(), text.cursor());
         ExpressionTextNavigation.KeyTarget target = ExpressionTextNavigation.getKeyTarget(text.value(), text.cursor(),
-                lines[line * 2], lines[line * 2 + 1], keyCode, Minecraft.ON_OSX, Screen.hasControlDown(), Screen.hasAltDown());
+                line[0], line[1], keyCode, Minecraft.ON_OSX, Screen.hasControlDown(), Screen.hasAltDown());
         if (target == null) {
             return false;
         }

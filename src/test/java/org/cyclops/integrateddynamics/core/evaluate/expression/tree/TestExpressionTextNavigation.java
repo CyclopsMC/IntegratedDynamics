@@ -134,4 +134,29 @@ public class TestExpressionTextNavigation {
         assertThat(target(GLFW.GLFW_KEY_HOME, true, true, false), nullValue());
     }
 
+    @Test
+    public void testLines() {
+        String text = "(x: Integer) =>\nx + 1\n";
+        assertThat(ExpressionTextNavigation.getLine(text, 0), is(new int[]{0, 15}));
+        assertThat(ExpressionTextNavigation.getLine(text, 15), is(new int[]{0, 15}));
+        assertThat(ExpressionTextNavigation.getLine(text, 16), is(new int[]{16, 21}));
+        assertThat(ExpressionTextNavigation.getLine(text, 19), is(new int[]{16, 21}));
+        assertThat(ExpressionTextNavigation.getLine(text, 22), is(new int[]{22, 22}));
+        assertThat(ExpressionTextNavigation.getLine("", 0), is(new int[]{0, 0}));
+    }
+
+    @Test
+    public void testKeysHomeEnd() {
+        // To the line, which can wrap over several rows, on all platforms, also with Alt
+        for (boolean osx : new boolean[]{false, true}) {
+            for (boolean alt : new boolean[]{false, true}) {
+                assertThat(target(GLFW.GLFW_KEY_HOME, osx, false, alt), is(new ExpressionTextNavigation.KeyTarget(0, false)));
+                assertThat(target(GLFW.GLFW_KEY_END, osx, false, alt), is(new ExpressionTextNavigation.KeyTarget(15, false)));
+            }
+            // With Ctrl, or Cmd, to the start or end of the text, as in vanilla
+            assertThat(target(GLFW.GLFW_KEY_HOME, osx, true, false), nullValue());
+            assertThat(target(GLFW.GLFW_KEY_END, osx, true, false), nullValue());
+        }
+    }
+
 }

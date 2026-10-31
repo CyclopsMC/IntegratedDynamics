@@ -843,11 +843,8 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
                 return true;
             }
             if (typedChar == GLFW.GLFW_KEY_ENTER || typedChar == GLFW.GLFW_KEY_KP_ENTER) {
-                if (Screen.hasShiftDown()) {
-                    field.insert("\n");
-                } else if (field.isDraft()) {
-                    applyText();
-                }
+                // A new line, as the text is applied once typing pauses, or with Escape
+                field.insert("\n");
             } else if (undoKey) {
                 undo();
             } else if (redoKey) {

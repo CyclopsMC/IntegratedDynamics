@@ -153,13 +153,24 @@ public final class ExpressionTextNavigation {
     }
 
     /**
+     * @param text A text.
+     * @param position A position in it.
+     * @return The begin and end of the line at that position, between line breaks.
+     */
+    public static int[] getLine(String text, int position) {
+        int end = text.indexOf('\n', position);
+        return new int[]{text.lastIndexOf('\n', position - 1) + 1, end < 0 ? text.length() : end};
+    }
+
+    /**
      * Where a key moves the cursor to, or deletes up to, for the keys where expressions differ from vanilla's text fields.
+     * Home and End move to the start or end of the line, not of the row it wraps on, as the text has no break there.
      * Ctrl, or Option on macOS, moves and deletes by word. On macOS, Cmd moves and deletes to the start or end of the line,
      * and Cmd with Up or Down to the start or end of the text, as in its own text fields.
      * @param text A text.
      * @param cursor The position of the cursor.
-     * @param lineBegin The begin of the line of the cursor.
-     * @param lineEnd The end of the line of the cursor.
+     * @param lineBegin The begin of the line of the cursor, after the previous line break.
+     * @param lineEnd The end of the line of the cursor, before the next line break.
      * @param key The key.
      * @param osx If this runs on macOS.
      * @param control If Ctrl is held, or Cmd on macOS, as vanilla's {@code Screen.hasControlDown} tells.
@@ -169,6 +180,9 @@ public final class ExpressionTextNavigation {
     @Nullable
     public static KeyTarget getKeyTarget(String text, int cursor, int lineBegin, int lineEnd, int key,
                                          boolean osx, boolean control, boolean alt) {
+        if (!control && (key == GLFW.GLFW_KEY_HOME || key == GLFW.GLFW_KEY_END)) {
+            return new KeyTarget(key == GLFW.GLFW_KEY_HOME ? lineBegin : lineEnd, false);
+        }
         if (osx && control) {
             return switch (key) {
                 case GLFW.GLFW_KEY_LEFT -> new KeyTarget(lineBegin, false);

@@ -336,11 +336,8 @@ public class ExpressionStartPanel {
             return true;
         }
         if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
-            if (Screen.hasShiftDown()) {
-                field.insert("\n");
-            } else if (field.isDraft()) {
-                applyText();
-            }
+            // A new line, as the text is applied once typing pauses, or with Escape
+            field.insert("\n");
         } else if (keyCode == GLFW.GLFW_KEY_Z && Screen.hasControlDown() && !Screen.hasShiftDown()) {
             // There is no history yet, so this only reverts what was typed
             field.revert();
