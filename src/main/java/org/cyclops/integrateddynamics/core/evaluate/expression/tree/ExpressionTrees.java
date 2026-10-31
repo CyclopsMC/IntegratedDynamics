@@ -192,6 +192,31 @@ public final class ExpressionTrees {
         return new EvaluationException(Component.translatable(L10NValues.VALUETYPE_ERROR_DESERIALIZE, tag.toString(), reason));
     }
 
+    // --------------- Roots ---------------
+
+    /**
+     * The root of an expression is an operator, so a value, parameter, reference or empty slot as a whole expression
+     * is the input of the identity operator, which is not written in its text.
+     * @param node A whole expression.
+     * @return The root for it.
+     */
+    public static ExpressionNode.Operator asRoot(ExpressionNode node) {
+        return node instanceof ExpressionNode.Operator operator ? operator
+                : new ExpressionNode.Operator(Operators.GENERAL_IDENTITY, List.of(node));
+    }
+
+    /**
+     * @param root The root of an expression.
+     * @return The input of the identity operator if the root was made by {@link #asRoot} for a node that is not an operator,
+     *         which is the whole expression in its text, otherwise null.
+     */
+    @Nullable
+    public static ExpressionNode getRootValue(ExpressionNode root) {
+        return root instanceof ExpressionNode.Operator op && op.operator() == Operators.GENERAL_IDENTITY
+                && op.children().size() == 1 && !(op.children().get(0) instanceof ExpressionNode.Operator)
+                ? op.children().get(0) : null;
+    }
+
     // --------------- Paths ---------------
 
     /**

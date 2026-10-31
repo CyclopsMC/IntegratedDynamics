@@ -117,7 +117,7 @@ public final class ExpressionPrinter {
             }
             tokens.add(new Token(" => ", null));
         }
-        new Tokenizer(expression, labels, types, tokens, new Exact(values, labelIds)).visit(expression.root(), new int[0], false);
+        new Tokenizer(expression, labels, types, tokens, new Exact(values, labelIds)).visitRoot();
         return tokens;
     }
 
@@ -250,7 +250,7 @@ public final class ExpressionPrinter {
             }
             tokens.add(new Token(" => ", null));
         }
-        new Tokenizer(expression, labels, types, tokens, null).visit(expression.root(), new int[0], false);
+        new Tokenizer(expression, labels, types, tokens, null).visitRoot();
         return tokens;
     }
 
@@ -315,6 +315,15 @@ public final class ExpressionPrinter {
             this.types = types;
             this.tokens = tokens;
             this.exact = exact;
+        }
+
+        private void visitRoot() {
+            ExpressionNode value = ExpressionTrees.getRootValue(expression.root());
+            if (value != null) {
+                visit(value, new int[]{0}, false);
+            } else {
+                visit(expression.root(), new int[0], false);
+            }
         }
 
         private void visit(ExpressionNode node, int[] path, boolean nested) {

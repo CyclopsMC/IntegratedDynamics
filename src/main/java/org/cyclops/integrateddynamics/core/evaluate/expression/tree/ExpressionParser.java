@@ -476,9 +476,7 @@ public final class ExpressionParser {
         if (trailing.kind() != Kind.END) {
             throw error(trailing, L10NValues.EXPRESSION_PARSE_TRAILING, trailing.text());
         }
-        if (!(root instanceof ExpressionNode.Operator)) {
-            throw new ExpressionParseException(start.start(), Component.translatable(L10NValues.EXPRESSION_PARSE_ROOT));
-        }
+        root = ExpressionTrees.asRoot(root);
         if (ExpressionTrees.depth(root) > ExpressionTrees.MAX_DEPTH) {
             throw new ExpressionParseException(start.start(), Component.translatable(L10NValues.EXPRESSION_PARSE_TOO_DEEP));
         }

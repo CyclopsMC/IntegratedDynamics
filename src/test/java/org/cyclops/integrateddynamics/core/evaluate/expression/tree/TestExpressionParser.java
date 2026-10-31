@@ -476,7 +476,6 @@ public class TestExpressionParser {
         assertError("1 + 2 3", L10NValues.EXPRESSION_PARSE_TRAILING, 6);
         assertError("y + 1", L10NValues.EXPRESSION_PARSE_UNKNOWN_NAME, 0);
         assertError("3000000000 + 1", L10NValues.EXPRESSION_PARSE_INTEGER_TOO_LARGE, 0);
-        assertError("x => x", L10NValues.EXPRESSION_PARSE_ROOT, 5);
         assertError("(x, x) => x + x", L10NValues.EXPRESSION_PARSE_DUPLICATE_PARAMETER, 4);
         assertError("true => 1 + 1", L10NValues.EXPRESSION_PARSE_PARAMETER_NAME, 0);
         assertError("(x: thing) => x + 1", L10NValues.EXPRESSION_PARSE_UNKNOWN_TYPE, 4);
@@ -525,6 +524,42 @@ public class TestExpressionParser {
         } catch (ExpressionParseException e) {
             assertThat(((TranslatableContents) e.getComponent().getContents()).getKey(), is(L10NValues.EXPRESSION_PARSE_TOO_DEEP));
         }
+    }
+
+    // --------------- Values as the whole expression ---------------
+
+    @Test
+    public void testValueRoots() throws ExpressionParseException {
+        // Held by the identity operator, which is left out when printed
+        assertThat(parse("5"), is(new Expression(op(Operators.GENERAL_IDENTITY, i(5)))));
+        assertThat(parse("x => x"), is(new Expression(op(Operators.GENERAL_IDENTITY, p(0)), List.of(param("x", ValueTypes.CATEGORY_ANY)))));
+        assertThat(parse("#5"), is(new Expression(op(Operators.GENERAL_IDENTITY, new ExpressionNode.Ref(5)))));
+        assertThat(parse("?"), is(new Expression(op(Operators.GENERAL_IDENTITY, ExpressionNode.EMPTY))));
+        assertThat(parse("(pipe)"), is(new Expression(op(Operators.GENERAL_IDENTITY,
+                c(ValueTypeOperator.ValueOperator.of(Operators.OPERATOR_PIPE))))));
+        assertPrinted("5", "5");
+        assertPrinted("(x) => x", "x => x");
+        assertPrinted("(x: Item) => x", "(x: Item) => x");
+        assertPrinted("#limit", "#limit");
+        assertPrinted("(pipe)", "(pipe)");
+        assertPrinted("@NBT{a: 1b}", "@NBT{a:1b}");
+        assertPrinted("x => @NBT{a: 1b}", "x => @NBT{a:1b}");
+        // As if the identity operator was written
+        assertPrinted("identity(5)", "5");
+        // Which is written when it holds an operator, as it would be left out otherwise
+        assertPrinted("identity(1 + 2)", "(1 + 2).identity()");
+        assertPrinted("identity(identity(5))", "identity(5).identity()");
+        assertThat(parse("identity(identity(5))"), is(new Expression(op(Operators.GENERAL_IDENTITY, op(Operators.GENERAL_IDENTITY, i(5))))));
+        // The type is that of the value
+        assertThat(ExpressionTypeChecker.check(parse("\"a\""), id -> null).outputType(), is(ValueTypes.STRING));
+        // The text is the value
+        assertThat(tokens("  \"a\""), is(List.of("  =-", "\"a\"=[0]")));
+        assertThat(tokens("x => x"), is(List.of("x => =-", "x=[0]")));
+        // A reference alone is the identity operator on a card, as the logic programmer makes it
+        assertThat(ExpressionTrees.isPlainOperator(parse("#5")), is(true));
+        assertThat(ExpressionTrees.getRootValue(parse("#5").root()), is(new ExpressionNode.Ref(5)));
+        assertThat(ExpressionTrees.getRootValue(parse("identity(1 + 2)").root()), is((ExpressionNode) null));
+        assertThat(ExpressionTrees.getRootValue(parse("1 + 2").root()), is((ExpressionNode) null));
     }
 
     // --------------- Tokens of typed text ---------------

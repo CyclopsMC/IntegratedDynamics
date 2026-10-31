@@ -722,6 +722,58 @@ public class GameTestsExpressions {
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
+    public void testLogicProgrammerSetValueAsText(GameTestHelper helper) throws ExpressionParseException {
+        // A value as the whole text, such as a fluid with an amount, gives a card with that value
+        setupRedstoneNetwork(helper);
+        ValueDeseralizationContext values = ValueDeseralizationContext.of(helper.getLevel());
+        ExpressionParser.Context context = ExpressionEditor.getParserContext(values, id -> null, label -> IntLists.EMPTY_LIST);
+        String text = "@Fluid{id: \"lava\", amount: 250}";
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        ItemStack written;
+        try {
+            ContainerLogicProgrammer container = new ContainerLogicProgrammer(0, player.getInventory());
+            container.applyExpressionAction(ExpressionEditor.actionSet(values, ExpressionParser.parse(text, context), text));
+            helper.assertTrue(container.getActiveElement() instanceof OperatorLPElement element
+                    && element.getOperator() == Operators.GENERAL_IDENTITY, "The element of the identity operator is not active");
+            OperatorLPElement element = (OperatorLPElement) container.getActiveElement();
+            written = element.writeElement(player, new ItemStack(RegistryEntries.ITEM_VARIABLE.get()));
+            ExpressionVariableFacade facade = (ExpressionVariableFacade) getVariableFacade(helper.getLevel(), written);
+            helper.assertTrue(text.equals(facade.getText()), "The card does not have the text");
+        } finally {
+            player.getServer().getPlayerList().remove(player);
+        }
+
+        Pair<PartTypePanelDisplay, PartTypePanelDisplay.State> partAndState = display(helper, written);
+        helper.succeedWhen(() -> assertValueEqual(partAndState.getRight().getDisplayValue(),
+                ValueObjectTypeFluidStack.ValueFluidStack.of(new FluidStack(Fluids.LAVA, 250))));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testLogicProgrammerSetReferenceAsText(GameTestHelper helper) throws ExpressionParseException {
+        // A reference alone gives a card of the identity operator on it, as the logic programmer makes without text
+        ItemStack variableRedstone = setupRedstoneNetwork(helper);
+        int redstoneId = getVariableFacade(helper.getLevel(), variableRedstone).getId();
+        ValueDeseralizationContext values = ValueDeseralizationContext.of(helper.getLevel());
+        ExpressionParser.Context context = ExpressionEditor.getParserContext(values, id -> null, label -> IntLists.EMPTY_LIST);
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        ItemStack written;
+        try {
+            ContainerLogicProgrammer container = new ContainerLogicProgrammer(0, player.getInventory());
+            container.applyExpressionAction(ExpressionEditor.actionSet(values, ExpressionParser.parse("#" + redstoneId, context), null));
+            OperatorLPElement element = (OperatorLPElement) container.getActiveElement();
+            helper.assertTrue(element.getOperator() == Operators.GENERAL_IDENTITY, "The element of the identity operator is not active");
+            written = element.writeElement(player, new ItemStack(RegistryEntries.ITEM_VARIABLE.get()));
+            helper.assertTrue(!(getVariableFacade(helper.getLevel(), written) instanceof ExpressionVariableFacade),
+                    "The card is not a plain operator card");
+        } finally {
+            player.getServer().getPlayerList().remove(player);
+        }
+
+        Pair<PartTypePanelDisplay, PartTypePanelDisplay.State> partAndState = display(helper, written);
+        helper.succeedWhen(() -> assertValueEqual(partAndState.getRight().getDisplayValue(), ValueTypeInteger.ValueInteger.of(15)));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
     public void testLogicProgrammerSetExpressionKeepsOpenOperator(GameTestHelper helper) throws ExpressionParseException {
         ValueDeseralizationContext values = ValueDeseralizationContext.of(helper.getLevel());
         ExpressionParser.Context context = ExpressionEditor.getParserContext(values, id -> null, label -> IntLists.EMPTY_LIST);

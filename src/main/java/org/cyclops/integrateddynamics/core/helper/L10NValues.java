@@ -136,7 +136,6 @@ public class L10NValues {
     public static final String EXPRESSION_PARSE_UNKNOWN_OPERATOR = "expression." + NS + ".parse.unknown_operator";
     public static final String EXPRESSION_PARSE_INPUT_COUNT = "expression." + NS + ".parse.input_count";
     public static final String EXPRESSION_PARSE_NOT_EDITABLE = "expression." + NS + ".parse.not_editable";
-    public static final String EXPRESSION_PARSE_ROOT = "expression." + NS + ".parse.root";
     public static final String EXPRESSION_PARSE_UNKNOWN_TYPE = "expression." + NS + ".parse.unknown_type";
     public static final String EXPRESSION_PARSE_PARAMETER_TYPE = "expression." + NS + ".parse.parameter_type";
     public static final String EXPRESSION_PARSE_PARAMETER_NAME = "expression." + NS + ".parse.parameter_name";
