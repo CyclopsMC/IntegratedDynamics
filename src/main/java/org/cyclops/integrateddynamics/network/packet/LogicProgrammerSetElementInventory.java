@@ -63,8 +63,11 @@ public class LogicProgrammerSetElementInventory extends PacketCodec {
             if (element instanceof ValueTypeListLPElement || element instanceof ValueTypeIngredientsLPElement) {
                 IValueType valueType = ValueTypes.REGISTRY.getValueType(Identifier.parse(this.listValueType));
                 if (valueType != null) {
+                    // Activate like the client-side list entries, so its state is initialized
+                    ILogicProgrammerElement subElement = valueType.createLogicProgrammerElement();
+                    subElement.activate();
                     ((ContainerLogicProgrammerBase) player.containerMenu).setElementInventory(
-                            valueType.createLogicProgrammerElement(), baseX, baseY);
+                            subElement, baseX, baseY);
                 } else {
                     IntegratedDynamics.clog(org.apache.logging.log4j.Level.WARN,
                             "Got an invalid LogicProgrammerSetElementInventory packet: " + this.listValueType);
