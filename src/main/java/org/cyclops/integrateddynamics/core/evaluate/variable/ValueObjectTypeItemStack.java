@@ -29,6 +29,7 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
         IValueTypeNullable<ValueObjectTypeItemStack.ValueItemStack> {
 
     public ValueObjectTypeItemStack() {
+        // TODO: in next major, prefix the global interact names of operators on items with item instead of itemstack.
         super("itemstack", ValueObjectTypeItemStack.ValueItemStack.class);
     }
 

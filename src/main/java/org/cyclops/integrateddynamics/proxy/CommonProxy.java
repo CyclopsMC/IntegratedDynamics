@@ -30,6 +30,7 @@ public class CommonProxy extends CommonProxyComponent {
         packetHandler.register(LogicProgrammerValueTypeListValueChangedPacket.ID, LogicProgrammerValueTypeListValueChangedPacket.CODEC);
         packetHandler.register(LogicProgrammerLabelPacket.ID, LogicProgrammerLabelPacket.CODEC);
         packetHandler.register(LogicProgrammerValueTypeOperatorValueChangedPacket.ID, LogicProgrammerValueTypeOperatorValueChangedPacket.CODEC);
+        packetHandler.register(LogicProgrammerExpressionActionPacket.ID, LogicProgrammerExpressionActionPacket.CODEC);
         packetHandler.register(NetworkDiagnosticsSubscribePacket.ID, NetworkDiagnosticsSubscribePacket.CODEC);
         packetHandler.register(NetworkDiagnosticsNetworkPacket.ID, NetworkDiagnosticsNetworkPacket.CODEC);
         packetHandler.register(NetworkDiagnosticsTriggerClient.ID, NetworkDiagnosticsTriggerClient.CODEC);

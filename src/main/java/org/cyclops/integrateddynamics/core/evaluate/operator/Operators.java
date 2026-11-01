@@ -71,6 +71,7 @@ import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperatorRegistry;
 import org.cyclops.integrateddynamics.api.evaluate.variable.*;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
+import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionOperator;
 import org.cyclops.integrateddynamics.core.evaluate.IOperatorValuePropagator;
 import org.cyclops.integrateddynamics.core.evaluate.OperatorBuilders;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
@@ -3200,6 +3201,7 @@ public final class Operators {
             )).build());
     static {
         REGISTRY.registerSerializer(new CombinedOperator.Flip.Serializer());
+        REGISTRY.registerSerializer(new ExpressionOperator.Serializer());
     }
 
     /**
