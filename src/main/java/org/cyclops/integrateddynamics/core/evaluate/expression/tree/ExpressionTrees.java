@@ -37,10 +37,6 @@ public final class ExpressionTrees {
      */
     public static final int MAX_DEPTH = 64;
     /**
-     * Maximum number of parameters.
-     */
-    public static final int MAX_PARAMETERS = 8;
-    /**
      * Maximum length of a parameter name.
      */
     public static final int MAX_PARAMETER_NAME_LENGTH = 16;
@@ -90,9 +86,6 @@ public final class ExpressionTrees {
         }
         List<ExpressionParameter> parameters = new ArrayList<>();
         ListTag params = tag.getList(KEY_PARAMETERS, Tag.TAG_COMPOUND);
-        if (params.size() > MAX_PARAMETERS) {
-            throw deserializeError(tag, "too many parameters");
-        }
         for (int i = 0; i < params.size(); i++) {
             CompoundTag paramTag = params.getCompound(i);
             IValueType<?> type = ValueTypes.REGISTRY.getValueType(ResourceLocation.parse(paramTag.getString(KEY_TYPE)));

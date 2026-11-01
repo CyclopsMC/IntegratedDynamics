@@ -34,8 +34,11 @@ import org.junit.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -158,6 +161,32 @@ public class TestExpressionTrees {
 
         IVariable<?> variable = ExpressionEvaluator.buildLazy(read.root(), 0, new ExpressionEvaluator.LocalValueCache(), id -> null);
         assertThat(integer(variable.getValue()), is(61));
+    }
+
+    @Test
+    public void testManyParameters() throws EvaluationException {
+        // p0 + p1 + ... + p19, as there is no limit
+        List<ExpressionParameter> parameters = new ArrayList<>();
+        ExpressionNode sum = p(0);
+        for (int i = 0; i < 20; i++) {
+            parameters.add(param("p" + i, ValueTypes.INTEGER));
+            if (i > 0) {
+                sum = op(Operators.ARITHMETIC_ADDITION, sum, p(i));
+            }
+        }
+        Expression expression = new Expression(sum, parameters);
+        CompoundTag tag = ExpressionTrees.serialize(ValueDeseralizationContextMocked.get(), expression);
+        Expression read = ExpressionTrees.deserialize(ValueDeseralizationContextMocked.get(), tag);
+        assertThat(read, is(expression));
+
+        ExpressionOperator operator = ExpressionOperator.of(read);
+        assertThat(operator.getRequiredInputLength(), is(20));
+        IValue[] values = IntStream.rangeClosed(1, 20).mapToObj(ValueTypeInteger.ValueInteger::of).toArray(IValue[]::new);
+        assertThat(integer(eval(operator, values)), is(210));
+        // Also with the first input applied
+        IValue curried = eval(Operators.OPERATOR_APPLY, ValueTypeOperator.ValueOperator.of(operator), values[0]);
+        IOperator rest = ((ValueTypeOperator.ValueOperator) curried).getRawValue();
+        assertThat(integer(eval(rest, Arrays.copyOfRange(values, 1, 20))), is(210));
     }
 
     @Test(expected = EvaluationException.class)

@@ -33,6 +33,8 @@ public class L10NValues {
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_ADD = "gui." + NS + ".logicprogrammer.expression.param_add";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_ADD_FIRST = "gui." + NS + ".logicprogrammer.expression.param_add.first";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_TOOLTIP = "gui." + NS + ".logicprogrammer.expression.param_tooltip";
+    public static final String GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_MORE = "gui." + NS + ".logicprogrammer.expression.param_more";
+    public static final String GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_MORE_TOOLTIP = "gui." + NS + ".logicprogrammer.expression.param_more.tooltip";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_VALUE = "gui." + NS + ".logicprogrammer.expression.value";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_VALUE_INVALID = "gui." + NS + ".logicprogrammer.expression.value_invalid";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_BREADCRUMB = "gui." + NS + ".logicprogrammer.expression.breadcrumb";
@@ -140,7 +142,6 @@ public class L10NValues {
     public static final String EXPRESSION_PARSE_PARAMETER_TYPE = "expression." + NS + ".parse.parameter_type";
     public static final String EXPRESSION_PARSE_PARAMETER_NAME = "expression." + NS + ".parse.parameter_name";
     public static final String EXPRESSION_PARSE_DUPLICATE_PARAMETER = "expression." + NS + ".parse.duplicate_parameter";
-    public static final String EXPRESSION_PARSE_TOO_MANY_PARAMETERS = "expression." + NS + ".parse.too_many_parameters";
     public static final String EXPRESSION_PARSE_BAD_VALUE = "expression." + NS + ".parse.bad_value";
     public static final String EXPRESSION_PARSE_VALUE_CHANGED = "expression." + NS + ".parse.value_changed";
     public static final String EXPRESSION_PARSE_LIST_ELEMENT = "expression." + NS + ".parse.list_element";

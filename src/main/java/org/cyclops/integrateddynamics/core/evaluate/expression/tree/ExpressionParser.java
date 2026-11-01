@@ -535,9 +535,6 @@ public final class ExpressionParser {
         if (previous.stream().anyMatch(parameter -> parameter.name().equals(name.text()))) {
             throw error(name, L10NValues.EXPRESSION_PARSE_DUPLICATE_PARAMETER, name.text());
         }
-        if (previous.size() >= ExpressionTrees.MAX_PARAMETERS) {
-            throw error(name, L10NValues.EXPRESSION_PARSE_TOO_MANY_PARAMETERS, ExpressionTrees.MAX_PARAMETERS);
-        }
         IValueType<?> type = ValueTypes.CATEGORY_ANY;
         if (accept(":")) {
             Token typeName = next();

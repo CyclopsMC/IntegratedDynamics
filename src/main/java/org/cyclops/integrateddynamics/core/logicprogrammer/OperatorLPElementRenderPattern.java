@@ -15,6 +15,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.Container;
 import net.neoforged.api.distmarker.Dist;
@@ -85,6 +86,10 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     // Parameter chips wrap onto as many rows as needed, followed by the button to add one, the expression follows below them
     static final int PARAMS_Y = TITLE_Y + 12;
     static final int CHIP_HEIGHT = 12;
+    // As many as 8 parameters with the longest names take, so the text keeps its room
+    static final int PARAM_ROWS = 4;
+    // In the tooltip of the parameters that do not fit
+    static final int MAX_LISTED_PARAMETERS = 32;
     private static final int BREADCRUMB_SEPARATOR = 8;
     static final int LINE_HEIGHT = 9;
     // Buttons right of the title, with their icons in line with it
@@ -210,7 +215,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         if (buttons == null) {
             return;
         }
-        buttons.addParameter.visible = panel && editor.getExpression().parameters().size() < ExpressionTrees.MAX_PARAMETERS;
+        buttons.addParameter.visible = panel;
         // Undo also reverts typed text that is not applied yet
         buttons.undo.visible = panel;
         buttons.undo.active = draft || container.getExpressionHistory().canUndo();
@@ -222,9 +227,8 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
         buttons.copy.visible = panel;
         buttons.layout(guiLeft, guiTop);
         if (editor != null) {
-            List<int[]> chips = layoutParameters(Minecraft.getInstance().font, editor.getExpression().parameters());
-            int[] last = chips.get(chips.size() - 1);
-            buttons.addParameter.setPosition(guiLeft + last[0], guiTop + last[1]);
+            int[] button = layoutParameters(Minecraft.getInstance().font, editor.getExpression().parameters()).button();
+            buttons.addParameter.setPosition(guiLeft + button[0], guiTop + button[1]);
         }
     }
 
@@ -241,27 +245,21 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     }
 
     /**
-     * Lay out the parameter chips in rows below the title, followed by the button to add one, unless there are too many.
+     * Lay out the parameter chips in rows below the title, followed by the button to add one.
+     * The rows are limited, and a chip tells how many parameters do not fit, which can be used in the text.
      * @param font The font.
      * @param parameters The parameters.
-     * @return The x, y and width of each chip, and of the button last, relative to the gui.
+     * @return Where the chips and the button go, relative to the gui.
      */
-    protected List<int[]> layoutParameters(Font font, List<ExpressionParameter> parameters) {
-        List<int[]> chips = new ArrayList<>();
-        int count = parameters.size() < ExpressionTrees.MAX_PARAMETERS ? parameters.size() + 1 : parameters.size();
-        int x = PANEL_X;
-        int y = PARAMS_Y;
-        for (int i = 0; i < count; i++) {
-            // Long names are cut off, so they do not take a row each
-            int width = i < parameters.size() ? Math.min(font.width(parameters.get(i).name()) + 4, (PANEL_WIDTH - 2) / 2) : buttons.addParameter.getWidth();
-            if (x + width > PANEL_X + PANEL_WIDTH) {
-                x = PANEL_X;
-                y += CHIP_HEIGHT + 1;
-            }
-            chips.add(new int[]{x, y, width});
-            x += width + 2;
-        }
-        return chips;
+    protected ParameterChipLayout layoutParameters(Font font, List<ExpressionParameter> parameters) {
+        // Long names are cut off, so they do not take a row each
+        int[] widths = parameters.stream().mapToInt(parameter -> Math.min(font.width(parameter.name()) + 4, (PANEL_WIDTH - 2) / 2)).toArray();
+        return ParameterChipLayout.layout(widths, hidden -> font.width(getMoreParametersText(hidden)) + 4, buttons.addParameter.getWidth(),
+                PANEL_X, PARAMS_Y, PANEL_WIDTH, CHIP_HEIGHT + 1, PARAM_ROWS);
+    }
+
+    protected static Component getMoreParametersText(int hidden) {
+        return Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_MORE, hidden);
     }
 
     @Override
@@ -1175,8 +1173,9 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
      */
     protected int renderParameters(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font, ExpressionEditor editor) {
         List<ExpressionParameter> parameters = editor.getExpression().parameters();
-        List<int[]> chips = layoutParameters(font, parameters);
-        for (int i = 0; i < parameters.size(); i++) {
+        ParameterChipLayout layout = layoutParameters(font, parameters);
+        List<int[]> chips = layout.chips();
+        for (int i = 0; i < chips.size(); i++) {
             ExpressionParameter parameter = parameters.get(i);
             int x = chips.get(i)[0];
             int y = chips.get(i)[1];
@@ -1199,10 +1198,36 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
                     selectSlot(-1);
                     pressedParameter = index;
                 }
-            }, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_TOOLTIP, parameter.name(),
-                    Component.translatable(parameter.type().getTranslationKey()).withStyle(parameter.type().getDisplayColorFormat()))));
+            }, getParameterTooltip(parameter)));
         }
-        return chips.get(chips.size() - 1)[1] + CHIP_HEIGHT + 2;
+        if (layout.more() != null) {
+            renderMoreParameters(guiGraphics, guiLeft, guiTop, font, layout.more(), parameters.subList(chips.size(), parameters.size()));
+        }
+        return layout.button()[1] + CHIP_HEIGHT + 2;
+    }
+
+    protected static Component getParameterTooltip(ExpressionParameter parameter) {
+        return Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_TOOLTIP, parameter.name(),
+                Component.translatable(parameter.type().getTranslationKey()).withStyle(parameter.type().getDisplayColorFormat()));
+    }
+
+    /**
+     * Draw the chip of the parameters that do not fit, with their names and types in its tooltip.
+     */
+    protected void renderMoreParameters(GuiGraphics guiGraphics, int guiLeft, int guiTop, Font font, int[] chip,
+                                        List<ExpressionParameter> hidden) {
+        guiGraphics.fill(guiLeft + chip[0], guiTop + chip[1], guiLeft + chip[0] + chip[2], guiTop + chip[1] + CHIP_HEIGHT, COLOR_STRIP);
+        drawOutline(guiGraphics, guiLeft + chip[0], guiTop + chip[1], chip[2], CHIP_HEIGHT, 0xFF806010);
+        guiGraphics.drawString(font, getMoreParametersText(hidden.size()), guiLeft + chip[0] + 2, guiTop + chip[1] + 2, COLOR_TEXT_LIGHT, false);
+        MutableComponent names = Component.empty();
+        for (int i = 0; i < Math.min(hidden.size(), MAX_LISTED_PARAMETERS); i++) {
+            names.append(i > 0 ? Component.literal(", ") : Component.empty()).append(getParameterTooltip(hidden.get(i)));
+        }
+        if (hidden.size() > MAX_LISTED_PARAMETERS) {
+            names.append(", " + ELLIPSIS);
+        }
+        regions.add(new Region(chip[0], chip[1], chip[2], CHIP_HEIGHT, button -> {},
+                Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_MORE_TOOLTIP, names)));
     }
 
     protected static boolean startsWith(int[] path, int[] prefix) {

@@ -297,9 +297,23 @@ public class TestExpressionEditor {
         // Also when the rest is not complete
         assertThat(addParameterToText("(x) => \"open"), is("(x, y) => \"open"));
         assertThat(addParameterToText("(x) => "), is("(x, y) => "));
-        // Not beyond the most parameters
-        String full = "(x, y, z, a, b, c, d, e) => x";
-        assertThat(addParameterToText(full), is(full));
+        // Also beyond the default names, with names no other parameter has
+        assertThat(addParameterToText("(x, y, z, a, b, c, d, e) => x"), is("(x, y, z, a, b, c, d, e, p8) => x"));
+        assertThat(addParameterToText("(x, y, z, a, b, c, d, e, p8) => x"), is("(x, y, z, a, b, c, d, e, p8, p9) => x"));
+        assertThat(ExpressionEditor.getNewParameterName(List.of("x", "y", "z", "a", "b", "c", "d", "e", "p9")), is("p10"));
+    }
+
+    @Test
+    public void testManyParameters() {
+        // There is no limit
+        ExpressionEditor editor = new ExpressionEditor(Operators.ARITHMETIC_ADDITION);
+        for (int i = 0; i < 20; i++) {
+            assertThat(apply(editor, ExpressionEditor.actionAddParam()), is(ExpressionEditor.ActionResult.CHANGED));
+        }
+        List<String> names = editor.getExpression().parameters().stream().map(ExpressionParameter::name).toList();
+        assertThat(names.size(), is(20));
+        assertThat(names.stream().distinct().count(), is(20L));
+        assertThat(names.get(19), is("p19"));
     }
 
 }

@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -195,6 +196,17 @@ public class TestExpressionParser {
             assertRoundTrip(new Expression(new ExpressionNode.Operator(operator, children), List.of(param("x", firstInputType))));
         }
         assertTrue("Only " + checked + " operators were checked", checked > 250);
+    }
+
+    @Test
+    public void testManyParameters() throws ExpressionParseException {
+        // There is no limit
+        List<String> names = IntStream.range(0, 30).mapToObj(i -> "p" + i).toList();
+        String text = "(" + String.join(", ", names) + ") => " + String.join(" + ", names);
+        Expression expression = parse(text);
+        assertThat(expression.parameters().size(), is(30));
+        assertThat(ExpressionTrees.containsParam(expression.root(), 29), is(true));
+        assertRoundTrip(expression);
     }
 
     @Test

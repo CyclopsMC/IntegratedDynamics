@@ -267,9 +267,6 @@ public class ExpressionEditor {
 
     public int addParameter() {
         List<ExpressionParameter> parameters = new ArrayList<>(expression.parameters());
-        if (parameters.size() >= ExpressionTrees.MAX_PARAMETERS) {
-            return -1;
-        }
         String name = getNewParameterName(parameters.stream().map(ExpressionParameter::name).toList());
         parameters.add(new ExpressionParameter(name, ValueTypes.CATEGORY_ANY));
         edit(expression.withParameters(parameters));
@@ -286,23 +283,23 @@ public class ExpressionEditor {
                 return candidate;
             }
         }
-        return "p" + names.size();
+        for (int i = names.size(); ; i++) {
+            if (!names.contains("p" + i)) {
+                return "p" + i;
+            }
+        }
     }
 
     /**
      * Add a parameter to the text of an expression, such as text that is still being typed.
      * @param text The text.
      * @param context What the parser needs to know about the world.
-     * @return The text with a new parameter after its parameters, or in front of it if it has none,
-     *         or the text itself if it has as many parameters as can be.
+     * @return The text with a new parameter after its parameters, or in front of it if it has none.
      */
     public static String addParameterToText(String text, ExpressionParser.Context context) {
         ExpressionParser.ParameterList parameters = ExpressionParser.getParameterList(text, context);
         if (parameters == null) {
             return getNewParameterName(List.of()) + " => " + text;
-        }
-        if (parameters.names().size() >= ExpressionTrees.MAX_PARAMETERS) {
-            return text;
         }
         String name = getNewParameterName(parameters.names());
         if (parameters.bracketed()) {
