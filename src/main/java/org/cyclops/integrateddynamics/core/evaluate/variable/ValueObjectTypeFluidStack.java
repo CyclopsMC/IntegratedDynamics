@@ -31,8 +31,7 @@ public class ValueObjectTypeFluidStack extends ValueObjectTypeBase<ValueObjectTy
         IValueTypeNullable<ValueObjectTypeFluidStack.ValueFluidStack> {
 
     public ValueObjectTypeFluidStack() {
-        // TODO: in next major, prefix the global interact names of operators on fluids with fluid instead of fluidstack,
-        //  as expressions call this type fluid. This keeps the saved unique name, but changes names that scripts use.
+        // TODO: in next major, prefix the global interact names of operators on fluids with fluid instead of fluidstack.
         super("fluidstack", ValueObjectTypeFluidStack.ValueFluidStack.class);
     }
 
