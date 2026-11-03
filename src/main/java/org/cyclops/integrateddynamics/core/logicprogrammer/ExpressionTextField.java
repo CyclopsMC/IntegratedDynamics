@@ -126,7 +126,7 @@ public class ExpressionTextField {
         this.font = font;
         this.text = new TextModel(font, width);
         // One more than can be parsed, so pasting too long text gives an error instead of being cut off unnoticed
-        this.text.setCharacterLimit(ExpressionParser.MAX_LENGTH + 1);
+        this.text.setCharacterLimit(ExpressionParser.getMaxLength() + 1);
         this.text.setCursorListener(this::scrollToCursor);
     }
 

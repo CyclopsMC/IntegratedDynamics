@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
+import net.minecraft.nbt.Tag;
 import org.cyclops.cyclopscore.helper.CyclopsCoreInstance;
 import org.cyclops.integrateddynamics.ModBaseMocked;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -301,6 +302,17 @@ public class TestExpressionTrees {
         ExpressionOperator square = ExpressionOperator.of(new Expression(op(Operators.ARITHMETIC_MULTIPLICATION, p(0), p(0)),
                 List.of(param("x", ValueTypes.INTEGER))));
         assertThat(integer(eval(square, ValueTypeInteger.ValueInteger.of(7))), is(49));
+    }
+
+    @Test
+    public void testOperatorSerializerRegistered() throws EvaluationException {
+        ExpressionOperator square = ExpressionOperator.of(new Expression(op(Operators.ARITHMETIC_MULTIPLICATION, p(0), p(0)),
+                List.of(param("x", ValueTypes.INTEGER))));
+        Tag tag = Operators.REGISTRY.serialize(ValueDeseralizationContextMocked.get(), square);
+        assertThat(((CompoundTag) tag).getString("serializer"), is("integrateddynamics:expression"));
+        IOperator read = Operators.REGISTRY.deserialize(ValueDeseralizationContextMocked.get(), tag);
+        assertThat(read, instanceOf(ExpressionOperator.class));
+        assertThat(integer(eval(read, ValueTypeInteger.ValueInteger.of(7))), is(49));
     }
 
     @Test

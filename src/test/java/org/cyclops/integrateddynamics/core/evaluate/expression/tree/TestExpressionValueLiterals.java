@@ -18,6 +18,7 @@ import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import org.cyclops.cyclopscore.helper.CyclopsCoreInstance;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.ModBaseMocked;
 import org.cyclops.integrateddynamics.api.evaluate.expression.tree.Expression;
 import org.cyclops.integrateddynamics.api.evaluate.expression.tree.ExpressionNode;
@@ -373,7 +374,19 @@ public class TestExpressionValueLiterals {
 
     @Test
     public void testTooLong() {
-        assertError("1 + " + " ".repeat(ExpressionParser.MAX_LENGTH), L10NValues.EXPRESSION_PARSE_TOO_LONG, ExpressionParser.MAX_LENGTH);
+        assertError("1 + " + " ".repeat(ExpressionParser.getMaxLength()), L10NValues.EXPRESSION_PARSE_TOO_LONG, ExpressionParser.getMaxLength());
+    }
+
+    @Test
+    public void testTooLongConfigured() throws ExpressionParseException {
+        int maxLength = GeneralConfig.expressionMaxLength;
+        GeneralConfig.expressionMaxLength = 5;
+        try {
+            assertThat(printExact(parse("1 + 2")), is("1 + 2"));
+            assertError("1 + 23", L10NValues.EXPRESSION_PARSE_TOO_LONG, 5);
+        } finally {
+            GeneralConfig.expressionMaxLength = maxLength;
+        }
     }
 
 }

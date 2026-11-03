@@ -531,7 +531,7 @@ public class ExpressionEditor {
     public static CompoundTag actionSet(ValueDeseralizationContext context, Expression expression, @Nullable String text) {
         CompoundTag tag = action(ACTION_SET, new int[0]);
         tag.put("expression", ExpressionTrees.serialize(context, expression));
-        if (text != null && text.length() <= ExpressionParser.MAX_LENGTH) {
+        if (text != null && text.length() <= ExpressionParser.getMaxLength()) {
             tag.putString("text", text);
         }
         return tag;
@@ -548,7 +548,7 @@ public class ExpressionEditor {
             return null;
         }
         String text = action.getString("text");
-        return text.length() <= ExpressionParser.MAX_LENGTH ? text : null;
+        return text.length() <= ExpressionParser.getMaxLength() ? text : null;
     }
 
     /**

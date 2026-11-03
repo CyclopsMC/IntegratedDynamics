@@ -170,7 +170,7 @@ public class TestExpressionEditor {
         // With the text it was typed as, which is left out if it is too long to be read
         String text = "(s: String) => length(s)";
         assertThat(ExpressionEditor.readSetActionText(ExpressionEditor.actionSet(ValueDeseralizationContextMocked.get(), expression, text)), is(text));
-        String tooLong = "x".repeat(ExpressionParser.MAX_LENGTH + 1);
+        String tooLong = "x".repeat(ExpressionParser.getMaxLength() + 1);
         assertThat(ExpressionEditor.readSetActionText(ExpressionEditor.actionSet(ValueDeseralizationContextMocked.get(), expression, tooLong)), nullValue());
         action.putString("text", tooLong);
         assertThat(ExpressionEditor.readSetActionText(action), nullValue());

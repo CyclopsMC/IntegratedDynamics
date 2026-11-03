@@ -14,6 +14,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import org.cyclops.integrateddynamics.Reference;
+import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.api.evaluate.expression.tree.Expression;
 import org.cyclops.integrateddynamics.api.evaluate.expression.tree.ExpressionNode;
 import org.cyclops.integrateddynamics.api.evaluate.expression.tree.ExpressionParameter;
@@ -81,7 +82,6 @@ import java.util.stream.Stream;
  */
 public final class ExpressionParser {
 
-    public static final int MAX_LENGTH = 8192;
     private static final int MAX_NESTING = ExpressionTrees.MAX_DEPTH * 2;
     // The syntax, as in JavaScript: the symbols between two values, from the loosest to the tightest binding,
     // and in front of a value. Which operators they stand for comes from the symbols of the operators, see OperatorNames.
@@ -136,6 +136,13 @@ public final class ExpressionParser {
     }
 
     /**
+     * @return The maximum length of the text of an expression, from the server config, which clients get when they join.
+     */
+    public static int getMaxLength() {
+        return GeneralConfig.expressionMaxLength;
+    }
+
+    /**
      * @param text The text of an expression.
      * @param context What the parser needs to know about the world.
      * @return The expression.
@@ -146,8 +153,9 @@ public final class ExpressionParser {
     }
 
     private static Expression parse(String text, Context context, @Nullable List<Span> spans) throws ExpressionParseException {
-        if (text.length() > MAX_LENGTH) {
-            throw new ExpressionParseException(MAX_LENGTH, Component.translatable(L10NValues.EXPRESSION_PARSE_TOO_LONG, MAX_LENGTH));
+        int maxLength = getMaxLength();
+        if (text.length() > maxLength) {
+            throw new ExpressionParseException(maxLength, Component.translatable(L10NValues.EXPRESSION_PARSE_TOO_LONG, maxLength));
         }
         ExpressionParser parser = new ExpressionParser(context, new Lexer(text, context).tokenize(), false);
         parser.spans = spans;
@@ -214,7 +222,7 @@ public final class ExpressionParser {
      * @return What can be completed.
      */
     public static Completion complete(String text, int cursor, Context context) {
-        if (cursor < 0 || cursor > Math.min(text.length(), MAX_LENGTH)) {
+        if (cursor < 0 || cursor > Math.min(text.length(), getMaxLength())) {
             return Completion.NONE;
         }
         String before = text.substring(0, cursor);
