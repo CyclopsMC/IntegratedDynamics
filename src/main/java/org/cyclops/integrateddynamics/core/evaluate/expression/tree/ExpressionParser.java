@@ -49,6 +49,7 @@ import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Parses the text form of expressions, as written by {@link ExpressionPrinter#printExact}.
@@ -82,24 +83,21 @@ public final class ExpressionParser {
 
     public static final int MAX_LENGTH = 8192;
     private static final int MAX_NESTING = ExpressionTrees.MAX_DEPTH * 2;
+    // The syntax, as in JavaScript: the symbols between two values, from the loosest to the tightest binding,
+    // and in front of a value. Which operators they stand for comes from the symbols of the operators, see OperatorNames.
     private static final List<List<String>> BINARY_LEVELS = List.of(
             List.of("||"), List.of("&&"), List.of("==", "!="), List.of("<", "<=", ">", ">="), List.of("+", "-"), List.of("*", "/", "%"));
-    private static final List<String> SYMBOLS = List.of(
-            "===", "!==", "=>", "->", "==", "!=", "<=", ">=", "&&", "||", "(", ")", "[", "]", ",", "?", ":", ".",
-            "+", "-", "*", "/", "%", "<", ">", "!");
+    public static final Set<String> INFIX_SYMBOLS = BINARY_LEVELS.stream().flatMap(List::stream).collect(Collectors.toUnmodifiableSet());
+    public static final Set<String> PREFIX_SYMBOLS = Set.of("!");
+    // Read as the symbol they stand for, as JavaScript has them too
     private static final Map<String, String> SYMBOL_ALIASES = Map.of("->", "=>", "===", "==", "!==", "!=");
+    // All symbols, the longest first, so == is not read as two =
+    private static final List<String> SYMBOLS = Stream.of(INFIX_SYMBOLS, PREFIX_SYMBOLS, SYMBOL_ALIASES.keySet(),
+                    Set.of("=>", "(", ")", "[", "]", ",", "?", ":", "."))
+            .flatMap(Set::stream).distinct().sorted(Comparator.comparingInt(String::length).reversed()).toList();
     private static final List<IOperator> APPLY_OPERATORS = List.of(
             Operators.OPERATOR_APPLY_0, Operators.OPERATOR_APPLY, Operators.OPERATOR_APPLY_2, Operators.OPERATOR_APPLY_3);
     private static final Set<String> RESERVED_NAMES = Set.of("true", "false", "NaN", "Infinity");
-    // Names of the types of Integrated Dynamics by id, as the logic programmer shows them, see ValueObjectTypeItemStack
-    private static final Map<String, String> TYPE_NAMES = Map.ofEntries(
-            Map.entry("any", "Any"), Map.entry("number", "Number"), Map.entry("named", "Named"), Map.entry("uniquely_named", "UniquelyNamed"),
-            Map.entry("boolean", "Boolean"), Map.entry("integer", "Integer"), Map.entry("long", "Long"), Map.entry("double", "Double"),
-            Map.entry("string", "String"), Map.entry("list", "List"), Map.entry("operator", "Operator"), Map.entry("nbt", "NBT"),
-            Map.entry("itemstack", "Item"), Map.entry("block", "Block"), Map.entry("fluidstack", "Fluid"), Map.entry("entity", "Entity"),
-            Map.entry("ingredients", "Ingredients"), Map.entry("recipe", "Recipe"));
-    // In lower case, for names that differ from the id
-    private static final Map<String, String> TYPE_IDS = Map.of("item", "itemstack", "fluid", "fluidstack", "uniquelynamed", "uniquely_named");
 
     private final Context context;
     private final List<Token> tokens;
@@ -120,6 +118,21 @@ public final class ExpressionParser {
         this.context = context;
         this.tokens = tokens;
         this.openCalls = completing ? new ArrayDeque<>() : null;
+    }
+
+    /**
+     * @param text Text.
+     * @return The value if the text is a single number or boolean, as in {@code 5}, {@code -5L}, {@code 1.5} or {@code true},
+     *         read as in the text of an expression, or null otherwise.
+     */
+    @Nullable
+    public static IValue parseLiteral(String text) {
+        try {
+            Context context = Context.of(null);
+            return new ExpressionParser(context, new Lexer(text, context).tokenize(), false).parseLiteral();
+        } catch (ExpressionParseException | RuntimeException e) {
+            return null;
+        }
     }
 
     /**
@@ -410,28 +423,35 @@ public final class ExpressionParser {
 
     /**
      * @param valueType A value type.
-     * @return The name of the type in the text form: for those of Integrated Dynamics, the name the logic programmer
-     *         shows, as in {@code Integer} or {@code Item}, otherwise its id.
+     * @return The name of the type in the text form, see {@link IValueType#getExpressionName()}.
      */
     public static String getTypeName(IValueType<?> valueType) {
-        ResourceLocation id = valueType.getUniqueName();
-        return id.getNamespace().equals(Reference.MOD_ID) ? TYPE_NAMES.getOrDefault(id.getPath(), id.getPath()) : id.toString();
+        return valueType.getExpressionName();
     }
 
     /**
      * @param name The name of a type in the text form, in any case, as in {@code Integer} or {@code integer}.
-     *             Types of add-ons are written by their id, whose namespace can be left out
-     *             when no other type has that name, as in {@code chemicalstack}. Ids, such as {@code itemstack}, are read too.
+     *             Unique names are read too, as in {@code itemstack} or {@code integratedmekanism:chemicalstack},
+     *             where the namespace can be left out when no other type has that name.
      * @return The type, or null if unknown or ambiguous.
      */
     @Nullable
     public static IValueType<?> getValueType(String name) {
-        name = name.toLowerCase(Locale.ROOT);
-        if (!name.contains(":")) {
-            name = TYPE_IDS.getOrDefault(name, name);
+        IValueType<?> type = null;
+        for (IValueType<?> candidate : ValueTypes.REGISTRY.getValueTypes()) {
+            if (candidate.getExpressionName().equalsIgnoreCase(name)) {
+                if (type != null) {
+                    return null;
+                }
+                type = candidate;
+            }
         }
+        if (type != null) {
+            return type;
+        }
+        name = name.toLowerCase(Locale.ROOT);
         ResourceLocation id = ResourceLocation.tryParse(name.contains(":") ? name : Reference.MOD_ID + ":" + name);
-        IValueType<?> type = id == null ? null : ValueTypes.REGISTRY.getValueType(id);
+        type = id == null ? null : ValueTypes.REGISTRY.getValueType(id);
         if (type != null || name.contains(":")) {
             return type;
         }
@@ -481,6 +501,22 @@ public final class ExpressionParser {
             throw new ExpressionParseException(start.start(), Component.translatable(L10NValues.EXPRESSION_PARSE_TOO_DEEP));
         }
         return new Expression(root, parameters);
+    }
+
+    @Nullable
+    private IValue parseLiteral() throws ExpressionParseException {
+        Token token = next();
+        boolean negative = isSymbol(token, "-");
+        if (negative) {
+            token = next();
+        }
+        IValue value = null;
+        if (isNumber(token)) {
+            value = parseNumber(token, negative);
+        } else if (!negative && token.kind() == Kind.NAME && (token.text().equals("true") || token.text().equals("false"))) {
+            value = ValueTypeBoolean.ValueBoolean.of(token.text().equals("true"));
+        }
+        return peek(0).kind() == Kind.END ? value : null;
     }
 
     private boolean isParameterHeader() {
@@ -590,11 +626,16 @@ public final class ExpressionParser {
 
     private ExpressionNode parseUnary() throws ExpressionParseException {
         Token token = peek(0);
-        if (accept("!")) {
+        if (token.kind() == Kind.SYMBOL && PREFIX_SYMBOLS.contains(symbol(token))) {
+            next();
             enter(token);
             ExpressionNode child = parseUnary();
             nesting--;
-            return span(operator(OperatorNames.getPrefixOperator("!"), List.of(child), token), token);
+            IOperator operator = OperatorNames.getPrefixOperator(symbol(token), types.getType(child));
+            if (operator == null) {
+                throw unknownOperator(token);
+            }
+            return span(operator(operator, List.of(child), token), token);
         }
         if (isSymbol(token, "-") && isNumber(peek(1))) {
             next();
@@ -984,15 +1025,14 @@ public final class ExpressionParser {
 
     private boolean isOperatorValue(Token token) {
         if (token.kind() == Kind.SYMBOL) {
-            return OperatorNames.getInfixOperator(symbol(token)) != null || OperatorNames.getPrefixOperator(symbol(token)) != null;
+            return OperatorNames.getSymbolValue(symbol(token)) != null;
         }
         return token.kind() == Kind.NAME && getParameterIndex(token.text()) < 0 && !RESERVED_NAMES.contains(token.text());
     }
 
     private IOperator resolveOperatorValue(Token token) throws ExpressionParseException {
         if (token.kind() == Kind.SYMBOL) {
-            IOperator infix = OperatorNames.getInfixOperator(symbol(token));
-            return infix != null ? infix : OperatorNames.getPrefixOperator(symbol(token));
+            return OperatorNames.getSymbolValue(symbol(token));
         }
         IOperator operator = OperatorNames.resolve(token.text(), null);
         if (operator == null) {

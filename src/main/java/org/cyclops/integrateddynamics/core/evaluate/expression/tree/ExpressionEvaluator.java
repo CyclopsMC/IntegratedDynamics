@@ -28,7 +28,7 @@ public final class ExpressionEvaluator {
     }
 
     /**
-     * Build a variable tree of cached lazy expressions, for a parameterless expression in a network.
+     * Build a variable tree of cached lazy expressions.
      * The root operator node is cached in the given value cache under the given id,
      * inner operator nodes are cached in a cache that is local to this tree.
      * @param root The root node.
@@ -44,7 +44,7 @@ public final class ExpressionEvaluator {
     }
 
     /**
-     * Build a variable for a single evaluation, where parameters are bound to the given variables.
+     * Build a variable for a single evaluation.
      * Operator nodes are evaluated lazily and at most once.
      * @param node The node.
      * @param params The parameter values.

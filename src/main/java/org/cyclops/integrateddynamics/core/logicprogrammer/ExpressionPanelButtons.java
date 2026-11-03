@@ -41,7 +41,7 @@ public class ExpressionPanelButtons {
      * @param addParameter Adds a parameter.
      * @param undo Goes back one change.
      * @param redo Goes forward one change.
-     * @param format Prints the expression in its usual form.
+     * @param format Prints the expression in its canonical form.
      * @param copy Copies the text.
      */
     public ExpressionPanelButtons(BooleanSupplier firstParameter, Runnable addParameter, Runnable undo, Runnable redo, Runnable format,
@@ -59,6 +59,7 @@ public class ExpressionPanelButtons {
         this.undo = createButton(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_UNDO, undo, ButtonIcon.Icon.UNDO);
         this.redo = createButton(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_REDO, redo, ButtonIcon.Icon.REDO);
         this.format = createButton(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_FORMAT, format, ButtonIcon.Icon.FORMAT);
+        this.format.setTooltip(Tooltip.create(Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_FORMAT + ".tooltip")));
         this.copy = new ButtonIcon(0, 0, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_COPY),
                 () -> Util.getMillis() - copiedTime < COPIED_MS ? ButtonIcon.Icon.CHECK : ButtonIcon.Icon.COPY, b -> {
             copy.run();
@@ -68,12 +69,10 @@ public class ExpressionPanelButtons {
     }
 
     /**
-     * @param key The translation key of its narration, and of its tooltip with ".tooltip" appended.
+     * @param key The translation key of its narration.
      */
     private static ButtonIcon createButton(String key, Runnable action, ButtonIcon.Icon icon) {
-        ButtonIcon button = new ButtonIcon(0, 0, Component.translatable(key), () -> icon, b -> action.run());
-        button.setTooltip(Tooltip.create(Component.translatable(key + ".tooltip")));
-        return button;
+        return new ButtonIcon(0, 0, Component.translatable(key), () -> icon, b -> action.run());
     }
 
     /**

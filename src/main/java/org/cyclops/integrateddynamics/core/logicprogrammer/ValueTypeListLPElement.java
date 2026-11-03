@@ -352,7 +352,6 @@ public class ValueTypeListLPElement extends ValueTypeLPElementBase {
             }
             int x = guiLeft + getX();
             int y = guiTop + getY();
-            // Right of the type selector, as the button of the expression panel is in the top right corner
             buttonList.add(arrowAdd = new ButtonText(x + getWidth() / 2 + 53, y + 10, 12, 12,
                     Component.translatable("gui.integrateddynamics.button.add"), Component.literal("+"), b -> {}, true));
         }

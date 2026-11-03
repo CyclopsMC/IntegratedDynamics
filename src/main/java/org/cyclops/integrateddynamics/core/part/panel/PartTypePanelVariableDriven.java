@@ -250,7 +250,6 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
     @Override
     public InteractionResult onPartActivated(final S partState, BlockPos pos, Level world, Player player, InteractionHand hand,
                                              ItemStack heldItem, BlockHitResult hit) {
-        // A Wrench in a configuration mode pastes its configuration instead of rotating the panel
         boolean pastesConfig = heldItem.getItem() instanceof ItemWrench itemWrench && itemWrench.getMode(heldItem).isConfig();
         if(!pastesConfig && WrenchHelpers.isWrench(player, heldItem, world, pos, hit.getDirection())) {
             WrenchHelpers.wrench(player, heldItem, world, pos, hit.getDirection(),

@@ -52,7 +52,7 @@ import static org.junit.Assert.fail;
 
 /**
  * Tests for how values are written in the text form of expressions, and that each reads back into the same value.
- * Values that need the game's registries, such as items, are tested in TestExpressionValueLiteralsInGame.
+ * Values that need the game's registries, such as items, are tested in the integration test of the same name.
  * @author rubensworks
  */
 public class TestExpressionValueLiterals {

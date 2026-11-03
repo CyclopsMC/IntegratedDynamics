@@ -33,6 +33,11 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
         super("itemstack", ValueObjectTypeItemStack.ValueItemStack.class);
     }
 
+    @Override
+    public String getExpressionName() {
+        return "Item";
+    }
+
     public static MutableComponent getItemStackDisplayNameUsSafe(ItemStack itemStack) throws NoSuchMethodException {
         return !itemStack.isEmpty()
                 ? (itemStack.getHoverName().copy().append((itemStack.getCount() > 1 ? " (" + itemStack.getCount() + ")" : "")))

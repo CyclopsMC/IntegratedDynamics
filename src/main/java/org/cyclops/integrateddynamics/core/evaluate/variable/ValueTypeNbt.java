@@ -31,6 +31,11 @@ public class ValueTypeNbt extends ValueTypeBase<ValueTypeNbt.ValueNbt>
     }
 
     @Override
+    public String getExpressionName() {
+        return "NBT";
+    }
+
+    @Override
     public ValueNbt getDefault() {
         return ValueNbt.of();
     }

@@ -8,7 +8,9 @@ import org.cyclops.integrateddynamics.api.evaluate.expression.tree.Expression;
 import org.cyclops.integrateddynamics.api.evaluate.expression.tree.ExpressionNode;
 import org.cyclops.integrateddynamics.api.evaluate.expression.tree.ExpressionParameter;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
-import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
+import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
+import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
+import org.cyclops.integrateddynamics.core.evaluate.build.OperatorBuilder;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueDeseralizationContextMocked;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeAddonMocked;
@@ -34,6 +36,10 @@ public class TestExpressionAddonTypes {
     static { CyclopsCoreInstance.MOD = new ModBaseMocked(); }
 
     private static final ValueTypeAddonMocked CHEMICAL = ValueTypeAddonMocked.CHEMICAL;
+    // An operator of an add-on with a symbol that the text form has
+    private static final IOperator CHEMICAL_ADD = Operators.REGISTRY.register(OperatorBuilder.forType(CHEMICAL).appendKind("chemical")
+            .inputTypes(2, CHEMICAL).output(CHEMICAL).symbol("+").operatorName("add").interactName("add")
+            .renderPattern(IConfigRenderPattern.INFIX).function(variables -> variables.getValue(0)).build());
 
     @BeforeClass
     public static void beforeClass() {
@@ -72,13 +78,20 @@ public class TestExpressionAddonTypes {
         assertTrue(!ExpressionEditor.isParameterType(ValueTypes.CATEGORY_NAMED));
         assertTrue(!ExpressionEditor.isParameterType(new ValueTypeAddonMocked("testaddon", "unregistered")));
 
-        // Those of Integrated Dynamics first, then those of add-ons by name
-        List<IValueType<?>> types = ExpressionEditor.getParameterTypes();
-        assertThat(types.get(0), is(ValueTypes.CATEGORY_ANY));
-        int chemical = types.indexOf(CHEMICAL);
-        assertTrue(chemical > types.indexOf(ValueTypes.OBJECT_RECIPE));
-        assertThat(types.indexOf(ValueTypeAddonMocked.WIDGET), is(chemical + 1));
-        assertThat(types.indexOf(ValueTypeAddonMocked.OTHER_WIDGET), is(chemical + 2));
+    }
+
+    @Test
+    public void testOperatorWithSymbol() throws ExpressionParseException {
+        // + also stands for an operator of an add-on with that symbol, for inputs of its types
+        Expression expression = parse("(a: testaddon:chemical, b: chemical) => a + b");
+        assertThat(((ExpressionNode.Operator) expression.root()).operator(), is(CHEMICAL_ADD));
+        assertThat(printExact(expression), is("(a: testaddon:chemical, b: testaddon:chemical) => a + b"));
+        assertThat(parse(printExact(expression)), is(expression));
+        // Without types, it is still addition, which was registered first
+        assertThat(((ExpressionNode.Operator) parse("(a, b) => a + b").root()).operator(), is(Operators.ARITHMETIC_ADDITION));
+        assertThat(OperatorNames.getValueName(Operators.ARITHMETIC_ADDITION), is("+"));
+        // As a value by a name that reads back as it, as other operators are called add too
+        assertThat(OperatorNames.resolve(OperatorNames.getValueName(CHEMICAL_ADD), null), is(CHEMICAL_ADD));
     }
 
     @Test

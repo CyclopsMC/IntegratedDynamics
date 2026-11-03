@@ -306,7 +306,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     /**
      * @param expression The expression.
      * @param text The text it was typed as, or null.
-     * @return The tokens of the text if it still reads as the expression, and otherwise of the expression in its usual form,
+     * @return The tokens of the text if it still reads as the expression, and otherwise of the expression in its canonical form,
      *         such as after a label that the text uses changed.
      */
     protected List<ExpressionPrinter.Token> printTokens(Expression expression, @Nullable String text) {
@@ -326,7 +326,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
 
     /**
      * @param expression An expression.
-     * @return Its usual form.
+     * @return Its canonical form.
      */
     protected String printExact(Expression expression) {
         return ExpressionPrinter.printExact(expression, ValueDeseralizationContext.ofClient(), this::getLabel, this::getLabelIds, this::getRefType);
@@ -369,7 +369,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     }
 
     /**
-     * Apply the typed text if it parses. It stays as typed, also on the card, unless it is the usual form.
+     * Apply the typed text if it parses. It stays as typed, also on the card, unless it is the canonical form.
      * The same expression typed in another way is applied too, as its text is kept.
      * This can make another element active, which replaces this panel, so it is not done while rendering.
      */
@@ -390,7 +390,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     }
 
     /**
-     * Show the expression in its usual form instead of as typed, applying typed text first if it parses.
+     * Show the expression in its canonical form instead of as typed, applying typed text first if it parses.
      * This can make another element active, which replaces this panel.
      */
     protected void formatText() {
@@ -968,7 +968,7 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
                     }
                 }
                 case ExpressionNode.Const constant -> {
-                    if (OperatorLPElement.getConstantItem(constant).isEmpty()) {
+                    if (OperatorLPElement.getItemOfValue(constant).isEmpty()) {
                         guiGraphics.fill(x + 1, y + 1, x + 17, y + 17, COLOR_CONST);
                         drawFitted(guiGraphics, fontRenderer, getConstantText(constant.value()), x + 1, y + 1, 16, 16, COLOR_TEXT);
                     }

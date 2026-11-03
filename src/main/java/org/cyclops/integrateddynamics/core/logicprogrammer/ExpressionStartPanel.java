@@ -53,9 +53,8 @@ import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElem
 import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.wrapTooltip;
 
 /**
- * The expression panel while no operator is active, where an expression can be typed right away.
- * Applying it makes the element of its root operator active, where the text can be edited further.
- * It looks like the panel of an expression without parameters, with the same buttons, which work on the text.
+ * The expression panel while no operator is active.
+ * It looks like the panel of an expression without parameters.
  * @author rubensworks
  */
 @OnlyIn(Dist.CLIENT)
@@ -77,7 +76,7 @@ public class ExpressionStartPanel {
     private ExpressionTypeChecker.Result parsedTextResult = null;
     @Nullable
     private ExpressionParseException textError = null;
-    // The usual form of the typed expression
+    // The canonical form of the typed expression
     @Nullable
     private String parsedTextPrinted = null;
 
@@ -234,7 +233,7 @@ public class ExpressionStartPanel {
     }
 
     /**
-     * Replace the typed text by its usual form, which is applied as any typed text.
+     * Replace the typed text by its canonical form, which is applied as any typed text.
      */
     protected void formatText() {
         Expression expression = parseText();

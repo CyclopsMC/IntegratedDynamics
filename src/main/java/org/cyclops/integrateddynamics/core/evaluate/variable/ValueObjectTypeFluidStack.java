@@ -36,6 +36,11 @@ public class ValueObjectTypeFluidStack extends ValueObjectTypeBase<ValueObjectTy
     }
 
     @Override
+    public String getExpressionName() {
+        return "Fluid";
+    }
+
+    @Override
     public ValueFluidStack getDefault() {
         return ValueFluidStack.of(FluidStack.EMPTY);
     }

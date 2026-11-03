@@ -7,8 +7,6 @@ import java.util.function.IntUnaryOperator;
 
 /**
  * The places of the parameter chips in the expression panel: in rows, followed by the button to add a parameter.
- * The rows are limited, so the text below keeps its room. The chips that do not fit are left out,
- * and a chip in their place tells how many there are.
  * @param chips The x, y and width of the chip of each shown parameter, which are the first ones.
  * @param more The x, y and width of the chip of the parameters that are left out, or null if all are shown.
  * @param button The x, y and width of the button to add a parameter.

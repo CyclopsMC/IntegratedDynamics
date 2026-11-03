@@ -35,6 +35,7 @@ import org.cyclops.integrateddynamics.api.evaluate.expression.tree.ExpressionNod
 import org.cyclops.integrateddynamics.api.evaluate.expression.tree.ExpressionParameter;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
@@ -64,6 +65,7 @@ import org.cyclops.integrateddynamics.core.helper.PartHelpers;
 import org.cyclops.integrateddynamics.core.item.ExpressionVariableFacade;
 import org.cyclops.integrateddynamics.core.item.OperatorVariableFacade;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ExpressionEditor;
+import org.cyclops.integrateddynamics.core.logicprogrammer.ValueTypeLPElementType;
 import org.cyclops.integrateddynamics.core.logicprogrammer.LogicProgrammerElementTypes;
 import org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElement;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
@@ -76,6 +78,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.cyclops.integrateddynamics.gametest.GameTestHelpersIntegratedDynamics.*;
 
@@ -718,6 +721,19 @@ public class GameTestsExpressions {
         } finally {
             player.getServer().getPlayerList().remove(player);
         }
+        helper.succeed();
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testLogicProgrammerParameterTypes(GameTestHelper helper) {
+        // Any and Number, then the types in the order of the logic programmer, each once
+        List<IValueType<?>> types = ExpressionEditor.getParameterTypes();
+        helper.assertTrue(types.subList(0, 2).equals(List.of(ValueTypes.CATEGORY_ANY, ValueTypes.CATEGORY_NUMBER)), "Any and Number are not first");
+        List<IValueType<?>> elementTypes = ValueTypeLPElementType.getElementValueTypes();
+        helper.assertTrue(types.subList(2, 2 + elementTypes.size()).equals(elementTypes), "Not in the order of the logic programmer");
+        helper.assertTrue(types.containsAll(List.of(ValueTypes.INTEGER, ValueTypes.OBJECT_ITEMSTACK, ValueTypes.OBJECT_RECIPE, ValueTypes.LIST)),
+                "Types are missing");
+        helper.assertTrue(Set.copyOf(types).size() == types.size(), "Types are listed twice");
         helper.succeed();
     }
 

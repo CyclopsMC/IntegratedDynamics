@@ -350,7 +350,7 @@ public final class ExpressionPrinter {
             IOperator operator = node.operator();
             List<ExpressionNode> children = node.children();
             String infixSymbol = OperatorNames.getInfixSymbol(node, path, types);
-            String prefixSymbol = OperatorNames.getPrefixSymbol(operator);
+            String prefixSymbol = OperatorNames.getPrefixSymbol(node, path, types);
             if (isTernary(node)) {
                 if (nested) {
                     tokens.add(new Token("(", path));
@@ -379,8 +379,8 @@ public final class ExpressionPrinter {
             } else if (OperatorNames.isMethodCall(node, path, types)) {
                 // The receiver in brackets if it has symbols, as a method binds tighter than those
                 ExpressionNode receiver = children.get(0);
-                boolean prefix = receiver instanceof ExpressionNode.Operator op && OperatorNames.getPrefixSymbol(op.operator()) != null
-                        && op.children().size() == 1;
+                boolean prefix = receiver instanceof ExpressionNode.Operator op
+                        && OperatorNames.getPrefixSymbol(op, ExpressionTrees.append(path, 0), types) != null;
                 if (prefix) {
                     tokens.add(new Token("(", path));
                 }

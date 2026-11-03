@@ -29,49 +29,18 @@ import java.util.TreeMap;
  * and otherwise the globally unique interact name is used, such as {@code listLength}.
  * A call with a scoped name is written as a method of its first argument, as in {@code item.size()},
  * as Integrated Scripting does for the methods of values.
- * A few common operators are written as symbols instead, such as {@code a + b} and {@code !a},
- * where + joins strings as well.
+ * Operators whose symbol is one of the symbols of the text form are written with it, such as {@code a + b} and {@code !a},
+ * where + stands for both addition and concat.
  *
  * @author rubensworks
  */
 public final class OperatorNames {
 
-    private static final Map<IOperator, String> INFIX_SYMBOLS = Map.ofEntries(
-            Map.entry(Operators.ARITHMETIC_ADDITION, "+"),
-            Map.entry(Operators.ARITHMETIC_SUBTRACTION, "-"),
-            Map.entry(Operators.ARITHMETIC_MULTIPLICATION, "*"),
-            Map.entry(Operators.ARITHMETIC_DIVISION, "/"),
-            Map.entry(Operators.ARITHMETIC_MODULUS, "%"),
-            Map.entry(Operators.RELATIONAL_EQUALS, "=="),
-            Map.entry(Operators.RELATIONAL_NOTEQUALS, "!="),
-            Map.entry(Operators.RELATIONAL_LT, "<"),
-            Map.entry(Operators.RELATIONAL_LE, "<="),
-            Map.entry(Operators.RELATIONAL_GT, ">"),
-            Map.entry(Operators.RELATIONAL_GE, ">="),
-            Map.entry(Operators.LOGICAL_AND, "&&"),
-            Map.entry(Operators.LOGICAL_OR, "||"));
-    private static final Map<IOperator, String> PREFIX_SYMBOLS = Map.of(Operators.LOGICAL_NOT, "!");
-    // + also joins strings
-    private static final List<IOperator> PLUS_OPERATORS = List.of(Operators.ARITHMETIC_ADDITION, Operators.STRING_CONCAT);
-    /**
-     * The types of Integrated Dynamics in the order of the type selector of parameters,
-     * which also decides between the operators of a shared name or symbol, see {@link #choose}.
-     */
-    public static final List<IValueType<?>> TYPE_ORDER = List.of(
-            ValueTypes.CATEGORY_ANY, ValueTypes.BOOLEAN, ValueTypes.INTEGER, ValueTypes.LONG, ValueTypes.DOUBLE,
-            ValueTypes.CATEGORY_NUMBER, ValueTypes.STRING, ValueTypes.LIST, ValueTypes.OPERATOR, ValueTypes.NBT,
-            ValueTypes.OBJECT_ITEMSTACK, ValueTypes.OBJECT_BLOCK, ValueTypes.OBJECT_FLUIDSTACK, ValueTypes.OBJECT_ENTITY,
-            ValueTypes.OBJECT_INGREDIENTS, ValueTypes.OBJECT_RECIPE);
-    // By the first input type in that order, then by the id of that type, as for those of add-ons, then by global name
-    private static final Comparator<IOperator> ORDER = Comparator
-            .comparingInt((IOperator operator) -> getOrder(getFirstInputType(operator)))
-            .thenComparing(operator -> getFirstInputType(operator) == null ? "" : getFirstInputType(operator).getUniqueName().toString())
-            .thenComparing(IOperator::getGlobalInteractName);
-    private static final Map<String, IOperator> INFIX_OPERATORS = invert(INFIX_SYMBOLS);
-    private static final Map<String, IOperator> PREFIX_OPERATORS = invert(PREFIX_SYMBOLS);
+    // By registration, so the operators of add-ons do not change how text without types is read
+    private static final Comparator<IOperator> ORDER = Comparator.comparingInt(OperatorNames::getRegistrationIndex);
 
     // Read from both the client and server thread
-    private static volatile ScopedNames scopedNames = null;
+    private static volatile Names names = null;
 
     private OperatorNames() {
     }
@@ -79,11 +48,11 @@ public final class OperatorNames {
     /**
      * @param operator An operator.
      * @return The symbol to write this operator with between its two inputs, or null.
-     *         Concat of strings shares + with addition.
+     *         These are the operators whose symbol is one between two values in the text form.
      */
     @Nullable
     public static String getInfixSymbol(IOperator operator) {
-        return operator == Operators.STRING_CONCAT ? "+" : INFIX_SYMBOLS.get(operator);
+        return getNames().infixSymbols().get(operator);
     }
 
     /**
@@ -112,10 +81,7 @@ public final class OperatorNames {
      */
     @Nullable
     public static IOperator getInfixOperator(String symbol, @Nullable IValueType<?> leftType, @Nullable IValueType<?> rightType) {
-        if (symbol.equals("+")) {
-            return choose(PLUS_OPERATORS, Arrays.asList(leftType, rightType), true);
-        }
-        return getInfixOperator(symbol);
+        return choose(getNames().infix().getOrDefault(symbol, List.of()), Arrays.asList(leftType, rightType), true);
     }
 
     /**
@@ -124,26 +90,53 @@ public final class OperatorNames {
      */
     @Nullable
     public static String getPrefixSymbol(IOperator operator) {
-        return PREFIX_SYMBOLS.get(operator);
+        return getNames().prefixSymbols().get(operator);
+    }
+
+    /**
+     * @param node An operator node.
+     * @param path The path of the node.
+     * @param types The type checking result of the expression that contains the node.
+     * @return The symbol to write the node with in front of its single input, or null if the symbol would be read
+     *         as another operator, or if the operator has no symbol.
+     */
+    @Nullable
+    public static String getPrefixSymbol(ExpressionNode.Operator node, int[] path, ExpressionTypeChecker.Result types) {
+        String symbol = getPrefixSymbol(node.operator());
+        if (symbol == null || node.children().size() != 1) {
+            return null;
+        }
+        return getPrefixOperator(symbol, getChildType(types, path, 0)) == node.operator() ? symbol : null;
     }
 
     /**
      * @param symbol A symbol.
-     * @return The operator written with this symbol between its two inputs, or null.
+     * @return The operator written with this symbol between its two inputs when their types are unknown, or null.
      *         + is addition here, see {@link #getInfixOperator(String, IValueType, IValueType)}.
      */
     @Nullable
     public static IOperator getInfixOperator(String symbol) {
-        return INFIX_OPERATORS.get(symbol);
+        return getInfixOperator(symbol, null, null);
     }
 
     /**
      * @param symbol A symbol.
-     * @return The operator written with this symbol in front of its single input, or null.
+     * @param type The type of the input, or null if unknown.
+     * @return The operator written with this symbol in front of its single input of this type, see {@link #choose}, or null.
      */
     @Nullable
-    public static IOperator getPrefixOperator(String symbol) {
-        return PREFIX_OPERATORS.get(symbol);
+    public static IOperator getPrefixOperator(String symbol, @Nullable IValueType<?> type) {
+        return choose(getNames().prefix().getOrDefault(symbol, List.of()), Collections.singletonList(type), true);
+    }
+
+    /**
+     * @param symbol A symbol.
+     * @return The operator that this symbol in brackets stands for as a value, as in {@code (+)}, or null.
+     */
+    @Nullable
+    public static IOperator getSymbolValue(String symbol) {
+        IOperator infix = getInfixOperator(symbol);
+        return infix != null ? infix : getPrefixOperator(symbol, null);
     }
 
     /**
@@ -173,8 +166,8 @@ public final class OperatorNames {
      */
     public static String getValueName(IOperator operator) {
         String symbol = getSymbol(operator);
-        // (+) is read as addition
-        return symbol != null && operator != Operators.STRING_CONCAT ? symbol : getName(operator, null);
+        // Only if the symbol is read back as this operator, as (+) is addition
+        return symbol != null && getSymbolValue(symbol) == operator ? symbol : getName(operator, null);
     }
 
     /**
@@ -186,7 +179,7 @@ public final class OperatorNames {
     public static String getNodeName(ExpressionNode.Operator node, int[] path, ExpressionTypeChecker.Result types) {
         String symbol = getInfixSymbol(node, path, types);
         if (symbol == null) {
-            symbol = getPrefixSymbol(node.operator());
+            symbol = getPrefixSymbol(node, path, types);
         }
         return symbol != null ? symbol : getCallName(node, path, types);
     }
@@ -267,8 +260,8 @@ public final class OperatorNames {
      *     <li>the operators that take as many inputs as there are arguments,</li>
      *     <li>of those, the ones whose inputs fit the arguments whose type is known best, where an input of exactly
      *     the type of an argument fits better than one of a category that holds it, such as Number or Any,</li>
-     *     <li>and of those, the one whose first input comes first in {@link #TYPE_ORDER}, the order of the type selector,
-     *     where the types of add-ons come last.</li>
+     *     <li>and of those, the one that was registered first, so those of Integrated Dynamics before those of add-ons,
+     *     whose operators do not change how text without types is read.</li>
      * </ol>
      * So {@code x + y} is addition, unless one of them is a string, {@code concat(x, "a")} joins strings,
      * and {@code length(x)} is the length of a string, unless x is a list.
@@ -332,20 +325,6 @@ public final class OperatorNames {
     }
 
     /**
-     * @param type A value type, or null.
-     * @return Its position in {@link #TYPE_ORDER}, with all other types after it.
-     */
-    private static int getOrder(@Nullable IValueType<?> type) {
-        int index = type == null ? -1 : TYPE_ORDER.indexOf(type);
-        return index >= 0 ? index : TYPE_ORDER.size();
-    }
-
-    @Nullable
-    private static IValueType<?> getFirstInputType(IOperator operator) {
-        return operator.getInputTypes().length == 0 ? null : operator.getInputTypes()[0];
-    }
-
-    /**
      * @param receiverType The type of a value.
      * @return The operators that can be called as a method on values of this type, by the name to call them with,
      *         ordered by name. These are the operators whose first input takes the type,
@@ -364,12 +343,6 @@ public final class OperatorNames {
             }
         });
         return methods;
-    }
-
-    private static Map<String, IOperator> invert(Map<IOperator, String> symbols) {
-        Map<String, IOperator> operators = new HashMap<>();
-        symbols.forEach((operator, symbol) -> operators.put(symbol, operator));
-        return Map.copyOf(operators);
     }
 
     @Nullable
@@ -393,20 +366,50 @@ public final class OperatorNames {
     }
 
     private static Map<String, List<IOperator>> getScopedNameOwners() {
-        // Rebuilt when operators were registered since
-        int operatorCount = Operators.REGISTRY.getOperators().size();
-        ScopedNames names = scopedNames;
-        if (names == null || names.operatorCount() != operatorCount) {
-            Map<String, List<IOperator>> owners = new HashMap<>();
-            for (Map<String, IOperator> scoped : Operators.REGISTRY.getScopedInteractOperators().values()) {
-                scoped.forEach((name, operator) -> owners.computeIfAbsent(name, n -> new ArrayList<>()).add(operator));
-            }
-            names = new ScopedNames(operatorCount, owners);
-            scopedNames = names;
-        }
-        return names.owners();
+        return getNames().scoped();
     }
 
-    private static record ScopedNames(int operatorCount, Map<String, List<IOperator>> owners) {}
+    private static int getRegistrationIndex(IOperator operator) {
+        return getNames().registrationIndex().getOrDefault(operator, Integer.MAX_VALUE);
+    }
+
+    private static Names getNames() {
+        // Rebuilt when operators were registered since
+        int operatorCount = Operators.REGISTRY.getOperators().size();
+        Names current = names;
+        if (current == null || current.operatorCount() != operatorCount) {
+            Map<String, List<IOperator>> scoped = new HashMap<>();
+            for (Map<String, IOperator> operators : Operators.REGISTRY.getScopedInteractOperators().values()) {
+                operators.forEach((name, operator) -> scoped.computeIfAbsent(name, n -> new ArrayList<>()).add(operator));
+            }
+            Map<String, List<IOperator>> infix = new HashMap<>();
+            Map<String, List<IOperator>> prefix = new HashMap<>();
+            Map<IOperator, String> infixSymbols = new HashMap<>();
+            Map<IOperator, String> prefixSymbols = new HashMap<>();
+            Map<IOperator, Integer> registrationIndex = new HashMap<>();
+            for (IOperator operator : Operators.REGISTRY.getOperators()) {
+                registrationIndex.putIfAbsent(operator, registrationIndex.size());
+                String symbol = operator.getSymbol();
+                if (!isRegistered(operator)) {
+                    continue;
+                }
+                if (operator.getRequiredInputLength() == 2 && ExpressionParser.INFIX_SYMBOLS.contains(symbol)) {
+                    infix.computeIfAbsent(symbol, s -> new ArrayList<>()).add(operator);
+                    infixSymbols.put(operator, symbol);
+                } else if (operator.getRequiredInputLength() == 1 && ExpressionParser.PREFIX_SYMBOLS.contains(symbol)) {
+                    prefix.computeIfAbsent(symbol, s -> new ArrayList<>()).add(operator);
+                    prefixSymbols.put(operator, symbol);
+                }
+            }
+            current = new Names(operatorCount, scoped, infix, prefix, infixSymbols, prefixSymbols, registrationIndex);
+            names = current;
+        }
+        return current;
+    }
+
+    // The operators of each shared scoped name and symbol, and the order of registration
+    private static record Names(int operatorCount, Map<String, List<IOperator>> scoped, Map<String, List<IOperator>> infix,
+                                Map<String, List<IOperator>> prefix, Map<IOperator, String> infixSymbols,
+                                Map<IOperator, String> prefixSymbols, Map<IOperator, Integer> registrationIndex) {}
 
 }

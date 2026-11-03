@@ -74,13 +74,13 @@ public class TestOperatorNames {
         // The number of arguments, as type(nbt, key) and type(entity) share a name
         assertThat(OperatorNames.resolve("type", types(any)), is(Operators.OBJECT_ENTITY_TYPE));
         assertThat(OperatorNames.resolve("type", types(any, any)), is(Operators.NBT_COMPOUND_VALUE_TYPE));
-        // Without types to tell, numbers come before strings before lists, in the order of the type selector
+        // Without types to tell, the one registered first, so those of Integrated Dynamics before those of add-ons
         assertThat(OperatorNames.getInfixOperator("+", any, any), is(Operators.ARITHMETIC_ADDITION));
         assertThat(OperatorNames.getInfixOperator("+", null, null), is(Operators.ARITHMETIC_ADDITION));
         assertThat(OperatorNames.resolve("concat", types(any, any)), is(Operators.STRING_CONCAT));
         assertThat(OperatorNames.resolve("length", types(any)), is(Operators.STRING_LENGTH));
         assertThat(OperatorNames.resolve("length", null), is(Operators.STRING_LENGTH));
-        assertThat(OperatorNames.resolve("size", types(any)), is(Operators.NBT_COMPOUND_SIZE));
+        assertThat(OperatorNames.resolve("size", types(any)), is(Operators.OBJECT_ITEMSTACK_SIZE));
         // Categories such as Number can hold the type of an input
         assertThat(OperatorNames.resolve("concat", types(ValueTypes.CATEGORY_NUMBER, any)), is(Operators.STRING_CONCAT));
         // An exact type fits better than a category, so one string makes + a concat
@@ -91,6 +91,20 @@ public class TestOperatorNames {
     }
 
     @Test
+    public void testSymbolsFromOperators() {
+        // Each symbol of the text form stands for the operators with that symbol
+        for (String symbol : ExpressionParser.INFIX_SYMBOLS) {
+            IOperator operator = OperatorNames.getInfixOperator(symbol);
+            assertThat(symbol, operator.getSymbol(), is(symbol));
+            assertThat(symbol, OperatorNames.getInfixSymbol(operator), is(symbol));
+        }
+        assertThat(OperatorNames.getPrefixOperator("!", null), is(Operators.LOGICAL_NOT));
+        // Symbols that are not in the text form are not
+        assertThat(OperatorNames.getInfixSymbol(Operators.NBT_COMPOUND_SIZE), is((String) null));
+        assertThat(OperatorNames.getInfixOperator("NBT{}.size"), is((IOperator) null));
+    }
+
+    @Test
     public void testSymbols() {
         assertThat(OperatorNames.getInfixSymbol(Operators.ARITHMETIC_ADDITION), is("+"));
         assertThat(OperatorNames.getInfixSymbol(Operators.STRING_CONCAT), is("+"));
@@ -98,10 +112,10 @@ public class TestOperatorNames {
         assertThat(OperatorNames.getInfixOperator("+", ValueTypes.INTEGER, ValueTypes.CATEGORY_ANY), is(Operators.ARITHMETIC_ADDITION));
         assertThat(OperatorNames.getPrefixSymbol(Operators.LOGICAL_NOT), is("!"));
         assertThat(OperatorNames.getValueName(Operators.ARITHMETIC_ADDITION), is("+"));
-        // (+) is read as addition, and (concat) as concat of strings, which comes before lists
+        // (+) is read as addition, and (concat) as concat of strings, which were registered first
         assertThat(OperatorNames.getValueName(Operators.STRING_CONCAT), is("concat"));
         assertThat(OperatorNames.getValueName(Operators.LIST_CONCAT), is("listConcat"));
-        // (length) is read as the first in the order of types
+        // (length) is read as the one registered first
         assertThat(OperatorNames.getValueName(Operators.STRING_LENGTH), is("length"));
         assertThat(OperatorNames.getValueName(Operators.LIST_LENGTH), is("listLength"));
         assertThat(OperatorNames.getValueName(Operators.OPERATOR_REDUCE), is("reduce"));

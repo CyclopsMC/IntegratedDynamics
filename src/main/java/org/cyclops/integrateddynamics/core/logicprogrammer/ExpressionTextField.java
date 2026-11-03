@@ -37,11 +37,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
- * The text of an expression in the logic programmer, which can be edited in place.
- * The text is either the text of the expression, which is the text it was typed as or otherwise its printed form,
- * text that was applied and is not followed yet, or a draft that the player typed and that is not applied yet.
- * It is drawn with a color for each character, which vanilla text boxes cannot do.
- * It is kept in the container, so it survives the panel being recreated, such as when navigating.
+ * The text of an expression in the logic programmer.
  * @author rubensworks
  */
 @OnlyIn(Dist.CLIENT)
@@ -59,7 +55,7 @@ public class ExpressionTextField {
     private static final int COLOR_DETAIL = 0xFF909090;
     // Neutral, so the colors of types stay readable
     private static final int COLOR_POPUP_SELECTED = 0xFF505050;
-    // Height of the arrow between an error tooltip and its error, as in Integrated Scripting's editor
+    // Height of the arrow between an error tooltip and its error
     private static final int TOOLTIP_ARROW = 4;
     // How far vanilla tooltip backgrounds extend beyond their contents, and their colors
     private static final int TOOLTIP_BORDER = 4;
@@ -75,14 +71,14 @@ public class ExpressionTextField {
     private Expression printedExpression = null;
     @Nullable
     private String printedText = null;
-    // The text that the expression was applied from, kept as typed while it has focus
+    // The text that the expression was applied from
     @Nullable
     private String applied = null;
-    // The applied expression, until it is followed
+    // The applied expression
     @Nullable
     private Expression appliedExpression = null;
     private boolean focused = false;
-    // Pressed in the text, so dragging selects, also after the panel was recreated by the press
+    // Pressed in the text
     private boolean pressed = false;
     private int scroll = 0;
     private int visibleLines = 1;
@@ -90,23 +86,23 @@ public class ExpressionTextField {
     private long lastEdit = 0;
     private long lastClick = 0;
     private int lastClickIndex = -1;
-    // Selected by a double or triple click, which a drag that stays on the clicked character keeps
+    // Selected by a double or triple click
     private boolean selectedByClicks = false;
     @Nullable
     private Supplier<ExpressionParser.Context> parserContext = null;
-    // What can be completed at the cursor, for the text and cursor it was found for
+    // What can be completed at the cursor
     private ExpressionParser.Completion completion = ExpressionParser.Completion.NONE;
     @Nullable
     private String completionText = null;
     private int completionCursor = -1;
-    // The methods or types shown while typing their name, for the text and cursor they were found for
+    // The methods or types shown while typing their name
     private List<Completion> completions = List.of();
     @Nullable
     private String completionsText = null;
     private int completionsCursor = -1;
     private int completionsStart = 0;
     private int completionIndex = 0;
-    // Where the list is drawn, relative to the text, the first entry drawn, and where the text is drawn
+    // Where the list is drawn, relative to the text
     @Nullable
     private int[] completionsBox = null;
     private int completionsFirst = 0;

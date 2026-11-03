@@ -77,6 +77,20 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
     }
 
     @Override
+    public String getExpressionName() {
+        // Those of Integrated Dynamics as in the logic programmer, such as Integer, as add-ons may have types of the same name
+        ResourceLocation id = getUniqueName();
+        if (!id.getNamespace().equals(Reference.MOD_ID)) {
+            return id.toString();
+        }
+        StringBuilder name = new StringBuilder();
+        for (String word : id.getPath().split("_")) {
+            name.append(Character.toUpperCase(word.charAt(0))).append(word.substring(1));
+        }
+        return name.toString();
+    }
+
+    @Override
     public int getDisplayColor() {
         return this.color;
     }

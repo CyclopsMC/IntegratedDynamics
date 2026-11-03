@@ -53,7 +53,7 @@ import java.util.Map;
  * and that each reads back into the same value.
  * @author rubensworks
  */
-public class TestExpressionValueLiteralsInGame {
+public class TestExpressionValueLiterals {
 
     private static ValueDeseralizationContext values() {
         return ValueDeseralizationContext.ofAllEnabled();

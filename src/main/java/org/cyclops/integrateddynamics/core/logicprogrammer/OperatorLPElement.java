@@ -46,24 +46,14 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgramm
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Element for operator.
- *
- * The element edits an expression tree with this operator at its root.
- * The slots always show the inputs of the operator node that is currently being edited.
- * When the tree is a single operator with only variable references, a plain operator variable is written,
- * otherwise an expression variable is written.
  *
  * @author rubensworks
  */
 @Data
 public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern, ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase> {
-
-    // Read from both the client and server thread
-    private static final Map<IValueType<?>, Optional<ValueTypeItemStackLPElement.IItemStackToValue<?>>> ITEM_CONVERTERS = new ConcurrentHashMap<>();
 
     private final IOperator operator;
     private IVariableFacade[] inputVariables;
@@ -130,13 +120,18 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
         return currentOperator.getRenderPattern();
     }
 
+    // --------------- Items in slots ---------------
+    // An item that is not a variable card gives a constant in a slot, and a constant in a slot is shown as an item
+
     /**
      * @param slotId A slot of the current node.
      * @param itemStack An item that is not a variable card.
-     * @return The inline constant that the item gives in the given slot, or null if it gives none.
+     * @return The constant that the item gives when placed in the slot: the item itself in a slot that takes items,
+     *         and otherwise the value that the element of the slot's type reads from it, such as the fluid in a bucket.
+     *         Null if it gives none.
      */
     @Nullable
-    protected IValue getItemConstant(int slotId, ItemStack itemStack) {
+    protected IValue getValueOfItem(int slotId, ItemStack itemStack) {
         if (editor == null || itemStack.isEmpty() || itemStack.getItem() == RegistryEntries.ITEM_VARIABLE.get()
                 || slotId >= editor.getSlotCount()) {
             return null;
@@ -155,9 +150,10 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
 
     /**
      * @param node A node in a slot.
-     * @return The item that shows the node in its slot, or an empty stack if it is not a constant that can be shown as one.
+     * @return The item that a constant is shown as in its slot: the item itself, or the item that the element of its type
+     *         shows it as, such as a bucket for a fluid. Empty if the node is not a constant that can be shown as an item.
      */
-    protected static ItemStack getConstantItem(ExpressionNode node) {
+    protected static ItemStack getItemOfValue(ExpressionNode node) {
         if (!(node instanceof ExpressionNode.Const constant)) {
             return ItemStack.EMPTY;
         }
@@ -170,12 +166,13 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
 
     /**
      * @param slotId A slot of the current node.
-     * @return The constant in the slot if its item does not show it exactly, such as the amount of a fluid in a bucket, or null.
+     * @return The constant in the slot if the item it is shown as does not show it exactly, so its tooltip can,
+     *         such as 250 mB of lava shown as a bucket. Null otherwise.
      */
     @Nullable
-    public IValue getInexactItemConstant(int slotId) {
+    public IValue getValueNotShownByItem(int slotId) {
         if (editor == null || slotId >= editor.getSlotCount() || !(editor.getChild(slotId) instanceof ExpressionNode.Const constant)
-                || constant.value() instanceof ValueObjectTypeItemStack.ValueItemStack || getConstantItem(constant).isEmpty()) {
+                || constant.value() instanceof ValueObjectTypeItemStack.ValueItemStack || getItemOfValue(constant).isEmpty()) {
             return null;
         }
         return constant.value();
@@ -183,16 +180,15 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
 
     /**
      * @param type A value type.
-     * @return How its element turns items into values, or null if it does not.
+     * @return How the element of the type in the logic programmer reads values from items and shows them as items,
+     *         or null if it does not.
      */
     @Nullable
     protected static ValueTypeItemStackLPElement.IItemStackToValue<?> getItemConverter(IValueType<?> type) {
         if (type.isCategory()) {
             return null;
         }
-        return ITEM_CONVERTERS.computeIfAbsent(type, t -> Optional.ofNullable(
-                t.createLogicProgrammerElement() instanceof ValueTypeItemStackLPElement<?> element ? element.getItemStackToValue() : null))
-                .orElse(null);
+        return type.createLogicProgrammerElement() instanceof ValueTypeItemStackLPElement<?> element ? element.getItemStackToValue() : null;
     }
 
     @Override
@@ -204,7 +200,7 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
         if (itemStack.isEmpty()) {
             inputVariables[slotId] = null;
             // Only clear nodes that were backed by an item in the slot
-            if (child instanceof ExpressionNode.Ref || !getConstantItem(child).isEmpty()) {
+            if (child instanceof ExpressionNode.Ref || !getItemOfValue(child).isEmpty()) {
                 editor.setChild(slotId, ExpressionNode.EMPTY);
             }
         } else if (itemStack.getItem() == RegistryEntries.ITEM_VARIABLE.get()) {
@@ -225,9 +221,9 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
             } else {
                 editor.setChild(slotId, ExpressionNode.EMPTY);
             }
-        } else if (!ItemStack.matches(itemStack, getConstantItem(child))) {
+        } else if (!ItemStack.matches(itemStack, getItemOfValue(child))) {
             // The item that shows the constant keeps it, as reading the item can lose details, such as the amount of a fluid
-            IValue value = getItemConstant(slotId, itemStack);
+            IValue value = getValueOfItem(slotId, itemStack);
             if (value != null) {
                 inputVariables[slotId] = null;
                 editor.setChild(slotId, new ExpressionNode.Const(value));
@@ -402,7 +398,7 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
             if (child instanceof ExpressionNode.Ref ref) {
                 itemStack = getReferenceItem(ref.variableId());
             } else {
-                itemStack = getConstantItem(child);
+                itemStack = getItemOfValue(child);
             }
             inputSlots.setItem(i, itemStack);
         }
@@ -425,7 +421,7 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
         if (result == ExpressionEditor.ActionResult.SLOT_CHANGED) {
             int slot = action.getInt("slot");
             ExpressionNode child = editor.getChild(slot);
-            if (!(child instanceof ExpressionNode.Ref) && getConstantItem(child).isEmpty()) {
+            if (!(child instanceof ExpressionNode.Ref) && getItemOfValue(child).isEmpty()) {
                 // The slot no longer holds an item-backed node
                 inputVariables[slot] = null;
                 container.getTemporaryInputSlots().removeDirtyMarkListener(container);
@@ -503,7 +499,7 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
 
     @Override
     public boolean isItemValidForSlot(int slotId, ItemStack itemStack) {
-        return itemStack.getItem() == RegistryEntries.ITEM_VARIABLE.get() || getItemConstant(slotId, itemStack) != null;
+        return itemStack.getItem() == RegistryEntries.ITEM_VARIABLE.get() || getValueOfItem(slotId, itemStack) != null;
     }
 
     @Override

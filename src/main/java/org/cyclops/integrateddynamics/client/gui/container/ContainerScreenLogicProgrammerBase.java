@@ -121,7 +121,6 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     public void containerTick() {
         super.containerTick();
         subGuiHolder.tick();
-        // After ticking the sub guis, as applying text can replace them
         if (operatorConfigPattern instanceof OperatorLPElementRenderPattern expressionPattern) {
             expressionPattern.tickText();
         }
@@ -308,7 +307,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         // A constant that its item does not show exactly, such as the amount of a fluid in a bucket
         if (hoveredSlot != null && hoveredSlot.container == getMenu().getTemporaryInputSlots()
                 && getMenu().getActiveElement() instanceof OperatorLPElement element) {
-            IValue value = element.getInexactItemConstant(hoveredSlot.getContainerSlot());
+            IValue value = element.getValueNotShownByItem(hoveredSlot.getContainerSlot());
             if (value != null) {
                 lines = Lists.newArrayList(lines);
                 lines.add(Math.min(1, lines.size()), Component.literal(ExpressionPrinter.printValue(value)).withStyle(ChatFormatting.GRAY));

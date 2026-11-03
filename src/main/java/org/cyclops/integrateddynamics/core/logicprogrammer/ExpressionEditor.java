@@ -17,9 +17,9 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueTypeCategory;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
 import org.cyclops.integrateddynamics.api.logicprogrammer.IConfigRenderPattern;
+import org.cyclops.integrateddynamics.api.logicprogrammer.IValueTypeLogicProgrammerElement;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionParseException;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionParser;
-import org.cyclops.integrateddynamics.core.evaluate.expression.tree.OperatorNames;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionTrees;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionTypeChecker;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
@@ -31,7 +31,6 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -368,11 +367,12 @@ public class ExpressionEditor {
     }
 
     /**
-     * @return The types parameters can have, in cycling order: those of Integrated Dynamics, then those of add-ons by name.
+     * @return The types parameters can have, in cycling order: Any and Number, then the types in the order of the logic programmer,
+     *         then those without an element in it by name.
      */
     public static List<IValueType<?>> getParameterTypes() {
-        // The same order decides between operators of a shared name
-        List<IValueType<?>> types = new ArrayList<>(OperatorNames.TYPE_ORDER);
+        List<IValueType<?>> types = new ArrayList<>(List.of(ValueTypes.CATEGORY_ANY, ValueTypes.CATEGORY_NUMBER));
+        types.addAll(ValueTypeLPElementType.getElementValueTypes());
         ValueTypes.REGISTRY.getValueTypes().stream()
                 .filter(type -> !types.contains(type) && isParameterType(type))
                 .sorted(Comparator.comparing(type -> type.getUniqueName().toString()))
@@ -671,55 +671,44 @@ public class ExpressionEditor {
 
     /**
      * Parse the given text to a value for the given expected type.
+     * Numbers and booleans are read as in the text of an expression, such as {@code 5L},
+     * and otherwise the text is read as the element of the type in the logic programmer reads it.
      * @param expectedType The expected type, possibly a category.
      * @param text The text.
      * @return The parsed value, or null if it could not be parsed.
      */
     @Nullable
     public static IValue parseValue(IValueType<?> expectedType, String text) {
-        if (text.isEmpty()) {
-            return expectedType == ValueTypes.STRING ? ValueTypeString.ValueString.of("") : null;
+        IValue literal = ExpressionParser.parseLiteral(text);
+        if (literal != null && ValueHelpers.correspondsTo(expectedType, literal.getType())) {
+            return literal;
         }
-        List<IValueType<?>> candidates = new ArrayList<>();
-        if (expectedType == ValueTypes.CATEGORY_ANY) {
-            candidates.add(ValueTypes.BOOLEAN);
-            candidates.add(ValueTypes.INTEGER);
-            candidates.add(ValueTypes.LONG);
-            candidates.add(ValueTypes.DOUBLE);
-            candidates.add(ValueTypes.STRING);
-        } else if (expectedType == ValueTypes.CATEGORY_NUMBER) {
-            candidates.add(ValueTypes.INTEGER);
-            candidates.add(ValueTypes.LONG);
-            candidates.add(ValueTypes.DOUBLE);
-        } else if (expectedType instanceof IValueTypeCategory<?> category) {
-            candidates.addAll((Collection) category.getElements());
-        } else {
-            candidates.add(expectedType);
+        if (expectedType.isCategory()) {
+            // Other text is a string where that fits
+            IValue string = ValueTypeString.ValueString.of(text);
+            return !text.isEmpty() && ValueHelpers.correspondsTo(expectedType, string.getType()) ? string : null;
         }
-        for (IValueType<?> candidate : candidates) {
-            if (!isTextEditable(candidate)) {
-                continue;
-            }
-            if (candidate == ValueTypes.BOOLEAN && !(text.equals("true") || text.equals("false"))) {
-                continue;
-            }
-            try {
-                return ValueHelpers.parseString(candidate, text);
-            } catch (EvaluationException | RuntimeException e) {
-                // Try next
-            }
+        if (!(expectedType.createLogicProgrammerElement() instanceof ValueTypeStringLPElement)) {
+            return null;
         }
-        return null;
+        try {
+            return ValueHelpers.parseString(expectedType, text);
+        } catch (EvaluationException | RuntimeException e) {
+            return null;
+        }
     }
 
     /**
      * @param type A value type.
-     * @return If constants of this type can be entered as text.
+     * @return If constants of this type can be entered as text: those whose element in the logic programmer is text or a checkbox,
+     *         and the categories of numbers, booleans or strings.
      */
     public static boolean isTextEditable(IValueType<?> type) {
-        return type == ValueTypes.BOOLEAN || type == ValueTypes.INTEGER || type == ValueTypes.LONG
-                || type == ValueTypes.DOUBLE || type == ValueTypes.STRING || type == ValueTypes.NBT
-                || type == ValueTypes.CATEGORY_ANY || type == ValueTypes.CATEGORY_NUMBER;
+        if (type.isCategory()) {
+            return ValueHelpers.correspondsTo(type, ValueTypes.STRING) || ValueHelpers.correspondsTo(type, ValueTypes.INTEGER);
+        }
+        IValueTypeLogicProgrammerElement element = type.createLogicProgrammerElement();
+        return element instanceof ValueTypeStringLPElement || element instanceof ValueTypeBooleanLPElement;
     }
 
     public static enum ActionResult {

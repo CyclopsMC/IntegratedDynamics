@@ -33,7 +33,7 @@ public class CommandTest implements Command<CommandSourceStack> {
             P + "TestFluidStackOperators",
             P + "TestIngredientsOperators",
             P + "TestRecipeOperators",
-            P + "TestExpressionValueLiteralsInGame"
+            P + "TestExpressionValueLiterals"
     );
 
     @Override
