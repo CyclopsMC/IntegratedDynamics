@@ -13,6 +13,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 import net.minecraft.util.StringUtil;
 import net.neoforged.api.distmarker.Dist;
@@ -44,23 +45,23 @@ import java.util.function.Supplier;
 public class ExpressionTextField {
 
     public static final int LINE_HEIGHT = 9;
-    private static final int COLOR_SELECTION = 0xFF3060A0;
-    private static final int COLOR_CARET = 0xFFE0E0E0;
-    private static final int COLOR_SCROLLBAR = 0xFF808080;
-    private static final int COLOR_BRACKET = 0xFF2F6B60;
+    private static final int COLOR_SELECTION = FastColor.ARGB32.color(48, 96, 160);
+    private static final int COLOR_CARET = FastColor.ARGB32.color(224, 224, 224);
+    private static final int COLOR_SCROLLBAR = FastColor.ARGB32.color(128, 128, 128);
+    private static final int COLOR_BRACKET = FastColor.ARGB32.color(47, 107, 96);
     private static final long MULTI_CLICK_MS = 250;
     private static final int COMPLETION_ROWS = 6;
-    private static final int COLOR_POPUP = 0xFF202020;
-    private static final int COLOR_POPUP_BORDER = 0xFFA0A0A0;
-    private static final int COLOR_DETAIL = 0xFF909090;
+    private static final int COLOR_POPUP = FastColor.ARGB32.color(32, 32, 32);
+    private static final int COLOR_POPUP_BORDER = FastColor.ARGB32.color(160, 160, 160);
+    private static final int COLOR_DETAIL = FastColor.ARGB32.color(144, 144, 144);
     // Neutral, so the colors of types stay readable
-    private static final int COLOR_POPUP_SELECTED = 0xFF505050;
+    private static final int COLOR_POPUP_SELECTED = FastColor.ARGB32.color(80, 80, 80);
     // Height of the arrow between an error tooltip and its error
     private static final int TOOLTIP_ARROW = 4;
     // How far vanilla tooltip backgrounds extend beyond their contents, and their colors
     private static final int TOOLTIP_BORDER = 4;
-    private static final int TOOLTIP_BACKGROUND = 0xF0100010;
-    private static final int TOOLTIP_BORDER_COLOR = 0x505000FF;
+    private static final int TOOLTIP_BACKGROUND = FastColor.ARGB32.color(240, 16, 0, 16);
+    private static final int TOOLTIP_BORDER_COLOR = FastColor.ARGB32.color(80, 80, 0, 255);
     private static final int TOOLTIP_WIDTH = 200;
 
     private final Font font;
@@ -1064,10 +1065,10 @@ public class ExpressionTextField {
             int detailWidth = boxX + width - 2 - detailX;
             FormattedText detail = completion.detail();
             if (font.width(detail) > detailWidth) {
-                detail = FormattedText.composite(font.substrByWidth(detail, Math.max(0, detailWidth - font.width(OperatorLPElementRenderPattern.ELLIPSIS))),
-                        FormattedText.of(OperatorLPElementRenderPattern.ELLIPSIS));
+                detail = FormattedText.composite(font.substrByWidth(detail, Math.max(0, detailWidth - font.width(ExpressionPanelRendering.ELLIPSIS))),
+                        FormattedText.of(ExpressionPanelRendering.ELLIPSIS));
             }
-            if (detailWidth > font.width(OperatorLPElementRenderPattern.ELLIPSIS)) {
+            if (detailWidth > font.width(ExpressionPanelRendering.ELLIPSIS)) {
                 guiGraphics.drawString(font, Language.getInstance().getVisualOrder(detail), detailX, rowY + 1, COLOR_DETAIL, false);
             }
         }
@@ -1086,8 +1087,8 @@ public class ExpressionTextField {
         int width = signatureBox[2];
         FormattedText shown = signature;
         if (font.width(shown) > width - 2) {
-            shown = FormattedText.composite(font.substrByWidth(shown, Math.max(0, width - 2 - font.width(OperatorLPElementRenderPattern.ELLIPSIS))),
-                    FormattedText.of(OperatorLPElementRenderPattern.ELLIPSIS));
+            shown = FormattedText.composite(font.substrByWidth(shown, Math.max(0, width - 2 - font.width(ExpressionPanelRendering.ELLIPSIS))),
+                    FormattedText.of(ExpressionPanelRendering.ELLIPSIS));
         }
         // Below tooltips, in the colors of the list
         guiGraphics.pose().pushPose();

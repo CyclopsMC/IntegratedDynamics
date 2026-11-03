@@ -13,10 +13,10 @@ import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 
-import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.BUTTONS_Y;
-import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.CHIP_HEIGHT;
-import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.PANEL_WIDTH;
-import static org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern.PANEL_X;
+import static org.cyclops.integrateddynamics.core.logicprogrammer.ExpressionPanelRendering.BUTTONS_Y;
+import static org.cyclops.integrateddynamics.core.logicprogrammer.ExpressionPanelRendering.CHIP_HEIGHT;
+import static org.cyclops.integrateddynamics.core.logicprogrammer.ExpressionPanelRendering.PANEL_WIDTH;
+import static org.cyclops.integrateddynamics.core.logicprogrammer.ExpressionPanelRendering.PANEL_X;
 
 /**
  * The buttons of the expression panel: Undo, Redo, Format and Copy right of the title, and the button to add a parameter after the chips.

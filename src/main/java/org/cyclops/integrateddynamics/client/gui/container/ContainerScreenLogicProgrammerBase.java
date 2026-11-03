@@ -9,6 +9,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.FastColor;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -33,6 +34,7 @@ import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionPr
 import org.cyclops.integrateddynamics.core.evaluate.variable.gui.GuiElementValueTypeString;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 import org.cyclops.integrateddynamics.core.logicprogrammer.ExpressionStartPanel;
+import org.cyclops.integrateddynamics.core.logicprogrammer.ExpressionTextController;
 import org.cyclops.integrateddynamics.core.logicprogrammer.LogicProgrammerElementTypes;
 import org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElement;
 import org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElementRenderPattern;
@@ -255,13 +257,17 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
      * Draw a panel in the vanilla style.
      */
     public static void drawPanel(GuiGraphics guiGraphics, int x, int y, int width, int height) {
-        guiGraphics.fill(x + 1, y, x + width - 1, y + height, 0xFF000000);
-        guiGraphics.fill(x, y + 1, x + width, y + height - 1, 0xFF000000);
-        guiGraphics.fill(x + 1, y + 1, x + width - 1, y + height - 1, 0xFFC6C6C6);
-        guiGraphics.fill(x + 1, y + 1, x + width - 3, y + 3, 0xFFFFFFFF);
-        guiGraphics.fill(x + 1, y + 1, x + 3, y + height - 3, 0xFFFFFFFF);
-        guiGraphics.fill(x + 3, y + height - 3, x + width - 1, y + height - 1, 0xFF555555);
-        guiGraphics.fill(x + width - 3, y + 3, x + width - 1, y + height - 1, 0xFF555555);
+        int border = FastColor.ARGB32.color(0, 0, 0);
+        int background = FastColor.ARGB32.color(198, 198, 198);
+        int light = FastColor.ARGB32.color(255, 255, 255);
+        int shadow = FastColor.ARGB32.color(85, 85, 85);
+        guiGraphics.fill(x + 1, y, x + width - 1, y + height, border);
+        guiGraphics.fill(x, y + 1, x + width, y + height - 1, border);
+        guiGraphics.fill(x + 1, y + 1, x + width - 1, y + height - 1, background);
+        guiGraphics.fill(x + 1, y + 1, x + width - 3, y + 3, light);
+        guiGraphics.fill(x + 1, y + 1, x + 3, y + height - 3, light);
+        guiGraphics.fill(x + 3, y + height - 3, x + width - 1, y + height - 1, shadow);
+        guiGraphics.fill(x + width - 3, y + 3, x + width - 1, y + height - 1, shadow);
     }
 
     /**
@@ -290,13 +296,13 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     protected void drawCurrentScreen(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         super.drawCurrentScreen(guiGraphics, mouseX, mouseY, partialTicks);
         // The list or signature shown while typing an expression, over everything but tooltips
-        OperatorLPElementRenderPattern.getTextField(getMenu()).renderPopups(guiGraphics);
+        ExpressionTextController.getTextField(getMenu()).renderPopups(guiGraphics);
     }
 
     @Override
     protected void renderTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         // Not for slots below the list or signature shown while typing
-        if (!OperatorLPElementRenderPattern.getTextField(getMenu()).isOverPopups(mouseX, mouseY)) {
+        if (!ExpressionTextController.getTextField(getMenu()).isOverPopups(mouseX, mouseY)) {
             super.renderTooltip(guiGraphics, mouseX, mouseY);
         }
     }

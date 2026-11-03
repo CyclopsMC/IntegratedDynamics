@@ -3,20 +3,27 @@ package org.cyclops.integrateddynamics.core.logicprogrammer;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.FastColor;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonExtended;
+import org.cyclops.cyclopscore.client.gui.image.Image;
+import org.cyclops.integrateddynamics.client.gui.image.Images;
 
 import java.util.function.Supplier;
 
 /**
- * A small square button with an icon, drawn pixel by pixel, as the font has no symbols such as undo arrows.
+ * A small square button with an icon, as the font has no symbols such as undo arrows.
  * @author rubensworks
  */
 @OnlyIn(Dist.CLIENT)
 public class ButtonIcon extends ButtonExtended {
 
     public static final int SIZE = 12;
+    // The colors of the text of text buttons
+    private static final int COLOR_INACTIVE = FastColor.ARGB32.color(160, 160, 160);
+    private static final int COLOR_HOVERED = FastColor.ARGB32.color(255, 255, 160);
+    private static final int COLOR = FastColor.ARGB32.color(224, 224, 224);
 
     private final Supplier<Icon> icon;
 
@@ -34,44 +41,35 @@ public class ButtonIcon extends ButtonExtended {
 
     @Override
     protected void drawButtonInner(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        // Same colors and shadow as the text of text buttons
-        int color = !active ? 0xFFA0A0A0 : isHoveredOrFocused() ? 0xFFFFFFA0 : 0xFFE0E0E0;
-        int x = getX() + (width - Icon.SIZE) / 2;
-        int y = getY() + (height - Icon.SIZE) / 2;
-        Icon icon = this.icon.get();
-        icon.draw(guiGraphics, x + 1, y + 1, (color & 0xFCFCFC) >> 2 | color & 0xFF000000);
-        icon.draw(guiGraphics, x, y, color);
+        int color = !active ? COLOR_INACTIVE : isHoveredOrFocused() ? COLOR_HOVERED : COLOR;
+        Image image = this.icon.get().getImage();
+        int x = getX() + (width - image.getWidth()) / 2;
+        int y = getY() + (height - image.getHeight()) / 2;
+        // With a shadow, as text has
+        drawWithColor(guiGraphics, image, x + 1, y + 1, 0.25F, color);
+        drawWithColor(guiGraphics, image, x, y, 1F, color);
+    }
+
+    private static void drawWithColor(GuiGraphics guiGraphics, Image image, int x, int y, float brightness, int color) {
+        image.drawWithColor(guiGraphics, x, y, FastColor.ARGB32.red(color) / 255F * brightness,
+                FastColor.ARGB32.green(color) / 255F * brightness, FastColor.ARGB32.blue(color) / 255F * brightness, 1F);
     }
 
     public static enum Icon {
-        UNDO("..#....", ".##....", "######.", ".##...#", "..#...#", "......#", "..####."),
-        REDO("....#..", "....##.", ".######", "#...##.", "#...#..", "#......", ".####.."),
-        COPY("#####..", "#...#..", "#.#####", "#.#...#", "###...#", "..#...#", "..#####"),
-        CHECK(".......", "......#", ".....##", "#...##.", "##.##..", ".###...", "..#...."),
-        FORMAT("#####..", ".......", "..#####", ".......", "..####.", ".......", "######.");
+        UNDO(Images.ICON_UNDO),
+        REDO(Images.ICON_REDO),
+        COPY(Images.ICON_COPY),
+        CHECK(Images.ICON_CHECK),
+        FORMAT(Images.ICON_FORMAT);
 
-        public static final int SIZE = 7;
+        private final Image image;
 
-        private final String[] rows;
-
-        Icon(String... rows) {
-            this.rows = rows;
+        Icon(Image image) {
+            this.image = image;
         }
 
-        public void draw(GuiGraphics guiGraphics, int x, int y, int color) {
-            for (int row = 0; row < rows.length; row++) {
-                String pixels = rows[row];
-                int start = -1;
-                for (int column = 0; column <= pixels.length(); column++) {
-                    boolean filled = column < pixels.length() && pixels.charAt(column) == '#';
-                    if (filled && start < 0) {
-                        start = column;
-                    } else if (!filled && start >= 0) {
-                        guiGraphics.fill(x + start, y + row, x + column, y + row + 1, color);
-                        start = -1;
-                    }
-                }
-            }
+        public Image getImage() {
+            return image;
         }
     }
 
