@@ -1,5 +1,6 @@
 package org.cyclops.integrateddynamics.gametest;
 
+import it.unimi.dsi.fastutil.ints.IntLists;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -10,6 +11,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -18,19 +20,24 @@ import net.neoforged.neoforge.event.entity.player.PlayerContainerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.commoncapabilities.IngredientComponents;
 import org.cyclops.commoncapabilities.api.ingredient.MixedIngredients;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.expression.ILazyExpressionValueCache;
+import org.cyclops.integrateddynamics.api.evaluate.expression.tree.Expression;
 import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariableInvalidateListener;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
+import org.cyclops.integrateddynamics.api.item.IExpressionVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.api.part.IPartContainer;
 import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.part.PartTarget;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspectRead;
@@ -40,21 +47,30 @@ import org.cyclops.integrateddynamics.api.part.write.IPartStateWriter;
 import org.cyclops.integrateddynamics.api.part.write.IPartTypeWriter;
 import org.cyclops.integrateddynamics.blockentity.BlockEntityVariablestore;
 import org.cyclops.integrateddynamics.core.evaluate.expression.LazyExpression;
+import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionParseException;
+import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionParser;
+import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionTrees;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.*;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
+import org.cyclops.integrateddynamics.core.logicprogrammer.ExpressionEditor;
 import org.cyclops.integrateddynamics.core.logicprogrammer.event.LogicProgrammerVariableFacadeCreatedEvent;
 import org.cyclops.integrateddynamics.core.network.event.NetworkInitializedEvent;
+import org.cyclops.integrateddynamics.core.part.PartTypeBase;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.core.part.event.PartReaderAspectEvent;
 import org.cyclops.integrateddynamics.core.part.event.PartVariableDrivenVariableContentsUpdatedEvent;
+import org.cyclops.integrateddynamics.core.part.panel.PartTypePanelVariableDriven;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammer;
+import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
+import org.cyclops.integrateddynamics.inventory.container.ContainerPartPanelVariableDriven;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.cyclops.integrateddynamics.gametest.GameTestHelpersIntegratedDynamics.*;
 
@@ -1121,6 +1137,153 @@ public class GameTestsAdvancements {
         placeVariableInWriterWithPlayer(level, writerPos, Aspects.Write.Audio.STRING_SOUND, stepSoundCard, player);
 
         helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:challenges/sponge_step_sound"));
+    }
+
+    // ---- Expressions ----
+
+    private static ContainerLogicProgrammer openLogicProgrammer(ServerPlayer player, IOperator operator) {
+        ContainerLogicProgrammer container = new ContainerLogicProgrammer(0, player.getInventory());
+        container.setActiveElement(container.getOperatorElement(operator), 0, 0);
+        return container;
+    }
+
+    /**
+     * Write the active element of a Logic Programmer to a card, as putting an empty card in its output slot does, and take it out.
+     */
+    private static ItemStack writeInLogicProgrammer(ContainerLogicProgrammer container) {
+        Slot output = container.slots.stream()
+                .filter(slot -> slot.x == ContainerLogicProgrammerBase.OUTPUT_X && slot.y == ContainerLogicProgrammerBase.OUTPUT_Y)
+                .findFirst().orElseThrow();
+        output.set(new ItemStack(RegistryEntries.ITEM_VARIABLE.get()));
+        ItemStack written = output.getItem().copy();
+        output.set(ItemStack.EMPTY);
+        return written;
+    }
+
+    /**
+     * Type an expression in the panel of a Logic Programmer, which opens the element of its root operator, and write it.
+     */
+    private static ItemStack writeExpressionText(ServerPlayer player, String text) throws ExpressionParseException {
+        ValueDeseralizationContext values = ValueDeseralizationContext.of(player.level());
+        Expression expression = ExpressionParser.parse(text, ExpressionEditor.getParserContext(values, id -> null, label -> IntLists.EMPTY_LIST));
+        ContainerLogicProgrammer container = openLogicProgrammer(player, Operators.ARITHMETIC_ADDITION);
+        container.applyExpressionAction(ExpressionEditor.actionSet(values, expression, null));
+        return writeInLogicProgrammer(container);
+    }
+
+    /**
+     * Place a cable with a variable store north of it, and a Display Panel on a second cable east of it.
+     * @return The position of the Display Panel.
+     */
+    private static PartPos setupDisplayNetwork(GameTestHelper helper) {
+        helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
+        helper.setBlock(POS.east(), RegistryEntries.BLOCK_CABLE.value());
+        helper.setBlock(POS.north(), RegistryEntries.BLOCK_VARIABLE_STORE.get());
+        PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS.east()), Direction.EAST,
+                PartTypes.DISPLAY_PANEL, new ItemStack(PartTypes.DISPLAY_PANEL.getItem()));
+        return PartPos.of(helper.getLevel(), helper.absolutePos(POS.east()), Direction.EAST);
+    }
+
+    /**
+     * Put a card in a Display Panel through its gui, as a player does.
+     */
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private static void insertInDisplayPanel(ServerPlayer player, PartPos panelPos, ItemStack card) {
+        Triple<IPartContainer, PartTypeBase, PartTarget> data = PartHelpers.getContainerPartConstructionData(panelPos);
+        PartTypePanelVariableDriven.State state = (PartTypePanelVariableDriven.State) data.getLeft().getPartState(data.getRight().getCenter().getSide());
+        ContainerPartPanelVariableDriven container = new ContainerPartPanelVariableDriven(0, player.getInventory(), state.getInventory(),
+                Optional.of(data.getRight()), Optional.of(data.getLeft()), (PartTypePanelVariableDriven) data.getMiddle());
+        container.getSlot(0).set(card);
+        container.removed(player);
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementExpressionWriting(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        ValueDeseralizationContext values = ValueDeseralizationContext.of(helper.getLevel());
+        // 3 + 4, typed into the slots of Arithmetic Addition
+        ContainerLogicProgrammer container = openLogicProgrammer(player, Operators.ARITHMETIC_ADDITION);
+        container.applyExpressionAction(ExpressionEditor.actionConst(values, new int[0], 0, ValueTypeInteger.ValueInteger.of(3)));
+        container.applyExpressionAction(ExpressionEditor.actionConst(values, new int[0], 1, ValueTypeInteger.ValueInteger.of(4)));
+        ItemStack written = writeInLogicProgrammer(container);
+        helper.assertTrue(getVariableFacade(helper.getLevel(), written) instanceof IExpressionVariableFacade, "No expression card was written");
+        helper.succeedWhen(() -> {
+            assertAdvancement(helper, player, "integrateddynamics:expressions/expression_writing");
+            // A single operator is not nested
+            assertAdvancementNotDone(helper, player, "integrateddynamics:expressions/expression_nesting");
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementExpressionWritingNegative(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        Level level = helper.getLevel();
+        // An operator with only cards as inputs is written as a classic operator card
+        ContainerLogicProgrammer container = openLogicProgrammer(player, Operators.ARITHMETIC_ADDITION);
+        container.getTemporaryInputSlots().setItem(0, createVariableForValue(level, ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(3)));
+        container.getTemporaryInputSlots().setItem(1, createVariableForValue(level, ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(4)));
+        ItemStack written = writeInLogicProgrammer(container);
+        IVariableFacade facade = getVariableFacade(level, written);
+        helper.assertTrue(facade.isValid() && !(facade instanceof IExpressionVariableFacade), "No classic operator card was written");
+        helper.succeedWhen(() -> assertAdvancementNotDone(helper, player, "integrateddynamics:expressions/expression_writing"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementExpressionNesting(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        ValueDeseralizationContext values = ValueDeseralizationContext.of(helper.getLevel());
+        // (2 * 5) + 4: Arithmetic Multiplication is picked for the first slot of Arithmetic Addition, which opens it
+        ContainerLogicProgrammer container = openLogicProgrammer(player, Operators.ARITHMETIC_ADDITION);
+        container.applyExpressionAction(ExpressionEditor.actionOperator(new int[0], 0, Operators.ARITHMETIC_MULTIPLICATION));
+        container.applyExpressionAction(ExpressionEditor.actionNavigate(new int[]{0}));
+        container.applyExpressionAction(ExpressionEditor.actionConst(values, new int[]{0}, 0, ValueTypeInteger.ValueInteger.of(2)));
+        container.applyExpressionAction(ExpressionEditor.actionConst(values, new int[]{0}, 1, ValueTypeInteger.ValueInteger.of(5)));
+        container.applyExpressionAction(ExpressionEditor.actionNavigate(new int[0]));
+        container.applyExpressionAction(ExpressionEditor.actionConst(values, new int[0], 1, ValueTypeInteger.ValueInteger.of(4)));
+        ItemStack written = writeInLogicProgrammer(container);
+        IVariableFacade facade = getVariableFacade(helper.getLevel(), written);
+        helper.assertTrue(facade instanceof IExpressionVariableFacade expressionFacade
+                && ExpressionTrees.countOperators(expressionFacade.getExpression().root()) == 2, "The nested expression was not written");
+        helper.succeedWhen(() -> assertAdvancement(helper, player, "integrateddynamics:expressions/expression_nesting"));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementExpressionOperator(GameTestHelper helper) throws ExpressionParseException {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        Level level = helper.getLevel();
+        PartPos panelPos = setupDisplayNetwork(helper);
+        BlockEntityVariablestore store = helper.getBlockEntity(POS.north());
+        ItemStack operatorCard = writeExpressionText(player, "(n: Integer) => n > 10");
+        store.getInventory().setItem(0, operatorCard);
+        ItemStack listCard = createVariableForValue(level, ValueTypes.LIST, ValueTypeList.ValueList.ofAll(
+                ValueTypeInteger.ValueInteger.of(1), ValueTypeInteger.ValueInteger.of(20), ValueTypeInteger.ValueInteger.of(5)));
+        store.getInventory().setItem(1, listCard);
+        // Only cards as inputs, so this is a classic Filter card that is given the expression
+        ItemStack filterCard = writeExpressionText(player, "filter(#" + getVariableFacade(level, operatorCard).getId()
+                + ", #" + getVariableFacade(level, listCard).getId() + ")");
+
+        // Once the network knows the cards in the store
+        helper.runAfterDelay(2, () -> insertInDisplayPanel(player, panelPos, filterCard));
+        helper.succeedWhen(() -> {
+            assertValueEqual(PartHelpers.getPart(panelPos).getState() instanceof PartTypePanelVariableDriven.State<?, ?> state ? state.getDisplayValue() : null,
+                    ValueTypeList.ValueList.ofAll(ValueTypeInteger.ValueInteger.of(20)));
+            assertAdvancement(helper, player, "integrateddynamics:expressions/expression_operator");
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testAdvancementExpressionOperatorNegative(GameTestHelper helper) throws ExpressionParseException {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        PartPos panelPos = setupDisplayNetwork(helper);
+        // Displaying the operator itself does not use it
+        ItemStack operatorCard = writeExpressionText(player, "(n: Integer) => n > 10");
+        helper.runAfterDelay(2, () -> insertInDisplayPanel(player, panelPos, operatorCard));
+        helper.runAfterDelay(10, () -> {
+            IValue value = ((PartTypePanelVariableDriven.State<?, ?>) PartHelpers.getPart(panelPos).getState()).getDisplayValue();
+            helper.assertTrue(value instanceof ValueTypeOperator.ValueOperator, "The operator is not displayed: " + value);
+            assertAdvancementNotDone(helper, player, "integrateddynamics:expressions/expression_operator");
+            helper.succeed();
+        });
     }
 
 }

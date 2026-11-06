@@ -1,0 +1,51 @@
+{
+  "display": {
+    "icon": {
+      "id": "integrateddynamics:variable",
+      "components": {
+        "integrateddynamics:variable_facade": {
+          "_id": 1,
+          "_type": "integrateddynamics:expression",
+          "expression": {
+            "root": {
+              "k": 0,
+              "op": "integrateddynamics:relational_gt",
+              "c": [
+                {
+                  "k": 0,
+                  "op": "integrateddynamics:arithmetic_multiplication",
+                  "c": [
+                    {"k": 2, "t": "integrateddynamics:integer", "v": 2},
+                    {"k": 2, "t": "integrateddynamics:integer", "v": 5}
+                  ]
+                },
+                {"k": 2, "t": "integrateddynamics:integer", "v": 4}
+              ]
+            }
+          }
+        }
+      }
+    },
+    "title": {
+      "translate": "advancement.integrateddynamics.expression_nesting"
+    },
+    "description": {
+      "translate": "advancement.integrateddynamics.expression_nesting.desc"
+    }
+  },
+  "parent": "integrateddynamics:expressions/expression_writing",
+  "criteria": {
+    "criteria_0": {
+      "trigger": "integrateddynamics:variable_created",
+      "conditions": {
+        "block": "integrateddynamics:logic_programmer",
+        "variable_facade": {
+          "type": "expression",
+          "operators": {
+            "min": 2
+          }
+        }
+      }
+    }
+  }
+}

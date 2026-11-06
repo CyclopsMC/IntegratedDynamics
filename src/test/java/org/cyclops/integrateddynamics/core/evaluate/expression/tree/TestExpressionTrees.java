@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.core.evaluate.expression.tree;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.nbt.Tag;
@@ -16,7 +17,9 @@ import org.cyclops.integrateddynamics.api.evaluate.operator.IOperator;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
+import org.cyclops.integrateddynamics.core.evaluate.ExpressionVariableFacadeHandler;
 import org.cyclops.integrateddynamics.core.evaluate.expression.LazyExpression;
+import org.cyclops.integrateddynamics.core.evaluate.operator.CurriedOperator;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueDeseralizationContextMocked;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
@@ -29,6 +32,7 @@ import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeString;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.evaluate.variable.Variable;
 import org.cyclops.integrateddynamics.core.item.ExpressionVariableFacade;
+import org.cyclops.integrateddynamics.core.item.OperatorVariableFacade;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -39,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -302,6 +307,53 @@ public class TestExpressionTrees {
         ExpressionOperator square = ExpressionOperator.of(new Expression(op(Operators.ARITHMETIC_MULTIPLICATION, p(0), p(0)),
                 List.of(param("x", ValueTypes.INTEGER))));
         assertThat(integer(eval(square, ValueTypeInteger.ValueInteger.of(7))), is(49));
+    }
+
+    @Test
+    public void testCountOperators() {
+        assertThat(ExpressionTrees.countOperators(c(1)), is(0));
+        assertThat(ExpressionTrees.countOperators(op(Operators.ARITHMETIC_ADDITION, op(Operators.ARITHMETIC_MULTIPLICATION, c(2), c(5)), c(4))), is(2));
+        // An operator used as a value is not counted
+        assertThat(ExpressionTrees.countOperators(op(Operators.OPERATOR_APPLY,
+                new ExpressionNode.Const(ValueTypeOperator.ValueOperator.of(Operators.LOGICAL_NOT)), c("x"))), is(1));
+    }
+
+    @Test
+    public void testExpressionVariableFacadePredicate() {
+        Expression single = new Expression(op(Operators.ARITHMETIC_ADDITION, c(3), c(4)));
+        Expression nested = new Expression(op(Operators.ARITHMETIC_ADDITION, op(Operators.ARITHMETIC_MULTIPLICATION, c(2), c(5)), c(4)));
+        Expression withParameter = new Expression(op(Operators.RELATIONAL_GT, p(0), c(10)), List.of(param("n", ValueTypes.INTEGER)));
+        ExpressionVariableFacadeHandler.ExpressionVariableFacadePredicate any =
+                new ExpressionVariableFacadeHandler.ExpressionVariableFacadePredicate(Optional.empty(), Optional.empty());
+        ExpressionVariableFacadeHandler.ExpressionVariableFacadePredicate nesting =
+                new ExpressionVariableFacadeHandler.ExpressionVariableFacadePredicate(Optional.of(MinMaxBounds.Ints.atLeast(2)), Optional.empty());
+        ExpressionVariableFacadeHandler.ExpressionVariableFacadePredicate parameters =
+                new ExpressionVariableFacadeHandler.ExpressionVariableFacadePredicate(Optional.empty(), Optional.of(MinMaxBounds.Ints.atLeast(1)));
+
+        assertThat(any.test(new ExpressionVariableFacade(1, single)), is(true));
+        assertThat(any.test(new ExpressionVariableFacade(1, null)), is(false));
+        assertThat(any.test(new OperatorVariableFacade(1, Operators.ARITHMETIC_ADDITION, new int[]{2, 3})), is(false));
+        assertThat(nesting.test(new ExpressionVariableFacade(1, single)), is(false));
+        assertThat(nesting.test(new ExpressionVariableFacade(1, nested)), is(true));
+        assertThat(parameters.test(new ExpressionVariableFacade(1, nested)), is(false));
+        assertThat(parameters.test(new ExpressionVariableFacade(1, withParameter)), is(true));
+    }
+
+    @Test
+    public void testValueExpressionPredicate() {
+        ExpressionOperator operator = ExpressionOperator.of(new Expression(op(Operators.ARITHMETIC_ADDITION, p(0), p(1)),
+                List.of(param("a", ValueTypes.INTEGER), param("b", ValueTypes.INTEGER))));
+        ExpressionOperator.ValueExpressionPredicate any = new ExpressionOperator.ValueExpressionPredicate(Optional.empty());
+        ExpressionOperator.ValueExpressionPredicate one = new ExpressionOperator.ValueExpressionPredicate(Optional.of(MinMaxBounds.Ints.exactly(1)));
+
+        assertThat(any.test(ValueTypeOperator.ValueOperator.of(operator)), is(true));
+        // Also with an input applied
+        assertThat(any.test(ValueTypeOperator.ValueOperator.of(new CurriedOperator(operator,
+                new Variable<>(ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(1))))), is(true));
+        assertThat(any.test(ValueTypeOperator.ValueOperator.of(Operators.ARITHMETIC_ADDITION)), is(false));
+        assertThat(any.test(ValueTypeInteger.ValueInteger.of(1)), is(false));
+        // By the parameters of the expression
+        assertThat(one.test(ValueTypeOperator.ValueOperator.of(operator)), is(false));
     }
 
     @Test

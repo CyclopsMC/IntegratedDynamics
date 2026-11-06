@@ -315,6 +315,21 @@ public final class ExpressionTrees {
 
     /**
      * @param node A node.
+     * @return The number of operator nodes in it, not counting operators used as values.
+     */
+    public static int countOperators(ExpressionNode node) {
+        int count = 0;
+        if (node instanceof ExpressionNode.Operator op) {
+            count++;
+            for (ExpressionNode child : op.children()) {
+                count += countOperators(child);
+            }
+        }
+        return count;
+    }
+
+    /**
+     * @param node A node.
      * @return All referenced variable ids, in order of first occurrence.
      */
     public static IntList getRefIds(ExpressionNode node) {

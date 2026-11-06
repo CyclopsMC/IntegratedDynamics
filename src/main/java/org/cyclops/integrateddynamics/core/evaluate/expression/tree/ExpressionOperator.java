@@ -2,12 +2,14 @@ package org.cyclops.integrateddynamics.core.evaluate.expression.tree;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
+import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import org.cyclops.integrateddynamics.Reference;
+import org.cyclops.integrateddynamics.api.advancement.criterion.ValuePredicate;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.expression.tree.Expression;
 import org.cyclops.integrateddynamics.api.evaluate.expression.tree.ExpressionNode;
@@ -17,13 +19,16 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IVariable;
 import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
+import org.cyclops.integrateddynamics.core.evaluate.operator.CurriedOperator;
 import org.cyclops.integrateddynamics.core.evaluate.operator.OperatorBase;
+import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypeOperator;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * An operator defined by an expression tree with parameters.
@@ -219,6 +224,34 @@ public class ExpressionOperator extends OperatorBase {
                 return ExpressionOperator.of(expression);
             }
             return new ExpressionOperator(expression, Int2ObjectMaps.emptyMap(), outputType);
+        }
+    }
+
+    /**
+     * Matches operator values of expressions, also with some of their inputs applied,
+     * optionally by the number of parameters of the expression.
+     */
+    public static class ValueExpressionPredicate extends ValuePredicate<ValueTypeOperator.ValueOperator> {
+
+        private final Optional<MinMaxBounds.Ints> parameters;
+
+        public ValueExpressionPredicate(Optional<MinMaxBounds.Ints> parameters) {
+            super(Optional.of(ValueTypes.OPERATOR), Optional.empty(), Optional.empty());
+            this.parameters = parameters;
+        }
+
+        public Optional<MinMaxBounds.Ints> getParameters() {
+            return parameters;
+        }
+
+        @Override
+        protected boolean testTyped(ValueTypeOperator.ValueOperator value) {
+            IOperator operator = value.getRawValue();
+            while (operator instanceof CurriedOperator curried) {
+                operator = curried.getBaseOperator();
+            }
+            return super.testTyped(value) && operator instanceof ExpressionOperator expressionOperator
+                    && (parameters.isEmpty() || parameters.get().matches(expressionOperator.getExpression().parameters().size()));
         }
     }
 }

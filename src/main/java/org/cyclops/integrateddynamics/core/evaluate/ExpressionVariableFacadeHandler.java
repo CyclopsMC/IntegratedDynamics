@@ -1,9 +1,11 @@
 package org.cyclops.integrateddynamics.core.evaluate;
 
+import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import org.cyclops.integrateddynamics.Reference;
+import org.cyclops.integrateddynamics.api.advancement.criterion.VariableFacadePredicate;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
 import org.cyclops.integrateddynamics.api.evaluate.expression.tree.Expression;
 import org.cyclops.integrateddynamics.api.evaluate.variable.IValueType;
@@ -18,6 +20,7 @@ import org.cyclops.integrateddynamics.core.item.ExpressionVariableFacade;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Handler for expression variable facades.
@@ -97,5 +100,36 @@ public class ExpressionVariableFacadeHandler implements IVariableFacadeHandler<I
     @Override
     public boolean isInstance(IVariable<?> variable) {
         return variable instanceof IVariable;
+    }
+
+    /**
+     * Matches expression cards, optionally by the number of operators and parameters of their expression.
+     */
+    public static class ExpressionVariableFacadePredicate extends VariableFacadePredicate<IExpressionVariableFacade> {
+
+        private final Optional<MinMaxBounds.Ints> operators;
+        private final Optional<MinMaxBounds.Ints> parameters;
+
+        public ExpressionVariableFacadePredicate(Optional<MinMaxBounds.Ints> operators, Optional<MinMaxBounds.Ints> parameters) {
+            super(IExpressionVariableFacade.class);
+            this.operators = operators;
+            this.parameters = parameters;
+        }
+
+        public Optional<MinMaxBounds.Ints> getOperators() {
+            return operators;
+        }
+
+        public Optional<MinMaxBounds.Ints> getParameters() {
+            return parameters;
+        }
+
+        @Override
+        protected boolean testTyped(IExpressionVariableFacade variableFacade) {
+            Expression expression = variableFacade.getExpression();
+            return expression != null
+                    && (operators.isEmpty() || operators.get().matches(ExpressionTrees.countOperators(expression.root())))
+                    && (parameters.isEmpty() || parameters.get().matches(expression.parameters().size()));
+        }
     }
 }
