@@ -7,6 +7,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.server.level.ServerPlayer;
 import org.cyclops.cyclopscore.command.argument.ArgumentTypeEnum;
 import org.cyclops.integrateddynamics.GeneralConfig;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
@@ -18,6 +19,8 @@ import org.cyclops.integrateddynamics.network.packet.NetworkDiagnosticsTriggerCl
  *
  */
 public class CommandNetworkDiagnostics implements Command<CommandSourceStack> {
+
+    public static final int PERMISSION_LEVEL = 2;
 
     private final boolean operationArg;
     private final boolean portArg;
@@ -40,12 +43,20 @@ public class CommandNetworkDiagnostics implements Command<CommandSourceStack> {
 
     public static LiteralArgumentBuilder<CommandSourceStack> make() {
         return Commands.literal("networkdiagnostics")
-                .requires((commandSource) -> commandSource.hasPermission(2))
+                .requires((commandSource) -> commandSource.hasPermission(PERMISSION_LEVEL))
                 .executes(new CommandNetworkDiagnostics(false, false))
                 .then(Commands.argument("operation", new ArgumentTypeEnum(StartStop.class))
                         .executes(new CommandNetworkDiagnostics(true, false))
                         .then(Commands.argument("port", IntegerArgumentType.integer())
                             .executes(new CommandNetworkDiagnostics(true, true))));
+    }
+
+    /**
+     * @param player A player.
+     * @return If the player may use network diagnostics.
+     */
+    public static boolean hasPermission(ServerPlayer player) {
+        return player.hasPermissions(PERMISSION_LEVEL);
     }
 
     public static enum StartStop {
