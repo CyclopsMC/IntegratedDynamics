@@ -29,7 +29,13 @@ public class ValueObjectTypeItemStack extends ValueObjectTypeBase<ValueObjectTyp
         IValueTypeNullable<ValueObjectTypeItemStack.ValueItemStack> {
 
     public ValueObjectTypeItemStack() {
+        // TODO: in next major, prefix the global interact names of operators on items with item instead of itemstack.
         super("itemstack", ValueObjectTypeItemStack.ValueItemStack.class);
+    }
+
+    @Override
+    public String getExpressionName() {
+        return "Item";
     }
 
     public static MutableComponent getItemStackDisplayNameUsSafe(ItemStack itemStack) throws NoSuchMethodException {

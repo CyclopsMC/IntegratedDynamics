@@ -1,6 +1,8 @@
 package org.cyclops.integrateddynamics.core.persist.world;
 
 import com.google.common.collect.Maps;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
@@ -116,6 +118,22 @@ public class LabelsWorldStorage extends WorldStorage {
             return null;
         }
         return labels.get(variableId);
+    }
+
+    /**
+     * Get the variable ids with the given label.
+     * @param label A label.
+     * @return The ids of the variables with this label, in ascending order.
+     */
+    public synchronized IntList getVariableIds(String label) {
+        IntList variableIds = new IntArrayList();
+        labels.forEach((variableId, variableLabel) -> {
+            if (label.equals(variableLabel)) {
+                variableIds.add((int) variableId);
+            }
+        });
+        variableIds.sort(null);
+        return variableIds;
     }
 
     @SubscribeEvent

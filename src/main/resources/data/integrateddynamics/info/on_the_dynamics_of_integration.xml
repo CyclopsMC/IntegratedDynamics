@@ -192,6 +192,27 @@
                 </rewards>
             </appendix>
         </section>
+        <section name="info_book.integrateddynamics.tutorials.expressions">
+            <paragraph>info_book.integrateddynamics.tutorials.expressions.text1</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.expressions.text2</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.expressions.text3</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.expressions.text4</paragraph>
+            <paragraph>info_book.integrateddynamics.tutorials.expressions.text5</paragraph>
+            <appendix type="integrateddynamics:operator">integrateddynamics:operator_filter</appendix>
+            <appendix type="advancement_rewards" id="integrateddynamics:expressions">
+                <advancements>
+                    <advancement id="integrateddynamics:expressions/expression_writing" />
+                    <advancement id="integrateddynamics:expressions/expression_nesting" />
+                    <advancement id="integrateddynamics:expressions/expression_operator" />
+                </advancements>
+                <rewards>
+                    <reward type="item" amount="1">integrateddynamics:labeller</reward>
+                    <reward type="item" amount="1">integrateddynamics:variablestore</reward>
+                    <reward type="item" amount="4">integrateddynamics:part_display_panel</reward>
+                    <reward type="item" amount="16">integrateddynamics:variable</reward>
+                </rewards>
+            </appendix>
+        </section>
         <section name="info_book.integrateddynamics.tutorials.saving_state">
             <paragraph>info_book.integrateddynamics.tutorials.saving_state.text1</paragraph>
             <paragraph>info_book.integrateddynamics.tutorials.saving_state.text2</paragraph>
@@ -681,6 +702,15 @@
             <appendix type="keybinding">key.integrateddynamics.logic_programmer_focus_search</appendix>
             <appendix type="keybinding">key.integrateddynamics.logic_programmer_open_rename</appendix>
             <appendix_list factory="integrateddynamics:operators_output">*</appendix_list>
+        </section>
+
+        <section name="info_book.integrateddynamics.manual.logic_programming.expressions">
+            <paragraph>info_book.integrateddynamics.manual.logic_programming.expressions.text1</paragraph>
+            <paragraph>info_book.integrateddynamics.manual.logic_programming.expressions.text2</paragraph>
+            <paragraph>info_book.integrateddynamics.manual.logic_programming.expressions.text3</paragraph>
+            <paragraph>info_book.integrateddynamics.manual.logic_programming.expressions.text4</paragraph>
+            <paragraph>info_book.integrateddynamics.manual.logic_programming.expressions.text5</paragraph>
+            <paragraph>info_book.integrateddynamics.manual.logic_programming.expressions.text6</paragraph>
         </section>
 
         <section name="info_book.integrateddynamics.manual.diagnostics">
