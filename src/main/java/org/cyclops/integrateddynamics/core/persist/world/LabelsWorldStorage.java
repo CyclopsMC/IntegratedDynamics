@@ -24,6 +24,11 @@ import java.util.Objects;
  */
 public class LabelsWorldStorage extends WorldStorage {
 
+    /**
+     * The maximum label length that clients may set, equal to the labeller and logic programmer text fields.
+     */
+    public static final int MAX_LABEL_LENGTH = 64;
+
     private static LabelsWorldStorage INSTANCE = null;
 
     @NBTPersist
