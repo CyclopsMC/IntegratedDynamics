@@ -7,6 +7,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.network.CodecField;
 import org.cyclops.cyclopscore.network.PacketCodec;
+import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLabeller;
 
 /**
@@ -40,6 +41,10 @@ public class ItemStackRenamePacket extends PacketCodec {
 
     @Override
     public void actionServer(Level world, ServerPlayer player) {
+        // Same text field as labels.
+        if (this.name != null && this.name.length() > LabelsWorldStorage.MAX_LABEL_LENGTH) {
+            return;
+        }
         if(player.containerMenu instanceof ContainerLabeller) {
             ((ContainerLabeller) player.containerMenu).setItemStackName(this.name);
         }
