@@ -161,6 +161,10 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
                     value.fromNBT(valueDeseralizationContext, entryTag.getCompound("value"));
                 }
                 if (key != null && value != null) {
+                    // Values saved before the server validated them may be invalid.
+                    if (key.getDefaultProperties() != null) {
+                        AspectProperties.resetInvalidValues(value, key.getDefaultProperties());
+                    }
                     this.aspectProperties.put(key, value);
                 }
             }
