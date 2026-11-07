@@ -106,6 +106,20 @@ public class AspectProperties implements IAspectProperties {
         }
     }
 
+    /**
+     * Reset values that do not pass their property validator to the default value.
+     * @param properties The properties to check.
+     * @param defaultProperties The default properties, which hold the property validators.
+     */
+    @SuppressWarnings({"unchecked", "deprecation"})
+    public static void resetInvalidValues(IAspectProperties properties, IAspectProperties defaultProperties) {
+        for (IAspectPropertyTypeInstance type : defaultProperties.getTypes()) {
+            if (!type.getValidator().test(properties.getValue(type))) {
+                properties.setValue(type, defaultProperties.getValue(type));
+            }
+        }
+    }
+
     @SuppressWarnings({"CloneDoesntCallSuperClone", "deprecation"})
     @Override
     public IAspectProperties clone() {

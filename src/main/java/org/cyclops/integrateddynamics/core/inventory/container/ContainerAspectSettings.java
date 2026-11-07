@@ -152,6 +152,10 @@ public class ContainerAspectSettings extends InventoryContainer {
                 IAspectProperties aspectProperties = aspect.getProperties(partType, target, partState);
                 aspectProperties = aspectProperties.clone();
                 IValue trueValue = ValueHelpers.deserializeRaw(ValueDeseralizationContext.of(world), property.getType(), value.get(ValueNotifierHelpers.KEY));
+                // Values from the client must pass the property validator, as in the settings screen.
+                if (trueValue == null || !property.getValidator().test(trueValue)) {
+                    return;
+                }
                 aspectProperties.setValue(property, trueValue);
                 aspect.setProperties(partType, target, partState, aspectProperties);
 

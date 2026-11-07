@@ -7,6 +7,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.network.CodecField;
 import org.cyclops.cyclopscore.network.PacketCodec;
+import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 
 /**
@@ -40,6 +41,9 @@ public class LogicProgrammerLabelPacket extends PacketCodec {
 
     @Override
     public void actionServer(Level world, ServerPlayer player) {
+        if (label != null && label.length() > LabelsWorldStorage.MAX_LABEL_LENGTH) {
+            return;
+        }
         if(player.containerMenu instanceof ContainerLogicProgrammerBase) {
             ((ContainerLogicProgrammerBase) player.containerMenu).onLabelPacket(label);
         }
