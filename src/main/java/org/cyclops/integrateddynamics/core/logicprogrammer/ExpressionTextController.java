@@ -22,8 +22,7 @@ import org.lwjgl.glfw.GLFW;
 import javax.annotation.Nullable;
 
 /**
- * The typed text of the expression panel: reading it, applying it once typing pauses, and the keys that work on it.
- * The panel of an operator and the one without an operator differ in how text is applied, and in what Undo, Redo and Format do.
+ * This handles the text manipulations in the expressions text box.
  * @author rubensworks
  */
 @OnlyIn(Dist.CLIENT)

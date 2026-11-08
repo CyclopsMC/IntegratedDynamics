@@ -21,17 +21,6 @@ import java.util.TreeMap;
 /**
  * Names of operators in printed expressions.
  *
- * Operators are named by their scoped interact name, such as {@code length},
- * as Integrated Scripting does for the methods of values.
- * Some scoped names are shared by operators with different input types, as + is by addition and concat.
- * Which one a name or symbol stands for is decided in the same way for both, see {@link #choose}.
- * A scoped name is only used when it is read back as the same operator,
- * and otherwise the globally unique interact name is used, such as {@code listLength}.
- * A call with a scoped name is written as a method of its first argument, as in {@code item.size()},
- * as Integrated Scripting does for the methods of values.
- * Operators whose symbol is one of the symbols of the text form are written with it, such as {@code a + b} and {@code !a},
- * where + stands for both addition and concat.
- *
  * @author rubensworks
  */
 public final class OperatorNames {
@@ -255,7 +244,7 @@ public final class OperatorNames {
     }
 
     /**
-     * Choose the operator that a shared name or symbol stands for, in the same way for all of them:
+     * Choose the operator that a shared name or symbol stands for:
      * <ol>
      *     <li>the operators that take as many inputs as there are arguments,</li>
      *     <li>of those, the ones whose inputs fit the arguments whose type is known best, where an input of exactly

@@ -36,8 +36,6 @@ import static org.cyclops.integrateddynamics.core.logicprogrammer.ExpressionPane
 /**
  * The expression panel while no operator is active.
  * It looks like the panel of an expression without parameters.
- * It is drawn by the screen, as there is no element whose render pattern could draw it,
- * and it shares the text, the buttons and how they are drawn with {@link OperatorLPElementRenderPattern}.
  * @author rubensworks
  */
 @OnlyIn(Dist.CLIENT)

@@ -24,7 +24,7 @@ import static org.cyclops.integrateddynamics.core.logicprogrammer.ExpressionPane
 import static org.cyclops.integrateddynamics.core.logicprogrammer.ExpressionPanelRendering.drawOutline;
 
 /**
- * The tabs above the slots for the operators from the root of an expression to the one in the slots, to go back to them.
+ * The tabs above the slots for the operators from the root of an expression to the one in the slots.
  * @author rubensworks
  */
 @OnlyIn(Dist.CLIENT)

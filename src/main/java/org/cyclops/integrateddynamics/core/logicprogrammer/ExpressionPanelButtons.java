@@ -20,8 +20,6 @@ import static org.cyclops.integrateddynamics.core.logicprogrammer.ExpressionPane
 
 /**
  * The buttons of the expression panel: Undo, Redo, Format and Copy right of the title, and the button to add a parameter after the chips.
- * The panel of an expression and the panel without an operator both have them, so the panel looks the same before and after
- * an expression is typed.
  * @author rubensworks
  */
 @OnlyIn(Dist.CLIENT)
