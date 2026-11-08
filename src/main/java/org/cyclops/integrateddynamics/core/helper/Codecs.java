@@ -11,6 +11,7 @@ import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.WritableRegistry;
@@ -37,6 +38,8 @@ import org.cyclops.integrateddynamics.api.item.IVariableFacade;
 import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.part.IPartType;
 import org.cyclops.integrateddynamics.api.part.aspect.IAspect;
+import org.cyclops.integrateddynamics.core.evaluate.ExpressionVariableFacadeHandler;
+import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionOperator;
 import org.cyclops.integrateddynamics.core.evaluate.operator.OperatorRegistry;
 import org.cyclops.integrateddynamics.core.evaluate.operator.Operators;
 import org.cyclops.integrateddynamics.core.evaluate.variable.ValueHelpers;
@@ -135,6 +138,13 @@ public class Codecs {
                                     ENTITY_TYPE.optionalFieldOf("entity").forGetter(ValueObjectTypeEntity.ValueEntityPredicate::getEntityType)
                             )
                             .apply(builder, (type, entityType) -> new ValueObjectTypeEntity.ValueEntityPredicate(entityType))
+            ),
+            RecordCodecBuilder.<ExpressionOperator.ValueExpressionPredicate>create(
+                    builder -> builder.group(
+                                    staticTypeField("expression"),
+                                    MinMaxBounds.Ints.CODEC.optionalFieldOf("parameters").forGetter(ExpressionOperator.ValueExpressionPredicate::getParameters)
+                            )
+                            .apply(builder, (type, parameters) -> new ExpressionOperator.ValueExpressionPredicate(parameters))
             ),
             RecordCodecBuilder.<ValueTypeList.ValueListPredicate>create(
                     builder -> builder.group(
@@ -241,6 +251,14 @@ public class Codecs {
                                     VALUE.optionalFieldOf("value").forGetter(ValueTypeRegistry.ValueTypeVariableFacadePredicate::getValuePredicate)
                             )
                             .apply(builder, (type, valueType, value) -> new ValueTypeRegistry.ValueTypeVariableFacadePredicate(valueType, value))
+            ),
+            RecordCodecBuilder.<ExpressionVariableFacadeHandler.ExpressionVariableFacadePredicate>create(
+                    builder -> builder.group(
+                                    staticTypeField("expression"),
+                                    MinMaxBounds.Ints.CODEC.optionalFieldOf("operators").forGetter(ExpressionVariableFacadeHandler.ExpressionVariableFacadePredicate::getOperators),
+                                    MinMaxBounds.Ints.CODEC.optionalFieldOf("parameters").forGetter(ExpressionVariableFacadeHandler.ExpressionVariableFacadePredicate::getParameters)
+                            )
+                            .apply(builder, (type, operators, parameters) -> new ExpressionVariableFacadeHandler.ExpressionVariableFacadePredicate(operators, parameters))
             ),
             RecordCodecBuilder.<VariableFacadePredicateTyped>create(
                     builder -> builder.group(

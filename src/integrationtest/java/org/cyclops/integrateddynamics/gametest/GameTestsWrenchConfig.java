@@ -35,6 +35,7 @@ import org.cyclops.integrateddynamics.core.part.PartStateActiveVariableBase;
 import org.cyclops.integrateddynamics.core.part.PartStateAspectVariablesHandler;
 import org.cyclops.integrateddynamics.core.part.PartStateOffsetHandler;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
+import org.cyclops.integrateddynamics.core.part.panel.PartTypePanelVariableDriven;
 import org.cyclops.integrateddynamics.item.ItemEnhancement;
 import org.cyclops.integrateddynamics.item.ItemWrench;
 import org.cyclops.integrateddynamics.part.aspect.Aspects;
@@ -290,6 +291,32 @@ public class GameTestsWrenchConfig {
             helper.assertValueEqual(countBlankVariables(player), 2, "Wrong number of blank variable cards consumed");
             helper.assertTrue(hasVariableWithId(helper, player, ejectedId),
                     "The variable card that was in the target part was not given back to the player");
+        });
+    }
+
+    /**
+     * A Wrench rotates panels, but not while it is in a configuration mode.
+     */
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testWrenchConfigPasteOntoPanel(GameTestHelper helper) {
+        PartPos source = placePart(helper, POS_SOURCE, PartTypes.DISPLAY_PANEL);
+        PartPos target = placePart(helper, POS_TARGET, PartTypes.DISPLAY_PANEL);
+        ((PartStateActiveVariableBase<?>) partState(source)).getInventory().setItem(0,
+                createVariableForValue(helper.getLevel(), ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(5)));
+        Direction rotation = ((PartTypePanelVariableDriven.State<?, ?>) partState(target)).getFacingRotation();
+
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        ItemStack wrench = createWrench(ItemWrench.Mode.CONFIG);
+        // The wrench occupies the selected hotbar slot, so it must be given before the blank variable cards
+        player.setItemInHand(InteractionHand.MAIN_HAND, wrench);
+        giveBlankVariables(player, 1);
+        clickPart(helper, player, wrench, source, true);
+        clickPart(helper, player, wrench, target, false);
+
+        helper.succeedWhen(() -> {
+            helper.assertTrue(getActiveVariable(target) != null, "Variable card was not pasted onto the panel");
+            helper.assertValueEqual(((PartTypePanelVariableDriven.State<?, ?>) partState(target)).getFacingRotation(),
+                    rotation, "The panel was rotated");
         });
     }
 

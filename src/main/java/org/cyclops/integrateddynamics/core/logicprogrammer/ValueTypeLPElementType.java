@@ -47,6 +47,13 @@ public class ValueTypeLPElementType implements ILogicProgrammerElementType<IValu
      * @return All possible value types in this element type.
      */
     public List<IValueType<?>> getValueTypes() {
+        return getElementValueTypes();
+    }
+
+    /**
+     * @return All value types that have an element, in the order of the logic programmer.
+     */
+    public static List<IValueType<?>> getElementValueTypes() {
         ImmutableList.Builder<IValueType<?>> builder = ImmutableList.builder();
         for(IValueType valueType : ValueTypes.REGISTRY.getValueTypes()) {
             if(!valueType.isCategory() && valueType.createLogicProgrammerElement() != null) {

@@ -99,6 +99,9 @@ public class GeneralConfig extends DummyConfig {
     @ConfigurableProperty(category = "machine", comment = "The maximum nesting depth of an encoded value, both when encoding and when decoding.", minimalValue = 1, configLocation = ModConfig.Type.SERVER)
     public static int valueEncodingMaxDepth = 512;
 
+    @ConfigurableProperty(category = "machine", comment = "The maximum length of the text of an expression in the logic programmer.", minimalValue = 1, configLocation = ModConfig.Type.SERVER)
+    public static int expressionMaxLength = 8192;
+
     @ConfigurableProperty(category = "general", comment = "The maximum render distance for part overlays to render. The higher, the more resource intensive.", isCommandable = true, minimalValue = 1, configLocation = ModConfig.Type.CLIENT)
     public static int partOverlayRenderdistance = 15;
 

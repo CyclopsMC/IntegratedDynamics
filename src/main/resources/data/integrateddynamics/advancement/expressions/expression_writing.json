@@ -1,0 +1,41 @@
+{
+  "display": {
+    "icon": {
+      "id": "integrateddynamics:variable",
+      "components": {
+        "integrateddynamics:variable_facade": {
+          "_id": 1,
+          "_type": "integrateddynamics:expression",
+          "expression": {
+            "root": {
+              "k": 0,
+              "op": "integrateddynamics:arithmetic_addition",
+              "c": [
+                {"k": 2, "t": "integrateddynamics:integer", "v": 3},
+                {"k": 2, "t": "integrateddynamics:integer", "v": 4}
+              ]
+            }
+          }
+        }
+      }
+    },
+    "title": {
+      "translate": "advancement.integrateddynamics.expression_writing"
+    },
+    "description": {
+      "translate": "advancement.integrateddynamics.expression_writing.desc"
+    }
+  },
+  "parent": "integrateddynamics:logic_operations/arithmetic_addition",
+  "criteria": {
+    "criteria_0": {
+      "trigger": "integrateddynamics:variable_created",
+      "conditions": {
+        "block": "integrateddynamics:logic_programmer",
+        "variable_facade": {
+          "type": "expression"
+        }
+      }
+    }
+  }
+}
