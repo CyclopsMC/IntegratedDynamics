@@ -48,6 +48,7 @@ import org.cyclops.integrateddynamics.core.network.event.VariableContentsUpdated
 import org.cyclops.integrateddynamics.core.part.PartStateActiveVariableBase;
 import org.cyclops.integrateddynamics.core.part.PartTypeBase;
 import org.cyclops.integrateddynamics.inventory.container.ContainerPartPanelVariableDriven;
+import org.cyclops.integrateddynamics.item.ItemWrench;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -243,7 +244,8 @@ public abstract class PartTypePanelVariableDriven<P extends PartTypePanelVariabl
     @Override
     public InteractionResult onPartActivated(final S partState, BlockPos pos, Level world, Player player, InteractionHand hand,
                                              ItemStack heldItem, BlockHitResult hit) {
-        if(WrenchHelpers.isWrench(player, heldItem, world, pos, hit.getDirection())) {
+        boolean pastesConfig = heldItem.getItem() instanceof ItemWrench itemWrench && itemWrench.getMode(heldItem).isConfig();
+        if(!pastesConfig && WrenchHelpers.isWrench(player, heldItem, world, pos, hit.getDirection())) {
             WrenchHelpers.wrench(player, heldItem, world, pos, hit.getDirection(),
                     (player1, pos1, parameter) -> partState.setFacingRotation(partState.getFacingRotation().getClockWise()));
             return InteractionResult.SUCCESS;

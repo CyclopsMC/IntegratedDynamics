@@ -48,6 +48,14 @@ public interface IValueType<V extends IValue> {
     public Identifier getUniqueName();
 
     /**
+     * @return The name of this type in the text of expressions, as in {@code Integer} or {@code Item},
+     *         which does not depend on the language. By default the unique name.
+     */
+    public default String getExpressionName() {
+        return getUniqueName().toString();
+    }
+
+    /**
      * @return The unique name of this type that will also be used for display.
      */
     public String getTranslationKey();

@@ -23,4 +23,11 @@ public class Images {
     public static final Image BUTTON_MIDDLE_ENCODE = new Image(ICONS, 18, 36, 18, 18);
     public static final Image BUTTON_MIDDLE_ENCODE_COMPRESSED = new Image(ICONS, 36, 36, 18, 18);
 
+    // White, so they are drawn in the color of the text of buttons
+    public static final Image ICON_UNDO = new Image(ICONS, 54, 0, 7, 7);
+    public static final Image ICON_REDO = new Image(ICONS, 62, 0, 7, 7);
+    public static final Image ICON_COPY = new Image(ICONS, 70, 0, 7, 7);
+    public static final Image ICON_CHECK = new Image(ICONS, 78, 0, 7, 7);
+    public static final Image ICON_FORMAT = new Image(ICONS, 86, 0, 7, 7);
+
 }
