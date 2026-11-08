@@ -10,6 +10,7 @@ org.cyclops.integrateddynamics.api.client.render.part
 org.cyclops.integrateddynamics.api.client.render.valuetype
 org.cyclops.integrateddynamics.api.evaluate
 org.cyclops.integrateddynamics.api.evaluate.expression
+org.cyclops.integrateddynamics.api.evaluate.expression.tree
 org.cyclops.integrateddynamics.api.evaluate.operator
 org.cyclops.integrateddynamics.api.evaluate.variable
 org.cyclops.integrateddynamics.api.ingredient
@@ -62,6 +63,7 @@ org.cyclops.integrateddynamics.core.datastructure
 org.cyclops.integrateddynamics.core.evaluate
 org.cyclops.integrateddynamics.core.evaluate.build
 org.cyclops.integrateddynamics.core.evaluate.expression
+org.cyclops.integrateddynamics.core.evaluate.expression.tree
 org.cyclops.integrateddynamics.core.evaluate.operator
 org.cyclops.integrateddynamics.core.evaluate.variable
 org.cyclops.integrateddynamics.core.evaluate.variable.gui
