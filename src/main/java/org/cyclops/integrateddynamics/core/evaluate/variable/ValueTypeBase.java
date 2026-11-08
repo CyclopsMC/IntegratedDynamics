@@ -78,13 +78,13 @@ public abstract class ValueTypeBase<V extends IValue> implements IValueType<V> {
 
     @Override
     public String getExpressionName() {
-        // Those of Integrated Dynamics as in the logic programmer, such as Integer, as add-ons may have types of the same name
-        ResourceLocation id = getUniqueName();
-        if (!id.getNamespace().equals(Reference.MOD_ID)) {
-            return id.toString();
+        // Types of add-ons keep their namespace, as several mods may have a type of the same name
+        if (!getModId().equals(Reference.MOD_ID)) {
+            return getUniqueName().toString();
         }
+        // As in the logic programmer, such as Integer
         StringBuilder name = new StringBuilder();
-        for (String word : id.getPath().split("_")) {
+        for (String word : getTypeName().split("_")) {
             name.append(Character.toUpperCase(word.charAt(0))).append(word.substring(1));
         }
         return name.toString();
