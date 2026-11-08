@@ -6,6 +6,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cyclops.cyclopscore.helper.IModHelpers;
@@ -79,12 +80,19 @@ public class RenderPattern<E extends IGuiInputElement, G extends Screen, C exten
             }
 
             if (configRenderPattern.getSymbolPosition() != null) {
-                IModHelpers.get().getRenderHelpers().drawScaledCenteredString(guiGraphics, fontRenderer, element.getSymbol(),
+                IModHelpers.get().getRenderHelpers().drawScaledCenteredString(guiGraphics, fontRenderer, getRenderSymbol(),
                         baseX + configRenderPattern.getSymbolPosition().getLeft(),
                         baseY + configRenderPattern.getSymbolPosition().getRight() + 8,
-                        0, 1, 0, false, Font.DisplayMode.NORMAL);
+                        0, 1, ARGB.opaque(0), false, Font.DisplayMode.NORMAL);
             }
         }
+    }
+
+    /**
+     * @return The symbol to render in the pattern.
+     */
+    protected String getRenderSymbol() {
+        return element.getSymbol();
     }
 
     @Override
