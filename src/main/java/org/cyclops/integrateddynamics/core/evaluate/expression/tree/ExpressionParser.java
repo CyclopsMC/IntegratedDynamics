@@ -696,6 +696,10 @@ public final class ExpressionParser {
     }
 
     private ExpressionNode parsePrimary() throws ExpressionParseException {
+        // Parameters are only declared once, at the start
+        if (isParameterHeader()) {
+            throw error(peek(0), L10NValues.EXPRESSION_PARSE_NESTED_PARAMETERS);
+        }
         Token token = next();
         switch (token.kind()) {
             case NUMBER -> {

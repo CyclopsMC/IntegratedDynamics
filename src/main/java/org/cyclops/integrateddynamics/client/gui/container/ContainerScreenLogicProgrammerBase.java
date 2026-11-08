@@ -13,6 +13,8 @@ import net.minecraft.util.FastColor;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonText;
@@ -30,6 +32,7 @@ import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
 import org.cyclops.integrateddynamics.core.client.gui.subgui.SubGuiHolder;
+import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionParseException;
 import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionPrinter;
 import org.cyclops.integrateddynamics.core.evaluate.variable.gui.GuiElementValueTypeString;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
@@ -132,11 +135,35 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     @Override
     public void onClose() {
         // Typed text is applied without confirming it, so also when closing right after typing, before the server closes
+        applyPendingText();
+        super.onClose();
+    }
+
+    protected void applyPendingText() {
         if (operatorConfigPattern instanceof OperatorLPElementRenderPattern expressionPattern) {
             expressionPattern.applyPendingText();
         }
         expressionStartPanel.applyPendingText();
-        super.onClose();
+    }
+
+    /**
+     * @return Why the typed text of the expression can not be applied, which keeps the card from being written, or null.
+     */
+    @Nullable
+    public ExpressionParseException getExpressionDraftError() {
+        return operatorConfigPattern instanceof OperatorLPElementRenderPattern expressionPattern ? expressionPattern.getDraftError() : null;
+    }
+
+    @Override
+    protected void slotClicked(@Nullable Slot slot, int slotId, int mouseButton, ClickType clickType) {
+        if (slot != null && getMenu().isWriteSlot(slot)) {
+            // The card gets the typed text, which is otherwise only applied once typing pauses, and the server reads it first
+            applyPendingText();
+            if (getExpressionDraftError() != null) {
+                return;
+            }
+        }
+        super.slotClicked(slot, slotId, mouseButton, clickType);
     }
 
     protected int getScrollX() {
@@ -310,6 +337,12 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     @Override
     protected List<Component> getTooltipFromContainerItem(ItemStack itemStack) {
         List<Component> lines = super.getTooltipFromContainerItem(itemStack);
+        // Why the card can not be taken
+        ExpressionParseException draftError = getExpressionDraftError();
+        if (hoveredSlot != null && getMenu().isWriteSlot(hoveredSlot) && draftError != null) {
+            lines = Lists.newArrayList(lines);
+            lines.add(getDraftErrorMessage(draftError).withStyle(ChatFormatting.RED));
+        }
         // A constant that its item does not show exactly, such as the amount of a fluid in a bucket
         if (hoveredSlot != null && hoveredSlot.container == getMenu().getTemporaryInputSlots()
                 && getMenu().getActiveElement() instanceof OperatorLPElement element) {
@@ -628,6 +661,10 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         return superRet;
     }
 
+    protected static MutableComponent getDraftErrorMessage(ExpressionParseException error) {
+        return Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_DRAFT_ERROR, error.getComponent());
+    }
+
     protected void label(String label) {
         IntegratedDynamics._instance.getPacketHandler().sendToServer(new LogicProgrammerLabelPacket(label));
     }
@@ -677,12 +714,13 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
 
         @Override
         protected boolean showError() {
-            return container.canWriteActiveElementPre();
+            return getExpressionDraftError() != null || container.canWriteActiveElementPre();
         }
 
         @Override
         protected Component getLastError() {
-            return container.getLastError();
+            ExpressionParseException draftError = getExpressionDraftError();
+            return draftError != null ? getDraftErrorMessage(draftError) : container.getLastError();
         }
 
         @Override

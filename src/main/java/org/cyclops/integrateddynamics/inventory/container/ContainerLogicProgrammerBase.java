@@ -12,6 +12,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -486,6 +487,14 @@ public abstract class ContainerLogicProgrammerBase extends ScrollingInventoryCon
 
     public boolean hasWriteItemInSlot() {
         return !this.writeSlot.getItem(0).isEmpty();
+    }
+
+    /**
+     * @param slot A slot of this container.
+     * @return If it is the slot that cards are written in.
+     */
+    public boolean isWriteSlot(Slot slot) {
+        return slot.container == this.writeSlot;
     }
 
     public void returnWriteItemToPlayer() {

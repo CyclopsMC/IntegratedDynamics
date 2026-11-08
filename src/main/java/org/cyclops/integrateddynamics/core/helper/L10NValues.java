@@ -43,6 +43,8 @@ public class L10NValues {
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_TOGGLE_HIDE = "gui." + NS + ".logicprogrammer.expression.toggle.hide";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_PARAM_TYPE = "gui." + NS + ".logicprogrammer.expression.param_type";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_STATUS_ERRORS_SLOT = "gui." + NS + ".logicprogrammer.expression.status.errors_slot";
+    public static final String GUI_LOGICPROGRAMMER_EXPRESSION_STATUS_ERRORS_SLOT_MORE = "gui." + NS + ".logicprogrammer.expression.status.errors_slot_more";
+    public static final String GUI_LOGICPROGRAMMER_EXPRESSION_DRAFT_ERROR = "gui." + NS + ".logicprogrammer.expression.draft_error";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_COPY = "gui." + NS + ".logicprogrammer.expression.text.copy";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_UNDO = "gui." + NS + ".logicprogrammer.expression.text.undo";
     public static final String GUI_LOGICPROGRAMMER_EXPRESSION_TEXT_REDO = "gui." + NS + ".logicprogrammer.expression.text.redo";
@@ -141,6 +143,7 @@ public class L10NValues {
     public static final String EXPRESSION_PARSE_UNKNOWN_TYPE = "expression." + NS + ".parse.unknown_type";
     public static final String EXPRESSION_PARSE_PARAMETER_TYPE = "expression." + NS + ".parse.parameter_type";
     public static final String EXPRESSION_PARSE_PARAMETER_NAME = "expression." + NS + ".parse.parameter_name";
+    public static final String EXPRESSION_PARSE_NESTED_PARAMETERS = "expression." + NS + ".parse.nested_parameters";
     public static final String EXPRESSION_PARSE_DUPLICATE_PARAMETER = "expression." + NS + ".parse.duplicate_parameter";
     public static final String EXPRESSION_PARSE_BAD_VALUE = "expression." + NS + ".parse.bad_value";
     public static final String EXPRESSION_PARSE_VALUE_CHANGED = "expression." + NS + ".parse.value_changed";

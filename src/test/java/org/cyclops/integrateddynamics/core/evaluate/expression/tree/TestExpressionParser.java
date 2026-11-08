@@ -386,6 +386,29 @@ public class TestExpressionParser {
     }
 
     @Test
+    public void testBookExamples() throws ExpressionParseException {
+        // A typed parameter picks the operator of its type among those that share a name
+        ExpressionNode.Operator gt = (ExpressionNode.Operator) parse("(item: Item) => item.nbt().size() > 3").root();
+        ExpressionNode.Operator size = (ExpressionNode.Operator) gt.children().get(0);
+        assertThat(size.operator(), is(Operators.NBT_COMPOUND_SIZE));
+        assertThat(((ExpressionNode.Operator) size.children().get(0)).operator(), is(Operators.OBJECT_ITEMSTACK_DATA));
+        ExpressionNode.Operator typed = (ExpressionNode.Operator) parse("(item: Item) => item.size() > 3").root();
+        assertThat(((ExpressionNode.Operator) typed.children().get(0)).operator(), is(Operators.OBJECT_ITEMSTACK_SIZE));
+        assertThat(((ExpressionNode.Operator) parse("(l: List) => l.length()").root()).operator(), is(Operators.LIST_LENGTH));
+        assertThat(((ExpressionNode.Operator) parse("l => l.length()").root()).operator(), is(Operators.STRING_LENGTH));
+    }
+
+    @Test
+    public void testNestedParameters() {
+        // Only the expression as a whole has parameters, an operator inside it needs its own card
+        assertError("filter((n: Integer) => n > 10, [1, 20, 5])", L10NValues.EXPRESSION_PARSE_NESTED_PARAMETERS, 7);
+        assertError("filter(x => x > 10, [1, 20, 5])", L10NValues.EXPRESSION_PARSE_NESTED_PARAMETERS, 7);
+        assertError("x => y => x + y", L10NValues.EXPRESSION_PARSE_NESTED_PARAMETERS, 5);
+        // Brackets that are no parameters
+        assertError("(n + 1) * 2", L10NValues.EXPRESSION_PARSE_UNKNOWN_NAME, 1);
+    }
+
+    @Test
     public void testMethodCallErrors() {
         assertError("(s: String) => s.length", L10NValues.EXPRESSION_PARSE_METHOD, 16);
         assertError("(s: String) => s.", L10NValues.EXPRESSION_PARSE_METHOD, 16);

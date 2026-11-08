@@ -163,6 +163,14 @@ public abstract class ExpressionTextController {
         return LabelsWorldStorage.getInstance(IntegratedDynamics._instance).getVariableIds(label);
     }
 
+    /**
+     * @return Why typed text that is not applied yet does not read as an expression, or null if there is none.
+     */
+    @Nullable
+    public ExpressionParseException getDraftError() {
+        return isDraft() ? getParseError() : null;
+    }
+
     // --------------- Typing ---------------
 
     public void focusText() {

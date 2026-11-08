@@ -144,10 +144,14 @@ public final class ExpressionPanelRendering {
         if (!result.errors().isEmpty()) {
             ExpressionTypeChecker.Error error = result.errors().get(0);
             Component status = error.message();
-            if (error.slot() >= 0) {
+            if (error.slot() >= 0 && error.expected() != null && error.actual() != null) {
                 String operatorName = ExpressionTrees.get(expression.root(), error.path()) instanceof ExpressionNode.Operator op
                         ? OperatorNames.getNodeName(op, error.path(), result) : "?";
-                status = Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_STATUS_ERRORS_SLOT, result.errors().size(), error.slot() + 1, operatorName);
+                Component expected = Component.translatable(error.expected().getTranslationKey());
+                Component actual = Component.translatable(error.actual().getTranslationKey());
+                status = result.errors().size() == 1
+                        ? Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_STATUS_ERRORS_SLOT, error.slot() + 1, operatorName, expected, actual)
+                        : Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_STATUS_ERRORS_SLOT_MORE, error.slot() + 1, operatorName, expected, actual, result.errors().size());
             }
             renderFooter(guiGraphics, guiLeft, guiTop, font, status.copy().withStyle(ChatFormatting.RED),
                     error.message().copy().withStyle(ChatFormatting.RED), regions);

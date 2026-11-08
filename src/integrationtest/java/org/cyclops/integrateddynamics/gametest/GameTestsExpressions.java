@@ -457,6 +457,33 @@ public class GameTestsExpressions {
     }
 
     @GameTest(template = TEMPLATE_EMPTY)
+    public void testLogicProgrammerTypedItemCount(GameTestHelper helper) throws ExpressionParseException {
+        // A typed item keeps its count, although its slot holds a single item
+        setupRedstoneNetwork(helper);
+        ValueDeseralizationContext values = ValueDeseralizationContext.of(helper.getLevel());
+        ExpressionParser.Context context = ExpressionEditor.getParserContext(values, id -> null, label -> IntLists.EMPTY_LIST);
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        ItemStack written;
+        try {
+            ContainerLogicProgrammer container = new ContainerLogicProgrammer(0, player.getInventory());
+            container.applyExpressionAction(ExpressionEditor.actionSet(values,
+                    ExpressionParser.parse("@Item{id: \"minecraft:diamond\", count: 5}.size()", context), null));
+            OperatorLPElement element = (OperatorLPElement) container.getActiveElement();
+            helper.assertValueEqual(container.getTemporaryInputSlots().getItem(0).getCount(), 1, "Count in the slot");
+            ExpressionNode child = element.getEditor().getChild(0);
+            helper.assertTrue(child instanceof ExpressionNode.Const constant
+                    && constant.value() instanceof ValueObjectTypeItemStack.ValueItemStack item && item.getRawValue().getCount() == 5,
+                    "The count is not kept: " + child);
+            written = element.writeElement(player, new ItemStack(RegistryEntries.ITEM_VARIABLE.get()));
+        } finally {
+            player.getServer().getPlayerList().remove(player);
+        }
+
+        Pair<PartTypePanelDisplay, PartTypePanelDisplay.State> partAndState = display(helper, written);
+        helper.succeedWhen(() -> assertValueEqual(partAndState.getRight().getDisplayValue(), ValueTypeInteger.ValueInteger.of(5)));
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
     public void testLogicProgrammerCompatibility(GameTestHelper helper) {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         ItemStack variableA = createVariableForValue(helper.getLevel(), ValueTypes.INTEGER, ValueTypeInteger.ValueInteger.of(1));

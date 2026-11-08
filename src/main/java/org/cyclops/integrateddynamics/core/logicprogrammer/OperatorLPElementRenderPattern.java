@@ -248,6 +248,14 @@ public class OperatorLPElementRenderPattern extends RenderPattern<OperatorLPElem
     }
 
     /**
+     * @return Why typed text can not be applied, which keeps the card from being written, or null if there is none.
+     */
+    @Nullable
+    public ExpressionParseException getDraftError() {
+        return text.getDraftError();
+    }
+
+    /**
      * Open the node of the character under the cursor in the slots, as when clicking a part of the expression.
      */
     protected void navigateToCursor() {

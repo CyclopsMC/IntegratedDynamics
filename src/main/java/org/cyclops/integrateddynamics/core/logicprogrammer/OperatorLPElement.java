@@ -172,7 +172,8 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
     @Nullable
     public IValue getValueNotShownByItem(int slotId) {
         if (editor == null || slotId >= editor.getSlotCount() || !(editor.getChild(slotId) instanceof ExpressionNode.Const constant)
-                || constant.value() instanceof ValueObjectTypeItemStack.ValueItemStack || getItemOfValue(constant).isEmpty()) {
+                || (constant.value() instanceof ValueObjectTypeItemStack.ValueItemStack itemValue && itemValue.getRawValue().getCount() <= getItemStackSizeLimit())
+                || getItemOfValue(constant).isEmpty()) {
             return null;
         }
         return constant.value();
@@ -221,8 +222,9 @@ public class OperatorLPElement implements ILogicProgrammerElement<RenderPattern,
             } else {
                 editor.setChild(slotId, ExpressionNode.EMPTY);
             }
-        } else if (!ItemStack.matches(itemStack, getItemOfValue(child))) {
-            // The item that shows the constant keeps it, as reading the item can lose details, such as the amount of a fluid
+        } else if (!ItemStack.isSameItemSameComponents(itemStack, getItemOfValue(child))) {
+            // The item that shows the constant keeps it, as reading the item can lose details,
+            // such as the amount of a fluid, or the count of an item, as the slot holds one
             IValue value = getValueOfItem(slotId, itemStack);
             if (value != null) {
                 inputVariables[slotId] = null;
