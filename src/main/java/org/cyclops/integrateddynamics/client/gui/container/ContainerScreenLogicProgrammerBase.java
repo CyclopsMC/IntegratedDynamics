@@ -2,6 +2,7 @@ package org.cyclops.integrateddynamics.client.gui.container;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -11,10 +12,13 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.ARGB;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cyclops.cyclopscore.client.gui.component.button.ButtonText;
@@ -26,12 +30,21 @@ import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.client.gui.subgui.IGuiInputElement;
+import org.cyclops.integrateddynamics.api.evaluate.variable.IValue;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElement;
 import org.cyclops.integrateddynamics.api.logicprogrammer.ILogicProgrammerElementType;
 import org.cyclops.integrateddynamics.core.client.gui.subgui.SubGuiHolder;
 import org.cyclops.integrateddynamics.core.evaluate.variable.gui.SubGuiValueTypeInfoBase;
+import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionParseException;
+import org.cyclops.integrateddynamics.core.evaluate.expression.tree.ExpressionPrinter;
 import org.cyclops.integrateddynamics.core.helper.L10NValues;
+import org.cyclops.integrateddynamics.core.logicprogrammer.client.ExpressionStartPanel;
+import org.cyclops.integrateddynamics.core.logicprogrammer.client.ExpressionTextController;
 import org.cyclops.integrateddynamics.core.logicprogrammer.LogicProgrammerElementTypes;
+import org.cyclops.integrateddynamics.core.logicprogrammer.OperatorLPElement;
+import org.cyclops.integrateddynamics.core.logicprogrammer.client.ExpressionPanelRendering;
+import org.cyclops.integrateddynamics.core.logicprogrammer.client.ExpressionTextField;
+import org.cyclops.integrateddynamics.core.logicprogrammer.client.OperatorLPElementRenderPattern;
 import org.cyclops.integrateddynamics.core.logicprogrammer.client.RenderPattern;
 import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgrammerBase;
 import org.cyclops.integrateddynamics.network.packet.LogicProgrammerActivateElementPacket;
@@ -55,6 +68,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     private static final Rectangle ITEM_POSITION = new Rectangle(19, 18, 56, BOX_HEIGHT - 1);
 
     protected final SubGuiHolder subGuiHolder = new SubGuiHolder();
+    protected final ExpressionStartPanel expressionStartPanel;
     private final boolean hasLabeller;
     protected RenderPattern operatorConfigPattern = null;
     protected SubGuiOperatorInfo operatorInfoPattern = null;
@@ -62,11 +76,23 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     protected int relativeStep = -1;
     protected boolean swallowNextCharacter = false;
     private ButtonText resetButton;
+    private ButtonText expressionPanelButton;
+
+    /**
+     * If the expression side panel is shown, hidden at first and remembered for the rest of the game session.
+     */
+    private static boolean expressionPanelOpen = false;
+    /**
+     * The typed text of the expression, kept while the panel of the active element is recreated.
+     */
+    @Nullable
+    private ExpressionTextField expressionTextField = null;
 
     public ContainerScreenLogicProgrammerBase(C container, Inventory playerInventory, Component title) {
         super(container, playerInventory, title);
         container.setScreenCallbackHandler(this);
         this.titleLabelX = 87;
+        this.expressionStartPanel = new ExpressionStartPanel(this, container);
 
         this.hasLabeller = playerInventory.contains(new ItemStack(RegistryEntries.ITEM_LABELLER));
     }
@@ -90,7 +116,15 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
             }
         }));
         this.resetButton.setHeight(12);
-        resetButton.visible = false;
+        resetButton.visible = container.getActiveElement() != null;
+
+        // Button to show or hide the expression side panel
+        addRenderableWidget(this.expressionPanelButton = new ButtonText(this.leftPos + 238, this.topPos + 4, 12, 12,
+                Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TOGGLE),
+                Component.literal(expressionPanelOpen ? "\u00ab" : "\u00bb"), button -> {
+            expressionPanelOpen = !expressionPanelOpen;
+            rebuildWidgets();
+        }, true));
 
         subGuiHolder.init(this.leftPos, this.topPos);
         if (firstInit) {
@@ -99,10 +133,65 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         }
     }
 
+    /**
+     * @return The typed text of the expression, kept while the panel of the active element is recreated.
+     */
+    public ExpressionTextField getExpressionTextField() {
+        if (expressionTextField == null) {
+            expressionTextField = new ExpressionTextField(Minecraft.getInstance().font, ExpressionPanelRendering.TEXT_WIDTH);
+        }
+        return expressionTextField;
+    }
+
+    @Override
+    public void resetExpressionText() {
+        if (expressionTextField != null) {
+            expressionTextField.reset();
+        }
+    }
+
     @Override
     public void containerTick() {
         super.containerTick();
         subGuiHolder.tick();
+        if (operatorConfigPattern instanceof OperatorLPElementRenderPattern expressionPattern) {
+            expressionPattern.tickText();
+        }
+        expressionStartPanel.tick();
+    }
+
+    @Override
+    public void onClose() {
+        // Typed text is applied without confirming it, so also when closing right after typing, before the server closes
+        applyPendingText();
+        super.onClose();
+    }
+
+    protected void applyPendingText() {
+        if (operatorConfigPattern instanceof OperatorLPElementRenderPattern expressionPattern) {
+            expressionPattern.applyPendingText();
+        }
+        expressionStartPanel.applyPendingText();
+    }
+
+    /**
+     * @return Why the typed text of the expression can not be applied, which keeps the card from being written, or null.
+     */
+    @Nullable
+    public ExpressionParseException getExpressionDraftError() {
+        return operatorConfigPattern instanceof OperatorLPElementRenderPattern expressionPattern ? expressionPattern.getDraftError() : null;
+    }
+
+    @Override
+    protected void slotClicked(@Nullable Slot slot, int slotId, int mouseButton, ContainerInput clickType) {
+        if (slot != null && getMenu().isWriteSlot(slot)) {
+            // The card gets the typed text, which is otherwise only applied once typing pauses, and the server reads it first
+            applyPendingText();
+            if (getExpressionDraftError() != null) {
+                return;
+            }
+        }
+        super.slotClicked(slot, slotId, mouseButton, clickType);
     }
 
     protected int getScrollX() {
@@ -119,7 +208,14 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
 
     @Override
     protected int getBaseXSize() {
-        return 256;
+        return isExpressionPanelOpen() ? ContainerLogicProgrammerBase.EXPRESSION_PANEL_X + ContainerLogicProgrammerBase.EXPRESSION_PANEL_WIDTH : 256;
+    }
+
+    /**
+     * @return If the expression side panel is shown.
+     */
+    public static boolean isExpressionPanelOpen() {
+        return expressionPanelOpen;
     }
 
     @Override
@@ -147,8 +243,9 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
 
     @Override
     public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        super.extractBackground(guiGraphics, mouseX, mouseY, partialTicks);
+        drawBackgroundTexture(guiGraphics, mouseX, mouseY, partialTicks);
         subGuiHolder.renderBg(guiGraphics, this.leftPos, this.topPos, getMinecraft().getTextureManager(), font, partialTicks, mouseX, mouseY);
+        expressionStartPanel.render(guiGraphics, font, mouseX, mouseY, partialTicks);
 
         // Draw container name
         guiGraphics.text(font, Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_FILTER),
@@ -163,7 +260,7 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
                 ILogicProgrammerElement element = container.getVisibleElement(i);
 
                 Triple<Float, Float, Float> rgb = IModHelpers.get().getBaseHelpers().intToRGB(element.getColor());
-                boolean hover = LogicProgrammerElementTypes.areEqual(container.getActiveElement(), element)
+                boolean hover = isElementShown(element)
                         || isPointInRegion(getElementPosition(container, i, false), new Point(mouseX, mouseY));
                 int color = ARGB.colorFromFloat(
                         1F,
@@ -196,6 +293,60 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
                 topPos + offsetY + ContainerLogicProgrammerBase.OUTPUT_Y - 4, subGuiHolder.isEmpty() ? 7 : 3, 240, 4, 4, 256, 256);
     }
 
+    /**
+     * Draw the background texture, and the expression side panel to the right of it, which the texture partly covers.
+     * @param guiGraphics The gui graphics.
+     */
+    protected void drawBackgroundTexture(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        // The texture at its own width, and not that of the gui with the panel
+        int imageWidthWithPanel = imageWidth;
+        imageWidth = 256 + 2 * offsetX;
+        super.extractBackground(guiGraphics, mouseX, mouseY, partialTicks);
+        imageWidth = imageWidthWithPanel;
+        if (isExpressionPanelOpen()) {
+            int x = leftPos + offsetX;
+            int y = topPos + offsetY;
+            drawPanel(guiGraphics, x + ContainerLogicProgrammerBase.EXPRESSION_PANEL_X, y + ContainerLogicProgrammerBase.EXPRESSION_PANEL_Y,
+                    ContainerLogicProgrammerBase.EXPRESSION_PANEL_WIDTH, ContainerLogicProgrammerBase.EXPRESSION_PANEL_HEIGHT);
+            // The edge of the texture covers the left of the panel
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, x + ContainerLogicProgrammerBase.EXPRESSION_PANEL_X, y,
+                    ContainerLogicProgrammerBase.EXPRESSION_PANEL_X, 0, 256 - ContainerLogicProgrammerBase.EXPRESSION_PANEL_X, 240, 256, 256);
+        }
+    }
+
+    /**
+     * Draw a panel in the vanilla style.
+     */
+    public static void drawPanel(GuiGraphicsExtractor guiGraphics, int x, int y, int width, int height) {
+        int border = ARGB.color(0, 0, 0);
+        int background = ARGB.color(198, 198, 198);
+        int light = ARGB.color(255, 255, 255);
+        int shadow = ARGB.color(85, 85, 85);
+        guiGraphics.fill(x + 1, y, x + width - 1, y + height, border);
+        guiGraphics.fill(x, y + 1, x + width, y + height - 1, border);
+        guiGraphics.fill(x + 1, y + 1, x + width - 1, y + height - 1, background);
+        guiGraphics.fill(x + 1, y + 1, x + width - 3, y + 3, light);
+        guiGraphics.fill(x + 1, y + 1, x + 3, y + height - 3, light);
+        guiGraphics.fill(x + 3, y + height - 3, x + width - 1, y + height - 1, shadow);
+        guiGraphics.fill(x + width - 3, y + 3, x + width - 1, y + height - 1, shadow);
+    }
+
+    /**
+     * Called when the expression node being edited in the active operator element has changed.
+     */
+    @Override
+    public void onExpressionNavigated() {
+        ILogicProgrammerElement element = container.getActiveElement();
+        if (element == null) {
+            return;
+        }
+        container.setExpressionSlotFilter(null);
+        subGuiHolder.removeSubGui(operatorConfigPattern);
+        subGuiHolder.addSubGui(operatorConfigPattern = (RenderPattern) element.getClient().createSubGui(ContainerLogicProgrammerBase.BASE_X, ContainerLogicProgrammerBase.BASE_Y, ContainerLogicProgrammerBase.MAX_WIDTH, ContainerLogicProgrammerBase.MAX_HEIGHT, this, (ContainerLogicProgrammerBase) getMenu()));
+        operatorConfigPattern.init(leftPos, topPos);
+        container.refreshElementInventory(element, operatorConfigPattern.getX(), operatorConfigPattern.getY());
+    }
+
     protected Rectangle getElementPosition(ContainerLogicProgrammerBase container, int i, boolean absolute) {
         return new Rectangle(ITEM_POSITION.x + offsetX + (absolute ? this.leftPos : 0),
                 ITEM_POSITION.y + BOX_HEIGHT * i + offsetY + (absolute ? this.topPos : 0),
@@ -204,9 +355,55 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
     }
 
     @Override
+    protected void drawCurrentScreen(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        super.drawCurrentScreen(guiGraphics, mouseX, mouseY, partialTicks);
+        guiGraphics.nextStratum();
+        // The list or signature shown while typing an expression, over everything but tooltips
+        ExpressionTextController.getTextField(getMenu()).renderPopups(guiGraphics);
+    }
+
+    @Override
+    protected void extractTooltip(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
+        // Not for slots below the list or signature shown while typing
+        if (!ExpressionTextController.getTextField(getMenu()).isOverPopups(mouseX, mouseY)) {
+            super.extractTooltip(guiGraphics, mouseX, mouseY);
+        }
+    }
+
+    @Override
+    protected List<Component> getTooltipFromContainerItem(ItemStack itemStack) {
+        List<Component> lines = super.getTooltipFromContainerItem(itemStack);
+        // Why the card can not be taken
+        ExpressionParseException draftError = getExpressionDraftError();
+        if (hoveredSlot != null && getMenu().isWriteSlot(hoveredSlot) && draftError != null) {
+            lines = Lists.newArrayList(lines);
+            lines.add(getDraftErrorMessage(draftError).withStyle(ChatFormatting.RED));
+        }
+        // A constant that its item does not show exactly, such as the amount of a fluid in a bucket
+        if (hoveredSlot != null && hoveredSlot.container == getMenu().getTemporaryInputSlots()
+                && getMenu().getActiveElement() instanceof OperatorLPElement element) {
+            IValue value = element.getValueNotShownByItem(hoveredSlot.getContainerSlot());
+            if (value != null) {
+                lines = Lists.newArrayList(lines);
+                lines.add(Math.min(1, lines.size()), Component.literal(ExpressionPrinter.printValue(value)).withStyle(ChatFormatting.GRAY));
+            }
+        }
+        return lines;
+    }
+
+    @Override
     protected void extractLabels(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
         // super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
         subGuiHolder.drawGuiContainerForegroundLayer(guiGraphics, this.leftPos, this.topPos, getMinecraft().getTextureManager(), font, mouseX, mouseY);
+
+        expressionStartPanel.renderTooltips(guiGraphics, mouseX, mouseY);
+
+        // Tooltip on the expression panel button
+        if (expressionPanelButton.isHovered()) {
+            this.drawTooltip(Lists.newArrayList(Component.translatable(isExpressionPanelOpen()
+                    ? L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TOGGLE_HIDE : L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_TOGGLE_SHOW)),
+                    guiGraphics, mouseX, mouseY);
+        }
 
         // Draw usage information
         if (subGuiHolder.isEmpty()) {
@@ -252,7 +449,19 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         operatorConfigPattern.init(leftPos, topPos);
     }
 
+    /**
+     * @return If the element is shown as selected: the active element, or the operator that is open in the slots of an expression.
+     */
+    protected boolean isElementShown(ILogicProgrammerElement element) {
+        ILogicProgrammerElement active = getMenu().getActiveElement();
+        if (active instanceof OperatorLPElement activeOperator && element instanceof OperatorLPElement operatorElement) {
+            return operatorElement.getOperator() == activeOperator.getCurrentOperator();
+        }
+        return LogicProgrammerElementTypes.areEqual(active, element);
+    }
+
     protected void onDeactivateElement(ILogicProgrammerElement element) {
+        container.setExpressionSlotFilter(null);
         subGuiHolder.clear();
     }
 
@@ -393,22 +602,59 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
             return true;
         }
 
-        return subGuiHolder.charTyped(evt) || handleKeyCode(new KeyEvent(evt.codepoint(), 0, 0)) || super.charTyped(evt);
+        return expressionStartPanel.charTyped(evt) || subGuiHolder.charTyped(evt) || handleKeyCode(new KeyEvent(evt.codepoint(), 0, 0))
+                || super.charTyped(evt);
     }
 
     @Override
     public boolean keyPressed(KeyEvent evt) {
+        // Escape first cancels an expression slot or parameter selection, before closing the gui
+        if (evt.key() == GLFW.GLFW_KEY_ESCAPE && ((operatorConfigPattern instanceof OperatorLPElementRenderPattern expressionPattern
+                && expressionPattern.cancelSelection()) || expressionStartPanel.cancel())) {
+            return true;
+        }
         if (evt.key() != GLFW.GLFW_KEY_ESCAPE) {
-            if (this.subGuiHolder.keyPressed(evt) || handleKeyCode(evt)) {
+            if (expressionStartPanel.keyPressed(evt) || this.subGuiHolder.keyPressed(evt) || handleKeyCode(evt)) {
                 return true;
             }
         }
         return super.keyPressed(evt);
     }
 
+    // Sub guis only receive clicks, the text editor of an expression also scrolls and selects,
+    // and parameters of an expression are dragged onto slots
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+        if ((operatorConfigPattern instanceof OperatorLPElementRenderPattern expressionPattern
+                && expressionPattern.mouseScrolled(mouseX, mouseY, scrollX, scrollY))
+                || expressionStartPanel.mouseScrolled(mouseX, mouseY, scrollY)) {
+            return true;
+        }
+        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+    }
+
+    @Override
+    public boolean mouseDragged(MouseButtonEvent evt, double dragX, double dragY) {
+        if ((operatorConfigPattern instanceof OperatorLPElementRenderPattern expressionPattern
+                && expressionPattern.mouseDragged(evt.x(), evt.y(), evt.button(), dragX, dragY))
+                || expressionStartPanel.mouseDragged(evt.x(), evt.y())) {
+            return true;
+        }
+        return super.mouseDragged(evt, dragX, dragY);
+    }
+
+    @Override
+    public boolean mouseReleased(MouseButtonEvent evt) {
+        if (operatorConfigPattern instanceof OperatorLPElementRenderPattern expressionPattern) {
+            expressionPattern.mouseReleased(evt.x(), evt.y(), evt.button());
+        }
+        expressionStartPanel.mouseReleased();
+        return super.mouseReleased(evt);
+    }
+
     @Override
     public boolean mouseClicked(MouseButtonEvent evt, boolean isDoubleClick) {
-        if (subGuiHolder.mouseClicked(evt, isDoubleClick)) {
+        if (expressionStartPanel.mouseClicked(evt, isDoubleClick) || subGuiHolder.mouseClicked(evt, isDoubleClick)) {
             if (isSearchFieldFocussed()) {
                 setSearchFieldFocussed(false);
             }
@@ -420,6 +666,16 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
             if (container.isElementVisible(i)) {
                 ILogicProgrammerElement element = container.getVisibleElement(i);
                 if (isPointInRegion(getElementPosition(container, i, false), new Point((int) evt.x(), (int) evt.y()))) {
+                    // Nest the operator in the selected expression slot
+                    if (element instanceof OperatorLPElement operatorElement
+                            && operatorConfigPattern instanceof OperatorLPElementRenderPattern expressionPattern
+                            && expressionPattern.onOperatorPicked(operatorElement.getOperator())) {
+                        return true;
+                    }
+                    // Activating the operator that is open in the slots would replace the whole expression
+                    if (!LogicProgrammerElementTypes.areEqual(container.getActiveElement(), element) && isElementShown(element)) {
+                        return true;
+                    }
                     boolean activated = handleElementActivation(element, true);
                     relativeStep = activated ? i : -1;
                     if (activated) {
@@ -440,6 +696,10 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
         }
 
         return superRet;
+    }
+
+    protected static MutableComponent getDraftErrorMessage(ExpressionParseException error) {
+        return Component.translatable(L10NValues.GUI_LOGICPROGRAMMER_EXPRESSION_DRAFT_ERROR, error.getComponent());
     }
 
     protected void label(String label) {
@@ -491,12 +751,13 @@ public class ContainerScreenLogicProgrammerBase<C extends ContainerLogicProgramm
 
         @Override
         protected boolean showError() {
-            return container.canWriteActiveElementPre();
+            return getExpressionDraftError() != null || container.canWriteActiveElementPre();
         }
 
         @Override
         protected Component getLastError() {
-            return container.getLastError();
+            ExpressionParseException draftError = getExpressionDraftError();
+            return draftError != null ? getDraftErrorMessage(draftError) : container.getLastError();
         }
 
         @Override
