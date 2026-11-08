@@ -1082,7 +1082,7 @@
     "expression.integrateddynamics.parse.bad_value": "Not a valid %s value: %s",
     "expression.integrateddynamics.parse.value_changed": "Not a valid %s value, it would be read as %s",
     "expression.integrateddynamics.parse.list_element": "A list can only contain values, such as 1, \"text\" or [2, 3]",
-    "expression.integrateddynamics.parse.method": "Write an operator call after the dot, as in item.size()",
+    "expression.integrateddynamics.parse.method": "Write a valid operator name after the dot",
     "expression.integrateddynamics.parse.unknown_label": "No variable card has the label %s",
     "expression.integrateddynamics.parse.ambiguous_label": "Several variable cards have the label %s, use one of %s",
     "expression.integrateddynamics.parse.too_deep": "The expression is nested too deeply",
