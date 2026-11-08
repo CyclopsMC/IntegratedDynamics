@@ -9,7 +9,7 @@ import org.cyclops.integrateddynamics.inventory.container.ContainerLogicProgramm
  * @author rubensworks
  */
 public class OperatorLPElementClient<T extends OperatorLPElement>
-        implements ILogicProgrammerElementClient<RenderPattern, ContainerScreenLogicProgrammerBase, ContainerLogicProgrammerBase> {
+        implements ILogicProgrammerElementClient<RenderPattern, ContainerScreenLogicProgrammerBase<?>, ContainerLogicProgrammerBase> {
 
     private final T element;
 
@@ -38,7 +38,7 @@ public class OperatorLPElementClient<T extends OperatorLPElement>
 
     @Override
     public RenderPattern createSubGui(int baseX, int baseY, int maxWidth, int maxHeight,
-                                      ContainerScreenLogicProgrammerBase gui, ContainerLogicProgrammerBase container) {
+                                      ContainerScreenLogicProgrammerBase<?> gui, ContainerLogicProgrammerBase container) {
         return new OperatorLPElementRenderPattern(this.element, baseX, baseY, maxWidth, maxHeight, gui, container);
     }
 

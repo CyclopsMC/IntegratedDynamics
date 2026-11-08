@@ -1,0 +1,52 @@
+{
+  "display": {
+    "icon": {
+      "id": "integrateddynamics:variable",
+      "components": {
+        "integrateddynamics:variable_facade": {
+          "_id": 1,
+          "_type": "integrateddynamics:expression",
+          "expression": {
+            "root": {
+              "k": 0,
+              "op": {"v": "integrateddynamics:relational_gt"},
+              "c": [
+                {"k": 3, "i": 0},
+                {"k": 2, "t": "integrateddynamics:integer", "v": {"v": 10}}
+              ]
+            },
+            "params": [
+              {"name": "n", "type": "integrateddynamics:integer"}
+            ]
+          }
+        }
+      }
+    },
+    "title": {
+      "translate": "advancement.integrateddynamics.expression_operator"
+    },
+    "description": {
+      "translate": "advancement.integrateddynamics.expression_operator.desc"
+    }
+  },
+  "parent": "integrateddynamics:expressions/expression_nesting",
+  "criteria": {
+    "criteria_0": {
+      "trigger": "integrateddynamics:part_variable_driven",
+      "conditions": {
+        "part_type": "integrateddynamics:display_panel",
+        "variable": {
+          "type": "operator",
+          "input": {
+            "0": {
+              "type": "value_type",
+              "value": {
+                "type": "expression"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
