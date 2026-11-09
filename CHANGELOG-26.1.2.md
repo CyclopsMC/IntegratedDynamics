@@ -1,8 +1,25 @@
 # Changelog for Minecraft 26.1.2
 All notable changes to this project will be documented in this file.
 
+<a name="26.1.2-1.37.0"></a>
+## [26.1.2-1.37.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.36.3...26.1.2-1.37.0) - 2026-11-09 16:49:23
+
+
+### Added
+* Add Expressions support to the Logic Programmer (#1766)
+  This allows constant values and multiple nested operators
+  to be combined within a single variable card, without having
+  to combine multiple variable cards.
+  These expressions can either be created through the existing
+  Logic Programmer interface, or they can be written in a text-form
+  for easy exchange across worlds and players.
+
+### Fixed
+* Fix non-ticking parts not re-attaching to network after chunk reloads (#1786), Closes #1785
+* Fix labels not being saved in singleplayer (#1784)
+
 <a name="26.1.2-1.36.3"></a>
-## [26.1.2-1.36.3](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.36.2...26.1.2-1.36.3) - 2026-10-31 16:31:28
+## [26.1.2-1.36.3](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.36.2...26.1.2-1.36.3) - 2026-10-31 16:31:28 +0100
 
 
 ### Fixed
