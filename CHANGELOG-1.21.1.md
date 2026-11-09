@@ -1,8 +1,24 @@
 # Changelog for Minecraft 1.21.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.21.1-1.39.0"></a>
+## [1.21.1-1.39.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.38.2...1.21.1-1.39.0) - 2026-11-09 16:48:57
+
+
+### Added
+* Add Expressions support to the Logic Programmer (#1766)
+  This allows constant values and multiple nested operators
+  to be combined within a single variable card, without having
+  to combine multiple variable cards.
+  These expressions can either be created through the existing
+  Logic Programmer interface, or they can be written in a text-form
+  for easy exchange across worlds and players.
+
+### Fixed
+* Fix non-ticking parts not re-attaching to network after chunk reloads (#1786), Closes #1785
+
 <a name="1.21.1-1.38.2"></a>
-## [1.21.1-1.38.2](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.38.1...1.21.1-1.38.2) - 2026-10-31 16:30:26
+## [1.21.1-1.38.2](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.38.1...1.21.1-1.38.2) - 2026-10-31 16:30:26 +0100
 
 
 ### Fixed

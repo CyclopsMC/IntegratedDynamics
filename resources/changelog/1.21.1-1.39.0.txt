@@ -1,0 +1,14 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.30.0 or higher.
+
+Additions:
+* Add Expressions support to the Logic Programmer (#1766)
+  This allows constant values and multiple nested operators
+  to be combined within a single variable card, without having
+  to combine multiple variable cards.
+  These expressions can either be created through the existing
+  Logic Programmer interface, or they can be written in a text-form
+  for easy exchange across worlds and players.
+
+Fixes:
+* Fix non-ticking parts not re-attaching to network after chunk reloads (#1786), Closes #1785
