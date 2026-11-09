@@ -164,7 +164,6 @@ public class LabelsWorldStorage extends WorldStorage<LabelsWorldStorage> {
                             NeoForgeExtraCodecs.unboundedMapAsList("k", Codec.INT, "v", Codec.STRING).fieldOf("counters").forGetter(data -> data.getLabels())
                     ).apply(instance, (level, labels) -> new LabelsWorldStorage(labels)))
             ), mod);
-            // Once, as storages are created for each world
             NeoForge.EVENT_BUS.register(this);
         }
 
