@@ -171,7 +171,8 @@ public class Network implements INetwork {
     }
 
     public NetworkParams toParams() {
-        return new NetworkParams(this.baseCluster.toParams(), this.crashed);
+        // A save can happen before the first network tick completes deferred loading.
+        return this.toRead != null ? this.toRead : new NetworkParams(this.baseCluster.toParams(), this.crashed);
     }
 
     public void fromParams(NetworkParams params) {
