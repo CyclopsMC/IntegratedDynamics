@@ -3,6 +3,8 @@ package org.cyclops.integrateddynamics.gametest;
 import com.google.common.collect.Sets;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -17,17 +19,23 @@ import net.minecraft.world.phys.Vec3;
 import org.cyclops.cyclopscore.client.particle.ParticleBlurData;
 import org.cyclops.cyclopscore.datastructure.DimPos;
 import org.cyclops.cyclopscore.gametest.GameTest;
+import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
 import org.cyclops.integrateddynamics.api.network.INetwork;
+import org.cyclops.integrateddynamics.api.part.PartPos;
 import org.cyclops.integrateddynamics.api.path.ISidedPathElement;
 import org.cyclops.integrateddynamics.capability.path.PathElementPosition;
 import org.cyclops.integrateddynamics.capability.path.SidedPathElement;
+import org.cyclops.integrateddynamics.core.blockentity.BlockEntityMultipartTicking;
 import org.cyclops.integrateddynamics.core.helper.CableHelpers;
 import org.cyclops.integrateddynamics.core.helper.NetworkHelpers;
 import org.cyclops.integrateddynamics.core.helper.PartHelpers;
+import org.cyclops.integrateddynamics.core.network.PartNetworkElement;
 import org.cyclops.integrateddynamics.core.part.PartTypes;
 import org.cyclops.integrateddynamics.core.persist.world.NetworkWorldStorage;
+import org.cyclops.integrateddynamics.core.test.TestHelpers;
+import org.cyclops.integrateddynamics.part.PartTypeConnector;
 
 import java.util.Optional;
 
@@ -2056,6 +2064,42 @@ public class GameTestsNetwork {
                     Sets.newHashSet(),
                     Component.literal("Connected cables are invalid")
             );
+        });
+    }
+
+    @GameTest(template = TEMPLATE_EMPTY)
+    public void testNetworkRevalidateAllPartsAtPosition(GameTestHelper helper) {
+        // Place a cable with two parts
+        helper.setBlock(POS, RegistryEntries.BLOCK_CABLE.value());
+        ItemStack omniDirectionalConnector = new ItemStack(PartTypes.CONNECTOR_OMNI.getItem());
+        omniDirectionalConnector.set(RegistryEntries.DATACOMPONENT_OMNIDIRECTIONAL_GROUP, 1);
+        PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS), Direction.DOWN, PartTypes.CONNECTOR_OMNI, omniDirectionalConnector.copy());
+        PartHelpers.addPart(helper.getLevel(), helper.absolutePos(POS), Direction.UP, PartTypes.CONNECTOR_OMNI, omniDirectionalConnector.copy());
+        PartPos posDown = PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.DOWN);
+        PartPos posUp = PartPos.of(helper.getLevel(), helper.absolutePos(POS), Direction.UP);
+
+        helper.runAfterDelay(20, () -> {
+            INetwork network = NetworkHelpers.getNetworkChecked(helper.getLevel(), helper.absolutePos(POS), null);
+
+            // Simulate loading the cable from disk, which creates new part states that are not attached to the network yet
+            BlockEntityMultipartTicking blockEntity = IModHelpers.get().getBlockEntityHelpers().get(helper.getLevel(), helper.absolutePos(POS), BlockEntityMultipartTicking.class).orElseThrow();
+            HolderLookup.Provider provider = helper.getLevel().registryAccess();
+            CompoundTag tag = TestHelpers.serialize(blockEntity.getPartContainer()::toValueOutput, provider);
+            TestHelpers.deserialize(tag, valueInput -> {
+                blockEntity.getPartContainer().fromValueInput(valueInput);
+                return null;
+            }, provider);
+            blockEntity.getNetworkCarrier().setNetwork(null);
+            helper.assertTrue(((PartTypeConnector.State<?>) PartHelpers.getPart(posUp).getState()).getPosition() == null, "Part state was not recreated");
+
+            // The network lazily revalidates the first updatable part at this position, which links the cable to the network
+            new PartNetworkElement<>(PartTypes.CONNECTOR_OMNI, posDown).revalidate(network);
+            helper.assertTrue(blockEntity.getNetwork() == network, "Network was not revalidated");
+
+            // The other part at this position must also be attached to the network again
+            helper.assertTrue(((PartTypeConnector.State<?>) PartHelpers.getPart(posDown).getState()).getPosition() != null, "First part was not attached to the network");
+            helper.assertTrue(((PartTypeConnector.State<?>) PartHelpers.getPart(posUp).getState()).getPosition() != null, "Second part was not attached to the network");
+            helper.succeed();
         });
     }
 
