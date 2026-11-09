@@ -115,6 +115,18 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
         super.revalidate(network);
         if (revalidatePositioned(network, this.center.getPos())) {
             afterNetworkReAlive(network);
+
+            // Ensure that non-ticking parts are also revalidated.
+            DimPos dimPos = this.center.getPos();
+            NetworkHelpers.getNetworkElementProvider(dimPos.getLevel(true), dimPos.getBlockPos(), null)
+                    .ifPresent(networkElementProvider -> {
+                        for (INetworkElement element : networkElementProvider.createNetworkElements(dimPos.getLevel(true), dimPos.getBlockPos())) {
+                            if (!element.equals(this)) {
+                                element.revalidate(network);
+                                element.afterNetworkReAlive(network);
+                            }
+                        }
+                    });
         }
     }
 
