@@ -260,6 +260,7 @@ public class IntegratedDynamics extends ModBaseNeoForge<IntegratedDynamics> {
                 GameTestsMechanicalSqueezer.class,
                 GameTestsMenrilLogs.class,
                 GameTestsNetwork.class,
+                GameTestsNetworkSnapshot.class,
                 GameTestsOffsets.class,
                 GameTestsPartGuiRemoval.class,
                 GameTestsParts.class,

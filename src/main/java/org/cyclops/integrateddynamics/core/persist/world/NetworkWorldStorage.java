@@ -88,11 +88,14 @@ public class NetworkWorldStorage extends WorldStorage<NetworkWorldStorage> {
             network.beforeServerStop();
         }
 
-        // Save to params
-        for(Network network : networks) {
-            // Save to params
-            this.networkParams.add(network.toParams());
+        // Build a complete snapshot before replacing the previous serialized state.
+        // Appending here retains stale networks and duplicates them on every save.
+        List<NetworkParams> snapshot = Lists.newArrayList();
+        for (Network network : networks) {
+            snapshot.add(network.toParams());
         }
+        this.networkParams.clear();
+        this.networkParams.addAll(snapshot);
 
         // Consider always dirty
         setDirty();
