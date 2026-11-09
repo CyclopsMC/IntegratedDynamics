@@ -6,12 +6,14 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.saveddata.SavedDataType;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.util.NeoForgeExtraCodecs;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.cyclops.cyclopscore.helper.IModHelpers;
 import org.cyclops.cyclopscore.init.ModBaseNeoForge;
 import org.cyclops.cyclopscore.persist.world.WorldStorage;
@@ -34,7 +36,6 @@ public class LabelsWorldStorage extends WorldStorage<LabelsWorldStorage> {
 
     public LabelsWorldStorage(Map<Integer, String> labels) {
         this.labels = Maps.newHashMap(labels);
-        NeoForge.EVENT_BUS.register(this);
     }
 
     public Map<Integer, String> getLabels() {
@@ -126,17 +127,6 @@ public class LabelsWorldStorage extends WorldStorage<LabelsWorldStorage> {
         return variableIds;
     }
 
-    @SubscribeEvent
-    public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-        if(!IModHelpers.get().getMinecraftHelpers().isClientSideThread()) {
-            try {
-                IntegratedDynamics._instance.getPacketHandler().sendToPlayer(new AllLabelsPacket(this.labels), (ServerPlayer) event.getEntity());
-            } catch (Exception e) {
-                // Ignore if packet cannot be sent (e.g., mock players in game tests have no connection)
-            }
-        }
-    }
-
     @Override
     public void afterLoad() {
         super.afterLoad();
@@ -174,17 +164,36 @@ public class LabelsWorldStorage extends WorldStorage<LabelsWorldStorage> {
                             NeoForgeExtraCodecs.unboundedMapAsList("k", Codec.INT, "v", Codec.STRING).fieldOf("counters").forGetter(data -> data.getLabels())
                     ).apply(instance, (level, labels) -> new LabelsWorldStorage(labels)))
             ), mod);
+            NeoForge.EVENT_BUS.register(this);
         }
 
         @Override
         public LabelsWorldStorage get() {
-            if (IModHelpers.get().getMinecraftHelpers().isClientSide()) {
+            // In singleplayer, only the client uses the synced copy, and the integrated server its saved labels
+            if (IModHelpers.get().getMinecraftHelpers().isClientSide() && !isServerThread()) {
                 if (clientInstance == null) {
                     clientInstance = new LabelsWorldStorage(Maps.newHashMap());
                 }
                 return clientInstance;
             }
             return super.get();
+        }
+
+        private static boolean isServerThread() {
+            MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+            return server != null && server.isSameThread();
+        }
+
+        @SubscribeEvent
+        public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+            if (event.getEntity() instanceof ServerPlayer player) {
+                try {
+                    IntegratedDynamics._instance.getPacketHandler().sendToPlayer(
+                            new AllLabelsPacket(get(player.level().getServer()).getLabels()), player);
+                } catch (Exception e) {
+                    // Ignore if packet cannot be sent (e.g., mock players in game tests have no connection)
+                }
+            }
         }
     }
 
