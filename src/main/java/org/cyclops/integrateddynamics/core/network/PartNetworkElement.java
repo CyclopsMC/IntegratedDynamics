@@ -118,6 +118,20 @@ public class PartNetworkElement<P extends IPartType<P, S>, S extends IPartState<
         super.revalidate(network);
         if (revalidatePositioned(network, this.center.getPos())) {
             afterNetworkReAlive(network);
+
+            // The other parts at this position share the network carrier that was just linked,
+            // so NetworkHelpers#revalidateNetworkElements will skip them,
+            // and parts that are not updated, such as interfaces, are never revalidated by the network.
+            DimPos dimPos = this.center.getPos();
+            NetworkHelpers.getNetworkElementProvider(dimPos.getLevel(true), dimPos.getBlockPos(), null)
+                    .ifPresent(networkElementProvider -> {
+                        for (INetworkElement element : networkElementProvider.createNetworkElements(dimPos.getLevel(true), dimPos.getBlockPos())) {
+                            if (!element.equals(this)) {
+                                element.revalidate(network);
+                                element.afterNetworkReAlive(network);
+                            }
+                        }
+                    });
         }
     }
 
