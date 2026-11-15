@@ -11,7 +11,11 @@ import org.cyclops.cyclopscore.inventory.ItemLocation;
 import org.cyclops.cyclopscore.inventory.SimpleInventory;
 import org.cyclops.cyclopscore.inventory.container.ItemInventoryContainer;
 import org.cyclops.cyclopscore.inventory.slot.SlotExtended;
+import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.RegistryEntries;
+import org.cyclops.integrateddynamics.api.evaluate.variable.ValueDeseralizationContext;
+import org.cyclops.integrateddynamics.api.item.IVariableFacade;
+import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.core.helper.Helpers;
 import org.cyclops.integrateddynamics.item.ItemLabeller;
 
@@ -40,6 +44,20 @@ public class ContainerLabeller extends ItemInventoryContainer<ItemLabeller> {
 
     public ItemStack getItemStack() {
         return temporaryInputSlots.getItem(0);
+    }
+
+    /**
+     * @param variableId A variable id.
+     * @return If the labeller currently holds a valid variable with the given id.
+     */
+    public boolean hasVariable(int variableId) {
+        ItemStack itemStack = getItemStack();
+        if (itemStack.isEmpty()) {
+            return false;
+        }
+        IVariableFacadeHandlerRegistry registry = IntegratedDynamics._instance.getRegistryManager().getRegistry(IVariableFacadeHandlerRegistry.class);
+        IVariableFacade variableFacade = registry.handle(ValueDeseralizationContext.of(player.level()), itemStack);
+        return variableFacade.isValid() && variableFacade.getId() == variableId;
     }
 
     @Override

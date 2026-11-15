@@ -1,0 +1,10 @@
+As always, don't forget to backup your world before updating!
+Requires CyclopsCore version 1.31.0 or higher.
+
+Fixes:
+* Validate aspect property values from the client on the server, Fixes GHSA-gc7v-g8hv-rjc5
+* Clamp Delay capacity to maxHistoryCapacity on the server, Fixes GHSA-xwwj-rxwx-g6p8
+* Only accept labels for the variable in the open labeller, Fixes GHSA-5q4r-pm24-r4r2
+* Remove unused LogicProgrammerValueTypeSlottedValueChangedPacket, Fixes GHSA-397c-mj7g-rxhx
+* Require diagnostics permission for teleport and subscribe packets, Fixes GHSA-pq4q-47f6-hpjx and GHSA-8mq2-856j-f89w
+

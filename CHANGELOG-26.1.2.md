@@ -1,8 +1,19 @@
 # Changelog for Minecraft 26.1.2
 All notable changes to this project will be documented in this file.
 
+<a name="26.1.2-1.37.1"></a>
+## [26.1.2-1.37.1](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.37.0...26.1.2-1.37.1) - 2026-11-15 10:43:47
+
+
+### Fixed
+* Validate aspect property values from the client on the server, Fixes GHSA-gc7v-g8hv-rjc5
+* Clamp Delay capacity to maxHistoryCapacity on the server, Fixes GHSA-xwwj-rxwx-g6p8
+* Only accept labels for the variable in the open labeller, Fixes GHSA-5q4r-pm24-r4r2
+* Remove unused LogicProgrammerValueTypeSlottedValueChangedPacket, Fixes GHSA-397c-mj7g-rxhx
+* Require diagnostics permission for teleport and subscribe packets, Fixes GHSA-pq4q-47f6-hpjx and GHSA-8mq2-856j-f89w
+
 <a name="26.1.2-1.37.0"></a>
-## [26.1.2-1.37.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.36.3...26.1.2-1.37.0) - 2026-11-09 16:49:23
+## [26.1.2-1.37.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/26.1.2-1.36.3...26.1.2-1.37.0) - 2026-11-09 16:49:23 +0100
 
 
 ### Added

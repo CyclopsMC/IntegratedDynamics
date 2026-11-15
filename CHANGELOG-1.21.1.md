@@ -1,8 +1,35 @@
 # Changelog for Minecraft 1.21.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.21.1-1.39.1"></a>
+## [1.21.1-1.39.1](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.39.0...1.21.1-1.39.1) - 2026-11-15 10:35:50
+
+
+### Fixed
+* Validate aspect property values from the client on the server, Fixes GHSA-gc7v-g8hv-rjc5
+* Clamp Delay capacity to maxHistoryCapacity on the server, Fixes GHSA-xwwj-rxwx-g6p8
+* Only accept labels for the variable in the open labeller, Fixes GHSA-5q4r-pm24-r4r2
+* Remove unused LogicProgrammerValueTypeSlottedValueChangedPacket, Fixes GHSA-397c-mj7g-rxhx
+* Require diagnostics permission for teleport and subscribe packets, Fixes GHSA-pq4q-47f6-hpjx and GHSA-8mq2-856j-f89w
+
+<a name="1.21.1-1.39.0"></a>
+## [1.21.1-1.39.0](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.38.2...1.21.1-1.39.0) - 2026-11-09 16:48:57 +0100
+
+
+### Added
+* Add Expressions support to the Logic Programmer (#1766)
+  This allows constant values and multiple nested operators
+  to be combined within a single variable card, without having
+  to combine multiple variable cards.
+  These expressions can either be created through the existing
+  Logic Programmer interface, or they can be written in a text-form
+  for easy exchange across worlds and players.
+
+### Fixed
+* Fix non-ticking parts not re-attaching to network after chunk reloads (#1786), Closes #1785
+
 <a name="1.21.1-1.38.2"></a>
-## [1.21.1-1.38.2](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.38.1...1.21.1-1.38.2) - 2026-10-31 16:30:26
+## [1.21.1-1.38.2](https://github.com/CyclopsMC/IntegratedDynamics/compare/1.21.1-1.38.1...1.21.1-1.38.2) - 2026-10-31 16:30:26 +0100
 
 
 ### Fixed
