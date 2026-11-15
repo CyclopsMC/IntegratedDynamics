@@ -5,6 +5,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -15,6 +16,7 @@ import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.cyclops.cyclopscore.network.CodecField;
 import org.cyclops.cyclopscore.network.PacketCodec;
 import org.cyclops.integrateddynamics.Reference;
+import org.cyclops.integrateddynamics.command.CommandNetworkDiagnostics;
 
 /**
  * Packet for subscribing a network update to a player.
@@ -66,10 +68,22 @@ public class PlayerTeleportPacket extends PacketCodec {
 
     @Override
     public void actionServer(Level world, ServerPlayer player) {
-        ResourceKey<Level> dimensionType = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(this.dimension));
+        // Only sent by the network diagnostics gui, which requires the same permission.
+        if (!CommandNetworkDiagnostics.hasPermission(player)) {
+            return;
+        }
+        ResourceLocation dimensionId = ResourceLocation.tryParse(this.dimension);
+        if (dimensionId == null) {
+            return;
+        }
+        ResourceKey<Level> dimensionType = ResourceKey.create(Registries.DIMENSION, dimensionId);
         if (!dimensionType.location().equals(player.level().dimension().location())) {
+            ServerLevel level = ServerLifecycleHooks.getCurrentServer().getLevel(dimensionType);
+            if (level == null) {
+                return;
+            }
             player.changeDimension(new DimensionTransition(
-                    ServerLifecycleHooks.getCurrentServer().getLevel(dimensionType),
+                    level,
                     player,
                     DimensionTransition.DO_NOTHING
             ));

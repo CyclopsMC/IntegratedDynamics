@@ -35,7 +35,6 @@ public class CommonProxy extends CommonProxyComponent {
         packetHandler.register(NetworkDiagnosticsNetworkPacket.ID, NetworkDiagnosticsNetworkPacket.CODEC);
         packetHandler.register(NetworkDiagnosticsTriggerClient.ID, NetworkDiagnosticsTriggerClient.CODEC);
         packetHandler.register(PlayerTeleportPacket.ID, PlayerTeleportPacket.CODEC);
-        packetHandler.register(LogicProgrammerValueTypeSlottedValueChangedPacket.ID, LogicProgrammerValueTypeSlottedValueChangedPacket.CODEC);
         packetHandler.register(LogicProgrammerSetElementInventory.ID, LogicProgrammerSetElementInventory.CODEC);
         packetHandler.register(LogicProgrammerValueTypeIngredientsValueChangedPacket.ID, LogicProgrammerValueTypeIngredientsValueChangedPacket.CODEC);
         packetHandler.register(LogicProgrammerValueTypeRecipeValueChangedPacket.ID, LogicProgrammerValueTypeRecipeValueChangedPacket.CODEC);

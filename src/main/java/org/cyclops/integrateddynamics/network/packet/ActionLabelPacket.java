@@ -13,6 +13,7 @@ import org.cyclops.cyclopscore.network.PacketCodec;
 import org.cyclops.integrateddynamics.IntegratedDynamics;
 import org.cyclops.integrateddynamics.Reference;
 import org.cyclops.integrateddynamics.core.persist.world.LabelsWorldStorage;
+import org.cyclops.integrateddynamics.inventory.container.ContainerLabeller;
 
 /**
  * Packet for notifying onLabelPacket changes.
@@ -56,6 +57,13 @@ public class ActionLabelPacket extends PacketCodec {
 
     @Override
     public void actionServer(Level world, ServerPlayer player) {
+        // Only the variable in the player's open labeller may be (un)labelled.
+        if (!(player.containerMenu instanceof ContainerLabeller containerLabeller) || !containerLabeller.hasVariable(variableId)) {
+            return;
+        }
+        if (label != null && label.length() > LabelsWorldStorage.MAX_LABEL_LENGTH) {
+            return;
+        }
         if(label == null) {
             LabelsWorldStorage.getInstance(IntegratedDynamics._instance).remove(variableId);
         } else {

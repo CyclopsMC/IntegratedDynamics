@@ -10,6 +10,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -34,6 +35,7 @@ import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.block.BlockDelayConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderSingleton;
 import org.cyclops.integrateddynamics.core.blockentity.BlockEntityActiveVariableBase;
 import org.cyclops.integrateddynamics.core.evaluate.DelayVariableFacadeHandler;
@@ -164,8 +166,12 @@ public class BlockEntityDelay extends BlockEntityProxy implements MenuProvider {
     }
 
     public void setCapacity(int capacity) {
-        this.capacity = Math.max(1, capacity);
+        this.capacity = clampCapacity(capacity);
         this.values = Queues.newArrayBlockingQueue(this.capacity);
+    }
+
+    protected static int clampCapacity(int capacity) {
+        return Mth.clamp(capacity, 1, BlockDelayConfig.maxHistoryCapacity);
     }
 
     public Queue<IValue> getValues() {
@@ -188,14 +194,17 @@ public class BlockEntityDelay extends BlockEntityProxy implements MenuProvider {
     @Override
     public void read(CompoundTag tag, HolderLookup.Provider provider) {
         super.read(tag, provider);
-        if (this.capacity <= 0) this.capacity = 1;
+        this.capacity = clampCapacity(this.capacity);
         values = Queues.newArrayBlockingQueue(this.capacity);
 
         ListTag valueList = tag.getList("values", Tag.TAG_COMPOUND);
         for (int i = 0; i < valueList.size(); i++) {
             IValue value = ValueHelpers.deserialize(ValueDeseralizationContext.of(getLevel()), valueList.getCompound(i));
             if (value != null) {
-                this.values.add(value);
+                // Keep the newest values if the capacity was lowered.
+                while (!this.values.offer(value)) {
+                    this.values.poll();
+                }
             }
         }
     }

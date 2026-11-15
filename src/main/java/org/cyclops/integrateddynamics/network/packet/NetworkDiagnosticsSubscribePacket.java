@@ -11,6 +11,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import org.cyclops.cyclopscore.network.CodecField;
 import org.cyclops.cyclopscore.network.PacketCodec;
 import org.cyclops.integrateddynamics.Reference;
+import org.cyclops.integrateddynamics.command.CommandNetworkDiagnostics;
 import org.cyclops.integrateddynamics.core.network.diagnostics.NetworkDiagnostics;
 
 /**
@@ -49,6 +50,9 @@ public class NetworkDiagnosticsSubscribePacket extends PacketCodec {
     @Override
     public void actionServer(Level world, ServerPlayer player) {
         if (subscribe) {
+            if (!CommandNetworkDiagnostics.hasPermission(player)) {
+                return;
+            }
             NetworkDiagnostics.getInstance().registerPlayer(player);
         } else {
             NetworkDiagnostics.getInstance().unRegisterPlayer(player);
