@@ -1,8 +1,19 @@
 # Changelog for Minecraft 1.20.1
 All notable changes to this project will be documented in this file.
 
+<a name="1.20.1-1.31.5"></a>
+## [1.20.1-1.31.5](/compare/1.20.1-1.31.4...1.20.1-1.31.5) - 2026-11-15 10:25:41
+
+
+### Fixed
+* Validate aspect property values from the client on the server, Fixes GHSA-gc7v-g8hv-rjc5
+* Clamp Delay capacity to maxHistoryCapacity on the server, Fixes GHSA-xwwj-rxwx-g6p8
+* Only accept labels for the variable in the open labeller, Fixes GHSA-5q4r-pm24-r4r2
+* Remove unused LogicProgrammerValueTypeSlottedValueChangedPacket, Fixes GHSA-397c-mj7g-rxhx
+* Require diagnostics permission for teleport and subscribe packets, Fixes GHSA-pq4q-47f6-hpjx and GHSA-8mq2-856j-f89w
+
 <a name="1.20.1-1.31.4"></a>
-## [1.20.1-1.31.4](/compare/1.20.1-1.31.3...1.20.1-1.31.4) - 2026-10-31 16:28:37
+## [1.20.1-1.31.4](/compare/1.20.1-1.31.3...1.20.1-1.31.4) - 2026-10-31 16:28:37 +0100
 
 
 ### Fixed

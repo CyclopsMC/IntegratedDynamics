@@ -172,6 +172,10 @@ public abstract class PartStateBase<P extends IPartType> implements IPartState<P
                     })
                     .orElse(null);
             if (key != null && value != null) {
+                // Values saved before the server validated them may be invalid.
+                if (key.getDefaultProperties() != null) {
+                    AspectProperties.resetInvalidValues(value, key.getDefaultProperties());
+                }
                 this.aspectProperties.put(key, value);
             }
         }

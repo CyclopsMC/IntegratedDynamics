@@ -378,6 +378,10 @@ public class ContainerAspectSettings extends InventoryContainer {
                     );
                     trueValue = ValueHelpers.deserializeRaw(input, property.getType());
                 }
+                // Values from the client must pass the property validator, as in the settings screen.
+                if (trueValue == null || !property.getValidator().test(trueValue)) {
+                    return;
+                }
                 aspectProperties.setValue(property, trueValue);
                 aspect.setProperties(partType, target, partState, aspectProperties);
 

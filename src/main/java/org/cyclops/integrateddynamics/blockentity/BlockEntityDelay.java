@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -30,6 +31,7 @@ import org.cyclops.integrateddynamics.api.item.IVariableFacadeHandlerRegistry;
 import org.cyclops.integrateddynamics.api.network.INetworkElement;
 import org.cyclops.integrateddynamics.api.network.INetworkElementProvider;
 import org.cyclops.integrateddynamics.api.network.IPartNetwork;
+import org.cyclops.integrateddynamics.block.BlockDelayConfig;
 import org.cyclops.integrateddynamics.capability.networkelementprovider.NetworkElementProviderSingleton;
 import org.cyclops.integrateddynamics.core.blockentity.BlockEntityActiveVariableBase;
 import org.cyclops.integrateddynamics.core.evaluate.DelayVariableFacadeHandler;
@@ -172,8 +174,12 @@ public class BlockEntityDelay extends BlockEntityProxy implements MenuProvider {
     }
 
     public void setCapacity(int capacity) {
-        this.capacity = Math.max(1, capacity);
+        this.capacity = clampCapacity(capacity);
         this.values = Queues.newArrayBlockingQueue(this.capacity);
+    }
+
+    protected static int clampCapacity(int capacity) {
+        return Mth.clamp(capacity, 1, BlockDelayConfig.maxHistoryCapacity);
     }
 
     public Queue<IValue> getValues() {
@@ -195,13 +201,16 @@ public class BlockEntityDelay extends BlockEntityProxy implements MenuProvider {
     @Override
     public void read(ValueInput input) {
         super.read(input);
-        if (this.capacity <= 0) this.capacity = 1;
+        this.capacity = clampCapacity(this.capacity);
         values = Queues.newArrayBlockingQueue(this.capacity);
 
         for (ValueInput valueInput : input.childrenList("values").orElseThrow()) {
             IValue value = ValueHelpers.deserialize(valueInput);
             if (value != null) {
-                this.values.add(value);
+                // Keep the newest values if the capacity was lowered.
+                while (!this.values.offer(value)) {
+                    this.values.poll();
+                }
             }
         }
     }
